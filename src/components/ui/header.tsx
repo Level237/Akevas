@@ -1,6 +1,7 @@
-import { Heart, ShoppingCart, User } from 'lucide-react'
+import { Heart, Search, ShoppingCart, User } from 'lucide-react'
 import React from 'react'
 import { Button } from './button'
+import Preferences from '../frontend/preferences'
 
 export default function Header() {
   return (
@@ -9,7 +10,7 @@ export default function Header() {
         <div className="flex  justify-between items-center mx-12 ">
           
             <div className="">
-                <a href="#" >Log in</a>
+               <Preferences/>
             </div>
             <div className=''>
            <a href="/" className="flex items-center">
@@ -28,7 +29,7 @@ export default function Header() {
                 <ShoppingCart/>
             </div>
             <div>
-                <Button>Devenir Vendeur</Button>
+               <Search/>
             </div>
            </div>
         </div>
