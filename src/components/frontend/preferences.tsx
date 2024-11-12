@@ -11,7 +11,7 @@ export default function Preferences() {
     <div>
       <Select>
   <SelectTrigger className="w-[180px]">
-    <SelectValue placeholder="Theme" />
+    <SelectValue placeholder="Préferences" />
   </SelectTrigger>
   <SelectContent>
     <SelectItem value="light">Par Defaut</SelectItem>
