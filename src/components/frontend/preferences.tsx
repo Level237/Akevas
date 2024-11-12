@@ -15,8 +15,9 @@ export default function Preferences() {
   </SelectTrigger>
   <SelectContent>
     <SelectItem value="light">Par Defaut</SelectItem>
-    <SelectItem value="dark">Hommes</SelectItem>
-    <SelectItem value="system">Enfant</SelectItem>
+    <SelectItem value="hommes">Hommes</SelectItem>
+    <SelectItem value="femmes">Femmes</SelectItem>
+    <SelectItem value="enfant">Enfant</SelectItem>
   </SelectContent>
 </Select>
     </div>
