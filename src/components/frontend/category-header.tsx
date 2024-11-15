@@ -33,7 +33,7 @@ export default function CategoryHeader() {
             </div>
         </div>
             <div className=''>
-                <Button>Dévenir Vendeur</Button>
+                <Button>Créer ma boutique</Button>
             </div>
           </div>
   )
