@@ -19,7 +19,7 @@ export default function StoreHero() {
               <span className="text-gray-300 text-xs">La texture du coton reste un atout</span>
             </div>
               
-              <Button>Voir la boutique</Button>
+              <Button className="text-xs bg-black">Voir la boutique</Button>
           </div>
      </section>
      <section className="flex flex-col w-[40%] h-full gap-4">
@@ -36,10 +36,10 @@ export default function StoreHero() {
               <span className="text-gray-300 text-xs">La maille du quai</span>
             </div>
               
-              <Button>Voir la boutique</Button>
+              <Button className="text-xs bg-black">Voir la boutique</Button>
           </div>
         </section>
-        <section style={{ background:"url('bg.webp')",backgroundPosition:"top",backgroundSize:"cover" }} className="w-full h-64 relative">
+        <section style={{ background:"url('sac-bg.webp')",backgroundPosition:"top",backgroundSize:"cover" }} className="w-full h-64 relative">
         <div className="absolute rounded-md w-full bg-gray-800 top-0 bottom-0 inset-0 opacity-60 z-10">
 
 </div>
@@ -48,11 +48,11 @@ export default function StoreHero() {
           </div>
 <div className="absolute bottom-6 z-20 flex justify-between w-full px-7">
             <div className="flex flex-col">
-              <h2 className="text-white text-xl font-bold">Meilleur adventise</h2>
+              <h2 className="text-white text-xl font-bold">L'univers des sac</h2>
               <span className="text-gray-300 text-xs">La maille du quai</span>
             </div>
               
-              <Button>Voir la boutique</Button>
+              <Button className="text-xs bg-black">Voir la boutique</Button>
           </div>
         </section>
 
