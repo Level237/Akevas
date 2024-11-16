@@ -1,4 +1,5 @@
 import CategorySlider from '@/components/frontend/category-slider'
+import ProductList from '@/components/frontend/product-list'
 import StoreHero from '@/components/frontend/StoreHero'
 import Header from '@/components/ui/header'
 import TopBar from '@/components/ui/topBar'
@@ -15,6 +16,9 @@ export default function Homepage() {
           Shop by Category
         </h2>
         <CategorySlider/>
+        <div>
+          <ProductList/>
+        </div>
       </section>
     </>
   )

@@ -17,7 +17,7 @@ export default function CategorySlider() {
     <Slider {...settings} className='mb-12 flex flex-col justify-center items-center'>
     <div >
         <div className='flex flex-col items-center justify-center gap-4'>
-        <div className='w-36 h-36 rounded-full' style={{ background:"url('/sac.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
+        <div className='w-24 h-24 rounded-full' style={{ background:"url('/sac.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
               
               </div>
               <div>
@@ -28,7 +28,7 @@ export default function CategorySlider() {
         </div>
         <div >
             <div className='flex flex-col items-center justify-center gap-4'>
-            <div className='w-36 h-36 rounded-full' style={{ background:"url('/man.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
+            <div className='w-24 h-24 rounded-full' style={{ background:"url('/man.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
               
               </div>
               <div>
@@ -40,7 +40,7 @@ export default function CategorySlider() {
         <div>
         <div className='flex flex-col justify-center items-center gap-4'>
             
-            <div className='w-36 h-36 rounded-full' style={{ background:"url('/woman.jpeg')",backgroundPosition:"top",backgroundSize:"cover" }}>
+            <div className='w-24 h-24 rounded-full' style={{ background:"url('/woman.jpeg')",backgroundPosition:"top",backgroundSize:"cover" }}>
               
             </div>
             <div>
@@ -50,7 +50,7 @@ export default function CategorySlider() {
         </div>
        <div>
        <div className='flex flex-col justify-center items-center gap-4'>
-            <div className='w-36 h-36 rounded-full' style={{ background:"url('/shoes1.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
+            <div className='w-24 h-24 rounded-full' style={{ background:"url('/shoes1.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
               
             </div>
             <div>
@@ -61,7 +61,7 @@ export default function CategorySlider() {
       
       <div>
         <div className='flex flex-col items-center gap-4'>
-                <div className='w-36 h-36 rounded-full' style={{ background:"url('/kids.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
+                <div className='w-24 h-24 rounded-full' style={{ background:"url('/kids.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
                 
                 </div>
                 <div>
@@ -72,7 +72,7 @@ export default function CategorySlider() {
         
         <div>
             <div className='flex flex-col items-center gap-4'>
-                <div className='w-36 h-36 rounded-full' style={{ background:"url('/traditional.jpeg')",backgroundPosition:"top",backgroundSize:"cover" }}>
+                <div className='w-24 h-24 rounded-full' style={{ background:"url('/traditional.jpeg')",backgroundPosition:"top",backgroundSize:"cover" }}>
                 
                 </div>
                 <div>
@@ -83,7 +83,7 @@ export default function CategorySlider() {
         
         <div>
             <div className='flex flex-col items-center gap-4'>
-                <div className='w-36 h-36 rounded-full' style={{ background:"url('/kids.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
+                <div className='w-24 h-24 rounded-full' style={{ background:"url('/kids.webp')",backgroundPosition:"top",backgroundSize:"cover" }}>
                 
                 </div>
                 <div>
