@@ -3,6 +3,7 @@ import React from 'react'
 import { Button } from './button'
 import Preferences from '../frontend/preferences'
 import CategoryHeader from '../frontend/category-header'
+import { CartSheet } from '../frontend/cartSheet'
 
 export default function Header() {
   return (
@@ -27,7 +28,8 @@ export default function Header() {
                 <Heart/>
             </div>
             <div>
-                <ShoppingCart/>
+                <CartSheet> <ShoppingCart/></CartSheet>
+               
             </div>
             <div>
                <Search/>

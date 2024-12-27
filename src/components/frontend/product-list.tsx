@@ -94,7 +94,7 @@ export default function ProductList() {
               <div className="p-6">
                 <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300">{product.name}</h2>
                 <p className="text-2xl font-bold mb-4">{product.price.toFixed(2)} €</p>
-                <Button className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                <Button className="w-full group-hover:bg-primary bg-black group-hover:text-primary-foreground transition-colors duration-300">
                   <ShoppingCart className="mr-2 h-5 w-5" /> Ajouter au panier
                 </Button>
               </div>

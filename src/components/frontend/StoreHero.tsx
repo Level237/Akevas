@@ -7,7 +7,7 @@ export default function StoreHero() {
   return (
     <section className="flex items-start gap-4 mx-12 h-[30rem] mb-20">
      <section style={{ background:"url('bg.webp')",backgroundPosition:"cover",backgroundSize:"center" }} className="w-[60%] rounded-md  relative h-[30rem] bg-red-300">
-          <div className="absolute rounded-md w-full bg-gray-800 top-0 bottom-0 inset-0 opacity-60 z-10">
+          <div className="absolute rounded-md w-full bg-zinc-950 top-0 bottom-0 inset-0 opacity-60 z-10">
 
           </div>
           <div className="absolute top-4 p-1 z-10 bg-orange-500 text-white">
@@ -24,7 +24,7 @@ export default function StoreHero() {
      </section>
      <section className="flex flex-col w-[40%] h-full gap-4">
         <section style={{ background:"url('shoes.webp')",backgroundPosition:"top",backgroundSize:"cover",backgroundRepeat:"no-repeat" }} className="w-full h-64 relative">
-        <div className="absolute rounded-md w-full bg-gray-800 top-0 bottom-0 inset-0 opacity-60 z-10">
+        <div className="absolute rounded-md w-full bg-zinc-950 top-0 bottom-0 inset-0 opacity-60 z-10">
 
 </div>
 <div className="absolute top-4 p-1 z-10 bg-orange-500 text-white">
@@ -40,7 +40,7 @@ export default function StoreHero() {
           </div>
         </section>
         <section style={{ background:"url('sac-bg.webp')",backgroundPosition:"top",backgroundSize:"cover" }} className="w-full h-64 relative">
-        <div className="absolute rounded-md w-full bg-gray-800 top-0 bottom-0 inset-0 opacity-60 z-10">
+        <div className="absolute rounded-md w-full bg-zinc-950 top-0 bottom-0 inset-0 opacity-60 z-10">
 
 </div>
 <div className="absolute top-4 p-1 z-10 bg-orange-500 text-white">
