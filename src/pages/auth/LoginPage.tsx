@@ -8,25 +8,25 @@ import { Shield, Truck, Unlock } from "lucide-react";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen overflow-y-hidden w-full bg-white">
-    <div className="mx-auto grid min-h-screen  md:grid-cols-2">
+    <div className="h-[100vh] overflow-hidden w-full bg-white">
+    <div className="mx-auto grid min-h-screen   md:grid-cols-2">
       {/* Left Column - Si<div className="min-h-screen w-full bg-white">
       <div className="mx-auto grid min-h-screen max-w-screen-xl md:grid-cols-2">
         {/* Left Column - Sign Up Form */}
        <LoginForm/>
 
         
-        <Card className="relative hidden w-full  overflow-hidden md:block">
-          <div className="absolute  inset-0">
+        <Card className="relative  hidden w-full  overflow-hidden md:block">
+          <div className="absolute rounded-none   inset-0">
             <img
               src="/traditional-dark.jpeg"
               alt="Modern furniture in a living room"
               width={600}
               height={800}
-              className="h-full w-full object-cover"
+              className="h-full  w-full object-cover"
               
             />
-            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute  inset-0 bg-black/20" />
           </div>
           
           <div className="relative flex h-full flex-col justify-end p-8 text-white">
