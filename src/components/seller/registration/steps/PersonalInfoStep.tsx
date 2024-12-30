@@ -68,7 +68,8 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
             name="firstName"
             value={data.firstName}
             onChange={handleChange}
-            placeholder="John"
+            placeholder="Entrez votre prénom"
+            className="py-6"
           />
         </div>
 
@@ -79,7 +80,8 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
             name="lastName"
             value={data.lastName}
             onChange={handleChange}
-            placeholder="Doe"
+            placeholder="Entrez votre nom"
+            className="py-6"
           />
         </div>
 
@@ -91,25 +93,35 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
             name="email"
             value={data.email}
             onChange={handleChange}
-            placeholder="john.doe@example.com"
+            placeholder="Entrez votre email"
+            className="py-6"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone">Téléphone</Label>
+          <Label htmlFor="phone">Numéro de téléphone</Label>
           <Input
             type="tel"
             id="phone"
             name="phone"
             value={data.phone}
             onChange={handleChange}
-            placeholder="+33 6 12 34 56 78"
+            placeholder="Entrez votre numéro de téléphone"
+            className="py-6"
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="birthDate">Date de naissance</Label>
-         
+          <Input
+            type="date"
+            id="birthDate"
+            name="birthDate"
+            value={data.birthDate}
+            
+            placeholder="Entrez votre date de naissance"
+            className="py-6"
+          />
         </div>
 
         <div className="space-y-2">
@@ -119,28 +131,20 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
             name="nationality"
             value={data.nationality}
             onChange={handleChange}
-            placeholder="Française"
+            placeholder="Entrez votre nationalité"
+            className="py-6"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="birthPlace">Lieu de naissance</Label>
-          <Input
-            id="birthPlace"
-            name="birthPlace"
-            value={data.birthPlace}
-            onChange={handleChange}
-            placeholder="Paris"
-          />
-        </div>
+      
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-4 bg-gray-50">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="p-2 bg-gray-50">
           <div className="space-y-2">
             <Label htmlFor="idCardFront">Photo recto de la CNI</Label>
             <div className="flex items-center gap-4">
-              <div className="h-32 w-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden">
+              <div className="h-24 w-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden">
                 {data.idCardFront ? (
                   <img
                     src={URL.createObjectURL(data.idCardFront)}
@@ -166,11 +170,11 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
           </div>
         </Card>
 
-        <Card className="p-4 bg-gray-50">
+        <Card className="p-2 bg-gray-50">
           <div className="space-y-2">
             <Label htmlFor="idCardBack">Photo verso de la CNI</Label>
             <div className="flex items-center gap-4">
-              <div className="h-32 w-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden">
+              <div className="h-24 w-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden">
                 {data.idCardBack ? (
                   <img
                     src={URL.createObjectURL(data.idCardBack)}
@@ -188,6 +192,35 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
                 type="file"
                 id="idCardBack"
                 name="idCardBack"
+                onChange={handleChange}
+                accept="image/*"
+                className="max-w-[250px]"
+              />
+            </div>
+          </div>
+        </Card>
+        <Card className="p-2 bg-gray-50">
+          <div className="space-y-2">
+            <Label htmlFor="idCardBack">Photo de votre passport</Label>
+            <div className="flex items-center gap-4">
+              <div className="h-24 w-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden">
+                {data.idCardPassport ? (
+                  <img
+                    src={URL.createObjectURL(data.idCardPassport)}
+                    alt="ID Card Back"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-4">
+                    <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-500">Passport</p>
+                  </div>
+                )}
+              </div>
+              <Input
+                type="file"
+                id="idCardPassport"
+                name="idCardPassport"
                 onChange={handleChange}
                 accept="image/*"
                 className="max-w-[250px]"

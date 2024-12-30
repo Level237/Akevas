@@ -7,6 +7,7 @@ export interface SellerFormData {
     phone: string;
     idCardFront?: File;
     idCardBack?: File;
+    idCardPassport?: File;
     birthDate: string;
     birthPlace: string;
     nationality: string;
