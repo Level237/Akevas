@@ -16,17 +16,20 @@ export default function LoginPage() {
        <LoginForm/>
 
         
-        <Card className="relative  hidden w-full  overflow-hidden md:block">
-          <div className="absolute rounded-none   inset-0">
+        <Card className="relative border-none rounded-none  hidden w-full   overflow-hidden md:block">
+          <div className="absolute rounded-none    inset-0">
+            <div className="absolute rotate-45 p-12 top-0   rounded-3xl z-50">
+            
+            </div>
             <img
               src="/traditional-dark.jpeg"
               alt="Modern furniture in a living room"
               width={600}
               height={800}
-              className="h-full  w-full object-cover"
+              className="h-full border-none w-full object-cover"
               
             />
-            <div className="absolute  inset-0 bg-black/20" />
+            <div className="absolute border-none  inset-0 bg-black/20" />
           </div>
           
           <div className="relative flex h-full flex-col justify-end p-8 text-white">
