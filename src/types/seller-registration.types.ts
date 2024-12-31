@@ -18,6 +18,7 @@ export interface SellerFormData {
     description: string;
     category: string;
     subCategory: string;
+    logo?: File;
   };
   // Informations bancaires
   bankInfo: {

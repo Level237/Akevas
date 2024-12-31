@@ -10,6 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
+import { Upload } from 'lucide-react';
 
 interface ShopInfoStepProps {
   data: SellerFormData['shopInfo'];
@@ -40,9 +42,18 @@ const subCategories: Record<string, string[]> = {
 
 const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value,type, files } = e.target;
+    if(type === 'file' && files) {
+      onUpdate({
+        shopInfo: {
+          ...data,
+          [name]: files[0],
+        },
+      });
+      return;
+    }
     onUpdate({
       shopInfo: {
         ...data,
@@ -88,6 +99,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             value={data.shopName}
             onChange={handleChange}
             placeholder="Ma Super Boutique"
+            className="py-6"
           />
           <p className="text-sm text-muted-foreground">
             Ce nom sera visible par tous les clients sur la marketplace
@@ -112,8 +124,9 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             <Select
               value={data.category}
               onValueChange={handleCategoryChange}
+              
             >
-              <SelectTrigger>
+              <SelectTrigger className="py-6">
                 <SelectValue placeholder="Sélectionnez une catégorie" />
               </SelectTrigger>
               <SelectContent>
@@ -133,7 +146,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
               onValueChange={handleSubCategoryChange}
               disabled={!data.category}
             >
-              <SelectTrigger>
+              <SelectTrigger className="py-6">
                 <SelectValue placeholder="Sélectionnez une sous-catégorie" />
               </SelectTrigger>
               <SelectContent>
@@ -147,6 +160,35 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             </Select>
           </div>
         </div>
+        <Card className="p-2 bg-gray-50">
+          <div className="space-y-2">
+            <Label htmlFor="idCardBack">Logo de votre boutique</Label>
+            <div className="flex items-center gap-4">
+              <div className="h-24 w-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden">
+                {data.logo ? (
+                  <img
+                    src={URL.createObjectURL(data.logo)}
+                    alt="Logo de votre boutique"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-4">
+                    <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-500">Logo de votre boutique</p>
+                  </div>
+                )}
+              </div>
+              <Input
+                type="file"
+                id="logo"
+                name="logo"
+                onChange={handleChange}
+                accept="image/*"
+                className="max-w-[250px]"
+              />
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );

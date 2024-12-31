@@ -9,7 +9,7 @@ export const routes = createBrowserRouter([
     element: <Homepage />
   },
   {
-    path: '/connexion',
+    path: '/login',
     element: <LoginPage />
   },
   {
