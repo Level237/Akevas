@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface BankInfoStepProps {
   data: SellerFormData['bankInfo'];
@@ -25,74 +26,58 @@ const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h2 className="text-2xl font-semibold tracking-tight">Informations Bancaires</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Informations Vendeur</h2>
         <p className="text-sm text-muted-foreground">
-          Ajoutez vos informations bancaires pour recevoir vos paiements
+          Ajoutez vos informations en tant que vendeur sur notre plateforme
         </p>
       </div>
 
-      <Alert variant="warning">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Vos informations bancaires sont sécurisées et ne seront utilisées que pour les virements de vos ventes
-        </AlertDescription>
-      </Alert>
+      
 
-      <Card className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="bankName">Nom de la banque</Label>
-            <Input
-              id="bankName"
-              name="bankName"
-              value={data.bankName}
-              onChange={handleChange}
-              placeholder="BNP Paribas"
-            />
+            <Label htmlFor="category">Quel type de vendeur etes vous?</Label>
+            <Select
+            >
+              <SelectTrigger className="py-6">
+                <SelectValue placeholder="Sélectionnez une reponse" />
+              </SelectTrigger>
+              <SelectContent>
+                
+                  <SelectItem key="0" value="0">
+                      Grossiste
+                  </SelectItem>
+                
+                  <SelectItem key="1" value="1">
+                      Detaillant
+                  </SelectItem>
+                  <SelectItem key="2" value="2">
+                      Les deux
+                  </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="accountHolder">Titulaire du compte</Label>
-            <Input
-              id="accountHolder"
-              name="accountHolder"
-              value={data.accountHolder}
-              onChange={handleChange}
-              placeholder="John Doe"
-            />
+            <Label htmlFor="category">Vos produits sont?</Label>
+            <Select
+            >
+              <SelectTrigger className="py-6">
+                <SelectValue placeholder="Sélectionnez une reponse" />
+              </SelectTrigger>
+              <SelectContent>
+                
+                  <SelectItem key="0" value="0">
+                      Boutique
+                  </SelectItem>
+                
+                  <SelectItem key="1" value="1">
+                      Friperie
+                  </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+         
         </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="iban">IBAN</Label>
-          <Input
-            id="iban"
-            name="iban"
-            value={data.iban}
-            onChange={handleChange}
-            placeholder="FR76 XXXX XXXX XXXX XXXX XXXX XXX"
-            className="uppercase"
-          />
-          <p className="text-sm text-muted-foreground">
-            Format: FR76 XXXX XXXX XXXX XXXX XXXX XXX
-          </p>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="swift">Code SWIFT/BIC</Label>
-          <Input
-            id="swift"
-            name="swift"
-            value={data.swift}
-            onChange={handleChange}
-            placeholder="BNPAFRPPXXX"
-            className="uppercase"
-          />
-          <p className="text-sm text-muted-foreground">
-            Le code SWIFT/BIC est disponible sur votre RIB
-          </p>
-        </div>
-      </Card>
 
       <div className="text-sm text-muted-foreground">
         <p>* Ces informations sont nécessaires pour le versement de vos revenus</p>

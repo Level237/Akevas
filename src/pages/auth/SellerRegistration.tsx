@@ -12,7 +12,7 @@ import AddressInfoStep from '@/components/seller/registration/steps/AddressInfoS
 const steps = [
   { id: 1, title: 'Informations personnelles' },
   { id: 2, title: 'Informations boutique' },
-  { id: 3, title: 'Informations bancaires' },
+  { id: 3, title: 'Informations Vendeur' },
   { id: 4, title: 'Adresse' },
 ];
 
