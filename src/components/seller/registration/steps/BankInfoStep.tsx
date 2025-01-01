@@ -38,6 +38,7 @@ const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
           <div className="space-y-2">
             <Label htmlFor="category">Quel type de vendeur etes vous?</Label>
             <Select
+            name='sellerType'
             >
               <SelectTrigger className="py-6">
                 <SelectValue placeholder="Sélectionnez une reponse" />
@@ -60,6 +61,7 @@ const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
           <div className="space-y-2">
             <Label htmlFor="category">Vos produits sont?</Label>
             <Select
+            name='productType'
             >
               <SelectTrigger className="py-6">
                 <SelectValue placeholder="Sélectionnez une reponse" />

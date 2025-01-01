@@ -3,13 +3,7 @@ import { SellerFormData } from '@/types/seller-registration.types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { CalendarIcon, Upload } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-
-
-import { cn } from '@/lib/utils';
+import { Upload } from 'lucide-react';
 
 interface PersonalInfoStepProps {
   data: SellerFormData['personalInfo'];
@@ -38,17 +32,6 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
         [name]: value,
       },
     });
-  };
-
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      onUpdate({
-        personalInfo: {
-          ...data,
-          birthDate: date.toISOString(),
-        },
-      });
-    }
   };
 
   return (
@@ -118,8 +101,7 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
             id="birthDate"
             name="birthDate"
             value={data.birthDate}
-            
-            placeholder="Entrez votre date de naissance"
+            onChange={handleChange}
             className="py-6"
           />
         </div>
@@ -135,8 +117,6 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
             className="py-6"
           />
         </div>
-
-      
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

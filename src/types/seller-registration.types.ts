@@ -22,10 +22,9 @@ export interface SellerFormData {
   };
   // Informations bancaires
   bankInfo: {
-    bankName: string;
-    accountHolder: string;
-    iban: string;
-    swift: string;
+    sellerType: string;
+    productType: string;
+
   };
   // Informations d'adresse
   addressInfo: {
