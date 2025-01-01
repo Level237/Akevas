@@ -23,6 +23,24 @@ const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
     });
   };
 
+  const handleSellerTypeChange = (value: string) => {
+    onUpdate({
+      bankInfo: {
+        ...data,
+        sellerType: value, // Reset sub-category when category changes
+      },
+    });
+  };
+  const handleProductTypeChange = (value: string) => {
+    onUpdate({
+      bankInfo: {
+        ...data,
+        productType: value, // Reset sub-category when category changes
+      },
+    });
+  };
+
+
   return (
     <div className="space-y-8">
       <div className="space-y-2">
@@ -39,6 +57,8 @@ const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
             <Label htmlFor="category">Quel type de vendeur etes vous?</Label>
             <Select
             name='sellerType'
+            value={data.sellerType}
+              onValueChange={handleSellerTypeChange}
             >
               <SelectTrigger className="py-6">
                 <SelectValue placeholder="Sélectionnez une reponse" />
@@ -62,6 +82,8 @@ const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
             <Label htmlFor="category">Vos produits sont?</Label>
             <Select
             name='productType'
+            value={data.productType}
+              onValueChange={handleProductTypeChange}
             >
               <SelectTrigger className="py-6">
                 <SelectValue placeholder="Sélectionnez une reponse" />
