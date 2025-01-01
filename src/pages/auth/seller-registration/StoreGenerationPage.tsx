@@ -24,7 +24,7 @@ const StoreGenerationPage = () => {
         }
         return prev + 1;
       });
-    }, 50);
+    }, 100);
 
     const stepInterval = setInterval(() => {
       setCurrentStep(prev => {

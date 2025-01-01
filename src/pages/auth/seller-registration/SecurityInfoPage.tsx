@@ -1,48 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PersonalInfoStep from '@/components/seller/registration/steps/PersonalInfoStep';
+import SecurityInfoStep from '@/components/seller/registration/steps/SecurityInfoStep';
 import { SellerFormData } from '@/types/seller-registration.types';
 import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 
-const PersonalInfoPage = () => {
+const SecurityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<SellerFormData['personalInfo']>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    birthDate: '',
-    birthPlace: '',
-    nationality: '',
+  const [formData, setFormData] = useState<SellerFormData['securityInfo']>({
+    password: '',
+    confirmPassword: '',
   });
 
   const handleUpdate = (data: Partial<SellerFormData>) => {
-    if (data.personalInfo) {
-      setFormData(data.personalInfo);
+    if (data.securityInfo) {
+      setFormData(data.securityInfo);
     }
   };
 
   const handleNext = async () => {
     // Validation
-    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'birthDate', 'nationality'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
-    
-    if (missingFields.length > 0) {
+    if (!formData.password || !formData.confirmPassword) {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
 
-    if (!formData.email.includes('@')) {
-      alert('Email invalide');
+    if (formData.password !== formData.confirmPassword) {
+      alert('Les mots de passe ne correspondent pas');
       return;
     }
 
     setIsLoading(true);
-
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -58,7 +49,7 @@ const PersonalInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/security-info');
+      navigate('/seller-registration/bank-info');
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -69,9 +60,9 @@ const PersonalInfoPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
-        <TopLoader progress={25} />
+        <TopLoader progress={37.5} />
         <div className="max-w-5xl mx-auto">
-          <PersonalInfoStep 
+          <SecurityInfoStep 
             data={formData}
             onUpdate={handleUpdate}
           />
@@ -84,7 +75,8 @@ const PersonalInfoPage = () => {
             <button
               onClick={handleNext}
               disabled={isLoading}
-              className="relative px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
+                disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
@@ -102,4 +94,4 @@ const PersonalInfoPage = () => {
   );
 };
 
-export default PersonalInfoPage;
+export default SecurityInfoPage;
