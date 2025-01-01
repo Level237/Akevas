@@ -66,7 +66,7 @@ const AddressInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/success');
+      navigate('/seller-registration/generating');
     } catch (error) {
       console.error('Error:', error);
     } finally {
