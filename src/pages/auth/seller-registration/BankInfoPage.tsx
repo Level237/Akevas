@@ -52,7 +52,7 @@ const BankInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/address-info');
+      navigate('/seller-registration/generating');
     } catch (error) {
       console.error('Error:', error);
     } finally {
