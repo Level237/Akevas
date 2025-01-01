@@ -38,7 +38,7 @@ const StoreGenerationPage = () => {
 
     // Redirect after completion
     const redirectTimeout = setTimeout(() => {
-      navigate('/dashboard');
+      navigate('/seller/dashboard');
     }, 12000);
 
     return () => {

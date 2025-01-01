@@ -8,6 +8,7 @@ import ShopInfoPage from "@/pages/auth/seller-registration/ShopInfoPage";
 import BankInfoPage from "@/pages/auth/seller-registration/BankInfoPage";
 import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
 import StoreGenerationPage from "@/pages/auth/seller-registration/StoreGenerationPage";
+import DashboardPage from "@/pages/seller/DashboardPage";
 
 export const routes = createBrowserRouter([
   {
@@ -41,5 +42,9 @@ export const routes = createBrowserRouter([
   {
     path: '/seller-registration/generating',
     element: <StoreGenerationPage />
+  },
+  {
+    path: '/seller/dashboard',
+    element: <DashboardPage />
   }
 ]);

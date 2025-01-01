@@ -90,7 +90,7 @@ const SecurityInfoStep: React.FC<SecurityInfoStepProps> = ({ data, onUpdate }) =
                   type={showPassword ? "text" : "password"}
                   value={data.password}
                   onChange={handleChange}
-                  className="pr-10 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 
+                  className="pr-10 py-6 rounded-xl border-2 border-gray-200 focus:border-blue-500 
                     focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                   placeholder="Minimum 8 caractères"
                 />
@@ -128,7 +128,7 @@ const SecurityInfoStep: React.FC<SecurityInfoStepProps> = ({ data, onUpdate }) =
                   type={showConfirmPassword ? "text" : "password"}
                   value={data.confirmPassword}
                   onChange={handleChange}
-                  className="pr-10 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 
+                  className="pr-10 py-6 rounded-xl border-2 border-gray-200 focus:border-blue-500 
                     focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                   placeholder="Retapez votre mot de passe"
                 />
