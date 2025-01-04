@@ -49,7 +49,7 @@ const SecurityInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/bank-info');
+      navigate('/seller-registration/shop-info');
     } catch (error) {
       console.error('Error:', error);
     } finally {
