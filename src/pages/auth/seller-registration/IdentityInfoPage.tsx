@@ -1,41 +1,33 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ShopInfoStep from '@/components/seller/registration/steps/ShopInfoStep';
+import PersonalInfoStep from '@/components/seller/registration/steps/PersonalInfoStep';
 import { SellerFormData } from '@/types/seller-registration.types';
 import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
+import IdentityInfoStep from '@/components/seller/registration/steps/IdentityInfoStep';
 
-const ShopInfoPage = () => {
+const IdentityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<SellerFormData['shopInfo']>({
-    shopName: '',
-    description: '',
-    category: '',
-    subCategory: '',
+  const [formData, setFormData] = useState<SellerFormData['identityInfo']>({
+    
   });
 
   const handleUpdate = (data: Partial<SellerFormData>) => {
-    if (data.shopInfo) {
-      setFormData(data.shopInfo);
+    if (data.identityInfo) {
+      setFormData(data.identityInfo);
     }
-  };
-
-  const handlePrevious = () => {
-    navigate('/seller-registration/personal-info');
   };
 
   const handleNext = async () => {
     // Validation
-    const requiredFields = ['shopName', 'description', 'category'];
+    const requiredFields = ['card'];
     const missingFields = requiredFields.filter(field => !formData[field]);
     
-    if (missingFields.length > 0) {
-      alert('Veuillez remplir tous les champs obligatoires');
-      return;
-    }
+    
+
 
     setIsLoading(true);
 
@@ -54,7 +46,7 @@ const ShopInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/bank-info');
+      navigate('/seller-registration/shop-info');
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -65,25 +57,18 @@ const ShopInfoPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
-        <TopLoader progress={50.1} />
+        <TopLoader progress={33.4} />
         <div className="max-w-5xl mx-auto">
-          <ShopInfoStep 
+          <IdentityInfoStep
             data={formData}
             onUpdate={handleUpdate}
           />
           <motion.div 
-            className="mt-8 flex justify-between"
+            className="mt-8 flex justify-end"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <button
-              onClick={handlePrevious}
-              disabled={isLoading}
-              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Retour
-            </button>
             <button
               onClick={handleNext}
               disabled={isLoading}
@@ -105,4 +90,4 @@ const ShopInfoPage = () => {
   );
 };
 
-export default ShopInfoPage;
+export default IdentityInfoPage;

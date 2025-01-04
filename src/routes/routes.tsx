@@ -9,6 +9,7 @@ import BankInfoPage from "@/pages/auth/seller-registration/BankInfoPage";
 import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
 import StoreGenerationPage from "@/pages/auth/seller-registration/StoreGenerationPage";
 import DashboardPage from "@/pages/seller/DashboardPage";
+import IdentityInfoPage from "@/pages/auth/seller-registration/IdentityInfoPage";
 
 export const routes = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ export const routes = createBrowserRouter([
   {
     path: '/seller-registration/generating',
     element: <StoreGenerationPage />
+  },
+  {
+    path:'/seller-registration/identity-info',
+    element: <IdentityInfoPage />
   },
   {
     path: '/seller/dashboard',

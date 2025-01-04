@@ -58,7 +58,7 @@ const PersonalInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/security-info');
+      navigate('/seller-registration/identity-info');
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -69,7 +69,7 @@ const PersonalInfoPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
-        <TopLoader progress={25} />
+        <TopLoader progress={16.7} />
         <div className="max-w-5xl mx-auto">
           <PersonalInfoStep 
             data={formData}

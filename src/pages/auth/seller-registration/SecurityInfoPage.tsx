@@ -21,9 +21,17 @@ const SecurityInfoPage = () => {
     }
   };
 
-  const handleNext = async () => {
+  const handleSubmit = async () => {
     // Validation
-    if (!formData.password || !formData.confirmPassword) {
+    const requiredFields = ['password', 'confirmPassword'];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+
+    if (missingFields.length > 0) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
@@ -32,35 +40,47 @@ const SecurityInfoPage = () => {
       alert('Les mots de passe ne correspondent pas');
       return;
     }
-
     setIsLoading(true);
+
     try {
       // Simuler une requête API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Animation de succès
+      // Animation de succès finale
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';
-      element.innerHTML = '<div class="bg-green-500 text-white p-4 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>';
+      element.innerHTML = `
+        <div class="bg-white p-8 rounded-2xl shadow-xl text-center">
+          <div class="mb-4">
+            <svg class="w-16 h-16 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">Inscription Réussie!</h3>
+          <p class="text-gray-600 mb-6">Votre compte vendeur a été créé avec succès.</p>
+          <div class="animate-pulse text-sm text-gray-500">Redirection en cours...</div>
+        </div>
+      `;
       document.body.appendChild(element);
 
       // Attendre l'animation
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/shop-info');
+      navigate('/seller-registration/generating');
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
   };
+ 
 
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
-        <TopLoader progress={37.5} />
+        <TopLoader progress={100} />
         <div className="max-w-5xl mx-auto">
           <SecurityInfoStep 
             data={formData}
@@ -73,18 +93,17 @@ const SecurityInfoPage = () => {
             transition={{ delay: 0.2 }}
           >
             <button
-              onClick={handleNext}
+              onClick={handleSubmit}
               disabled={isLoading}
-              className="relative px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-                disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
                   <LoadingSpinner size="sm" />
-                  <span>Validation...</span>
+                  <span>Finalisation...</span>
                 </div>
               ) : (
-                'Suivant'
+                "Terminer l'inscription"
               )}
             </button>
           </motion.div>

@@ -57,12 +57,13 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
       <Card className="p-6">
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="street">Rue</Label>
+            <Label htmlFor="street">Quartier</Label>
             <Input
               id="street"
               name="street"
               value={data.street}
               onChange={handleChange}
+              className="py-6"
               placeholder="123 rue de la Paix"
             />
           </div>
@@ -86,6 +87,7 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
                 name="state"
                 value={data.state}
                 onChange={handleChange}
+                className="py-6"
                 placeholder="Île-de-France"
               />
             </div>
@@ -99,6 +101,7 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
                 name="postalCode"
                 value={data.postalCode}
                 onChange={handleChange}
+                className="py-6"
                 placeholder="75000"
               />
             </div>
@@ -108,8 +111,9 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
               <Select
                 value={data.country}
                 onValueChange={handleCountryChange}
+                
               >
-                <SelectTrigger>
+                <SelectTrigger className="py-6">
                   <SelectValue placeholder="Sélectionnez un pays" />
                 </SelectTrigger>
                 <SelectContent>

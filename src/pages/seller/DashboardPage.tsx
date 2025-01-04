@@ -16,7 +16,7 @@ import { Card } from '@/components/ui/card';
 
 const DashboardPage = () => {
   // État simulé de la boutique
-  const storeStatus = 'approved'; // 'pending' | 'approved' | 'rejected'
+  const storeStatus = 'pending'; // 'pending' | 'approved' | 'rejected'
 
   const getStatusContent = () => {
     switch (storeStatus) {

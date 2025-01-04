@@ -63,7 +63,7 @@ const BankInfoPage = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
-        <TopLoader progress={50} />
+        <TopLoader progress={66.8} />
         <div className="max-w-5xl mx-auto">
           <BankInfoStep 
             data={formData}

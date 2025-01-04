@@ -29,6 +29,10 @@ export interface SellerFormData {
     productType: string;
 
   };
+  securityInfo: {
+    password: string;
+    confirmPassword: string;
+  };
   // Informations d'adresse
   addressInfo: {
     street: string;
