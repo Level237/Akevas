@@ -5,12 +5,15 @@ export interface SellerFormData {
     lastName: string;
     email: string;
     phone: string;
-    idCardFront?: File;
-    idCardBack?: File;
-    idCardPassport?: File;
     birthDate: string;
     birthPlace: string;
     nationality: string;
+  };
+
+  identityInfo: {
+    idCardFront?: File;
+    idCardBack?: File;
+    idCardPassport?: File;
   };
   // Informations de la boutique
   shopInfo: {
