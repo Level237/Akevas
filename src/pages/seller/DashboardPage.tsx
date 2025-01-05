@@ -10,13 +10,13 @@ import {
   HelpCircle,
   ChevronRight,
   FileText,
-  UserCircle
+  UserCircle,
+  Lock
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
 const DashboardPage = () => {
-  // État simulé de la boutique
-  const storeStatus = 'pending'; // 'pending' | 'approved' | 'rejected'
+  const storeStatus = 'pending';
 
   const getStatusContent = () => {
     switch (storeStatus) {
@@ -25,9 +25,9 @@ const DashboardPage = () => {
           icon: Clock,
           title: 'En attente de validation',
           description: 'Votre demande est en cours d\'examen par notre équipe',
-          color: 'text-yellow-600',
-          bgColor: 'bg-yellow-50',
-          borderColor: 'border-yellow-200',
+          color: 'text-amber-600',
+          bgColor: 'bg-amber-50',
+          borderColor: 'border-amber-200',
           estimate: '24-48 heures'
         };
       case 'approved':
@@ -35,18 +35,18 @@ const DashboardPage = () => {
           icon: CheckCircle2,
           title: 'Boutique approuvée',
           description: 'Votre boutique a été validée. Vous pouvez commencer à vendre',
-          color: 'text-green-600',
-          bgColor: 'bg-green-50',
-          borderColor: 'border-green-200'
+          color: 'text-emerald-600',
+          bgColor: 'bg-emerald-50',
+          borderColor: 'border-emerald-200'
         };
       case 'rejected':
         return {
           icon: AlertCircle,
           title: 'Validation refusée',
           description: 'Votre demande n\'a pas été approuvée. Consultez les détails ci-dessous',
-          color: 'text-red-600',
-          bgColor: 'bg-red-50',
-          borderColor: 'border-red-200'
+          color: 'text-rose-600',
+          bgColor: 'bg-rose-50',
+          borderColor: 'border-rose-200'
         };
       default:
         return null;
@@ -57,172 +57,208 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* En-tête avec navigation */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Store className="w-8 h-8 text-blue-600" />
-              <h1 className="ml-2 text-xl font-semibold text-gray-900">
-                Tableau de bord vendeur
-              </h1>
+            <div className="flex items-center space-x-8">
+              <div className="flex items-center">
+                <Store className="w-8 h-8 text-blue-600" />
+                <h1 className="ml-2 text-xl font-semibold text-gray-900">
+                  Espace Vendeur
+                </h1>
+              </div>
+              <nav className="hidden md:flex space-x-6">
+                <span className="text-blue-600 font-medium">Tableau de bord</span>
+                <span className="text-gray-400 cursor-not-allowed">Produits</span>
+                <span className="text-gray-400 cursor-not-allowed">Commandes</span>
+              </nav>
             </div>
+
             <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-gray-500">
-                <Bell className="w-6 h-6" />
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
+                <Bell className="w-5 h-5" />
               </button>
-              <button className="p-2 text-gray-400 hover:text-gray-500">
-                <Settings className="w-6 h-6" />
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
+                <Settings className="w-5 h-5" />
               </button>
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <UserCircle className="w-6 h-6 text-blue-600" />
+              <div className="flex items-center space-x-3 pl-4 border-l">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900">John Doe</p>
+                  <p className="text-xs text-gray-500">Vendeur</p>
+                </div>
+                <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <UserCircle className="w-6 h-6 text-blue-600" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Status Card */}
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Carte de statut */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          className="mb-8"
         >
-          <Card className={`p-6 ${status?.bgColor} border-2 ${status?.borderColor}`}>
-            <div className="flex items-start space-x-4">
-              <div className={`p-3 rounded-full ${status?.bgColor} ${status?.color}`}>
-                {status && <status.icon className="w-6 h-6" />}
-              </div>
-              <div className="flex-1">
-                <h2 className={`text-lg font-semibold ${status?.color}`}>
-                  {status?.title}
-                </h2>
-                <p className="mt-1 text-gray-600">
-                  {status?.description}
-                </p>
-                {status?.estimate && (
-                  <p className="mt-2 text-sm text-gray-500">
-                    Temps d'attente estimé: {status.estimate}
+          <Card className={`${status?.bgColor} border ${status?.borderColor}`}>
+            <div className="p-6">
+              <div className="flex items-start space-x-4">
+                <div className={`p-3 rounded-lg ${status?.color} bg-white`}>
+                  {status && <status.icon className="w-6 h-6" />}
+                </div>
+                <div>
+                  <h2 className={`text-lg font-semibold ${status?.color}`}>
+                    {status?.title}
+                  </h2>
+                  <p className="mt-1 text-gray-600">
+                    {status?.description}
                   </p>
-                )}
+                  {status?.estimate && (
+                    <div className="mt-3 flex items-center text-sm text-gray-500">
+                      <Clock className="w-4 h-4 mr-1.5" />
+                      Temps estimé: {status.estimate}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </Card>
         </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          <Card className="p-6 hover:shadow-lg transition-shadow duration-200 cursor-not-allowed opacity-75">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Store className="w-6 h-6 text-blue-600" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Prochaines étapes */}
+          <div className="lg:col-span-2">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Prochaines étapes
+                  </h3>
+                  <span className="px-2.5 py-0.5 bg-blue-100 text-blue-700 text-sm rounded-full">
+                    1/3 complété
+                  </span>
                 </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Ma boutique</h3>
-                  <p className="text-sm text-gray-500">En attente de validation</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400" />
-            </div>
-          </Card>
+                <div className="space-y-6">
+                  {/* Étape 1 - En cours */}
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                      1
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h4 className="text-sm font-medium text-gray-900">
+                        Validation de votre boutique
+                      </h4>
+                      <p className="mt-1 text-sm text-gray-500">
+                        En cours d'examen par notre équipe
+                      </p>
+                    </div>
+                    <Clock className="w-5 h-5 text-blue-600" />
+                  </div>
 
-          <Card className="p-6 hover:shadow-lg transition-shadow duration-200 cursor-not-allowed opacity-75">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <FileText className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Documents</h3>
-                  <p className="text-sm text-gray-500">Gérer vos documents</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400" />
-            </div>
-          </Card>
+                  {/* Étape 2 - Verrouillée */}
+                  <div className="flex items-center opacity-50">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center">
+                      2
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h4 className="text-sm font-medium text-gray-900">
+                        Configuration de la boutique
+                      </h4>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Personnalisez votre espace de vente
+                      </p>
+                    </div>
+                    <Lock className="w-5 h-5 text-gray-400" />
+                  </div>
 
-          <Card className="p-6 hover:shadow-lg transition-shadow duration-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <HelpCircle className="w-6 h-6 text-green-600" />
+                  {/* Étape 3 - Verrouillée */}
+                  <div className="flex items-center opacity-50">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center">
+                      3
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h4 className="text-sm font-medium text-gray-900">
+                        Ajout de produits
+                      </h4>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Commencez à créer votre catalogue
+                      </p>
+                    </div>
+                    <Lock className="w-5 h-5 text-gray-400" />
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Aide</h3>
-                  <p className="text-sm text-gray-500">Centre d'assistance</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400" />
-            </div>
-          </Card>
-        </motion.div>
+              </Card>
+            </motion.div>
+          </div>
 
-        {/* Information Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6"
-        >
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Prochaines étapes
-            </h3>
-            <ul className="space-y-4">
-              <li className="flex items-center text-sm text-gray-600">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                  <span className="text-blue-600 font-medium">1</span>
-                </div>
-                Validation de votre boutique par notre équipe
-              </li>
-              <li className="flex items-center text-sm text-gray-600">
-                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center mr-3">
-                  <span className="text-gray-600 font-medium">2</span>
-                </div>
-                Configuration de votre boutique
-              </li>
-              <li className="flex items-center text-sm text-gray-600">
-                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center mr-3">
-                  <span className="text-gray-600 font-medium">3</span>
-                </div>
-                Ajout de vos premiers produits
-              </li>
-            </ul>
-          </Card>
-
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Centre de ressources
-            </h3>
-            <ul className="space-y-4">
-              <li>
-                <a href="#" className="flex items-center text-sm text-blue-600 hover:text-blue-700">
-                  <FileText className="w-4 h-4 mr-2" />
-                  Guide du vendeur
+          {/* Ressources et aide */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">
+                Ressources utiles
+              </h3>
+              <div className="space-y-4">
+                <a
+                  href="#"
+                  className="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-blue-600" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-900">
+                        Guide du vendeur
+                      </p>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Tout ce qu'il faut savoir pour bien démarrer
+                      </p>
+                    </div>
+                  </div>
                 </a>
-              </li>
-              <li>
-                <a href="#" className="flex items-center text-sm text-blue-600 hover:text-blue-700">
-                  <FileText className="w-4 h-4 mr-2" />
-                  Bonnes pratiques de vente
+
+                <a
+                  href="#"
+                  className="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <HelpCircle className="w-5 h-5 text-purple-600" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-900">
+                        Centre d'aide
+                      </p>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Trouvez des réponses à vos questions
+                      </p>
+                    </div>
+                  </div>
                 </a>
-              </li>
-              <li>
-                <a href="#" className="flex items-center text-sm text-blue-600 hover:text-blue-700">
-                  <FileText className="w-4 h-4 mr-2" />
-                  FAQ Vendeurs
-                </a>
-              </li>
-            </ul>
-          </Card>
-        </motion.div>
+              </div>
+
+              <button className="mt-6 w-full bg-gray-900 text-white rounded-lg px-4 py-2 hover:bg-gray-800 transition-colors">
+                Contacter le support
+              </button>
+            </Card>
+          </motion.div>
+        </div>
       </main>
     </div>
   );
