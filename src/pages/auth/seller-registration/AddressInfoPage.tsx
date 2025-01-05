@@ -13,9 +13,6 @@ const AddressInfoPage = () => {
   const [formData, setFormData] = useState<SellerFormData['addressInfo']>({
     street: '',
     city: '',
-    state: '',
-    postalCode: '',
-    country: '',
   });
 
   const handleUpdate = (data: Partial<SellerFormData>) => {
@@ -30,7 +27,7 @@ const AddressInfoPage = () => {
 
   const handleNext = async () => {
     // Validation
-    const requiredFields = ['street', 'city', 'postalCode', 'country'];
+    const requiredFields = ['street', 'city'];
     const missingFields = requiredFields.filter(field => !formData[field]);
 
     if (missingFields.length > 0) {

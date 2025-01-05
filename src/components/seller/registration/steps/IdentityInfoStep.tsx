@@ -34,7 +34,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">Identification nationales</h2>
         <p className="text-sm text-muted-foreground">
-          Remplissez vos informations personnelles pour commencer
+          Identifiez vous en renseignant vos documents nationaux
         </p>
       </div>
 

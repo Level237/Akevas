@@ -101,9 +101,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             placeholder="Ma Super Boutique"
             className="py-6"
           />
-          <p className="text-sm text-muted-foreground">
-            Ce nom sera visible par tous les clients sur la marketplace
-          </p>
+          
         </div>
 
         <div className="space-y-2">

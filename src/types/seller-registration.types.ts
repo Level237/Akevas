@@ -37,8 +37,5 @@ export interface SellerFormData {
   addressInfo: {
     street: string;
     city: string;
-    state: string;
-    postalCode: string;
-    country: string;
   };
 }

@@ -16,14 +16,7 @@ interface AddressInfoStepProps {
   onUpdate: (data: Partial<SellerFormData>) => void;
 }
 
-const countries = [
-  'France',
-  'Belgique',
-  'Suisse',
-  'Luxembourg',
-  'Canada',
-  'Autre',
-];
+
 
 const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,27 +29,33 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
     });
   };
 
-  const handleCountryChange = (value: string) => {
-    onUpdate({
-      addressInfo: {
-        ...data,
-        country: value,
-      },
-    });
-  };
+
 
   return (
     <div className="space-y-8">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">Adresse</h2>
         <p className="text-sm text-muted-foreground">
-          Renseignez l'adresse de votre entreprise
+          Renseignez l'adresse de votre boutique ou votre residence personnelle
         </p>
       </div>
 
       <Card className="p-6">
         <div className="space-y-6">
-          <div className="space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="city">Ville</Label>
+              <Input
+                id="city"
+                name="city"
+                value={data.city}
+                onChange={handleChange}
+                placeholder="Paris"
+                className='py-6'
+              />
+            </div>
+
+            <div className="space-y-2">
             <Label htmlFor="street">Quartier</Label>
             <Input
               id="street"
@@ -67,65 +66,9 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
               placeholder="123 rue de la Paix"
             />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="city">Ville</Label>
-              <Input
-                id="city"
-                name="city"
-                value={data.city}
-                onChange={handleChange}
-                placeholder="Paris"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="state">Région</Label>
-              <Input
-                id="state"
-                name="state"
-                value={data.state}
-                onChange={handleChange}
-                className="py-6"
-                placeholder="Île-de-France"
-              />
-            </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="postalCode">Code postal</Label>
-              <Input
-                id="postalCode"
-                name="postalCode"
-                value={data.postalCode}
-                onChange={handleChange}
-                className="py-6"
-                placeholder="75000"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="country">Pays</Label>
-              <Select
-                value={data.country}
-                onValueChange={handleCountryChange}
-                
-              >
-                <SelectTrigger className="py-6">
-                  <SelectValue placeholder="Sélectionnez un pays" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country} value={country}>
-                      {country}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          
+          
         </div>
       </Card>
 
