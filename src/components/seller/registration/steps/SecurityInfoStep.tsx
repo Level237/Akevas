@@ -155,13 +155,13 @@ const SecurityInfoStep: React.FC<SecurityInfoStepProps> = ({ data, onUpdate }) =
         </Card>
 
         {/* Règles de mot de passe */}
-        <Card className="p-4 bg-blue-50 border border-blue-100">
+        <Card className="p-4 bg-[#ed7e0f]/10 border border-[#ed7e0f]/20">
           <div className="space-y-2">
-            <h3 className="font-medium text-blue-800 flex items-center gap-2">
+            <h3 className="font-medium text-[#ed7e0f] flex items-center gap-2">
               <Lock className="w-4 h-4" />
               Règles de sécurité
             </h3>
-            <ul className="text-sm text-blue-700 space-y-1 list-disc list-inside">
+            <ul className="text-sm text-[#ed7e0f] space-y-1 list-disc list-inside">
               <li>Au moins 8 caractères</li>
               <li>Au moins une lettre majuscule</li>
               <li>Au moins une lettre minuscule</li>

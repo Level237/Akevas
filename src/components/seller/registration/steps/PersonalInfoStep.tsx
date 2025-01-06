@@ -52,7 +52,7 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
             value={data.firstName}
             onChange={handleChange}
             placeholder="Entrez votre prénom"
-            className="py-6"
+            className="py-6 focus:outline-none"
           />
         </div>
 

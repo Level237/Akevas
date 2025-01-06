@@ -48,7 +48,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
             </Label>
             <div className="flex flex-col items-center gap-4">
               <div className="h-32 w-full rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 
-                flex flex-col items-center justify-center overflow-hidden hover:border-blue-500 
+                flex flex-col items-center justify-center overflow-hidden hover:border-[#ed7e0f]
                 transition-colors duration-200">
                 {data.idCardFront ? (
                   <img
@@ -82,7 +82,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
             </Label>
             <div className="flex flex-col items-center gap-4">
               <div className="h-32 w-full rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 
-                flex flex-col items-center justify-center overflow-hidden hover:border-blue-500 
+                flex flex-col items-center justify-center overflow-hidden hover:border-[#ed7e0f]
                 transition-colors duration-200">
                 {data.idCardBack ? (
                   <img
@@ -116,7 +116,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
             </Label>
             <div className="flex flex-col items-center gap-4">
               <div className="h-32 w-full rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 
-                flex flex-col items-center justify-center overflow-hidden hover:border-blue-500 
+                flex flex-col items-center justify-center overflow-hidden hover:border-[#ed7e0f]
                 transition-colors duration-200">
                 {data.idCardPassport ? (
                   <img

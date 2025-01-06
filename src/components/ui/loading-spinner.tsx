@@ -17,7 +17,7 @@ export const LoadingSpinner = ({ className, size = 'md' }: LoadingSpinnerProps) 
     <div className="flex items-center justify-center">
       <motion.div
         className={cn(
-          'border-4 border-primary/30 border-t-primary rounded-full',
+          'border-4 border-[#ed7e0f]/30 border-t-[#ed7e0f] rounded-full',
           sizes[size],
           className
         )}

@@ -68,7 +68,7 @@ const StoreGenerationPage = () => {
               repeatType: "reverse"
             }}
           >
-            <Store className="w-24 h-24 text-blue-600" />
+            <Store className="w-24 h-24 text-[#ed7e0f]" />
           </motion.div>
         </div>
 
@@ -86,22 +86,22 @@ const StoreGenerationPage = () => {
         <div className="relative pt-1">
           <div className="flex mb-2 items-center justify-between">
             <div>
-              <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
+              <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-[#ed7e0f] bg-[#ed7e0f]/10">
                 Progression
               </span>
             </div>
             <div className="text-right">
-              <span className="text-xs font-semibold inline-block text-blue-600">
+              <span className="text-xs font-semibold inline-block text-[#ed7e0f]">
                 {progress}%
               </span>
             </div>
           </div>
-          <div className="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-blue-100">
+          <div className="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-[#ed7e0f]/20">
             <motion.div
               initial={{ width: "0%" }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5 }}
-              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
+              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-[#ed7e0f]"
             />
           </div>
         </div>
@@ -113,7 +113,7 @@ const StoreGenerationPage = () => {
             animate={{ scale: 1 }}
             className="flex justify-center"
           >
-            <CheckCircle2 className="w-16 h-16 text-green-500" />
+            <CheckCircle2 className="w-16 h-16 text-[#ed7e0f]" />
           </motion.div>
         )}
 
@@ -131,7 +131,7 @@ const StoreGenerationPage = () => {
             >
               <div
                 className={`w-2 h-2 rounded-full ${
-                  index <= currentStep ? 'bg-blue-500' : 'bg-gray-300'
+                  index <= currentStep ? 'bg-[#ed7e0f]' : 'bg-gray-300'
                 }`}
               />
               <span

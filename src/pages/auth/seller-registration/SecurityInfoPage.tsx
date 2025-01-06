@@ -52,7 +52,7 @@ const SecurityInfoPage = () => {
       element.innerHTML = `
         <div class="bg-white p-8 rounded-2xl shadow-xl text-center">
           <div class="mb-4">
-            <svg class="w-16 h-16 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-16 h-16 text-[#ed7e0f] mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
@@ -95,7 +95,7 @@ const SecurityInfoPage = () => {
             <button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="relative px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative px-6 py-3 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">

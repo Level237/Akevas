@@ -50,7 +50,7 @@ const PersonalInfoPage = () => {
       // Animation de succès
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';
-      element.innerHTML = '<div class="bg-green-500 text-white p-4 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>';
+      element.innerHTML = '<div class="bg-[#ed7e0f] text-white p-4 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>';
       document.body.appendChild(element);
 
       // Attendre l'animation
@@ -84,7 +84,7 @@ const PersonalInfoPage = () => {
             <button
               onClick={handleNext}
               disabled={isLoading}
-              className="relative px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative px-6 py-3 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
