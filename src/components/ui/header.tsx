@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ShoppingCart, User, Search, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple, Heart, Dumbbell, Sparkle } from 'lucide-react'
+import { ShoppingCart, User, Search, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple, Heart, Dumbbell, Sparkle, ShoppingBag } from 'lucide-react'
 import logo from "../../assets/logo.png"
 import {
   NavigationMenu,
@@ -79,7 +79,7 @@ ListItem.displayName = "ListItem"
 export default function Header() {
   return (
     <header className="w-full z-[99999] border-b bg-white">
-      <div className=" mx-36 px-4 py-3">
+      <div className=" mx-16 px-4 py-3">
         {/* Top bar avec logo, recherche et actions */}
         <div className="flex items-center justify-between gap-4">
           <Link to="/" className="flex-shrink-0">
@@ -104,24 +104,28 @@ export default function Header() {
             </Button>
           </div>
 
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-between gap-8">
 
                 <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                    <User className="h-5 w-5" />
-                    <span>Se connecter</span>
+                    <User className="h-7 w-7" />
+                    
                 </div>
               
             
-            <Button variant="ghost" className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5" />
-              <span>Panier</span>
-            </Button>
+                
+            <div className="relative py-2 ">
+          <div className="top-[-3px] absolute left-3">
+            <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">0</p>
+          </div>
+         <ShoppingBag className="h-7 w-7" />
+        </div>
+
           </div>
         </div>
 
         {/* Navigation avec menus déroulants */}
-        <NavigationMenu className="mt-4 z-[99999]">
-          <NavigationMenuList className="flex justify-center w-full">
+        <NavigationMenu className="mt-4  w-full z-[99999]">
+          <NavigationMenuList className="flex justify-center mx-12 w-full">
             <NavigationMenuItem>
               <NavigationMenuTrigger className="flex items-center w-full gap-2">
                 <Tag className="h-4 w-4" />
