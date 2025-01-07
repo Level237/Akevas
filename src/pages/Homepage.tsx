@@ -13,14 +13,12 @@ export default function Homepage() {
         <TopBar/>
         <Header/>
         <StoreHero/>
+        <FeaturedStores />
         <h2 className='text-3xl mx-12 mb-8 font-bold'>
           Shop by Category
         </h2>
         <CategorySlider/>
-        <FeaturedStores />
-        <div>
-          <ProductList/>
-        </div>
+        <ProductList/>
       </section>
     </>
   )

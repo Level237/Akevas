@@ -97,6 +97,10 @@ const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
                   <SelectItem key="1" value="1">
                       Friperie
                   </SelectItem>
+
+                  <SelectItem key="2" value="2">
+                      les deux
+                  </SelectItem>
               </SelectContent>
             </Select>
           </div>

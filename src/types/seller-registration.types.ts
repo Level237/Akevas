@@ -20,7 +20,6 @@ export interface SellerFormData {
     shopName: string;
     description: string;
     category: string;
-    subCategory: string;
     logo?: File;
   };
   // Informations bancaires

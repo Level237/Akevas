@@ -14,7 +14,6 @@ const ShopInfoPage = () => {
     shopName: '',
     description: '',
     category: '',
-    subCategory: '',
   });
 
   const handleUpdate = (data: Partial<SellerFormData>) => {

@@ -44,7 +44,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
         <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200">
           <div className="space-y-3">
             <Label htmlFor="idCardFront" className="text-sm font-medium text-gray-700">
-              Photo recto de la CNI <span className="text-red-500">*</span>
+              Photo recto de la CNI ou passport <span className="text-red-500">*</span>
             </Label>
             <div className="flex flex-col items-center gap-4">
               <div className="h-32 w-full rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 
@@ -112,7 +112,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
         <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200">
           <div className="space-y-3">
             <Label htmlFor="idCardPassport" className="text-sm font-medium text-gray-700">
-              Photo du passeport <span className="text-red-500">*</span>
+              Photo de vous avec votre CNI <span className="text-red-500">*</span>
             </Label>
             <div className="flex flex-col items-center gap-4">
               <div className="h-32 w-full rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 
@@ -127,7 +127,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
                 ) : (
                   <div className="text-center p-4">
                     <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                    <p className="mt-2 text-sm text-gray-500">Passeport</p>
+                    <p className="mt-2 text-sm text-gray-500">profil + CNI</p>
                   </div>
                 )}
               </div>

@@ -29,16 +29,7 @@ const categories = [
   'Autres',
 ];
 
-const subCategories: Record<string, string[]> = {
-  'Mode': ['Vêtements', 'Chaussures', 'Accessoires', 'Bijoux', 'Montres'],
-  'Électronique': ['Smartphones', 'Ordinateurs', 'Audio', 'Photo & Vidéo', 'Accessoires'],
-  'Maison & Jardin': ['Meubles', 'Décoration', 'Jardin', 'Bricolage', 'Électroménager'],
-  'Sports & Loisirs': ['Sport', 'Camping', 'Vélos', 'Jeux & Jouets', 'Instruments de musique'],
-  'Beauté & Santé': ['Soins', 'Parfums', 'Maquillage', 'Bien-être', 'Hygiène'],
-  'Alimentation': ['Épicerie', 'Boissons', 'Bio', 'Gourmandises', 'Produits frais'],
-  'Art & Collection': ['Peintures', 'Sculptures', 'Photos', 'Antiquités', 'Collection'],
-  'Autres': ['Divers'],
-};
+
 
 const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
   const handleChange = (
@@ -67,7 +58,6 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
       shopInfo: {
         ...data,
         category: value,
-        subCategory: '', // Reset sub-category when category changes
       },
     });
   };
@@ -76,7 +66,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
     onUpdate({
       shopInfo: {
         ...data,
-        subCategory: value,
+
       },
     });
   };
@@ -116,9 +106,9 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="category">Catégorie principale</Label>
+            <Label htmlFor="category">Catégorie produit</Label>
             <Select
               value={data.category}
               onValueChange={handleCategoryChange}
@@ -137,32 +127,18 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="subCategory">Sous-catégorie</Label>
-            <Select
-              value={data.subCategory}
-              onValueChange={handleSubCategoryChange}
-              disabled={!data.category}
-            >
-              <SelectTrigger className="py-6">
-                <SelectValue placeholder="Sélectionnez une sous-catégorie" />
-              </SelectTrigger>
-              <SelectContent>
-                {data.category &&
-                  subCategories[data.category].map((subCategory) => (
-                    <SelectItem key={subCategory} value={subCategory}>
-                      {subCategory}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </div>
+          
         </div>
-        <Card className="p-2 bg-gray-50">
-          <div className="space-y-2">
-            <Label htmlFor="idCardBack">Logo de votre boutique</Label>
-            <div className="flex items-center gap-4">
-              <div className="h-24 w-48 rounded-lg bg-white border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden">
+       
+        <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200">
+          <div className="space-y-3">
+            <Label htmlFor="idCardFront" className="text-sm font-medium text-gray-700">
+              Indiquez au moins 3 photos de votre boutique <span className="text-red-500">*</span><span className='text-xs text-gray-400'> ( Envoyez des photos de bonnes qualité pour permettre une validation rapide de votre boutique )</span>
+            </Label>
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-32 w-full rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 
+                flex flex-col items-center justify-center overflow-hidden hover:border-[#ed7e0f]
+                transition-colors duration-200">
                 {data.logo ? (
                   <img
                     src={URL.createObjectURL(data.logo)}
@@ -182,7 +158,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
                 name="logo"
                 onChange={handleChange}
                 accept="image/*"
-                className="max-w-[250px]"
+               className="w-full text-sm"
               />
             </div>
           </div>

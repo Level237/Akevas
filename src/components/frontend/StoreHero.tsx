@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 
 export default function StoreHero() {
   return (
-    <section className="flex items-start gap-4 mx-16 h-[30rem] mb-20">
+    <section className="flex items-start gap-4 mx-16 h-[30rem]">
      <section style={{ backgroundImage:`url(${dress})`,backgroundPosition:"cover",backgroundSize:"cover" }} className="w-[75%] rounded-3xl  relative h-96 bg-red-300">
      </section>
      <section className="flex flex-col w-[25%] h-96 gap-4">
