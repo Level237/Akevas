@@ -101,26 +101,20 @@ const featuredStores: Store[] = [
 
 const FeaturedStores: React.FC = () => {
   return (
-    <section className="py-16 bg-[#6e0a13]">
+    <section className="py-16 mx-16 border rounded-xl ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* En-tête de section */}
         <div className="text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="flex items-center justify-between"
           >
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Boutiques Premium
-            </h2>
-            <p className="text-white max-w-2xl mx-auto">
-              Découvrez notre sélection de boutiques premium, reconnues pour leur excellence 
-              et leur engagement envers la qualité.
-            </p>
+            <h2 className="text-3xl font-bold text-black">Boutiques Premium</h2>
+            <p className="text-black">Voir plus</p>
           </motion.div>
         </div>
 
-        {/* Grille des boutiques */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredStores.map((store, index) => (
             <motion.div
@@ -133,7 +127,7 @@ const FeaturedStores: React.FC = () => {
                 to={`/store/${store.code}`}
                 className="block group"
               >
-                <div className="bg-gray-600 rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+                <div className="bg-gray-100 rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl">
                   {/* Image de couverture */}
                   <div className="relative h-48 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
@@ -175,13 +169,13 @@ const FeaturedStores: React.FC = () => {
                       <div className="space-y-4">
                         <div className="flex items-center gap-2">
                           <Star className="w-4 h-4 text-yellow-400" />
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-black">
                             {store.rating} / 5.0
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <ShoppingBag className="w-4 h-4 text-purple-500" />
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-black">
                             {store.productCount} produits
                           </span>
                         </div>
@@ -189,13 +183,13 @@ const FeaturedStores: React.FC = () => {
                       <div className="space-y-4">
                         <div className="flex items-center gap-2">
                           <TrendingUp className="w-4 h-4 text-green-500" />
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-black">
                             {store.totalSales} ventes
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-blue-500" />
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-black">
                             Depuis {store.joinedDate}
                           </span>
                         </div>
@@ -214,31 +208,6 @@ const FeaturedStores: React.FC = () => {
             </motion.div>
           ))}
         </div>
-
-        {/* Bannière d'inscription */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-16 bg-[#ed7e0f] rounded-2xl overflow-hidden"
-        >
-          <div className="px-8 py-12 text-center text-white">
-            <Award className="w-12 h-12 mx-auto mb-6" />
-            <h3 className="text-2xl font-bold mb-4">
-              Devenez une boutique Premium
-            </h3>
-            <p className="mb-8 max-w-2xl mx-auto">
-              Rejoignez nos boutiques premium et bénéficiez d'une visibilité accrue, 
-              d'outils exclusifs et d'un support prioritaire.
-            </p>
-            <Link
-              to="/seller/premium"
-              className="inline-block bg-white text-blue-600 px-8 py-3 rounded-xl font-medium hover:bg-gray-100 transition-colors duration-300"
-            >
-              En savoir plus
-            </Link>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

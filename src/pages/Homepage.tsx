@@ -1,11 +1,13 @@
-import CategorySlider from '@/components/frontend/category-slider'
+
+import { CategorySlider } from '@/components/frontend/category-slider'
 import ProductList from '@/components/frontend/product-list'
 import StoreHero from '@/components/frontend/StoreHero'
 import FeaturedStores from '@/components/stores/FeaturedStores'
 import Header from '@/components/ui/header'
 import TopBar from '@/components/ui/topBar'
-import React from 'react'
-
+import banner1 from "../assets/banner-7.webp"
+import banner2 from "../assets/banner-8.webp"
+import banner3 from "../assets/banner-9.webp"
 export default function Homepage() {
   return (
     <>
@@ -13,12 +15,11 @@ export default function Homepage() {
         <TopBar/>
         <Header/>
         <StoreHero/>
+      
+       
         <FeaturedStores />
-        <h2 className='text-3xl mx-12 mb-8 font-bold'>
-          Shop by Category
-        </h2>
-        <CategorySlider/>
-        <ProductList/>
+       
+        
       </section>
     </>
   )

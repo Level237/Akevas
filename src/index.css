@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+.category-slider .slick-track {
+  display: flex;
+  gap: 1rem;
+}
+
+.category-slider .slick-slide {
+  height: inherit;
+}
+
+.category-slider .slick-slide > div {
+  height: 100%;
+}
+
 
 @layer base {
     :root {
