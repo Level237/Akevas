@@ -13,19 +13,19 @@ export function StoreBadges({ isPremium, isWholesale, isThrift }: StoreBadgeProp
       {isPremium && (
         <Badge variant="default" className="bg-gradient-to-r from-amber-500 to-yellow-400 text-white gap-1">
           <Crown className="h-3.5 w-3.5" />
-          Premium Seller
+          Vendeur Premium
         </Badge>
       )}
       {isWholesale && (
         <Badge variant="secondary" className="gap-1">
           <Package className="h-3.5 w-3.5" />
-          Wholesale
+          En Detail
         </Badge>
       )}
       {isThrift && (
         <Badge variant="secondary" className="gap-1">
           <Recycle className="h-3.5 w-3.5" />
-          Thrift Store
+          Friperie
         </Badge>
       )}
     </div>
