@@ -3,7 +3,7 @@ import { Button } from './button'
 
 export default function TopBar() {
   return (
-    <div className=' bg-[#6E0A13] py-5'>
+    <div className=' bg-[#6E0A13] py-3'>
         <div className='flex items-center gap-3 justify-center mx-16'>
             <div>
             <h2 className='text-lg font-bold text-white'>DEVENEZ VENDEUR SUR AKEVAS</h2>

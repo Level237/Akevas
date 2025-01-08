@@ -120,7 +120,7 @@ export function CategorySlider() {
   }
 
   return (
-    <div className="w-full max-w-7xl mt-[-2rem] mb-16 mx-auto px-4">
+    <div className="w-full max-w-7xl mt-2 mb-16 mx-auto px-4">
       <div className="flex items-center justify-between mb-10">
         <div>
           <h2 className="text-3xl font-bold mb-2">Shop By Category</h2>

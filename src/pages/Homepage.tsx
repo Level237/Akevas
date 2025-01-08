@@ -8,6 +8,7 @@ import TopBar from '@/components/ui/topBar'
 import banner1 from "../assets/banner-7.webp"
 import banner2 from "../assets/banner-8.webp"
 import banner3 from "../assets/banner-9.webp"
+import StoreStories from '@/components/stores/store-stories'
 export default function Homepage() {
   return (
     <>
@@ -16,8 +17,8 @@ export default function Homepage() {
         <Header/>
         <StoreHero/>
       
-       
-        <FeaturedStores />
+        <FeaturedStores/>
+        <StoreStories/>
         <CategorySlider />
         
         
