@@ -108,16 +108,21 @@ export default function Header() {
 
                 <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
                     <User className="h-7 w-7" />
-                    
+                    <div>
+                        
+                        <p className="text-sm">Connexion</p>
+                    </div>
                 </div>
               
-            
+
                 
-            <div className="relative py-2 ">
-          <div className="top-[-3px] absolute left-3">
+            <div className="relative py-2 flex items-center justify-center gap-2 ">
+          
+         <ShoppingCart className="h-7 w-7" />
+         <div className="">
             <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">0</p>
+            <p className="text-sm">Panier</p>
           </div>
-         <ShoppingBag className="h-7 w-7" />
         </div>
 
           </div>
