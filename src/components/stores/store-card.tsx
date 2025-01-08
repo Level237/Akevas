@@ -101,15 +101,11 @@ export function StoreCard({
             
             {showStore &&  <motion.div 
         className="absolute inset-x-0 bottom-0 p-6 text-white"
-        initial={{ y: 0 }}
-        whileHover={{ y: -10 }}
-        transition={{ type: "spring", damping: 30 }}
+    
       >
         <h3 className="font-bold  text-xl mb-2">{name}</h3>
         <motion.div
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
+          
         >
           <p className="text-gray-200 text-sm mb-4">{category}</p>
           
