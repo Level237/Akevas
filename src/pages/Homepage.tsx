@@ -18,7 +18,8 @@ export default function Homepage() {
       
        
         <FeaturedStores />
-       
+        <CategorySlider />
+        
         
       </section>
     </>

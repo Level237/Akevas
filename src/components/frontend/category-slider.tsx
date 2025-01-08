@@ -86,6 +86,7 @@ export function CategorySlider() {
     dots: false,
     infinite: true,
     speed: 500,
+    autoplay:true,
     slidesToShow: 5,
     slidesToScroll: 1,
     nextArrow: <NextArrow />,

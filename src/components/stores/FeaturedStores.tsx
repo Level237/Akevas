@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Star, TrendingUp, Clock, ShoppingBag, Shield, Award } from 'lucide-react';
+import { Star, TrendingUp, Clock, ShoppingBag, Shield, Award, ArrowRight, BadgeInfo } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import shoes from "../../assets/shoes1.webp"
+import TooltipChildren from '../frontend/TooltipChildren';
 interface Store {
   id: string;
   code: string;
@@ -101,9 +102,10 @@ const featuredStores: Store[] = [
 
 const FeaturedStores: React.FC = () => {
   return (
-    <section className="py-16 mx-16 border rounded-xl ">
+    <section className="py-16 mx-16 mb-24 border rounded-xl ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
+          <div className='flex flex-col gap-3 justify-between'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -111,8 +113,17 @@ const FeaturedStores: React.FC = () => {
             className="flex items-center justify-between"
           >
             <h2 className="text-3xl font-bold text-black">Boutiques Premium</h2>
-            <p className="text-black">Voir plus</p>
+            <TooltipChildren title='Decouvrez comment devenir une boutique premium'>
+            <BadgeInfo className='text-gray-400' />
+            </TooltipChildren>
+
           </motion.div>
+          <div className='flex items-center justify-between'>
+            <p className=' text-2xl'>Diverses boutiques populaires sur AKEVAS</p>
+            <div className='flex items-center cursor-pointer'><p className="text-[#ed7e0f] font-bold">Voir plus </p><ArrowRight className='text-[#ed7e0f] w-5 h-5 ml-1'></ArrowRight></div>
+          </div>
+          </div>
+         
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
