@@ -17,7 +17,7 @@ export default function Homepage() {
         <Header/>
         <StoreHero/>
       
-        <FeaturedStores/>
+        
         <StoreStories/>
         <CategorySlider />
         

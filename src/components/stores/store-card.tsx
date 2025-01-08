@@ -1,11 +1,14 @@
-'use client'
+
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Star, ShoppingBag, Clock } from 'lucide-react'
+import { Star, ShoppingBag, Clock, X, Heart, ExternalLink, MapPin } from 'lucide-react'
 import { AnimatePresence, motion } from "framer-motion"
 import shoes from "../../assets/shoes1.webp"
 import { useState } from "react"
+
+import { StoreBadges } from "../seller/store-badge"
+import { Separator } from "../ui/separator"
 interface StoreCardProps {
   name: string
   category: string
@@ -15,7 +18,8 @@ interface StoreCardProps {
   since: string
   image: string
   isPremium?: boolean
-  isTopSeller?: boolean
+  isTopSeller?: boolean,
+  openModal: () => void
 }
 
 export function StoreCard({
@@ -26,15 +30,21 @@ export function StoreCard({
   products,
   since,
   image,
+  openModal,
   isPremium,
-  isTopSeller
+  isTopSeller,
 }: StoreCardProps) {
-
+   
     const [showOverlay,setShowOverlay]=useState(false)
     const [showStore,setShowStore]=useState(false)
-
+    
+    const open=()=>{
+        openModal()
+    }
   return (
-    <motion.div 
+    <section className="w-full cursor-pointer">
+     <motion.div 
+     onClick={()=>open()}
       className="relative bg-gray-500 rounded-xl overflow-hidden shadow-lg w-[300px] h-[400px] group"
       whileHover={{ scale: 1.02 }}
       onHoverStart={()=>{setShowOverlay(true);setShowStore(true)}}
@@ -93,7 +103,7 @@ export function StoreCard({
         className="absolute inset-x-0 bottom-0 p-6 text-white"
         initial={{ y: 0 }}
         whileHover={{ y: -10 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        transition={{ type: "spring", damping: 30 }}
       >
         <h3 className="font-bold  text-xl mb-2">{name}</h3>
         <motion.div
@@ -141,6 +151,10 @@ export function StoreCard({
      
      </AnimatePresence>
     </motion.div>
+    
+    
+    </section>
+   
   )
 }
 
