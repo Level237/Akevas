@@ -176,7 +176,7 @@ interface Store {
   
     return (
         <>
-         <section className="w-full overflow-x-hidden  bg-[#6e0a13] py-8">
+         <section className="w-full overflow-x-hidden mt-[-3rem]  bg-[#6e0a13] py-8">
         <div className="container overflow-x-hidden  mx-auto px-4">
           <div className="flex justify-between items-baseline mb-6">
             <div>
@@ -217,7 +217,7 @@ interface Store {
   
             <button
               onClick={() => scroll('left')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hidden md:block"
+              className="absolute   top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hidden md:block"
             >
               <ChevronRight className="h-6 w-6 rotate-180" />
             </button>
