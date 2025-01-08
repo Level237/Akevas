@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
 import { MessageCircle, Package, Heart, CreditCard, Ticket, Settings, Building2, User, ChevronRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom"
 
 export function DropdownAccount({children}: any) {
   const [isOpen, setIsOpen] = useState(false)
@@ -42,8 +43,8 @@ export function DropdownAccount({children}: any) {
               className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
             >
               <div className="px-4 py-3 border-b border-gray-100">
-                <Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button>
-                <Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button>
+                <Link to={"/login"}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button></Link>
+                <Link to={"/register"}><Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button></Link>
               </div>
 
               <div className="py-2">

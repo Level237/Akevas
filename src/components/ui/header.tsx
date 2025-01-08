@@ -100,7 +100,7 @@ export default function Header() {
                 className="w-full py-6 pl-10"
               />
             </div>
-            <Button className="bg-orange-500 py-6 hover:bg-orange-600">
+            <Button className="bg-[#ed7e0f] py-6 hover:bg-[#ed7e0f]/80">
               Cherchez
             </Button>
           </div>
