@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils"
 import React from "react"
 import { Link } from "react-router-dom"
+import { DropdownAccount } from "./dropdown-account"
 
 const categories = {
   mode: {
@@ -106,13 +107,14 @@ export default function Header() {
 
           <div className="flex items-center justify-between gap-8">
 
-                <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                    <User className="h-7 w-7" />
-                    <div>
-                        
-                        <p className="text-sm">Connexion</p>
-                    </div>
-                </div>
+                
+                    <DropdownAccount>
+                    <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                      <User className="h-7 w-7" />
+                      <p className="text-sm">Connexion</p>
+                      </div>
+                    </DropdownAccount>
+                
               
 
                 
