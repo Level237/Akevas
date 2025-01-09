@@ -84,7 +84,7 @@ function PrevArrow(props: any) {
 export function CategorySlider() {
   const settings = {
     dots: false,
-    infinite: true,
+    infinite: false,
     speed: 500,
     autoplay:true,
     slidesToShow: 5,
