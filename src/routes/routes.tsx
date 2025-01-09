@@ -23,6 +23,7 @@ import SecurityInfoPage from "@/pages/auth/seller-registration/SecurityInfoPage"
 import ShopInfoPage from "@/pages/auth/seller-registration/ShopInfoPage";
 import BankInfoPage from "@/pages/auth/seller-registration/BankInfoPage";
 import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
+import DeliveryDashboard from "@/pages/delivery/DashboardPage";
 
 export const routes = createBrowserRouter([
   {
@@ -116,5 +117,9 @@ export const routes = createBrowserRouter([
   {
     path: '/stores/:code',
     element: <StorePage />
+  },
+  {
+    path: '/delivery/dashboard',
+    element: <DeliveryDashboard />
   }
 ]);

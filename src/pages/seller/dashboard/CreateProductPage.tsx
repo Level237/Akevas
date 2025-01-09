@@ -13,8 +13,22 @@ import {
   Image as ImageIcon,
   Tag,
   Settings,
-  Star
+  Star,
+  Trash2
 } from 'lucide-react';
+
+interface ProductImage {
+  id: string;
+  file: File;
+  preview: string;
+  attributes: ProductAttribute[];
+}
+
+interface ProductAttribute {
+  name: string;
+  type: 'color' | 'text' | 'number';
+  value: string;
+}
 
 interface ColorOption {
   name: string;
@@ -33,17 +47,10 @@ const availableColors: ColorOption[] = [
   { name: 'Blanc', hex: '#F9FAFB' }
 ];
 
-interface ProductAttribute {
-  name: string;
-  type: 'color' | 'text' | 'number';
-  values: string[];
-}
-
 const CreateProductPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedColors, setSelectedColors] = useState<ColorOption[]>([]);
-  const [images, setImages] = useState<File[]>([]);
-  const [mainImage, setMainImage] = useState<number>(0);
+  const [productImages, setProductImages] = useState<ProductImage[]>([]);
+  const [mainImageId, setMainImageId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -55,67 +62,52 @@ const CreateProductPage: React.FC = () => {
     sku: '',
     barcode: '',
     weight: '',
-    attributes: [
-      { name: 'Couleur', type: 'color', values: [] },
-      { name: 'Taille', type: 'text', values: [] },
-      { name: 'Matériau', type: 'text', values: [] }
-    ] as ProductAttribute[],
     stock: '',
     taxable: true,
     status: 'draft'
   });
 
-  const steps = [
-    {
-      id: 1,
-      name: 'Informations',
-      icon: Layout,
-      description: 'Informations de base du produit'
-    },
-    {
-      id: 2,
-      name: 'Images',
-      icon: ImageIcon,
-      description: 'Photos et médias'
-    },
-    {
-      id: 3,
-      name: 'Prix',
-      icon: Tag,
-      description: 'Prix et inventaire'
-    },
-    {
-      id: 4,
-      name: 'Variantes',
-      icon: Settings,
-      description: 'Options et variantes'
-    }
-  ];
-
-  const handleColorSelect = (color: ColorOption) => {
-    if (selectedColors.find(c => c.hex === color.hex)) {
-      setSelectedColors(selectedColors.filter(c => c.hex !== color.hex));
-    } else {
-      setSelectedColors([...selectedColors, color]);
-    }
-  };
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newImages = Array.from(e.target.files);
-      setImages([...images, ...newImages]);
+      const newImages = Array.from(e.target.files).map(file => ({
+        id: Math.random().toString(36).substr(2, 9),
+        file,
+        preview: URL.createObjectURL(file),
+        attributes: [
+          { name: 'Couleur', type: 'color' as const, value: '' },
+          { name: 'Taille', type: 'text' as const, value: '' },
+          { name: 'Stock', type: 'number' as const, value: '' }
+        ]
+      }));
+      setProductImages([...productImages, ...newImages]);
+      if (!mainImageId && newImages.length > 0) {
+        setMainImageId(newImages[0].id);
+      }
     }
   };
 
-  const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
-    if (mainImage === index) {
-      setMainImage(0);
+  const removeImage = (imageId: string) => {
+    setProductImages(productImages.filter(img => img.id !== imageId));
+    if (mainImageId === imageId) {
+      setMainImageId(productImages[0]?.id || null);
     }
   };
 
-  const setAsMainImage = (index: number) => {
-    setMainImage(index);
+  const setAsMainImage = (imageId: string) => {
+    setMainImageId(imageId);
+  };
+
+  const updateImageAttribute = (imageId: string, attributeName: string, value: string) => {
+    setProductImages(productImages.map(img => 
+      img.id === imageId
+        ? {
+            ...img,
+            attributes: img.attributes.map(attr =>
+              attr.name === attributeName ? { ...attr, value } : attr
+            )
+          }
+        : img
+    ));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -136,94 +128,21 @@ const CreateProductPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <nav aria-label="Progress">
-            <ol className="flex items-center">
-              {steps.map((step, stepIdx) => (
-                <li
-                  key={step.name}
-                  className={`${
-                    stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : ''
-                  } relative`}
-                >
-                  <div className="flex items-center">
-                    <button
-                      onClick={() => setCurrentStep(step.id)}
-                      className={`relative flex h-12 w-12 items-center justify-center rounded-full ${
-                        step.id === currentStep
-                          ? 'bg-[#ed7e0f] text-white'
-                          : step.id < currentStep
-                          ? 'bg-green-500 text-white'
-                          : 'bg-gray-100 text-gray-500'
-                      }`}
-                    >
-                      <step.icon className="h-6 w-6" />
-                    </button>
-                    {stepIdx !== steps.length - 1 && (
-                      <div
-                        className={`absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 transform ${
-                          step.id < currentStep ? 'bg-green-500' : 'bg-gray-200'
-                        }`}
-                      />
-                    )}
-                  </div>
-                  <div className="mt-2">
-                    <span className="text-sm font-medium">{step.name}</span>
-                    <p className="text-sm text-gray-500">{step.description}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </nav>
-        </div>
-
-        {/* Step Content */}
+        {/* Main Content */}
         <div className="bg-white rounded-2xl shadow-sm">
-          {currentStep === 1 && (
-            <div className="p-6">
-              <h2 className="text-lg font-semibold mb-6">
-                Informations du produit
-              </h2>
-
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nom du produit
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Marque
-                    </label>
-                    <input
-                      type="text"
-                      name="brand"
-                      value={formData.brand}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
+          <div className="p-6">
+            {/* Basic Information */}
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
+                    Nom du produit
                   </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
-                    rows={4}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                   />
                 </div>
@@ -245,67 +164,114 @@ const CreateProductPage: React.FC = () => {
                   </select>
                 </div>
               </div>
-            </div>
-          )}
 
-          {currentStep === 2 && (
-            <div className="p-6">
-              <h2 className="text-lg font-semibold mb-6">Images du produit</h2>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={4}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                />
+              </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {images.map((image, index) => (
-                  <div
-                    key={index}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 ${
-                      index === mainImage ? 'border-[#ed7e0f]' : 'border-transparent'
-                    }`}
-                  >
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={`Product ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 transition-opacity flex items-center justify-center opacity-0 hover:opacity-100">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setAsMainImage(index)}
-                          className="p-2 bg-white rounded-full hover:bg-gray-100"
-                        >
-                          <Star className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => removeImage(index)}
-                          className="p-2 bg-white rounded-full hover:bg-gray-100"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+              {/* Images Section */}
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Images et Variantes</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {productImages.map((image) => (
+                    <div
+                      key={image.id}
+                      className={`border rounded-xl p-4 ${
+                        mainImageId === image.id ? 'border-[#ed7e0f]' : 'border-gray-200'
+                      }`}
+                    >
+                      <div className="relative aspect-square mb-4">
+                        <img
+                          src={image.preview}
+                          alt="Product"
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                        <div className="absolute top-2 right-2 flex gap-2">
+                          <button
+                            onClick={() => setAsMainImage(image.id)}
+                            className={`p-2 rounded-full ${
+                              mainImageId === image.id
+                                ? 'bg-[#ed7e0f] text-white'
+                                : 'bg-white text-gray-600'
+                            }`}
+                          >
+                            <Star className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => removeImage(image.id)}
+                            className="p-2 rounded-full bg-white text-gray-600"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Attributes for this image */}
+                      <div className="space-y-3">
+                        {image.attributes.map((attr, index) => (
+                          <div key={index}>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              {attr.name}
+                            </label>
+                            {attr.type === 'color' ? (
+                              <div className="grid grid-cols-3 gap-2">
+                                {availableColors.map((color) => (
+                                  <button
+                                    key={color.hex}
+                                    onClick={() => updateImageAttribute(image.id, attr.name, color.hex)}
+                                    className={`w-full aspect-square rounded-lg border-2 ${
+                                      attr.value === color.hex
+                                        ? 'border-[#ed7e0f]'
+                                        : 'border-transparent'
+                                    }`}
+                                    style={{ backgroundColor: color.hex }}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <input
+                                type={attr.type}
+                                value={attr.value}
+                                onChange={(e) => updateImageAttribute(image.id, attr.name, e.target.value)}
+                                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                                placeholder={`Entrer ${attr.name.toLowerCase()}`}
+                              />
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
 
-                <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-[#ed7e0f] transition-colors">
-                  <Upload className="w-8 h-8 text-gray-400" />
-                  <span className="mt-2 text-sm text-gray-500">
-                    Ajouter une image
-                  </span>
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                  />
-                </label>
+                  {/* Upload Button */}
+                  <label className="border-2 border-dashed border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:border-[#ed7e0f] transition-colors">
+                    <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-500">
+                      Ajouter une image
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                </div>
               </div>
-            </div>
-          )}
 
-          {currentStep === 3 && (
-            <div className="p-6">
-              <h2 className="text-lg font-semibold mb-6">Prix et inventaire</h2>
-
-              <div className="space-y-6">
+              {/* Pricing Section */}
+              <div>
+                <h2 className="text-lg font-semibold mb-4">Prix et Stock</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -313,14 +279,14 @@ const CreateProductPage: React.FC = () => {
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        €
+                        FCFA
                       </span>
                       <input
                         type="number"
                         name="price"
                         value={formData.price}
                         onChange={handleInputChange}
-                        className="w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                        className="w-full pl-16 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -331,67 +297,21 @@ const CreateProductPage: React.FC = () => {
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        €
+                        FCFA
                       </span>
                       <input
                         type="number"
                         name="compareAtPrice"
                         value={formData.compareAtPrice}
                         onChange={handleInputChange}
-                        className="w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                        className="w-full pl-16 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Coût par unité
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        €
-                      </span>
-                      <input
-                        type="number"
-                        name="cost"
-                        value={formData.cost}
-                        onChange={handleInputChange}
-                        className="w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      SKU
-                    </label>
-                    <input
-                      type="text"
-                      name="sku"
-                      value={formData.sku}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Code-barres
-                    </label>
-                    <input
-                      type="text"
-                      name="barcode"
-                      value={formData.barcode}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Stock
+                      Stock total
                     </label>
                     <input
                       type="number"
@@ -404,119 +324,21 @@ const CreateProductPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          )}
+          </div>
 
-          {currentStep === 4 && (
-            <div className="p-6">
-              <h2 className="text-lg font-semibold mb-6">Options et variantes</h2>
-
-              <div className="space-y-8">
-                {/* Sélecteur de couleurs */}
-                <div>
-                  <h3 className="font-medium mb-4">Couleurs disponibles</h3>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-                    {availableColors.map((color) => (
-                      <button
-                        key={color.hex}
-                        onClick={() => handleColorSelect(color)}
-                        className={`group relative h-20 w-full rounded-lg border-2 ${
-                          selectedColors.find(c => c.hex === color.hex)
-                            ? 'border-[#ed7e0f]'
-                            : 'border-transparent hover:border-gray-200'
-                        }`}
-                      >
-                        <span
-                          className="absolute inset-2 rounded"
-                          style={{ backgroundColor: color.hex }}
-                        />
-                        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs font-medium">
-                          {color.name}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Autres attributs */}
-                {formData.attributes
-                  .filter(attr => attr.type !== 'color')
-                  .map((attribute, index) => (
-                    <div key={attribute.name}>
-                      <h3 className="font-medium mb-4">{attribute.name}</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {attribute.values.map((value) => (
-                          <span
-                            key={value}
-                            className="px-3 py-1 bg-gray-100 rounded-lg text-sm"
-                          >
-                            {value}
-                            <button
-                              onClick={() => {
-                                const newAttributes = [...formData.attributes];
-                                newAttributes[index].values = newAttributes[
-                                  index
-                                ].values.filter((v) => v !== value);
-                                setFormData({
-                                  ...formData,
-                                  attributes: newAttributes
-                                });
-                              }}
-                              className="ml-2 text-gray-400 hover:text-gray-600"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </span>
-                        ))}
-                        <input
-                          type="text"
-                          placeholder={`Ajouter ${attribute.name.toLowerCase()}`}
-                          className="px-3 py-1 border rounded-lg text-sm focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              const input = e.target as HTMLInputElement;
-                              if (input.value) {
-                                const newAttributes = [...formData.attributes];
-                                if (!newAttributes[index].values.includes(input.value)) {
-                                  newAttributes[index].values.push(input.value);
-                                  setFormData({
-                                    ...formData,
-                                    attributes: newAttributes
-                                  });
-                                }
-                                input.value = '';
-                              }
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          )}
-
-          {/* Navigation buttons */}
+          {/* Footer */}
           <div className="px-6 py-4 bg-gray-50 rounded-b-2xl border-t flex justify-between">
             <button
-              onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-              className={`px-6 py-2 rounded-lg border ${
-                currentStep === 1
-                  ? 'text-gray-400 border-gray-200 cursor-not-allowed'
-                  : 'text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
-              disabled={currentStep === 1}
+              type="button"
+              className="px-6 py-2 border rounded-lg hover:bg-gray-50"
             >
-              Précédent
+              Annuler
             </button>
             <button
-              onClick={() =>
-                currentStep === steps.length
-                  ? console.log('Submit form', formData)
-                  : setCurrentStep(currentStep + 1)
-              }
+              type="submit"
               className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors"
             >
-              {currentStep === steps.length ? 'Créer le produit' : 'Suivant'}
+              Créer le produit
             </button>
           </div>
         </div>
