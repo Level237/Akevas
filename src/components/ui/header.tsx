@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ShoppingCart, User, Search, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple, Heart, Dumbbell, Sparkle, ShoppingBag } from 'lucide-react'
+import { ShoppingCart, User, Search, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple, Heart, Dumbbell, Sparkle, ShoppingBag, ChevronDown } from 'lucide-react'
 import logo from "../../assets/logo.png"
 import {
   NavigationMenu,
@@ -13,7 +13,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { cn } from "@/lib/utils"
-import React from "react"
+import React, { useState } from "react"
 import { Link } from "react-router-dom"
 import { DropdownAccount } from "./dropdown-account"
 
@@ -77,7 +77,16 @@ const ListItem = React.forwardRef<
 })
 ListItem.displayName = "ListItem"
 
+const searchCategories = [
+  { id: 'all', label: 'Tous' },
+  { id: 'products', label: 'Produits' },
+  { id: 'stores', label: 'Boutiques' },
+  { id: 'cities', label: 'Villes' },
+]
 export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState(searchCategories[0])
+  const [showCategories, setShowCategories] = useState(false)
   return (
     <header className="w-full z-[99999] border-b bg-white">
       <div className=" mx-16 px-4 py-3">
@@ -92,17 +101,43 @@ export default function Header() {
           </Link>
 
           <div className="flex flex-1 max-w-xl items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-              <Input
-                type="search"
-                placeholder="cherchez un produit..."
-                className="w-full py-6 pl-10"
-              />
-            </div>
-            <Button className="bg-[#ed7e0f] py-6 hover:bg-[#ed7e0f]/80">
-              Cherchez
-            </Button>
+          <div className="relative w-full">
+          <div className="relative">
+                <button
+                  onClick={() => setShowCategories(!showCategories)}
+                  className="absolute left-0 top-0 h-full px-3 flex items-center gap-1 text-gray-500 hover:text-gray-700 border-r"
+                >
+                  {selectedCategory.label}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                <input
+                  type="text"
+                  placeholder="Rechercher..."
+                  className="w-full pl-32 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                />
+                <button className="absolute right-0 top-0 h-full px-3 text-gray-500 hover:text-gray-700">
+                  <Search className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Categories Dropdown */}
+              {showCategories && (
+                <div className="absolute top-full z-[999999] left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border">
+                  {searchCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => {
+                        setSelectedCategory(category)
+                        setShowCategories(false)
+                      }}
+                      className="w-full  px-4 py-2 text-left hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
+                    >
+                      {category.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              </div>
           </div>
 
           <div className="flex items-center justify-between gap-8">
@@ -118,15 +153,15 @@ export default function Header() {
               
 
                 
-            <div className="relative py-2 flex items-center justify-center gap-2 ">
-          
-         <ShoppingCart className="h-7 w-7" />
-         <div className="">
-            <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">0</p>
-            <p className="text-sm">Panier</p>
-          </div>
-          
-        </div>
+                    <Link
+              to="/cart"
+              className="relative text-gray-700 hover:text-[#ed7e0f]"
+            >
+              <ShoppingCart className="w-6 h-6" />
+              <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                0
+              </span>
+            </Link>
 
           </div>
         </div>
@@ -258,4 +293,3 @@ export default function Header() {
     </header>
   )
 }
-

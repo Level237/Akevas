@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import Homepage from "../pages/Homepage";
+import Homepage from "@/pages/Homepage";
 import LoginPage from "@/pages/auth/LoginPage";
 import SellerRegistration from "@/pages/auth/SellerRegistration";
 import PersonalInfoPage from "@/pages/auth/seller-registration/PersonalInfoPage";
@@ -12,6 +12,8 @@ import DashboardPage from "@/pages/seller/DashboardPage";
 import IdentityInfoPage from "@/pages/auth/seller-registration/IdentityInfoPage";
 import ProductListPage from "@/pages/ProductListPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
+import CartPage from "@/pages/CartPage";
+import StorePage from "@/pages/StorePage";
 
 export const routes = createBrowserRouter([
   {
@@ -54,12 +56,20 @@ export const routes = createBrowserRouter([
     path: '/seller/dashboard',
     element: <DashboardPage />
   },
-{
-  path:'/products',
-  element:<ProductListPage/>
-},
-{
-  path:'/products/:id',
-  element:<ProductDetailPage/>
-}
+  {
+    path:'/products',
+    element:<ProductListPage/>
+  },
+  {
+    path:'/products/:id',
+    element:<ProductDetailPage/>
+  },
+  {
+    path: '/cart',
+    element: <CartPage />
+  },
+  {
+    path: '/stores/:code',
+    element: <StorePage />
+  }
 ]);
