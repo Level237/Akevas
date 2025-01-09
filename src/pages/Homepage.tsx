@@ -10,6 +10,7 @@ import banner2 from "../assets/banner-8.webp"
 import banner3 from "../assets/banner-9.webp"
 import StoreStories from '@/components/stores/store-stories'
 import PremiumProducts from '@/components/products/PremiumProducts'
+import MobileNav from '@/components/ui/mobile-nav'
 export default function Homepage() {
   return (
     <>
@@ -22,7 +23,7 @@ export default function Homepage() {
         <StoreStories/>
         <PremiumProducts/>
         <CategorySlider />
-        
+        <MobileNav/>
         
       </section>
     </>

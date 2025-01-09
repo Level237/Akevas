@@ -14,6 +14,9 @@ import ProductListPage from "@/pages/ProductListPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import CartPage from "@/pages/CartPage";
 import StorePage from "@/pages/StorePage";
+import CheckoutPage from "@/pages/CheckoutPage";
+import StoreBoostPage from "@/pages/seller/StoreBoostPage";
+import CreateProductPage from "@/pages/seller/CreateProductPage";
 
 export const routes = createBrowserRouter([
   {
@@ -67,6 +70,18 @@ export const routes = createBrowserRouter([
   {
     path: '/cart',
     element: <CartPage />
+  },
+  {
+    path: '/checkout',
+    element: <CheckoutPage />
+  },
+  {
+    path: '/seller/create-product',
+    element: <CreateProductPage />
+  },
+  {
+    path: '/seller/boost',
+    element: <StoreBoostPage />
   },
   {
     path: '/stores/:code',

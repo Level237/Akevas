@@ -14,6 +14,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import shoes from "../assets/shoes1.webp"
+import dress from "../assets/dress.jpg"
 import Header from '@/components/ui/header';
 
 const ProductDetailPage: React.FC = () => {
@@ -39,7 +40,7 @@ const ProductDetailPage: React.FC = () => {
     originalPrice: 159.99,
     images: [
       shoes,
-      shoes,
+      dress,
       shoes,
       shoes
     ],
@@ -69,7 +70,7 @@ const ProductDetailPage: React.FC = () => {
         date: '2024-12-28',
         content: 'Qualité exceptionnelle, les détails sont incroyables !',
         likes: 12,
-        images: ['/images/reviews/review1.jpg']
+        images: [shoes]
       },
       // Ajoutez plus d'avis
     ]
