@@ -22,25 +22,25 @@ const steps = [
     id: 2,
     name: 'Véhicule',
     icon: Truck,
-    route: '/delivery/register/vehicle'
+    route: '/delivery/vehicle'
   },
   {
     id: 3,
     name: 'Zone de livraison',
     icon: MapPin,
-    route: '/delivery/register/zone'
+    route: '/delivery/zone'
   },
   {
     id: 4,
     name: 'Documents',
     icon: FileText,
-    route: '/delivery/register/documents'
+    route: '/delivery/documents'
   },
   {
     id: 5,
     name: 'Validation',
     icon: CheckCircle,
-    route: '/delivery/register/validation'
+    route: '/delivery/validation'
   }
 ];
 
@@ -74,7 +74,6 @@ const DeliveryRegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
@@ -278,7 +277,7 @@ const DeliveryRegisterPage: React.FC = () => {
 
                 <div className="flex justify-end">
                   <Link
-                    to="/delivery/register/vehicle"
+                    to="/delivery/vehicle"
                     className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                   >
                     Suivant

@@ -111,8 +111,6 @@ const DocumentsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -229,7 +227,7 @@ const DocumentsPage: React.FC = () => {
                 Retour
               </Link>
               <Link
-                to="/auth/delivery/validation"
+                to="/delivery/validation"
                 className={`px-6 py-2 rounded-lg flex items-center gap-2 ${
                   isComplete()
                     ? 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'

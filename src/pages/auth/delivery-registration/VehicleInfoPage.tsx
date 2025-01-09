@@ -97,7 +97,7 @@ const VehicleInfoPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
@@ -278,7 +278,7 @@ const VehicleInfoPage: React.FC = () => {
                       Retour
                     </Link>
                     <Link
-                      to="/delivery/register/zone"
+                      to="/delivery/zone"
                       className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                     >
                       Suivant

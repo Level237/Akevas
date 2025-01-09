@@ -90,13 +90,13 @@ const ValidationPage: React.FC = () => {
     e.preventDefault();
     if (validatePassword()) {
       // Redirect to generation page
-      window.location.href = '/auth/delivery/generating';
+      window.location.href = '/delivery/generating';
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
@@ -209,7 +209,7 @@ const ValidationPage: React.FC = () => {
 
                 <div className="flex justify-between">
                   <Link
-                    to="/auth/delivery/documents"
+                    to="/delivery/documents"
                     className="px-6 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
                   >
                     <ChevronLeft className="w-4 h-4" />

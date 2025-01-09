@@ -179,7 +179,7 @@ const DeliveryZonePage: React.FC = () => {
                 Retour
               </Link>
               <Link
-                to="/auth/delivery/documents"
+                to="/delivery/documents"
                 className={`px-6 py-2 rounded-lg flex items-center gap-2 ${
                   selectedCity && selectedDistricts.length > 0
                     ? 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
