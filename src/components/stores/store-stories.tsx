@@ -352,10 +352,12 @@ interface Store {
                   </div>
 
                   <div className="space-y-6 rounded-xl border bg-gray-50 p-4">
-                    <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 gap-2">
-                      Visiter la boutique
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
+                    <Link to="/stores/shoe-store">
+                      <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 gap-2">
+                        Visiter la boutique
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </Link>
 
                     <Separator />
 

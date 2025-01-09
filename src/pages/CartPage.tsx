@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Minus, X, ArrowLeft, Truck, Shield, CreditCard } from 'lucide-react';
+import { Plus, Minus, X, ArrowLeft, Truck, Shield, CreditCard, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import type { CartItem } from '@/components/cart/CartModal';
-
+import shoes from "../assets/shoes1.webp"
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
   const [items, setItems] = React.useState<CartItem[]>([
@@ -13,7 +13,7 @@ const CartPage: React.FC = () => {
       name: 'Figurine Collector Demon Slayer',
       price: 129.99,
       quantity: 2,
-      image: '/images/products/demon-slayer-1.jpg',
+      image: shoes,
       storeCode: 'JP_STORE_8472',
       variants: {
         size: '24cm'
@@ -58,7 +58,8 @@ const CartPage: React.FC = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Mon Panier</h1>
 
         {items.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center">
+            <ShoppingCart className="w-16 text-[#ed7e0f] h-16 mx-auto mb-4" />
             <h2 className="text-2xl font-medium text-gray-900 mb-4">
               Votre panier est vide
             </h2>
