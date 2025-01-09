@@ -125,6 +125,7 @@ export default function Header() {
             <p className="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">0</p>
             <p className="text-sm">Panier</p>
           </div>
+          
         </div>
 
           </div>

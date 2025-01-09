@@ -111,7 +111,7 @@ const ProductDetailPage: React.FC = () => {
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
                     className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors
-                      ${selectedImage === idx ? 'border-blue-500' : 'border-transparent hover:border-gray-200'}`}
+                      ${selectedImage === idx ? 'border-[#ed7e0f]' : 'border-transparent hover:border-gray-200'}`}
                   >
                     <img
                       src={image}
@@ -208,7 +208,7 @@ const ProductDetailPage: React.FC = () => {
                     </button>
                   </div>
 
-                  <button className="flex-1 bg-blue-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors">
+                  <button className="flex-1 bg-[#ed7e0f] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Ajouter au panier
                   </button>
                 </div>
@@ -227,7 +227,7 @@ const ProductDetailPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-blue-500" />
+                    <Shield className="w-5 h-5 text-[#ed7e0f]" />
                     <div>
                       <p className="font-medium text-gray-900">
                         Garantie premium
@@ -248,39 +248,39 @@ const ProductDetailPage: React.FC = () => {
               <button
                 onClick={() => setSelectedTab('description')}
                 className={`px-8 py-4 font-medium text-sm transition-colors relative
-                  ${selectedTab === 'description' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+                  ${selectedTab === 'description' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
               >
                 Description
                 {selectedTab === 'description' && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
                   />
                 )}
               </button>
               <button
                 onClick={() => setSelectedTab('specifications')}
                 className={`px-8 py-4 font-medium text-sm transition-colors relative
-                  ${selectedTab === 'specifications' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+                  ${selectedTab === 'specifications' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
               >
                 Spécifications
                 {selectedTab === 'specifications' && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
                   />
                 )}
               </button>
               <button
                 onClick={() => setSelectedTab('reviews')}
                 className={`px-8 py-4 font-medium text-sm transition-colors relative
-                  ${selectedTab === 'reviews' ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+                  ${selectedTab === 'reviews' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
               >
                 Avis ({product.reviewCount})
                 {selectedTab === 'reviews' && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
                   />
                 )}
               </button>

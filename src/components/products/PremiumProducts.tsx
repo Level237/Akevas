@@ -166,7 +166,7 @@ const ProductModal: React.FC<{
                       <button
                         key={idx}
                         className={`aspect-square rounded-lg overflow-hidden border-2 
-                          ${selectedImage === idx ? 'border-blue-500' : 'border-transparent'}`}
+                          ${selectedImage === idx ? 'border-[#ed7e0f]' : 'border-transparent'}`}
                         onClick={() => setSelectedImage(idx)}
                       >
                         <img
@@ -247,7 +247,7 @@ const ProductModal: React.FC<{
                             }))}
                             className={`px-4 py-2 rounded-lg text-sm font-medium
                               ${selectedVariants[type] === variant.id
-                                ? 'bg-blue-600 text-white'
+                                ? 'bg-[#ed7e0f] text-white'
                                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                               }
                               ${!variant.inStock && 'opacity-50 cursor-not-allowed'}
@@ -284,7 +284,7 @@ const ProductModal: React.FC<{
 
                     <button
                       onClick={handleAddToCart}
-                      className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                      className="flex-1 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
                     >
                       Ajouter au panier
                     </button>

@@ -379,7 +379,7 @@ const ProductListPage: React.FC = () => {
                               </span>
                             )}
                           </div>
-                          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                          <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
                             Ajouter au panier
                           </button>
                         </div>
