@@ -1,12 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import Homepage from "@/pages/Homepage";
 import LoginPage from "@/pages/auth/LoginPage";
-import SellerRegistration from "@/pages/auth/SellerRegistration";
-import PersonalInfoPage from "@/pages/auth/seller-registration/PersonalInfoPage";
-import SecurityInfoPage from "@/pages/auth/seller-registration/SecurityInfoPage";
-import ShopInfoPage from "@/pages/auth/seller-registration/ShopInfoPage";
-import BankInfoPage from "@/pages/auth/seller-registration/BankInfoPage";
-import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
+
+
 import StoreGenerationPage from "@/pages/auth/seller-registration/StoreGenerationPage";
 import DashboardPage from "@/pages/seller/DashboardPage";
 import IdentityInfoPage from "@/pages/auth/seller-registration/IdentityInfoPage";
@@ -16,7 +12,15 @@ import CartPage from "@/pages/CartPage";
 import StorePage from "@/pages/StorePage";
 import CheckoutPage from "@/pages/CheckoutPage";
 import StoreBoostPage from "@/pages/seller/StoreBoostPage";
-import CreateProductPage from "@/pages/seller/CreateProductPage";
+import CreateProductPage from "@/pages/seller/dashboard/CreateProductPage";
+import DeliveryRegisterPage from "@/pages/auth/delivery-registration/DeliveryRegisterPage";
+import VehicleInfoPage from "@/pages/auth/delivery-registration/VehicleInfoPage";
+import SellerRegistration from "@/pages/auth/SellerRegistration";
+import PersonalInfoPage from "@/pages/auth/seller-registration/PersonalInfoPage";
+import SecurityInfoPage from "@/pages/auth/seller-registration/SecurityInfoPage";
+import ShopInfoPage from "@/pages/auth/seller-registration/ShopInfoPage";
+import BankInfoPage from "@/pages/auth/seller-registration/BankInfoPage";
+import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
 
 export const routes = createBrowserRouter([
   {
@@ -24,8 +28,16 @@ export const routes = createBrowserRouter([
     element: <Homepage />
   },
   {
-    path: '/login',
+    path: '/auth/login',
     element: <LoginPage />
+  },
+  {
+    path: '/auth/delivery/register',
+    element: <DeliveryRegisterPage />
+  },
+  {
+    path: '/auth/delivery/vehicle',
+    element: <VehicleInfoPage />
   },
   {
     path: '/seller-registration/personal-info',
@@ -60,12 +72,28 @@ export const routes = createBrowserRouter([
     element: <DashboardPage />
   },
   {
-    path:'/products',
-    element:<ProductListPage/>
+    path: '/seller/dashboard/create-product',
+    element: <CreateProductPage />
   },
   {
-    path:'/products/:id',
-    element:<ProductDetailPage/>
+    path: '/seller/boost',
+    element: <StoreBoostPage />
+  },
+  {
+    path: '/delivery/register',
+    element: <DeliveryRegisterPage />
+  },
+  {
+    path: '/delivery/register/vehicle',
+    element: <VehicleInfoPage />
+  },
+  {
+    path: '/products',
+    element: <ProductListPage />
+  },
+  {
+    path: '/products/:id',
+    element: <ProductDetailPage />
   },
   {
     path: '/cart',
@@ -74,14 +102,6 @@ export const routes = createBrowserRouter([
   {
     path: '/checkout',
     element: <CheckoutPage />
-  },
-  {
-    path: '/seller/create-product',
-    element: <CreateProductPage />
-  },
-  {
-    path: '/seller/boost',
-    element: <StoreBoostPage />
   },
   {
     path: '/stores/:code',
