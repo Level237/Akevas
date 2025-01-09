@@ -13,6 +13,7 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 import Header from '@/components/ui/header';
+import { ScrollRestoration } from 'react-router-dom';
 
 interface FilterOption {
   id: string;
@@ -128,7 +129,7 @@ const ProductListPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
+        <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* En-tête avec filtres mobiles et tri */}
         <div className="flex items-center justify-between mb-8">
