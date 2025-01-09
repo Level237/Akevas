@@ -20,8 +20,9 @@ export default function Homepage() {
       
         
         <StoreStories/>
-        <CategorySlider />
         <PremiumProducts/>
+        <CategorySlider />
+        
         
       </section>
     </>

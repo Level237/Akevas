@@ -306,15 +306,21 @@ const PremiumProducts: React.FC = () => {
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* En-tête */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Produits Premium
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Découvrez notre sélection de produits premium, choisis pour leur qualité exceptionnelle 
-            et leur authenticité.
-          </p>
-        </div>
+        <div className="flex justify-between items-baseline mb-6">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold mb-2 text-black">Produits Premium</h2>
+              <p className="text-xl md:text-2xl  text-gray-600">Découvrez notre sélection de produits premium 
+              </p>
+            </div>
+            <Link 
+              to="/products/" 
+              className="hidden md:flex text-black items-center  text-sm hover:underline"
+            >
+              Voir toutes les produits
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </Link>
+          </div>
+        
 
         {/* Grille de produits */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
