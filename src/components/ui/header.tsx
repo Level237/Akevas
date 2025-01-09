@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils"
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
 import { DropdownAccount } from "./dropdown-account"
+import AsyncLink from "./AsyncLink"
 
 const categories = {
   mode: {
@@ -92,13 +93,13 @@ export default function Header() {
       <div className=" mx-16 px-4 py-3">
         {/* Top bar avec logo, recherche et actions */}
         <div className="flex items-center justify-between gap-4">
-          <Link to="/" className="flex-shrink-0">
+          <AsyncLink to="/" className="flex-shrink-0">
             <img
               src={logo}
               alt="AKEVAS"
               className="h-28 w-auto"
             />
-          </Link>
+          </AsyncLink>
 
           <div className="flex flex-1 max-w-xl items-center gap-2">
           <div className="relative w-full">
@@ -152,16 +153,17 @@ export default function Header() {
                 
               
 
-                
-                    <Link
-              to="/cart"
-              className="relative text-gray-700 hover:text-[#ed7e0f]"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </Link>
+                  <AsyncLink to="/cart">
+                  <div
+             
+             className="relative text-gray-700 hover:text-[#ed7e0f]"
+           >
+             <ShoppingCart className="w-6 h-6" />
+             <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+               0
+             </span>
+           </div>
+                  </AsyncLink>
 
           </div>
         </div>

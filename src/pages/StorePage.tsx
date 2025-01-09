@@ -14,6 +14,7 @@ import {
 import Header from '@/components/ui/header';
 import dress from "../assets/dress.jpg"
 import shoes from "../assets/shoes1.webp"
+import { ScrollRestoration } from 'react-router-dom';
 
 interface StoreProduct {
   id: string;
@@ -85,7 +86,7 @@ const StorePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
+      <ScrollRestoration />
       {/* Couverture et informations de la boutique */}
       <div className="relative h-64 bg-gray-900">
         <img

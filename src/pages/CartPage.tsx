@@ -5,8 +5,12 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import type { CartItem } from '@/components/cart/CartModal';
 import shoes from "../assets/shoes1.webp"
+import { useRef } from 'react';
+import AsyncLink from '@/components/ui/AsyncLink';
+
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
+  const loadingBarRef = useRef(null);
   const [items, setItems] = React.useState<CartItem[]>([
     {
       id: '1',
@@ -40,6 +44,9 @@ const CartPage: React.FC = () => {
   const shipping = 0; // Gratuit pour cet exemple
   const total = subtotal + shipping;
 
+  const goTo=()=>{
+
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -219,11 +226,11 @@ const CartPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-
-                <button className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
+                  <AsyncLink to='/checkout'>
+                <button   className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                   Procéder au paiement
                 </button>
-
+                </AsyncLink>
                 <p className="mt-4 text-sm text-gray-500 text-center">
                   Paiement 100% sécurisé
                 </p>

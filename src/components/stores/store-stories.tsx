@@ -11,6 +11,7 @@ import { StoreCard } from './store-card'
 import { StoreBadges } from '../seller/store-badge'
 import { Button } from '../ui/button'
 import { Separator } from '../ui/separator'
+import AsyncLink from '../ui/AsyncLink'
 interface Store {
     id: number
     name: string
@@ -183,13 +184,13 @@ interface Store {
               <h2 className="text-2xl md:text-3xl font-bold mb-2 text-white">Nos Boutiques</h2>
               <p className="text-xl md:text-2xl  text-gray-200">Découvrez nos meilleures boutiques</p>
             </div>
-            <Link 
+            <AsyncLink
               to="/stores" 
               className="hidden md:flex text-white items-center  text-sm hover:underline"
             >
               Voir toutes les boutiques
               <ChevronRight className="ml-1 h-4 w-4" />
-            </Link>
+            </AsyncLink>
           </div>
   
           <div className="relative">
@@ -229,13 +230,13 @@ interface Store {
             </button>
           </div>
   
-          <Link 
+          <AsyncLink
             to="/stores" 
             className="flex md:hidden items-center  justify-center mt-6 text-sm hover:underline"
           >
             Voir toutes les boutiques
             <ChevronRight className="ml-1 h-4 w-4" />
-          </Link>
+          </AsyncLink>
         </div>
       </section>
         <div className="flex justify-center items-center"><AnimatePresence>
@@ -352,12 +353,12 @@ interface Store {
                   </div>
 
                   <div className="space-y-6 rounded-xl border bg-gray-50 p-4">
-                    <Link to="/stores/shoe-store">
+                    <AsyncLink to="/stores/shoe-store">
                       <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 gap-2">
                         Visiter la boutique
                         <ExternalLink className="h-4 w-4" />
                       </Button>
-                    </Link>
+                    </AsyncLink>
 
                     <Separator />
 

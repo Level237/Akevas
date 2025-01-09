@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import Header from '@/components/ui/header';
 import shoes from "../assets/shoes1.webp";
+import { ScrollRestoration } from 'react-router-dom';
 
 type PaymentMethod = 'card' | 'orange' | 'momo';
 
@@ -61,7 +62,7 @@ const CheckoutPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
+      <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Finaliser la commande</h1>
 
