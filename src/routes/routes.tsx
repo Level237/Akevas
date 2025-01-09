@@ -1,8 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Homepage from "@/pages/Homepage";
 import LoginPage from "@/pages/auth/LoginPage";
-
-
 import StoreGenerationPage from "@/pages/auth/seller-registration/StoreGenerationPage";
 import DashboardPage from "@/pages/seller/DashboardPage";
 import IdentityInfoPage from "@/pages/auth/seller-registration/IdentityInfoPage";
@@ -15,6 +13,10 @@ import StoreBoostPage from "@/pages/seller/StoreBoostPage";
 import CreateProductPage from "@/pages/seller/dashboard/CreateProductPage";
 import DeliveryRegisterPage from "@/pages/auth/delivery-registration/DeliveryRegisterPage";
 import VehicleInfoPage from "@/pages/auth/delivery-registration/VehicleInfoPage";
+import DeliveryZonePage from "@/pages/auth/delivery-registration/DeliveryZonePage";
+import DocumentsPage from "@/pages/auth/delivery-registration/DocumentsPage";
+import ValidationPage from "@/pages/auth/delivery-registration/ValidationPage";
+import DeliveryGenerationPage from "@/pages/auth/delivery-registration/DeliveryGenerationPage";
 import SellerRegistration from "@/pages/auth/SellerRegistration";
 import PersonalInfoPage from "@/pages/auth/seller-registration/PersonalInfoPage";
 import SecurityInfoPage from "@/pages/auth/seller-registration/SecurityInfoPage";
@@ -32,12 +34,28 @@ export const routes = createBrowserRouter([
     element: <LoginPage />
   },
   {
-    path: '/auth/delivery/register',
+    path: '/delivery/register',
     element: <DeliveryRegisterPage />
   },
   {
-    path: '/auth/delivery/vehicle',
+    path: '/delivery/vehicle',
     element: <VehicleInfoPage />
+  },
+  {
+    path: '/delivery/zone',
+    element: <DeliveryZonePage />
+  },
+  {
+    path: '/delivery/documents',
+    element: <DocumentsPage />
+  },
+  {
+    path: '/delivery/validation',
+    element: <ValidationPage />
+  },
+  {
+    path: '/delivery/generating',
+    element: <DeliveryGenerationPage />
   },
   {
     path: '/seller-registration/personal-info',
@@ -72,20 +90,12 @@ export const routes = createBrowserRouter([
     element: <DashboardPage />
   },
   {
-    path: '/seller/dashboard/create-product',
+    path: '/seller/create-product',
     element: <CreateProductPage />
   },
   {
     path: '/seller/boost',
     element: <StoreBoostPage />
-  },
-  {
-    path: '/delivery/register',
-    element: <DeliveryRegisterPage />
-  },
-  {
-    path: '/delivery/register/vehicle',
-    element: <VehicleInfoPage />
   },
   {
     path: '/products',
