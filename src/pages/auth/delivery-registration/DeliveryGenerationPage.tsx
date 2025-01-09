@@ -128,7 +128,7 @@ const DeliveryGenerationPage: React.FC = () => {
           </div>
         )}
 
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-white">
           <p>Ne fermez pas cette fenêtre</p>
           <p>Vous serez automatiquement redirigé</p>
         </div>

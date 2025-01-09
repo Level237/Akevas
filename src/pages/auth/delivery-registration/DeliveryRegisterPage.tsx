@@ -8,8 +8,9 @@ import {
   CheckCircle,
   ChevronRight
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, ScrollRestoration } from 'react-router-dom';
 import Header from '@/components/ui/header';
+import AsyncLink from '@/components/ui/AsyncLink';
 
 const steps = [
   {
@@ -74,7 +75,7 @@ const DeliveryRegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
+      <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -276,13 +277,13 @@ const DeliveryRegisterPage: React.FC = () => {
                 </div>
 
                 <div className="flex justify-end">
-                  <Link
+                  <AsyncLink
                     to="/delivery/vehicle"
                     className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                   >
                     Suivant
                     <ChevronRight className="w-4 h-4" />
-                  </Link>
+                  </AsyncLink>
                 </div>
               </form>
             </div>

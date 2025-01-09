@@ -13,8 +13,9 @@ import {
   Monitor,
 
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, ScrollRestoration } from 'react-router-dom';
 import Header from '@/components/ui/header';
+import AsyncLink from '@/components/ui/AsyncLink';
 
 const steps = [
   {
@@ -98,7 +99,7 @@ const VehicleInfoPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       
-
+      <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -270,20 +271,20 @@ const VehicleInfoPage: React.FC = () => {
                   )}
 
                   <div className="flex justify-between">
-                    <Link
+                    <AsyncLink
                       to="/delivery/register"
                       className="px-6 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
                     >
                       <ChevronLeft className="w-4 h-4" />
                       Retour
-                    </Link>
-                    <Link
+                    </AsyncLink>
+                    <AsyncLink
                       to="/delivery/zone"
                       className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                     >
                       Suivant
                       <ChevronRight className="w-4 h-4" />
-                    </Link>
+                    </AsyncLink>
                   </div>
                 </form>
               )}

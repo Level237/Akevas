@@ -6,8 +6,9 @@ interface AsyncLinkProps {
     to: string;
     className?: string; // Ajout de la prop className
     children: React.ReactNode;
+    OnClick?: () => void
   }
-const AsyncLink = ({ to, className, children }: AsyncLinkProps) => {
+const AsyncLink = ({ to, className, children, OnClick }: AsyncLinkProps) => {
   const navigate = useNavigate();
   const { startLoading, completeLoading } = useLoader();
 
@@ -20,6 +21,7 @@ const AsyncLink = ({ to, className, children }: AsyncLinkProps) => {
 
     navigate(to); // Naviguer vers la nouvelle page
     completeLoading();
+    OnClick && OnClick();
   };
 
   return (

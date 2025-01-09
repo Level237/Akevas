@@ -12,7 +12,7 @@ import {
   Lock,
   AlertCircle
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, ScrollRestoration } from 'react-router-dom';
 import Header from '@/components/ui/header';
 
 const steps = [
@@ -96,7 +96,7 @@ const ValidationPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
+      <ScrollRestoration />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">

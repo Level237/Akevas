@@ -11,8 +11,10 @@ import {
   X,
   Check
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, ScrollRestoration } from 'react-router-dom';
 import Header from '@/components/ui/header';
+import AsyncLink from '@/components/ui/AsyncLink';
+import { Button } from '@/components/ui/button';
 
 const steps = [
   {
@@ -111,6 +113,7 @@ const DocumentsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -219,21 +222,22 @@ const DocumentsPage: React.FC = () => {
             </div>
 
             <div className="px-6 py-4 bg-gray-50 rounded-b-2xl border-t flex justify-between">
-              <Link
+              <AsyncLink
                 to="/auth/delivery/zone"
                 className="px-6 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Retour
-              </Link>
-              <Link
-                to="/delivery/validation"
+              </AsyncLink>
+              <AsyncLink to="/delivery/validation">
+              <Button
+                
                 className={`px-6 py-2 rounded-lg flex items-center gap-2 ${
                   isComplete()
                     ? 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent) => {
                   if (!isComplete()) {
                     e.preventDefault();
                   }
@@ -241,7 +245,10 @@ const DocumentsPage: React.FC = () => {
               >
                 Suivant
                 <ChevronRight className="w-4 h-4" />
-              </Link>
+              </Button>
+
+              </AsyncLink>
+             
             </div>
           </div>
 
