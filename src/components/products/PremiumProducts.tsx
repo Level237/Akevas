@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Heart, ShoppingCart, X, Plus, Minus, Check, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import shoes from "../../assets/shoes1.webp"
+import AsyncLink from '../ui/AsyncLink';
 interface ProductVariant {
   id: string;
   name: string;
@@ -312,13 +313,13 @@ const PremiumProducts: React.FC = () => {
               <p className="text-xl md:text-2xl  text-gray-600">Découvrez notre sélection de produits premium 
               </p>
             </div>
-            <Link 
+            <AsyncLink
               to="/products/" 
               className="hidden md:flex text-black items-center  text-sm hover:underline"
             >
               Voir toutes les produits
               <ChevronRight className="ml-1 h-4 w-4" />
-            </Link>
+            </AsyncLink>
           </div>
         
 
