@@ -22,6 +22,7 @@ import {
 import { MobileNav } from '@/components/dashboard/delivery/mobile-nav'
 import { Link } from 'react-router-dom'
 import { OnlineStatusSwitch } from '@/components/dashboard/delivery/online-status-switch'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 
 
@@ -58,15 +59,10 @@ export default function DeliveryDashboard() {
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <img
-                    src="/placeholder.svg"
-                    height={32}
-                    width={32}
-                    alt="Avatar"
-                    className="rounded-full"
-                  />
-                </Button>
+              <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
