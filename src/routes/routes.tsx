@@ -17,7 +17,6 @@ import DeliveryZonePage from "@/pages/auth/delivery-registration/DeliveryZonePag
 import DocumentsPage from "@/pages/auth/delivery-registration/DocumentsPage";
 import ValidationPage from "@/pages/auth/delivery-registration/ValidationPage";
 import DeliveryGenerationPage from "@/pages/auth/delivery-registration/DeliveryGenerationPage";
-import SellerRegistration from "@/pages/auth/SellerRegistration";
 import PersonalInfoPage from "@/pages/auth/seller-registration/PersonalInfoPage";
 import SecurityInfoPage from "@/pages/auth/seller-registration/SecurityInfoPage";
 import ShopInfoPage from "@/pages/auth/seller-registration/ShopInfoPage";

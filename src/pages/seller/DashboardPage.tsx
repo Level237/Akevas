@@ -8,7 +8,6 @@ import {
   Bell,
   Settings,
   HelpCircle,
-  ChevronRight,
   FileText,
   UserCircle,
   Lock,
@@ -16,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import Sidebar from '@/components/seller/Sidebar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const DashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -95,14 +95,14 @@ const DashboardPage = () => {
                   <Menu className="w-6 h-6" />
                 </button>
               )}
-              <div className="flex items-center">
+              <div className="flex max-sm:hidden items-center">
                 <Store className="w-8 h-8 text-blue-600" />
                 <h1 className="ml-2 text-xl font-semibold text-gray-900">
                   Espace Vendeur
                 </h1>
               </div>
               <nav className="hidden lg:flex space-x-6">
-                <span className="text-blue-600 font-medium">Tableau de bord</span>
+                <span className="text-[#ed7e0f] font-medium">Tableau de bord</span>
                 <span className="text-gray-400 cursor-not-allowed">Produits</span>
                 <span className="text-gray-400 cursor-not-allowed">Commandes</span>
               </nav>
@@ -120,8 +120,11 @@ const DashboardPage = () => {
                   <p className="text-sm font-medium text-gray-900">John Doe</p>
                   <p className="text-xs text-gray-500">Vendeur</p>
                 </div>
-                <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <UserCircle className="w-6 h-6 text-blue-600" />
+                <div className="h-8 w-8  rounded-full flex items-center justify-center">
+                  <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
                 </div>
               </div>
             </div>
@@ -177,14 +180,14 @@ const DashboardPage = () => {
                     <h3 className="text-lg font-semibold text-gray-900">
                       Prochaines étapes
                     </h3>
-                    <span className="px-2.5 py-0.5 bg-blue-100 text-blue-700 text-sm rounded-full">
+                    <span className="px-2.5 py-0.5 bg-[#ed7e0f]/10 text-[#ed7e0f] text-sm rounded-full">
                       1/3 complété
                     </span>
                   </div>
                   <div className="space-y-6">
                     {/* Étape 1 - En cours */}
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#ed7e0f] text-white flex items-center justify-center">
                         1
                       </div>
                       <div className="ml-4 flex-1">
@@ -195,7 +198,7 @@ const DashboardPage = () => {
                           En cours d'examen par notre équipe
                         </p>
                       </div>
-                      <Clock className="w-5 h-5 text-blue-600" />
+                      <Clock className="w-5 h-5 text-[#ed7e0f]" />
                     </div>
 
                     {/* Étape 2 - Verrouillée */}

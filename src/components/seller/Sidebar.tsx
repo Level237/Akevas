@@ -104,14 +104,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
                   href="#"
                   className={`flex items-center px-3 py-2 rounded-lg transition-colors
                     ${item.active 
-                      ? 'bg-blue-50 text-blue-600' 
+                      ? 'bg-[#ed7e0f]/10 text-[#ed7e0f]' 
                       : item.disabled 
                         ? 'opacity-50 cursor-not-allowed text-gray-400'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                 >
                   <item.icon className={`w-5 h-5 ${
-                    item.active ? 'text-blue-600' : 'text-gray-400'
+                    item.active ? 'text-[#ed7e0f]' : 'text-gray-400'
                   }`} />
                   <span className="ml-3 font-medium">{item.label}</span>
                   {!item.disabled && (
@@ -125,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
 
         {/* Footer */}
         <div className="p-4 border-t">
-          <button className="w-full px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="w-full px-4 py-2 text-sm text-white bg-[#ed7e0f] rounded-lg hover:bg-[#ed7e0f]/90 transition-colors">
             Support
           </button>
         </div>
