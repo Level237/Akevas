@@ -1,246 +1,265 @@
-import React, { useState } from 'react';
+'use client'
+
+import { Activity, Bell, Box, ChevronDown, Clock, DollarSign, Home, Package, Settings, Star, Truck, Users } from 'lucide-react'
+
+
+import { Button } from "@/components/ui/button"
 import {
-  Home,
-  Package,
-  Clock,
-  MapPin,
-  Wallet,
-  Settings,
-  Bell,
-  User,
-  ChevronRight,
-  TrendingUp,
-  Truck,
-  DollarSign
-} from 'lucide-react';
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { MobileNav } from '@/components/dashboard/delivery/mobile-nav'
+import { Link } from 'react-router-dom'
+import { OnlineStatusSwitch } from '@/components/dashboard/delivery/online-status-switch'
 
-const deliveries = [
-  {
-    id: 1,
-    orderNumber: 'CMD-001',
-    status: 'En attente',
-    pickupAddress: 'Cocody, Rue des Jardins',
-    deliveryAddress: 'Marcory, Zone 4',
-    amount: 2500,
-    time: '10:30'
-  },
-  {
-    id: 2,
-    orderNumber: 'CMD-002',
-    status: 'En cours',
-    pickupAddress: 'Plateau, Avenue de la République',
-    deliveryAddress: 'Yopougon, Rue Principale',
-    amount: 3000,
-    time: '11:15'
-  }
-];
 
-const stats = [
-  {
-    id: 1,
-    title: 'Livraisons du jour',
-    value: '8',
-    icon: Package,
-    color: 'bg-blue-500'
-  },
-  {
-    id: 2,
-    title: 'Gains du jour',
-    value: '15,000 FCFA',
-    icon: DollarSign,
-    color: 'bg-green-500'
-  },
-  {
-    id: 3,
-    title: 'Temps moyen',
-    value: '25 min',
-    icon: Clock,
-    color: 'bg-purple-500'
-  },
-  {
-    id: 4,
-    title: 'Note',
-    value: '4.8/5',
-    icon: TrendingUp,
-    color: 'bg-yellow-500'
-  }
-];
 
-const DeliveryDashboard: React.FC = () => {
-  const [isOnline, setIsOnline] = useState(false);
-
+export default function DeliveryDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Bar */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img src="/logo.png" alt="Logo" className="w-10 h-10" />
-              <div>
-                <h2 className="font-semibold">Bonjour, John</h2>
-                <p className="text-sm text-gray-500">Livreur #12345</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
-                <Bell className="w-6 h-6" />
-              </button>
-              <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
-                <User className="w-6 h-6" />
-              </button>
-            </div>
+    <div className="min-h-screen bg-background">
+      {/* Top Navigation */}
+      <header className="sticky top-0 z-40 border-b bg-background">
+        <div className="flex h-16 items-center px-4 md:px-6">
+          <MobileNav />
+          <div className="flex items-center gap-2 font-semibold ml-4 lg:ml-0">
+            <Truck className="h-6 w-6" />
+            <span className="hidden md:inline">DeliveryPro</span>
+          </div>
+          <nav className="ml-8 hidden md:flex items-center gap-6">
+            <Link className="text-sm font-medium hover:underline underline-offset-4" to="/">
+              Livraisons
+            </Link>
+            <Link className="text-sm font-medium hover:underline underline-offset-4" to="/">
+              Pages
+            </Link>
+            <Link className="text-sm font-medium hover:underline underline-offset-4" to="/">
+              Compte
+            </Link>
+            <Link className="text-sm font-medium hover:underline underline-offset-4" to="/">
+              Contact
+            </Link>
+          </nav>
+          <div className="ml-auto flex items-center gap-4">
+            <OnlineStatusSwitch />
+            <Button variant="outline" size="icon" className="relative">
+              <Bell className="h-4 w-4" />
+              <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-red-600" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <img
+                    src="/placeholder.svg"
+                    height={32}
+                    width={32}
+                    alt="Avatar"
+                    className="rounded-full"
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">Thomas</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      thomas@delivery.com
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  Profil
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Paramètres
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  Déconnexion
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-      </div>
+      </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Status Toggle */}
-        <div className="mb-8">
-          <button
-            onClick={() => setIsOnline(!isOnline)}
-            className={`w-full md:w-auto px-6 py-3 rounded-xl font-medium transition-colors ${
-              isOnline
-                ? 'bg-green-500 text-white hover:bg-green-600'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            {isOnline ? 'En ligne' : 'Hors ligne'}
-          </button>
-        </div>
+      {/* Main Content */}
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside className="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-background overflow-y-auto">
+          <div className="flex h-14 items-center border-b px-4">
+            <h2 className="text-lg font-semibold">Dashboard</h2>
+          </div>
+          <nav className="flex-1 space-y-1 p-4">
+            <Link className="flex items-center gap-3 rounded-lg bg-secondary/50 px-3 py-2 text-secondary-foreground transition-all hover:text-primary" to="/">
+              <Home className="h-4 w-4" />
+              Accueil
+            </Link>
+            <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary" to="/">
+              <Package className="h-4 w-4" />
+              Livraisons
+            </Link>
+            <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary" to="/">
+              <Clock className="h-4 w-4" />
+              Historique
+            </Link>
+            <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary" to="/">
+              <Activity className="h-4 w-4" />
+              Performance
+            </Link>
+            <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary" to="/">
+              <DollarSign className="h-4 w-4" />
+              Revenus
+            </Link>
+            <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary" to="/">
+              <Star className="h-4 w-4" />
+              Évaluations
+            </Link>
+            <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary" to="/">
+              <Settings className="h-4 w-4" />
+              Paramètres
+            </Link>
+          </nav>
+        </aside>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div key={stat.id} className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-lg ${stat.color}`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <TrendingUp className="w-5 h-5 text-green-500" />
-                </div>
-                <h3 className="text-2xl font-semibold mb-1">{stat.value}</h3>
-                <p className="text-gray-500">{stat.title}</p>
-              </div>
-            );
-          })}
-        </div>
+        {/* Main Dashboard */}
+        <main className="flex-1 p-6 lg:ml-64 overflow-y-auto mt-16 lg:mt-0">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-bold">Bonjour, Thomas</h1>
+              <p className="text-muted-foreground">Voici un aperçu de votre activité</p>
+            </div>
+            <Button>
+              Nouvelle livraison
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
 
-        {/* Current Deliveries */}
-        <div className="bg-white rounded-xl shadow-sm mb-8">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold mb-6">Livraisons en cours</h2>
-            <div className="space-y-6">
-              {deliveries.map((delivery) => (
-                <div
-                  key={delivery.id}
-                  className="border rounded-xl p-4 hover:border-[#ed7e0f] transition-colors"
-                >
-                  <div className="flex items-center justify-between mb-4">
+          {/* Stats Grid */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Livraisons Totales</CardTitle>
+                <Box className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">127</div>
+                <p className="text-xs text-muted-foreground">
+                  +4% par rapport au mois dernier
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Revenus</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">1,234€</div>
+                <p className="text-xs text-muted-foreground">
+                  +10% par rapport au mois dernier
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Clients Servis</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">573</div>
+                <p className="text-xs text-muted-foreground">
+                  +12% par rapport au mois dernier
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Note Moyenne</CardTitle>
+                <Star className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">4.8</div>
+                <p className="text-xs text-muted-foreground">
+                  Basé sur 127 évaluations
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recent Deliveries */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Livraisons Récentes</CardTitle>
+              <CardDescription>
+                Vous avez effectué 12 livraisons aujourd'hui
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {/* Delivery Items */}
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-primary/10 rounded-full">
+                      <Package className="h-4 w-4 text-primary" />
+                    </div>
                     <div>
-                      <span className="text-sm text-gray-500">
-                        {delivery.orderNumber}
-                      </span>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm ${
-                            delivery.status === 'En cours'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-yellow-100 text-yellow-700'
-                          }`}
-                        >
-                          {delivery.status}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {delivery.time}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="font-medium">
-                      {delivery.amount} FCFA
-                    </span>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <MapPin className="w-4 h-4 text-green-600" />
-                      </div>
-                      <div>
-                        <span className="text-sm text-gray-500">Récupération</span>
-                        <p className="text-gray-700">{delivery.pickupAddress}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                        <MapPin className="w-4 h-4 text-red-600" />
-                      </div>
-                      <div>
-                        <span className="text-sm text-gray-500">Livraison</span>
-                        <p className="text-gray-700">{delivery.deliveryAddress}</p>
-                      </div>
+                      <p className="font-medium">Commande #2458</p>
+                      <p className="text-sm text-muted-foreground">15 Rue de la Paix, Paris</p>
                     </div>
                   </div>
-                  <button className="w-full mt-4 px-4 py-2 border rounded-lg text-[#ed7e0f] border-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white transition-colors flex items-center justify-center gap-2">
-                    Voir les détails
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                  <div className="text-right">
+                    <p className="font-medium">14:30</p>
+                    <p className="text-sm text-green-500">Livré</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <button className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <Wallet className="w-8 h-8 text-[#ed7e0f] mb-4" />
-            <h3 className="font-medium mb-2">Mes gains</h3>
-            <p className="text-sm text-gray-500">
-              Consultez vos revenus et retraits
-            </p>
-          </button>
-          <button className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <Clock className="w-8 h-8 text-[#ed7e0f] mb-4" />
-            <h3 className="font-medium mb-2">Historique</h3>
-            <p className="text-sm text-gray-500">
-              Voir vos livraisons passées
-            </p>
-          </button>
-          <button className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <Settings className="w-8 h-8 text-[#ed7e0f] mb-4" />
-            <h3 className="font-medium mb-2">Paramètres</h3>
-            <p className="text-sm text-gray-500">
-              Gérez votre compte et préférences
-            </p>
-          </button>
-        </div>
-      </main>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden">
-        <div className="flex justify-around py-3">
-          <button className="flex flex-col items-center text-[#ed7e0f]">
-            <Home className="w-6 h-6" />
-            <span className="text-xs mt-1">Accueil</span>
-          </button>
-          <button className="flex flex-col items-center text-gray-500">
-            <Package className="w-6 h-6" />
-            <span className="text-xs mt-1">Livraisons</span>
-          </button>
-          <button className="flex flex-col items-center text-gray-500">
-            <Wallet className="w-6 h-6" />
-            <span className="text-xs mt-1">Gains</span>
-          </button>
-          <button className="flex flex-col items-center text-gray-500">
-            <User className="w-6 h-6" />
-            <span className="text-xs mt-1">Profil</span>
-          </button>
-        </div>
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-primary/10 rounded-full">
+                      <Package className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Commande #2457</p>
+                      <p className="text-sm text-muted-foreground">8 Avenue Montaigne, Paris</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">13:45</p>
+                    <p className="text-sm text-green-500">Livré</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-primary/10 rounded-full">
+                      <Package className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Commande #2456</p>
+                      <p className="text-sm text-muted-foreground">22 Rue du Commerce, Paris</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">11:20</p>
+                    <p className="text-sm text-green-500">Livré</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DeliveryDashboard;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from "../../assets/logo.png"
 import {
   X,
   LayoutDashboard,
@@ -10,6 +11,7 @@ import {
   ChevronRight,
   Menu
 } from 'lucide-react';
+import AsyncLink from '../ui/AsyncLink';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -83,7 +85,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
         {/* En-tête Sidebar */}
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+          <AsyncLink to="/" className="flex-shrink-0">
+            <img
+              src={logo}
+              alt="AKEVAS"
+              className="h-20 w-auto"
+            />
+          </AsyncLink>
             {isMobile && (
               <button
                 onClick={onClose}
