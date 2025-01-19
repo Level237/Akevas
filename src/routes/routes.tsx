@@ -24,6 +24,8 @@ import BankInfoPage from "@/pages/auth/seller-registration/BankInfoPage";
 import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
 import DeliveryDashboard from "@/pages/delivery/DashboardPage";
 import DeliveriesPage from "@/pages/delivery/DeliveryPage";
+import DeliveryRootDashboard from "@/components/Layouts/DeliveryRootDashboard";
+import { PrivateRoute } from "@/pages/auth/private-route";
 
 export const routes = createBrowserRouter([
   {
@@ -117,12 +119,18 @@ export const routes = createBrowserRouter([
   {
     path: '/stores/:code',
     element: <StorePage />
-  },
-  {
-    path: '/delivery/dashboard',
-    element: <DeliveryDashboard />
   },{
     path:'/delivery/orders',
     element: <DeliveriesPage />
+  },
+  {
+    path: '/',
+    element: <DeliveryRootDashboard><PrivateRoute/></DeliveryRootDashboard>,
+    children:[
+      {
+        path: 'delivery/dashboard',
+        element: <DeliveryDashboard />
+      }
+    ]
   }
 ]);

@@ -14,8 +14,9 @@ export function OnlineStatusSwitch() {
         id="online-status"
         checked={isOnline}
         onCheckedChange={setIsOnline}
+        className="data-[state=checked]:bg-green-500 "
       />
-      <Label htmlFor="online-status" className={isOnline ? "text-green-500" : "text-muted-foreground"}>
+      <Label htmlFor="online-status" className={isOnline ? "text-black" : "text-muted-foreground"}>
         {isOnline ? "En ligne" : "Hors ligne"}
       </Label>
     </div>
