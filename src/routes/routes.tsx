@@ -11,6 +11,7 @@ import StorePage from "@/pages/StorePage";
 import CheckoutPage from "@/pages/CheckoutPage";
 import StoreBoostPage from "@/pages/seller/StoreBoostPage";
 import CreateProductPage from "@/pages/seller/dashboard/CreateProductPage";
+import DashboardProductListPage from "@/pages/seller/dashboard/ProductListPage";
 import DeliveryRegisterPage from "@/pages/auth/delivery-registration/DeliveryRegisterPage";
 import VehicleInfoPage from "@/pages/auth/delivery-registration/VehicleInfoPage";
 import DeliveryZonePage from "@/pages/auth/delivery-registration/DeliveryZonePage";
@@ -99,6 +100,10 @@ export const routes = createBrowserRouter([
   {
     path: '/seller/boost',
     element: <StoreBoostPage />
+  },
+  {
+    path: '/seller/products',
+    element: <DashboardProductListPage  />
   },
   {
     path: '/products',
