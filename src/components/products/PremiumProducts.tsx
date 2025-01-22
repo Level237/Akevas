@@ -152,7 +152,7 @@ const ProductModal: React.FC<{
             
             <div className="inline-block w-full max-w-4xl my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl overflow-hidden"
                  onClick={e => e.stopPropagation()}>
-              <div className="relative grid grid-cols-2 gap-8">
+              <div className="relative grid max-sm:grid-cols-1 max-sm:gap-0 grid-cols-2 gap-8">
                 {/* Images */}
                 <div className="p-6">
                   <div className="relative aspect-square rounded-lg overflow-hidden mb-4">
@@ -264,7 +264,7 @@ const ProductModal: React.FC<{
                   ))}
 
                   {/* Quantité et ajout au panier */}
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center max-sm:mb-8 gap-6">
                     <div className="flex items-center border rounded-lg">
                       <button
                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
@@ -309,8 +309,8 @@ const PremiumProducts: React.FC = () => {
         {/* En-tête */}
         <div className="flex justify-between items-baseline mb-6">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-2 text-black">Produits Premium</h2>
-              <p className="text-xl md:text-2xl  text-gray-600">Découvrez notre sélection de produits premium 
+              <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-black">Produits Premium</h2>
+              <p className="text-xl md:text-2xl max-sm:text-sm  text-gray-600">Découvrez notre sélection de produits premium 
               </p>
             </div>
             <AsyncLink

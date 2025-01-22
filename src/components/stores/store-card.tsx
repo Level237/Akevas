@@ -45,7 +45,7 @@ export function StoreCard({
     <section className="w-full cursor-pointer">
      <motion.div 
      onClick={()=>open()}
-      className="relative bg-gray-500 rounded-xl overflow-hidden shadow-lg w-[300px] h-[400px] group"
+      className="relative bg-gray-500 rounded-xl max-sm:w-[250px] max-sm:h-[300px] overflow-hidden shadow-lg w-[250px] h-[300px] group"
       whileHover={{ scale: 1.02 }}
       onHoverStart={()=>{setShowOverlay(true);setShowStore(true)}}
       onHoverEnd={()=>{setShowOverlay(false);setShowStore(false)}}

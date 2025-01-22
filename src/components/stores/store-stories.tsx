@@ -177,12 +177,12 @@ interface Store {
   
     return (
         <>
-         <section className="w-full overflow-x-hidden mt-[-3rem]  bg-[#6e0a13] py-8">
+         <section className="w-full overflow-x-hidden max-sm:mt-12 mt-[-3rem]  bg-[#6e0a13] py-8">
         <div className="container overflow-x-hidden  mx-auto px-4">
           <div className="flex justify-between items-baseline mb-6">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-2 text-white">Nos Boutiques</h2>
-              <p className="text-xl md:text-2xl  text-gray-200">Découvrez nos meilleures boutiques</p>
+              <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-white">Nos Boutiques</h2>
+              <p className="text-xl md:text-2xl max-sm:text-sm  text-gray-200">Découvrez nos meilleures boutiques</p>
             </div>
             <AsyncLink
               to="/stores" 
@@ -232,7 +232,7 @@ interface Store {
   
           <AsyncLink
             to="/stores" 
-            className="flex md:hidden items-center  justify-center mt-6 text-sm hover:underline"
+            className="flex md:hidden text-white items-center  justify-center mt-6 text-sm hover:underline"
           >
             Voir toutes les boutiques
             <ChevronRight className="ml-1 h-4 w-4" />
