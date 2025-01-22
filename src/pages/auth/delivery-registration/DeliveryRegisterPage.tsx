@@ -87,7 +87,7 @@ const DeliveryRegisterPage: React.FC = () => {
         </div>
 
         {/* Progress Steps */}
-        <nav className="mb-8">
+        <nav className="mb-8 max-sm:hidden">
           <ol className="flex items-center justify-center space-x-8">
             {steps.map((step, stepIdx) => (
               <li key={step.name} className="relative">
@@ -128,7 +128,7 @@ const DeliveryRegisterPage: React.FC = () => {
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Prénom
@@ -158,7 +158,7 @@ const DeliveryRegisterPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Email
@@ -188,7 +188,7 @@ const DeliveryRegisterPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Date de naissance
@@ -246,7 +246,7 @@ const DeliveryRegisterPage: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Ville

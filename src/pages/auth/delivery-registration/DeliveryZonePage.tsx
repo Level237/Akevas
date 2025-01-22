@@ -88,7 +88,7 @@ const DeliveryZonePage: React.FC = () => {
         </div>
 
         {/* Progress Steps */}
-        <nav className="mb-8">
+        <nav className="mb-8 max-sm:hidden">
           <ol className="flex items-center justify-center space-x-8">
             {steps.map((step, stepIdx) => (
               <li key={step.name} className="relative">

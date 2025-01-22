@@ -109,7 +109,7 @@ const ValidationPage: React.FC = () => {
         </div>
 
         {/* Progress Steps */}
-        <nav className="mb-8">
+        <nav className="mb-8 max-sm:hidden">
           <ol className="flex items-center justify-center space-x-8">
             {steps.map((step, stepIdx) => (
               <li key={step.name} className="relative">
@@ -207,17 +207,17 @@ const ValidationPage: React.FC = () => {
                   </div>
                 )}
 
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-3">
                   <Link
                     to="/delivery/documents"
-                    className="px-6 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
+                    className="px-6 py-2 max-sm:text-sm border rounded-lg hover:bg-gray-50 flex items-center gap-2"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Retour
                   </Link>
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
+                    className="px-6 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                   >
                     Finaliser l'inscription
                     <ChevronRight className="w-4 h-4" />
