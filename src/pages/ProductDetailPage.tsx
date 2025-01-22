@@ -16,6 +16,7 @@ import {
 import shoes from "../assets/shoes1.webp"
 import dress from "../assets/dress.jpg"
 import Header from '@/components/ui/header';
+import MobileNav from '@/components/ui/mobile-nav';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -80,9 +81,9 @@ const ProductDetailPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto max-sm:mx-0 px-4 max-sm:px-0 py-8">
         {/* Fil d'Ariane */}
-        <nav className="flex items-center text-sm text-gray-500 mb-8">
+        <nav className="flex max-sm:mx-9 items-center text-sm text-gray-500 mb-8">
           <a href="/" className="hover:text-gray-900">Accueil</a>
           <ArrowRight className="w-4 h-4 mx-2" />
           <a href="/category/figurines" className="hover:text-gray-900">Figurines</a>
@@ -92,7 +93,7 @@ const ProductDetailPage: React.FC = () => {
 
         {/* Section principale */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="grid grid-cols-2 gap-8 p-8">
+          <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-8 p-8">
             {/* Galerie d'images */}
             <div>
               <div className="aspect-square rounded-lg overflow-hidden mb-4">
@@ -370,6 +371,7 @@ const ProductDetailPage: React.FC = () => {
           </div>
         </div>
       </main>
+      <MobileNav />
     </div>
   );
 };
