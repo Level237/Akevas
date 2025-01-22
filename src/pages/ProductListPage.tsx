@@ -267,18 +267,18 @@ const ProductListPage: React.FC = () => {
 
           {/* Liste des produits */}
           <div className="lg:col-span-3">
-            <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
+            <div className={viewMode === 'grid' ? 'grid grid-cols-1 max-sm:flex max-sm:flex-col max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
               {products.map((product) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={viewMode === 'grid' ? '' : 'flex gap-6 bg-white rounded-2xl shadow-sm p-4'}
+                  className={viewMode === 'grid' ? '' : 'flex gap-6  bg-white rounded-2xl shadow-sm p-4'}
                 >
                   {viewMode === 'grid' ? (
                     // Vue grille
-                    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <div className="group bg-white max-sm:w-[20.9rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                       <div className="relative aspect-square">
                         <img
                           src={product.image}
