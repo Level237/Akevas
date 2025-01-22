@@ -20,16 +20,8 @@ import { OnlineStatusSwitch } from '@/components/dashboard/delivery/online-statu
 
 export default function DeliveriesPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="flex h-16 items-center px-4">
-          <MobileNav />
-          <h1 className="ml-4 text-lg font-semibold">Livraisons disponibles</h1>
-          <div className="ml-auto flex items-center space-x-4">
-            <OnlineStatusSwitch />
-          </div>
-        </div>
-      </header>
+
+     
 
       <main className="p-6">
         <div className="grid gap-6">
@@ -159,7 +151,7 @@ export default function DeliveriesPage() {
           </Card>
         </div>
       </main>
-    </div>
+
   )
 }
 

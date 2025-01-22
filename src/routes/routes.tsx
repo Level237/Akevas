@@ -129,9 +129,6 @@ export const routes = createBrowserRouter([
   {
     path: '/stores/:code',
     element: <StorePage />
-  },{
-    path:'/delivery/orders',
-    element: <DeliveriesPage />
   },
   {
     path: '/',
@@ -140,7 +137,10 @@ export const routes = createBrowserRouter([
       {
         path: 'delivery/dashboard',
         element: <DeliveryDashboard />
-      }
+      },{
+        path:'delivery/orders',
+        element: <DeliveriesPage />
+      },
     ]
   }
 ]);
