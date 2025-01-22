@@ -98,8 +98,9 @@ const Homepage = () => {
         <StoreStories/>
         <PremiumProducts/>
         <ShopByCategory />
-        <MobileNav/>
+       
       </section>
+      <MobileNav/>
     </div>
   );
 };

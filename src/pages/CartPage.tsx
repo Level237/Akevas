@@ -7,6 +7,7 @@ import type { CartItem } from '@/components/cart/CartModal';
 import shoes from "../assets/shoes1.webp"
 import { useRef } from 'react';
 import AsyncLink from '@/components/ui/AsyncLink';
+import MobileNav from '@/components/ui/mobile-nav';
 
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
@@ -48,9 +49,9 @@ const CartPage: React.FC = () => {
 
   }
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen overflow-hidden bg-gray-50">
       <Header />
-
+      <MobileNav/>
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <Link
