@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Header from '@/components/ui/header';
 import TopBar from '@/components/ui/topBar';
+import AsyncLink from '@/components/ui/AsyncLink';
 
 const faqs = [
   {
@@ -96,7 +97,7 @@ const SellerGuidePage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-6">
-              Guide du vendeur Akiba
+              Guide du vendeur Akevas
             </h1>
             <p className="text-xl opacity-90">
               Tout ce que vous devez savoir pour réussir sur notre marketplace
@@ -249,9 +250,10 @@ const SellerGuidePage = () => {
             <p className="text-gray-400 mb-8">
               Rejoignez des milliers de vendeurs qui font confiance à Akiba
             </p>
-            <button className="bg-[#ed7e0f] text-white px-8 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
+            <AsyncLink to="/seller-registration/personal-info"> <button className="bg-[#ed7e0f] text-white px-8 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
               Devenir vendeur
-            </button>
+            </button></AsyncLink>
+           
           </div>
         </div>
       </div>

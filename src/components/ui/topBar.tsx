@@ -1,5 +1,7 @@
 
+import { Link } from 'react-router-dom'
 import { Button } from './button'
+import AsyncLink from './AsyncLink'
 
 export default function TopBar() {
   return (
@@ -9,7 +11,8 @@ export default function TopBar() {
             <h2 className='text-lg max-sm:text-xs font-bold text-white'>DEVENEZ VENDEUR SUR AKEVAS</h2>
           </div>
       <div>
-        <Button className='bg-[#ed7e0f] text-md max-sm:text-sm font-bold'>Créer votre boutique</Button>
+        <AsyncLink to="/seller/guide"> <Button className='bg-[#ed7e0f] text-md max-sm:text-sm font-bold'>Créer votre boutique</Button></AsyncLink>
+       
       </div>
         </div>
      
