@@ -24,7 +24,7 @@ const faqs = [
     color: '#FF6B6B',
     questions: [
       {
-        question: 'Comment créer une boutique sur Akiba ?',
+        question: 'Comment créer une boutique sur Akevas ?',
         answer: 'Pour créer une boutique, cliquez sur "Devenir vendeur" en haut de la page. Remplissez le formulaire avec vos informations personnelles, les détails de votre boutique et téléchargez les documents requis. Notre équipe examinera votre demande sous 48h.'
       },
       {
@@ -248,7 +248,7 @@ const SellerGuidePage = () => {
               Prêt à commencer votre aventure ?
             </h2>
             <p className="text-gray-400 mb-8">
-              Rejoignez des milliers de vendeurs qui font confiance à Akiba
+              Rejoignez des milliers de vendeurs qui font confiance à Akevas
             </p>
             <AsyncLink to="/seller-registration/personal-info"> <button className="bg-[#ed7e0f] text-white px-8 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
               Devenir vendeur
