@@ -27,6 +27,7 @@ import DeliveryDashboard from "@/pages/delivery/DashboardPage";
 import DeliveriesPage from "@/pages/delivery/DeliveryPage";
 import DeliveryRootDashboard from "@/components/Layouts/DeliveryRootDashboard";
 import { PrivateRoute } from "@/pages/auth/private-route";
+import SellerGuidePage from "@/pages/seller/SellerGuidePage";
 
 export const routes = createBrowserRouter([
   {
@@ -104,6 +105,10 @@ export const routes = createBrowserRouter([
   {
     path: '/seller/products',
     element: <DashboardProductListPage  />
+  },
+  {
+    path: '/seller/guide',
+    element: <SellerGuidePage />
   },
   {
     path: '/products',

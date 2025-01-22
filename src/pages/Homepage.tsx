@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import Skeleton from '@/components/ui/Skeleton';
 import { CategorySlider } from '@/components/frontend/category-slider'
+import ShopByCategory from '@/components/frontend/ShopByCategory';
 
 import StoreHero from '@/components/frontend/StoreHero'
 import Header from '@/components/ui/header'
@@ -93,13 +94,11 @@ const Homepage = () => {
         <TopBar/>
         <Header/>
         <StoreHero/>
-      
-        
+       
         <StoreStories/>
         <PremiumProducts/>
-        <CategorySlider />
+        <ShopByCategory />
         <MobileNav/>
-        
       </section>
     </div>
   );
