@@ -286,8 +286,8 @@ interface Store {
                       </div>
                             </div>
 
-                            <div>
-                              <Button className='bg-transparent hover:bg-black hover:text-white' variant={'outline'}>Suivre la boutique<UserPlus/></Button>
+                            <div className='max-sm:hidden'>
+                              <Button className='bg-transparent max-sm:text-sm hover:bg-black hover:text-white' variant={'outline'}>Suivre la boutique<UserPlus/></Button>
                             </div>
                       </div>
                     </div>
@@ -304,7 +304,17 @@ interface Store {
                 <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-4">
                   <div className="md:col-span-3">
                     <div className="mb-6">
-                      <h3 className="mb-4 text-lg font-semibold">Store Categories</h3>
+                      <div className='flex max-sm:mb-6 items-center justify-between'>
+                      <h3 className="mb-4 max-sm:mb-0 text-lg font-semibold">Store Categories</h3>
+                      <Link to={'/stores/fashion-hub'}>
+                      <Button className="px-12 ma max-sm:flex hidden bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 gap-2">
+                        Visiter
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                      </Link>
+                     
+                      </div>
+                      
                       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                         {categories.map((category) => (
                           <div

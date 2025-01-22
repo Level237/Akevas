@@ -104,7 +104,7 @@ const Header = () => {
   return (
     <>
       {/* Header Principal */}
-      <header className="w-full z-50 bg-white border-b sticky top-0">
+      <header className="w-full z-50 bg-white border-b max-sm:sticky top-0">
         <div className="container hidden max-sm:block mx-16 py-3 max-sm:mx-auto px-4">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Menu Burger (Mobile) */}

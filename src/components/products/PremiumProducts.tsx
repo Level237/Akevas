@@ -285,7 +285,7 @@ const ProductModal: React.FC<{
 
                     <button
                       onClick={handleAddToCart}
-                      className="flex-1 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
+                      className="flex-1 max-sm:text-sm max-sm:py-3.5 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
                     >
                       Ajouter au panier
                     </button>
