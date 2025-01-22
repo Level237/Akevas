@@ -1,7 +1,7 @@
 
 
 
-import { Badge, ChevronRight, Clock, ExternalLink, Heart, MapPin, ShoppingBag, Star, X } from 'lucide-react'
+import { Badge, ChevronRight, Clock, ExternalLink, Heart, MapPin, ShoppingBag, Star, UserPlus, X } from 'lucide-react'
 import { useRef, useState } from "react"
 import { Link } from 'react-router-dom'
 import shoes from "../../assets/shoes1.webp"
@@ -260,7 +260,9 @@ interface Store {
                     
                     <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h2 className="text-3xl font-bold">Shoe Store</h2>
+                      <div className='flex items-end justify-between'>
+                            <div>
+                            <h2 className="text-3xl font-bold">Shoe Store</h2>
                       <div className="mt-4 flex flex-wrap items-center gap-4">
                         <div className="flex items-center gap-1">
                           <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -281,6 +283,12 @@ interface Store {
                           isWholesale={true}
                           isThrift={true}
                         />
+                      </div>
+                            </div>
+
+                            <div>
+                              <Button className='bg-transparent hover:bg-black hover:text-white' variant={'outline'}>Suivre la boutique<UserPlus/></Button>
+                            </div>
                       </div>
                     </div>
                   </div>
