@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { ScrollRestoration, useNavigate } from 'react-router-dom';
 import PersonalInfoStep from '@/components/seller/registration/steps/PersonalInfoStep';
 import { SellerFormData } from '@/types/seller-registration.types';
 import TopLoader from '@/components/ui/top-loader';
@@ -58,6 +58,7 @@ const IdentityInfoPage = () => {
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
         <TopLoader progress={33.4} />
+        <ScrollRestoration />
         <div className="max-w-5xl mx-auto">
           <IdentityInfoStep
             data={formData}
