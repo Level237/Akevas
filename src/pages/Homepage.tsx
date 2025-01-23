@@ -15,7 +15,7 @@ import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
 
 const Homepage = () => {
   const [loading, setLoading] = useState(true);
-  const [showFeaturedShop, setShowFeaturedShop] = useState(true);
+  const [showFeaturedShop, setShowFeaturedShop] = useState(false);
 
   useEffect(() => {
     // Simulate loading delay
