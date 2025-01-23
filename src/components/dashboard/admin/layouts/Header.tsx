@@ -1,4 +1,4 @@
-import { Search, Inbox, MessageCircle, Settings, Moon } from "lucide-react"
+import { Search, Inbox, MessageCircle, Settings, Moon, Menu } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -7,6 +7,16 @@ export function Header() {
   return (
     <header className="fixed top-0 right-0 left-0 md:left-64 z-30 h-16 border-b bg-white/50 backdrop-blur-sm">
       <div className="flex items-center justify-between h-full px-4">
+      <div className="w-10">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="fixed  top-4 left-4 z-50 md:hidden"
+      
+      >
+         <Menu className="h-6 w-6" />
+      </Button>
+      </div>
         <div className="flex-1 flex items-center gap-4">
           <div className="w-full max-w-[400px]">
             <div className="relative">
