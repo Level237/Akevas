@@ -8,6 +8,7 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import { ScrollRestoration } from 'react-router-dom';
 import img from "../assets/dress.jpg"
 import { cn } from '@/lib/utils';
+import MobileNav from '@/components/ui/mobile-nav';
 
 // Mock data for shops with enhanced information
 const shops = Array.from({ length: 50 }, (_, i) => ({
@@ -93,6 +94,7 @@ const ShopsPage = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <ScrollRestoration />
+      <MobileNav/>
       
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hero Section */}

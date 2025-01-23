@@ -18,7 +18,7 @@ const MobileNav: React.FC = () => {
     {
       icon: Store,
       label: 'Boutiques',
-      path: '/stores'
+      path: '/shops'
     },
     {
       icon: ShoppingBag,
