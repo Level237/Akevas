@@ -19,8 +19,8 @@ import {
 import { Link, useLocation } from "react-router-dom"
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-  { icon: Package, label: "Products", href: "/products" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
+  { icon: Package, label: "Products", href: "/admin/products" },
   { icon: Truck, label: "Deliverers", href: "/deliverers" },
   { icon: Store, label: "Shops", href: "/shops" },
   { icon: Users, label: "Users", href: "/users" },

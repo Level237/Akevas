@@ -31,6 +31,8 @@ import SellerGuidePage from "@/pages/seller/SellerGuidePage";
 import DashboardAdminPage from "@/pages/admin/DashboardPage";
 import ShopsPage from "@/pages/ShopsPage";
 import NotificationsPage from "@/pages/NotificationsPage";
+import AdminRootDashboard from "@/components/Layouts/AdminRootDashboard";
+import AdminProductListPage from "@/pages/admin/products/ProductPage";
 
 export const routes = createBrowserRouter([
   {
@@ -134,8 +136,17 @@ export const routes = createBrowserRouter([
     element: <StorePage />
   },
   {
-    path:"/dashboard/admin",
-    element:<DashboardAdminPage/>
+    path:"/",
+    element:<AdminRootDashboard><PrivateRoute/></AdminRootDashboard>,
+    children:[
+      {
+        path:"admin/dashboard",
+        element:<DashboardAdminPage/>
+      },{
+        path:"admin/products",
+        element:<AdminProductListPage/>
+      }
+    ]
   },
   {
     path: '/',

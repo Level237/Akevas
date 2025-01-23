@@ -70,59 +70,53 @@ const delivererStats = [
 
 export default function DashboardAdminPage() {
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="flex-1 md:ml-64">
-        <Header />
-        <main className="p-4 md:p-6 mt-16">
-          <h1 className="text-2xl font-bold mb-6">E-Commerce Dashboard</h1>
+    <main className="p-4 md:p-6 mt-16">
+    <h1 className="text-2xl font-bold mb-6">E-Commerce Dashboard</h1>
 
-          <div className="grid gap-6 mb-6">
-            <UserStats
-              stats={[
-                {
-                  title: "Total Revenue",
-                  value: 52890,
-                  change: 12,
-                  icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-                },
-                {
-                  title: "Active Orders",
-                  value: 124,
-                  change: 8,
-                  icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />,
-                },
-                {
-                  title: "Total Products",
-                  value: 1789,
-                  change: 3,
-                  icon: <Package className="h-4 w-4 text-muted-foreground" />,
-                },
-              ]}
-            />
-          </div>
+    <div className="grid gap-6 mb-6">
+      <UserStats
+        stats={[
+          {
+            title: "Total Revenue",
+            value: 52890,
+            change: 12,
+            icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+          },
+          {
+            title: "Active Orders",
+            value: 124,
+            change: 8,
+            icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />,
+          },
+          {
+            title: "Total Products",
+            value: 1789,
+            change: 3,
+            icon: <Package className="h-4 w-4 text-muted-foreground" />,
+          },
+        ]}
+      />
+    </div>
 
-          <div className="grid gap-6 mb-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <RecentUsers users={recentDeliverers} title="Recent Deliverers" />
-              <RecentUsers users={recentSellers} title="Recent Sellers" />
-            </div>
-            <RecentProducts products={recentProducts} />
-          </div>
+    <div className="grid gap-6 mb-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        <RecentUsers users={recentDeliverers} title="Recent Deliverers" />
+        <RecentUsers users={recentSellers} title="Recent Sellers" />
+      </div>
+      <RecentProducts products={recentProducts} />
+    </div>
 
-          <div className="grid gap-6">
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Seller Statistics</h2>
-              <UserStats stats={sellerStats} />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Deliverer Statistics</h2>
-              <UserStats stats={delivererStats} />
-            </div>
-          </div>
-        </main>
+    <div className="grid gap-6">
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Seller Statistics</h2>
+        <UserStats stats={sellerStats} />
+      </div>
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Deliverer Statistics</h2>
+        <UserStats stats={delivererStats} />
       </div>
     </div>
+  </main>
   )
 }
 
