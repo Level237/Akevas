@@ -11,9 +11,11 @@ import TopBar from '@/components/ui/topBar'
 import StoreStories from '@/components/stores/store-stories'
 import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
+import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
 
 const Homepage = () => {
   const [loading, setLoading] = useState(true);
+  const [showFeaturedShop, setShowFeaturedShop] = useState(true);
 
   useEffect(() => {
     // Simulate loading delay
@@ -23,6 +25,9 @@ const Homepage = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+
+
 
   if (loading) {
     return (
@@ -89,7 +94,7 @@ const Homepage = () => {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#F8F9FC]">
       <section className='overflow-hidden'>
         <TopBar/>
         <Header/>
@@ -101,6 +106,10 @@ const Homepage = () => {
        
       </section>
       <MobileNav/>
+      <FeaturedShopModal 
+        isOpen={showFeaturedShop} 
+        onClose={() => setShowFeaturedShop(false)} 
+      />
     </div>
   );
 };

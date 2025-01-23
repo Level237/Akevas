@@ -16,6 +16,7 @@ import {
 import Header from '@/components/ui/header';
 import TopBar from '@/components/ui/topBar';
 import AsyncLink from '@/components/ui/AsyncLink';
+import MobileNav from '@/components/ui/mobile-nav';
 
 const faqs = [
   {
@@ -91,7 +92,7 @@ const SellerGuidePage = () => {
     <div className="min-h-screen bg-gray-50">
       <TopBar />
       <Header />
-
+      <MobileNav/>
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-[#ed7e0f] to-[#6e0a13] text-white py-20">
         <div className="container mx-auto px-4">
