@@ -33,6 +33,8 @@ import ShopsPage from "@/pages/ShopsPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import AdminRootDashboard from "@/components/Layouts/AdminRootDashboard";
 import AdminProductListPage from "@/pages/admin/products/ProductPage";
+import AdminShopDetailPage from "@/pages/admin/shops/ShopDetailPage";
+import AdminShopPage from "@/pages/admin/shops/ShopPage";
 
 export const routes = createBrowserRouter([
   {
@@ -145,6 +147,12 @@ export const routes = createBrowserRouter([
       },{
         path:"admin/products",
         element:<AdminProductListPage/>
+      },{
+        path:"admin/shops/:id",
+        element:<AdminShopDetailPage/>
+      },{
+        path:"admin/shops",
+        element:<AdminShopPage/>
       }
     ]
   },

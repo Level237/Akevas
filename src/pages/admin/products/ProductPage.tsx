@@ -18,7 +18,7 @@ export default function AdminProductListPage() {
     <main className="p-4 md:p-6 mt-16">
     <div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold">Products</h1>
-      <Button>
+      <Button className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90">
         <Plus className="mr-2 h-4 w-4" /> Add Product
       </Button>
     </div>
@@ -51,7 +51,7 @@ export default function AdminProductListPage() {
               <TableCell>${product.price.toFixed(2)}</TableCell>
               <TableCell>{product.stock}</TableCell>
               <TableCell>
-                <Badge variant={product.status === "In Stock" ? "success" : "warning"}>{product.status}</Badge>
+                <Badge  className={product.status === "In Stock" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}>{product.status}</Badge>
               </TableCell>
               <TableCell className="text-right">
                 <Button variant="ghost" size="icon" className="mr-2">
