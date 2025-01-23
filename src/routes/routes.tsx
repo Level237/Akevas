@@ -29,6 +29,8 @@ import DeliveryRootDashboard from "@/components/Layouts/DeliveryRootDashboard";
 import { PrivateRoute } from "@/pages/auth/private-route";
 import SellerGuidePage from "@/pages/seller/SellerGuidePage";
 import DashboardAdminPage from "@/pages/admin/DashboardPage";
+import ShopsPage from "@/pages/ShopsPage";
+import NotificationsPage from "@/pages/NotificationsPage";
 
 export const routes = createBrowserRouter([
   {
@@ -147,5 +149,17 @@ export const routes = createBrowserRouter([
         element: <DeliveriesPage />
       },
     ]
-  }
+  },
+  {
+    path: '/',
+    element: <Homepage />,
+    
+  },{
+    path: 'shops',
+    element: <ShopsPage />
+  },
+  {
+    path: 'notifications',
+    element: <NotificationsPage />
+  },
 ]);
