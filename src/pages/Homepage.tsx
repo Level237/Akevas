@@ -14,16 +14,16 @@ import MobileNav from '@/components/ui/mobile-nav'
 import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
 
 const Homepage = () => {
-  const [loading, setLoading] = useState(true);
+  //t [loading, setLoading] = useState(true);
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
 
   useEffect(() => {
     // Simulate loading delay
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 4000);
+    //const timer = setTimeout(() => {
+    //setLoading(false);
+    //}, 4000);
 
-    return () => clearTimeout(timer);
+    //return () => clearTimeout(timer);
   }, []);
 
 
@@ -44,10 +44,10 @@ const Homepage = () => {
         </div>
 
         {/* Hero Skeleton */}
-          <div className='flex items-start mt-28 gap-4 mx-16 h-[30rem]'>
-              <Skeleton className="w-[75%] rounded-3xl  relative h-96" />
-              <Skeleton className="flex w-[25%] h-96 gap-4"/>
-          </div>
+        <div className='flex items-start mt-28 gap-4 mx-16 h-[30rem]'>
+          <Skeleton className="w-[75%] rounded-3xl  relative h-96" />
+          <Skeleton className="flex w-[25%] h-96 gap-4" />
+        </div>
         {/* Categories Skeleton */}
         <div className="mb-12 ">
           <Skeleton className="h-8 w-48 mb-6" />
@@ -96,19 +96,19 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
       <section className='overflow-hidden'>
-        <TopBar/>
-        <Header/>
-        <StoreHero/>
-       
-        <StoreStories/>
-        <PremiumProducts/>
+        <TopBar />
+        <Header />
+        <StoreHero />
+
+        <StoreStories />
+        <PremiumProducts />
         <ShopByCategory />
-       
+
       </section>
-      <MobileNav/>
-      <FeaturedShopModal 
-        isOpen={showFeaturedShop} 
-        onClose={() => setShowFeaturedShop(false)} 
+      <MobileNav />
+      <FeaturedShopModal
+        isOpen={showFeaturedShop}
+        onClose={() => setShowFeaturedShop(false)}
       />
     </div>
   );
