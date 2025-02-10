@@ -1,9 +1,9 @@
-
+import { useSelector } from 'react-redux'
 import {  Navigate, Outlet, useLocation} from 'react-router-dom'
-
+import { RootState } from '@/store'
 export  const  PrivateRoute=()=> {
     
-    const token="NDJHF"
+    const token=useSelector((state:RootState)=>state.auth.usedToken)
     const location=useLocation()
 
 

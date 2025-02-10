@@ -1,7 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
+import { useLoginMutation } from "@/services/auth";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { AppDispatch } from "@/store";
+import { useState } from "react";
+import { authTokenChange } from "@/store/authSlice";
 export default function LoginForm() {
+
+   const [phone,setPhone]=useState('');
+    const [password,setPassword]=useState('');
+   const [login,{isLoading,isError,error}]=useLoginMutation()
+    const dispatch=useDispatch<AppDispatch>();
+    const navigate=useNavigate()
+
+    const handleSubmit=async(e:React.FormEvent<HTMLFormElement>)=>{
+        e.preventDefault()
+            const userObject={phone:phone,password:password}
+            const userData=await login(userObject)
+            
+            const userState={
+                'refreshToken':userData.data.refresh_token,
+                'accessToken':userData.data.access_token
+            }
+            
+            dispatch(authTokenChange(userState))
+            
+            setPhone('')
+            setPassword('')
+            navigate(`/authenticate?token=
+              ${userData.data.access_token}
+              &refresh_token=${userData.data.refresh_token}`)
+    }
   return (
     <div className="flex flex-col px-8 py-12 ">
     <div className="mb-2 md:px-2">
@@ -30,17 +60,22 @@ export default function LoginForm() {
         </div>
       </div>
 
-      <form className="space-y-4">
-        
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
+          {'data' in error ? JSON.stringify(error.data) : 'Une erreur est survenue'}
+        </div>}
         
         <div className="space-y-2">
           <label htmlFor="email">Numéro de Téléphone</label>
           <Input
-            id="email"
-            placeholder="Enter your email"
+            id="phone"
+            placeholder="Enter your phone"
             required
-            type="email"
+            type="phone"
             className="py-6"
+            name="phone"
+            value={phone}
+            onChange={(e)=>setPhone(e.target.value)}
           />
         </div>
 
@@ -52,6 +87,9 @@ export default function LoginForm() {
             required
             type="password"
             className="py-6"
+            name="password"
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
           />
         </div>
 
@@ -68,8 +106,8 @@ export default function LoginForm() {
             </label>
           </div>
 
-          <Button type="submit" className="w-full py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
-            Sign Up
+          <Button disabled={isLoading} type="submit" className="w-full py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
+            {isLoading ? "Connexion..." : "Connexion"}
           </Button>
         </div>
       </form>

@@ -7,6 +7,7 @@ const authSlice=createSlice({
       refreshToken: localStorage.getItem("refreshToken") || null,
       token: localStorage.getItem("token") || null,
       usedToken: localStorage.getItem("token") || null,
+      userRole: localStorage.getItem("userRole") || null,
 },
 
     reducers:{
@@ -18,6 +19,10 @@ const authSlice=createSlice({
             state.refreshToken = action.payload.refreshToken;
             state.usedToken = action.payload.accessToken;
             console.log(state.token)
+          },
+          userRole: (state, action) => {
+            localStorage.setItem("userRole", action.payload.userRole);
+            state.userRole = action.payload.userRole;
           },
           logoutUser: (state) => {
             localStorage.removeItem("token");
@@ -32,5 +37,5 @@ const authSlice=createSlice({
     }
 })
 
-export const { authTokenChange, logoutUser, adjustUsedToken } = authSlice.actions;
+export const { authTokenChange, logoutUser,userRole, adjustUsedToken } = authSlice.actions;
 export default authSlice;
