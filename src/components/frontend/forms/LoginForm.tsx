@@ -16,9 +16,9 @@ export default function LoginForm() {
 
     const handleSubmit=async(e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault()
-            const userObject={phone:phone,password:password}
+            const userObject={phone_number:phone,password:password}
             const userData=await login(userObject)
-            
+            console.log(userObject)
             const userState={
                 'refreshToken':userData.data.refresh_token,
                 'accessToken':userData.data.access_token

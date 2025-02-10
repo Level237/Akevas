@@ -20,7 +20,7 @@ const authSlice=createSlice({
             state.usedToken = action.payload.accessToken;
             console.log(state.token)
           },
-          userRole: (state, action) => {
+          getUserRole: (state, action) => {
             localStorage.setItem("userRole", action.payload.userRole);
             state.userRole = action.payload.userRole;
           },
@@ -37,5 +37,5 @@ const authSlice=createSlice({
     }
 })
 
-export const { authTokenChange, logoutUser,userRole, adjustUsedToken } = authSlice.actions;
+export const { authTokenChange, logoutUser,getUserRole, adjustUsedToken } = authSlice.actions;
 export default authSlice;
