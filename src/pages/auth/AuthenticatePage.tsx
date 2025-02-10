@@ -42,8 +42,11 @@ export const AuthenticatePage=()=>{
 return () => clearTimeout(timer);
     },[isLoading,tokenUrl,token,userData,dispatch,navigate,isSuccess])
     return(
-        <div>
-            <h1>gg</h1>
-        </div>
+        <section className="h-screen w-full flex flex-col items-center justify-center">
+                <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full" role="status" aria-label="loading">
+                    <span className="sr-only">Loading...</span>
+                </div>
+        </section>
+        
     )
 }
