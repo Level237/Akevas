@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import './App.css'
-import { RouterProvider, ScrollRestoration } from 'react-router-dom'
+import { RouterProvider } from 'react-router-dom'
 import { routes } from './routes/routes'
 import { LoaderProvider } from './context/LoaderContext'
+import { Provider } from 'react-redux'
+import { store } from './store'
 
 
 function App() {
@@ -12,8 +12,9 @@ function App() {
 
   return (
     <LoaderProvider>
-      
-    <RouterProvider router={routes} />
+       <Provider store={store}>
+        <RouterProvider router={routes} />
+       </Provider>
    
     </LoaderProvider>
   )
