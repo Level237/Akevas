@@ -35,7 +35,7 @@ import AdminRootDashboard from "@/components/Layouts/AdminRootDashboard";
 import AdminProductListPage from "@/pages/admin/products/ProductPage";
 import AdminShopDetailPage from "@/pages/admin/shops/ShopDetailPage";
 import AdminShopPage from "@/pages/admin/shops/ShopPage";
-
+import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -181,4 +181,8 @@ export const routes = createBrowserRouter([
     path: 'notifications',
     element: <NotificationsPage />
   },
+  {
+    path:'/authenticate',
+    element:<AuthenticatePage/>
+  }
 ]);
