@@ -58,7 +58,7 @@ export const authService=createApi({
                       return { error: baseQueryResult.data };
                     }
                   },
-        })
+        }),
     })
 })
 

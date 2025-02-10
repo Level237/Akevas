@@ -1,15 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "./authSlice";
 import { authService } from "@/services/auth";
-
+import { checkTokenService } from "@/services/checkService";
 export const store=configureStore({
     reducer:{
         [authSlice.name]:authSlice.reducer,
-        [authService.reducerPath]:authService.reducer
+        [authService.reducerPath]:authService.reducer,
+        [checkTokenService.reducerPath]:checkTokenService.reducer
     },
     middleware:(getDefaultMiddleware)=>getDefaultMiddleware({
         serializableCheck:false
-    }).concat(authService.middleware)
+    }).concat(authService.middleware,checkTokenService.middleware)
 })
 
 export type RootState=ReturnType<typeof store.getState>
