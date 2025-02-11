@@ -16,10 +16,13 @@ const registerSlice=createSlice({
       storeName: localStorage.getItem("storeName") || null,
       storeDescription: localStorage.getItem("storeDescription") || null,
       storeCategories: localStorage.getItem("storeCategories") || null,
-      storeCity: localStorage.getItem("storeCity") || null,
-      storeState: localStorage.getItem("storeState") || null,
-      storeZipCode: localStorage.getItem("storeZipCode") || null,
-      storeCountry: localStorage.getItem("storeCountry") || null,
+      storeLogo: localStorage.getItem("storeLogo") || null,
+      storeImages: localStorage.getItem("storeImages") || null,
+      sellerType: localStorage.getItem("sellerType") || null,
+      productType: localStorage.getItem("productType") || null,
+      storeTown: localStorage.getItem("storeTown") || null,
+      storeQuarter: localStorage.getItem("storeQuarter") || null,
+      password: localStorage.getItem("password") || null,
 },
 
     reducers:{
@@ -47,13 +50,34 @@ const registerSlice=createSlice({
        },
        setShopInfo:(state,action)=>{
         localStorage.setItem("storeName", action.payload.storeName);
-        localStorage.setItem("zipCode", action.payload.zipCode);
-        localStorage.setItem("country", action.payload.country);
+        localStorage.setItem("storeDescription", action.payload.storeDescription);
+        localStorage.setItem("storeCategories", action.payload.storeCategories);
+        localStorage.setItem("storeLogo", action.payload.storeLogo);
+        localStorage.setItem("storeImages", action.payload.storeImages);
         state.storeName = action.payload.storeName;
-        state.zipCode = action.payload.zipCode;
-        state.country = action.payload.country;
+        state.storeDescription = action.payload.storeDescription;
+        state.storeCategories = action.payload.storeCategories;
+        state.storeLogo = action.payload.storeLogo;
+        state.storeImages = action.payload.storeImages;
+    },
+    setSellerType:(state,action)=>{
+        localStorage.setItem("sellerType", action.payload.sellerType);
+        localStorage.setItem("productType", action.payload.productType);
+        state.sellerType = action.payload.sellerType;
+        state.productType = action.payload.productType;
+    },
+    setAddressInfo:(state,action)=>{
+        localStorage.setItem("storeTown", action.payload.storeTown);
+        localStorage.setItem("storeQuarter", action.payload.storeQuarter);
+        state.storeTown = action.payload.storeTown;
+        state.storeQuarter = action.payload.storeQuarter;
+    },
+    setPassword:(state,action)=>{
+        localStorage.setItem("password", action.payload.password);
+        state.password = action.payload.password;
     }
+}   
 })
 
-export const { setPersonalInfo } = registerSlice.actions;
+export const { setPersonalInfo, setIdentity, setShopInfo, setSellerType, setAddressInfo, setPassword } = registerSlice.actions;
 export default registerSlice;

@@ -7,12 +7,12 @@ import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-interface BankInfoStepProps {
+interface SellerTypeStepProps {
   data: SellerFormData['bankInfo'];
   onUpdate: (data: Partial<SellerFormData>) => void;
 }
 
-const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
+const SellerTypeStep: React.FC<SellerTypeStepProps> = ({ data, onUpdate }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     onUpdate({
@@ -115,4 +115,4 @@ const BankInfoStep: React.FC<BankInfoStepProps> = ({ data, onUpdate }) => {
   );
 };
 
-export default BankInfoStep;
+export default SellerTypeStep;

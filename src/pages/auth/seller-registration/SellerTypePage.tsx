@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BankInfoStep from '@/components/seller/registration/steps/BankInfoStep';
+import SellerTypeStep from '@/components/seller/registration/steps/SellerTypeStep';
 import { SellerFormData } from '@/types/seller-registration.types';
 import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 
-const BankInfoPage = () => {
+const SellerTypePage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<SellerFormData['bankInfo']>({
@@ -65,7 +65,7 @@ const BankInfoPage = () => {
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
         <TopLoader progress={66.8} />
         <div className="max-w-5xl mx-auto">
-          <BankInfoStep 
+          <SellerTypeStep 
             data={formData}
             onUpdate={handleUpdate}
           />
@@ -103,4 +103,4 @@ const BankInfoPage = () => {
   );
 };
 
-export default BankInfoPage;
+export default SellerTypePage;

@@ -21,7 +21,7 @@ import DeliveryGenerationPage from "@/pages/auth/delivery-registration/DeliveryG
 import PersonalInfoPage from "@/pages/auth/seller-registration/PersonalInfoPage";
 import SecurityInfoPage from "@/pages/auth/seller-registration/SecurityInfoPage";
 import ShopInfoPage from "@/pages/auth/seller-registration/ShopInfoPage";
-import BankInfoPage from "@/pages/auth/seller-registration/BankInfoPage";
+
 import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
 import DeliveryDashboard from "@/pages/delivery/DashboardPage";
 import DeliveriesPage from "@/pages/delivery/DeliveryPage";
@@ -36,6 +36,7 @@ import AdminProductListPage from "@/pages/admin/products/ProductPage";
 import AdminShopDetailPage from "@/pages/admin/shops/ShopDetailPage";
 import AdminShopPage from "@/pages/admin/shops/ShopPage";
 import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
+import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage"; 
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -82,8 +83,8 @@ export const routes = createBrowserRouter([
     element: <ShopInfoPage />
   },
   {
-    path: '/seller-registration/bank-info',
-    element: <BankInfoPage />
+    path: '/seller-registration/seller-type',
+    element: <SellerTypePage />
   },
   {
     path: '/seller-registration/address-info',

@@ -55,7 +55,7 @@ const ShopInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/bank-info');
+      navigate('/seller-registration/seller-type');
     } catch (error) {
       console.error('Error:', error);
     } finally {
