@@ -13,9 +13,13 @@ const registerSlice=createSlice({
       identity_card_in_front: localStorage.getItem("identity_card_in_front") || null,
       identity_card_in_back: localStorage.getItem("identity_card_in_back") || null,
       identity_card_with_the_person: localStorage.getItem("identity_card_with_the_person") || null,
-      state: localStorage.getItem("state") || null,
-      zipCode: localStorage.getItem("zipCode") || null,
-      country: localStorage.getItem("country") || null,
+      storeName: localStorage.getItem("storeName") || null,
+      storeDescription: localStorage.getItem("storeDescription") || null,
+      storeCategories: localStorage.getItem("storeCategories") || null,
+      storeCity: localStorage.getItem("storeCity") || null,
+      storeState: localStorage.getItem("storeState") || null,
+      storeZipCode: localStorage.getItem("storeZipCode") || null,
+      storeCountry: localStorage.getItem("storeCountry") || null,
 },
 
     reducers:{
@@ -40,7 +44,14 @@ const registerSlice=createSlice({
             state.identity_card_in_front = action.payload.identity_card_in_front;
             state.identity_card_in_back = action.payload.identity_card_in_back;
             state.identity_card_with_the_person = action.payload.identity_card_with_the_person;
-       }
+       },
+       setShopInfo:(state,action)=>{
+        localStorage.setItem("storeName", action.payload.storeName);
+        localStorage.setItem("zipCode", action.payload.zipCode);
+        localStorage.setItem("country", action.payload.country);
+        state.storeName = action.payload.storeName;
+        state.zipCode = action.payload.zipCode;
+        state.country = action.payload.country;
     }
 })
 

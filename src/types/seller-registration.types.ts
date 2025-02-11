@@ -19,8 +19,9 @@ export interface SellerFormData {
   shopInfo: {
     shopName: string;
     description: string;
-    category: string;
+    category: string[];
     logo?: File;
+    images?: File[];
   };
   // Informations bancaires
   bankInfo: {

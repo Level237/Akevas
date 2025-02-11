@@ -13,7 +13,9 @@ const ShopInfoPage = () => {
   const [formData, setFormData] = useState<SellerFormData['shopInfo']>({
     shopName: '',
     description: '',
-    category: '',
+    images: [],
+    logo: undefined,
+    category: [],
   });
 
   const handleUpdate = (data: Partial<SellerFormData>) => {
@@ -29,7 +31,7 @@ const ShopInfoPage = () => {
   const handleNext = async () => {
     // Validation
     const requiredFields = ['shopName', 'description', 'category'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (missingFields.length > 0) {
       alert('Veuillez remplir tous les champs obligatoires');
