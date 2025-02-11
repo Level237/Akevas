@@ -36,7 +36,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
         onUpdate({
           shopInfo: {
             ...data,
-            [name]: Array.from(files), // Convertit FileList en array
+            [name]: Array.from(files).map(file => URL.createObjectURL(file)), // Convertit FileList en array
           },
         });
         return;

@@ -14,7 +14,7 @@ const ShopInfoPage = () => {
     shopName: '',
     description: '',
     images: [],
-    logo: undefined,
+    logo: null,
     category: [],
   });
 
@@ -27,7 +27,7 @@ const ShopInfoPage = () => {
   const handlePrevious = () => {
     navigate(-1);
   };
-
+console.log(formData);
   const handleNext = async () => {
     // Validation
     const requiredFields = ['shopName', 'description', 'category'];

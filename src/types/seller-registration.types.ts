@@ -20,8 +20,8 @@ export interface SellerFormData {
     shopName: string;
     description: string;
     category: string[];
-    logo?: File;
-    images?: File[];
+    logo: string | null;
+    images: string[];
   };
   // Informations bancaires
   bankInfo: {
