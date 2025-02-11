@@ -2,8 +2,11 @@ import { Search, Inbox, MessageCircle, Settings, Moon, Menu } from "lucide-react
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useGetUserQuery } from "@/services/auth"
 
 export function Header() {
+   const {data:userData}=useGetUserQuery('Auth')
+   
   return (
     <header className="fixed top-0 right-0 left-0 md:left-64 z-30 h-16 border-b bg-white/50 backdrop-blur-sm">
       <div className="flex items-center justify-between h-full px-4">
@@ -54,8 +57,8 @@ export function Header() {
               <AvatarFallback>WR</AvatarFallback>
             </Avatar>
             <div className="hidden md:block">
-              <div className="font-medium">William Robbie</div>
-              <div className="text-xs text-gray-500">CEO & Founder</div>
+              <div className="font-medium">{userData?.userName}</div>
+              <div className="text-xs text-gray-500">Administrateur</div>
             </div>
           </div>
         </div>

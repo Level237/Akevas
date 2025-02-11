@@ -7,7 +7,7 @@ export  const  PrivateRoute=()=> {
     const token=useSelector((state:RootState)=>state.auth.usedToken)
     //const {data,isLoading}=useCheckTokenQuery()
     const location=useLocation()
-
+    
 
     return (
         token ? <Outlet/> : <Navigate to="/login" state={{ from:location }} replace/>

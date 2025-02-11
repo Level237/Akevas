@@ -98,6 +98,9 @@ export const routes = createBrowserRouter([
     element: <IdentityInfoPage />
   },
   {
+    element:<PrivateRoute/>,
+    children:[
+{
     path: '/seller/dashboard',
     element: <DashboardPage />
   },
@@ -112,6 +115,8 @@ export const routes = createBrowserRouter([
   {
     path: '/seller/products',
     element: <DashboardProductListPage  />
+  }
+    ]
   },
   {
     path: '/seller/guide',

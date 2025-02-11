@@ -71,7 +71,7 @@ const delivererStats = [
 export default function DashboardAdminPage() {
   return (
     <main className="p-4 md:p-6 mt-16">
-    <h1 className="text-2xl font-bold mb-6">E-Commerce Dashboard</h1>
+    <h1 className="text-2xl font-bold mb-6">Akevas Dashboard</h1>
 
     <div className="grid gap-6 mb-6">
       <UserStats

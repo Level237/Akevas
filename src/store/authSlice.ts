@@ -27,9 +27,11 @@ const authSlice=createSlice({
           logoutUser: (state) => {
             localStorage.removeItem("token");
             localStorage.removeItem("refreshToken");
+            localStorage.removeItem("userRole");
             state.token = null;
             state.refreshToken = null;
             state.usedToken = null;
+            state.userRole = null;
           },
           adjustUsedToken: (state, action) => {
             state.usedToken = action.payload;

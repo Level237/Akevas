@@ -15,9 +15,12 @@ import {
   HelpCircle,
   Menu,
   X,
+  LogOut,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
-
+import { useLogoutMutation } from "@/services/auth"
+import { useDispatch } from "react-redux"
+import { logoutUser } from "@/store/authSlice"
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
@@ -32,8 +35,14 @@ const navItems = [
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
-  
+  const [logout]=useLogoutMutation()
+  const dispatch=useDispatch();
   const { pathname } = useLocation()
+
+  const handleLogout=async()=>{
+    await logout('Auth');
+    dispatch(logoutUser())
+  }
   return (
     <>
       {/* Mobile Menu Button */}
@@ -81,8 +90,8 @@ export function Sidebar() {
           </nav>
 
           <div className="p-4 border-t">
-            <Button variant="outline" className="w-full">
-              <Users className="mr-2 h-4 w-4" /> Invite Team
+            <Button variant="outline" className="w-full" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" /> Deconnexion
             </Button>
           </div>
         </div>
