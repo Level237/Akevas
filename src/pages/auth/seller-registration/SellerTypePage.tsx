@@ -6,10 +6,12 @@ import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
-
+import { useDispatch } from 'react-redux';
+import { setSellerType } from '@/store/seller/registerSlice';
 const SellerTypePage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<SellerFormData['bankInfo']>({
     sellerType: '',
     productType: '',
@@ -24,7 +26,7 @@ const SellerTypePage = () => {
   const handlePrevious = () => {
     navigate(-1);
   };
-
+console.log(formData);
   const handleNext = async () => {
     // Validation
     const requiredFields = ['sellerType', 'productType'];
@@ -40,7 +42,11 @@ const SellerTypePage = () => {
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const sellerTypeState={
+        'sellerType':formData.sellerType,
+        'productType':formData.productType,
+      }
+      dispatch(setSellerType(sellerTypeState));
       // Animation de succès
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';

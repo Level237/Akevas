@@ -1,10 +1,7 @@
 import React from 'react';
 import { SellerFormData } from '@/types/seller-registration.types';
-import { Input } from '@/components/ui/input';
+
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface SellerTypeStepProps {
@@ -13,15 +10,7 @@ interface SellerTypeStepProps {
 }
 
 const SellerTypeStep: React.FC<SellerTypeStepProps> = ({ data, onUpdate }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    onUpdate({
-      bankInfo: {
-        ...data,
-        [name]: value,
-      },
-    });
-  };
+
 
   const handleSellerTypeChange = (value: string) => {
     onUpdate({
