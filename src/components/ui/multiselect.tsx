@@ -11,9 +11,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 type MultiSelectProps = {
-  options: string[];
-  selected: string[];
-  onChange: (selected: string[]) => void;
+  options: {id:number,category_name:string}[];
+  selected: number[];
+  onChange: (selected: number[]) => void;
   placeholder?: string;
 };
 
@@ -34,12 +34,12 @@ export function MultiSelect({
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
 
-  const handleUnselect = (option: string) => {
+  const handleUnselect = (option: number) => {
     onChange(selected.filter((s) => s !== option));
   };
 
-  const selectables = options.filter((option) => !selected.includes(option));
-
+  const selectables = options.filter((option) => !selected.includes(option.id));
+  
   return (
     <Command className="overflow-visible bg-transparent">
       <div className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
@@ -47,7 +47,7 @@ export function MultiSelect({
           {selected.map((option) => {
             return (
               <Badge key={option} className="bg-white" variant="secondary">
-                {option}
+                {options.find((o) => o.id === option)?.category_name}
                 <button
                   className="ml-1 ring-offset-background  rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   onKeyDown={(e) => {
@@ -86,24 +86,24 @@ export function MultiSelect({
                 {selectables.map((option) => {
                   return (
                     <CommandItem
-                      key={option}
+                      key={option.id}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                       }}
                       onSelect={() => {
                         setInputValue("");
-                        onChange([...selected, option]);
+                        onChange([...selected, option.id]);
                       }}
                       className={"cursor-pointer"}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          onChange([...selected, option]);
+                          onChange([...selected, option.id]);
                           setInputValue("");
                         }
                       }}
                     >
-                      {option}
+                      {option.category_name}
                     </CommandItem>
                   );
                 })}

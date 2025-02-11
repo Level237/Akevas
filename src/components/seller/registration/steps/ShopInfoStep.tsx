@@ -6,48 +6,61 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Upload } from 'lucide-react';
 import { MultiSelect } from '@/components/ui/multiselect';
-
+import { useGetCategoriesQuery } from '@/services/guardService';
 interface ShopInfoStepProps {
   data: SellerFormData['shopInfo'];
   onUpdate: (data: Partial<SellerFormData>) => void;
 }
 
-const categories = [
-  'Mode',
-  'Électronique',
-  'Maison & Jardin',
-  'Sports & Loisirs',
-  'Beauté & Santé',
-  'Alimentation',
-  'Art & Collection',
-  'Autres',
-];
+
+
 
 
 
 const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
+  const {data:categories,isLoading}=useGetCategoriesQuery('guard')
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
   ) => {
-    const { name, value,type, files } = e.target;
-   
+    const { name,value,type, files } = e.target;
     if(type === 'file' && files) {
        if (name === 'images') {
-        onUpdate({
-          shopInfo: {
-            ...data,
-            [name]: Array.from(files).map(file => URL.createObjectURL(file)), // Convertit FileList en array
-          },
+        // Traitement de plusieurs fichiers
+        const fileArray = Array.from(files);
+        Promise.all(
+          fileArray.map((file) => {
+            return new Promise<string>((resolve) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                resolve(e.target?.result as string);
+              };
+              reader.readAsDataURL(file);
+            });
+          })
+        ).then((base64Array) => {
+          onUpdate({
+            shopInfo: {
+              ...data,
+              [name]: base64Array,
+            },
+          });
         });
         return;
+      } else if (name === 'logo') {
+        // Traitement d'un seul fichier (logo)
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64 = e.target?.result as string;
+          onUpdate({
+            shopInfo: {
+              ...data,
+              [name]: base64,
+            },
+          });
+        };
+        reader.readAsDataURL(files[0]);
+        return;
       }
-      onUpdate({
-        shopInfo: {
-          ...data,
-          [name]: files[0],
-        },
-      });
-      return;
     }
     onUpdate({
       shopInfo: {
@@ -56,9 +69,17 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
       },
     });
   };
- const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
-  console.log(selectedCategories);
+    const handleChangeCategories = (selected: number[]) => {
+      setSelectedCategories(selected);
+      onUpdate({
+        shopInfo: {
+          ...data,
+          category: selected.map((id) => categories?.categories.find((c:{id:number,category_name:string}) => c.id === id)?.id|| ''),
+        },
+      });
+    };
 
   return (
     <div className="space-y-8">
@@ -98,12 +119,15 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           <div className="space-y-2">
             <Label htmlFor="category">Catégorie produit</Label>
-            <MultiSelect
-        options={categories}
+            {isLoading ? <div>Loading...</div> : (
+              <MultiSelect
+              
+        options={categories?.categories}
         selected={selectedCategories}
-        onChange={setSelectedCategories}
+        onChange={handleChangeCategories}
         placeholder="Select categories..."
       />
+            )}
           </div>
 
           
@@ -122,7 +146,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
                 {data.logo ? (
                   <div className='relative mt-5'>
                      <img
-                    src={URL.createObjectURL(data.logo)}
+                    src={data.logo}
                     alt="Logo de votre boutique"
                     className="h-full w-28 object-cover"
                   />
@@ -131,7 +155,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             onUpdate({
               shopInfo: {
                 ...data,
-                logo: undefined,
+                logo: null,
               },
             });
           }}
@@ -176,7 +200,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             {data.images.map((image, index) => (
               <div key={index} className="relative h-40 w-full">
         <img
-          src={URL.createObjectURL(image)}
+          src={image}
           alt={`Image ${index + 1} de la boutique`}
           className="h-full w-full object-cover rounded-lg"
         />
