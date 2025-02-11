@@ -13,7 +13,12 @@ export const checkTokenService=createApi({
        
         checkToken:builder.query({
            
-                query:()=>'/api/check/token',
+                query:(token)=>({
+                    url:'/api/check/token',
+                    headers:{
+                        Authorization: `Bearer ${token}`
+                    }
+                }),
                 providesTags: ['checkToken'],
                
         }),
