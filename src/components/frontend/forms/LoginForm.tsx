@@ -71,6 +71,7 @@ export default function LoginForm() {
             placeholder="Enter your phone"
             required
             type="phone"
+            autoComplete='billing home email webauthn'
             className="py-6"
             name="phone"
             value={phone}
@@ -106,7 +107,9 @@ export default function LoginForm() {
           </div>
 
           <Button disabled={isLoading} type="submit" className="w-full py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
-            {isLoading ? "Connexion..." : "Connexion"}
+            {isLoading ?  <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
+                    <span className="sr-only">Loading...</span>
+                </div>: "Connexion"}
           </Button>
         </div>
       </form>
