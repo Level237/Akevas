@@ -6,10 +6,12 @@ import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 import IdentityInfoStep from '@/components/seller/registration/steps/IdentityInfoStep';
-
+import { useDispatch } from 'react-redux';
+import { setIdentity } from '@/store/seller/registerSlice';
 const IdentityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<SellerFormData['identityInfo']>({
     identity_card_in_front: null,
     identity_card_in_back: null,
@@ -38,7 +40,12 @@ const IdentityInfoPage = () => {
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const identityInfoState={
+        'identity_card_in_front':formData.identity_card_in_front,
+        'identity_card_in_back':formData.identity_card_in_back,
+        'identity_card_with_the_person':formData.identity_card_with_the_person,
+      }
+      dispatch(setIdentity(identityInfoState));
       // Animation de succès
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';
@@ -79,14 +86,10 @@ console.log(formData);
               disabled={isLoading}
               className="relative px-6 py-3 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <LoadingSpinner size="sm" />
-                  <span>Validation...</span>
-                </div>
-              ) : (
-                'Précedent'
-              )}
+             
+              
+                Précedent
+              
             </button>
             <button
               onClick={handleNext}

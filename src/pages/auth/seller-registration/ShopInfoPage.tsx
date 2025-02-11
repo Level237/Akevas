@@ -25,7 +25,7 @@ const ShopInfoPage = () => {
   };
 
   const handlePrevious = () => {
-    navigate('/seller-registration/personal-info');
+    navigate(-1);
   };
 
   const handleNext = async () => {
@@ -84,7 +84,7 @@ const ShopInfoPage = () => {
               disabled={isLoading}
               className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Retour
+              Précedent
             </button>
             <button
               onClick={handleNext}
