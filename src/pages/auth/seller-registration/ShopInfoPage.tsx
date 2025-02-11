@@ -6,10 +6,12 @@ import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
-
+import { useDispatch } from 'react-redux';
+import { setShopInfo } from '@/store/seller/registerSlice';
 const ShopInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<SellerFormData['shopInfo']>({
     shopName: '',
     description: '',
@@ -27,7 +29,7 @@ const ShopInfoPage = () => {
   const handlePrevious = () => {
     navigate(-1);
   };
-console.log(formData);
+
   const handleNext = async () => {
     // Validation
     const requiredFields = ['shopName', 'description', 'category'];
@@ -43,7 +45,14 @@ console.log(formData);
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const shopInfoState={
+        'storeName':formData.shopName,
+        'storeDescription':formData.description,
+        'storeCategories':JSON.stringify(formData.category),
+        'storeLogo':formData.logo,
+        'storeImages':JSON.stringify(formData.images),
+      }
+      dispatch(setShopInfo(shopInfoState));
       // Animation de succès
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';

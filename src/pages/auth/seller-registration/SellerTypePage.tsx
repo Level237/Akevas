@@ -22,7 +22,7 @@ const SellerTypePage = () => {
   };
 
   const handlePrevious = () => {
-    navigate('/seller-registration/personal-info');
+    navigate(-1);
   };
 
   const handleNext = async () => {
