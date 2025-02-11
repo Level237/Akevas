@@ -11,9 +11,9 @@ export interface SellerFormData {
   };
 
   identityInfo: {
-    idCardFront?: File;
-    idCardBack?: File;
-    idCardPassport?: File;
+    identity_card_in_front?: string;
+    identity_card_in_back?: string;
+    identity_card_with_the_person?: string;
   };
   // Informations de la boutique
   shopInfo: {

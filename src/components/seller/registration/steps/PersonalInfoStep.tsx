@@ -2,8 +2,7 @@ import React from 'react';
 import { SellerFormData } from '@/types/seller-registration.types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Upload } from 'lucide-react';
+
 
 interface PersonalInfoStepProps {
   data: SellerFormData['personalInfo'];
@@ -14,17 +13,8 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const { name, value, type, files } = e.target;
+    const { name, value } = e.target;
     
-    if (type === 'file' && files) {
-      onUpdate({
-        personalInfo: {
-          ...data,
-          [name]: files[0],
-        },
-      });
-      return;
-    }
 
     onUpdate({
       personalInfo: {

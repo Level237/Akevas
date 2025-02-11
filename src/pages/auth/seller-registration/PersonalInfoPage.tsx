@@ -6,9 +6,12 @@ import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
+import { useDispatch } from 'react-redux';
+import { setPersonalInfo } from '@/store/seller/registerSlice';
 
 const PersonalInfoPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<SellerFormData['personalInfo']>({
     firstName: '',
@@ -29,7 +32,7 @@ const PersonalInfoPage = () => {
   const handleNext = async () => {
     // Validation
     const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'birthDate', 'nationality'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (missingFields.length > 0) {
       alert('Veuillez remplir tous les champs obligatoires');
@@ -46,7 +49,16 @@ const PersonalInfoPage = () => {
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const personalInfoState={
+                'lastName':formData.lastName,
+                'firstName':formData.firstName,
+                'email':formData.email,
+                'phone':formData.phone,
+                'birthDate':formData.birthDate,
+                'nationality':formData.nationality,
+            }
+            
+            dispatch(setPersonalInfo(personalInfoState))
       // Animation de succès
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';

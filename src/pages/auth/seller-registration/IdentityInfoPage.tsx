@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ScrollRestoration, useNavigate } from 'react-router-dom';
-import PersonalInfoStep from '@/components/seller/registration/steps/PersonalInfoStep';
 import { SellerFormData } from '@/types/seller-registration.types';
 import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
@@ -23,10 +22,13 @@ const IdentityInfoPage = () => {
 
   const handleNext = async () => {
     // Validation
-    const requiredFields = ['card'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
+    const requiredFields = ['identity_card_in_front', 'identity_card_in_back', 'identity_card_with_the_person'];
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
-    
+    if (missingFields.length > 0) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
 
 
     setIsLoading(true);

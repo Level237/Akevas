@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SellerTypeStep from '@/components/seller/registration/steps/SellerTypeStep';
 import { SellerFormData } from '@/types/seller-registration.types';
@@ -28,7 +28,7 @@ const SellerTypePage = () => {
   const handleNext = async () => {
     // Validation
     const requiredFields = ['sellerType', 'productType'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (missingFields.length > 0) {
       alert('Veuillez remplir tous les champs obligatoires');
