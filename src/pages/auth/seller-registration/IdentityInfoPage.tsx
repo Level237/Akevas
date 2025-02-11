@@ -11,7 +11,9 @@ const IdentityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<SellerFormData['identityInfo']>({
-    
+    identity_card_in_front: null,
+    identity_card_in_back: null,
+    identity_card_with_the_person: null,
   });
 
   const handleUpdate = (data: Partial<SellerFormData>) => {
@@ -55,7 +57,7 @@ const IdentityInfoPage = () => {
       setIsLoading(false);
     }
   };
-
+console.log(formData);
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
@@ -67,11 +69,25 @@ const IdentityInfoPage = () => {
             onUpdate={handleUpdate}
           />
           <motion.div 
-            className="mt-8 flex justify-end"
+            className="mt-8 flex justify-between"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
+             <button
+              onClick={()=>navigate(-1)}
+              disabled={isLoading}
+              className="relative px-6 py-3 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <div className="flex items-center space-x-2">
+                  <LoadingSpinner size="sm" />
+                  <span>Validation...</span>
+                </div>
+              ) : (
+                'Précedent'
+              )}
+            </button>
             <button
               onClick={handleNext}
               disabled={isLoading}

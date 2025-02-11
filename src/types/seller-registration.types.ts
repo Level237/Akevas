@@ -11,9 +11,9 @@ export interface SellerFormData {
   };
 
   identityInfo: {
-    identity_card_in_front?: string;
-    identity_card_in_back?: string;
-    identity_card_with_the_person?: string;
+    identity_card_in_front: string | null;
+    identity_card_in_back: string | null;
+    identity_card_with_the_person: string | null;
   };
   // Informations de la boutique
   shopInfo: {
