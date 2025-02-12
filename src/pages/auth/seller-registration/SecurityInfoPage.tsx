@@ -7,17 +7,20 @@ import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
 import {setPassword} from '@/store/seller/registerSlice';
+
 
 const SecurityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState<SellerFormData['securityInfo']>({
     password: '',
     confirmPassword: '',
   });
-console.log(formData);
+  
+
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.securityInfo) {
       setFormData(data.securityInfo);

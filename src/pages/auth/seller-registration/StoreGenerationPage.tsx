@@ -2,6 +2,9 @@ import  { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Store } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/index';
+import { useNewStoreMutation } from '@/services/guardService';
 
 const steps = [
   "Création de votre boutique...",
@@ -10,11 +13,14 @@ const steps = [
   "Finalisation de votre compte..."
 ];
 
+
 const StoreGenerationPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
-
+  const {firstName, lastName, email, phone, birthDate, nationality, identity_card_in_front, identity_card_in_back, identity_card_with_the_person, storeName, storeDescription, storeCategories, storeLogo, storeBanner, storePhone, storeTown, storeQuarter, password} = useSelector((state: RootState) => state.registerSeller);
+  console.log(firstName, lastName, email, phone, birthDate, nationality, identity_card_in_front, identity_card_in_back, identity_card_with_the_person, storeName, storeDescription, storeCategories, storeLogo, storeBanner, storePhone, storeTown, storeQuarter, password);
+  const [newStore, {isLoading}] = useNewStoreMutation();
   useEffect(() => {
     const progressInterval = setInterval(() => {
       setProgress(prev => {
