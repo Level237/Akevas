@@ -11,10 +11,10 @@ const AddressInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<SellerFormData['addressInfo']>({
-    street: '',
-    city: '',
+    street: null,
+    city: null,
   });
-
+console.log(formData);
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.addressInfo) {
       setFormData(data.addressInfo);
@@ -22,13 +22,13 @@ const AddressInfoPage = () => {
   };
 
   const handlePrevious = () => {
-    navigate('/seller-registration/shop-info');
+    navigate(-1)  ;
   };
 
   const handleNext = async () => {
     // Validation
     const requiredFields = ['street', 'city'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
 
     if (missingFields.length > 0) {
       alert('Veuillez remplir tous les champs obligatoires');
@@ -79,7 +79,7 @@ const AddressInfoPage = () => {
               disabled={isLoading}
               className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Retour
+              Précedent
             </button>
             
             <button

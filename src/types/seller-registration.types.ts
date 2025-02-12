@@ -35,7 +35,7 @@ export interface SellerFormData {
   };
   // Informations d'adresse
   addressInfo: {
-    street: string;
-    city: string;
+    street: string | null;
+    city: string | null;
   };
 }
