@@ -20,11 +20,18 @@ export const guardService=createApi({
                 providesTags: ['guard'],
                
         }),
+        getTowns:builder.query({
+            query:()=>({
+                url:"/api/towns",
+                method:"GET",
+            }),
+            providesTags: ['guard'],
+        })
     })
 })
 
 export const {
    
     useGetCategoriesQuery,
-
+    useGetTownsQuery,
 }=guardService

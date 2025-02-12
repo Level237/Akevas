@@ -45,14 +45,19 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="city">Ville</Label>
-              <Input
+              <Select
                 id="city"
                 name="city"
                 value={data.city}
                 onChange={handleChange}
-                placeholder="Paris"
-                className='py-6'
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir une ville" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Paris">Paris</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
