@@ -5,7 +5,6 @@ import { CheckCircle2, Store } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/index';
 import { useLoginMutation,useNewStoreMutation } from '@/services/auth';
-import { authTokenChange } from '@/store/authSlice';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
 const steps = [
   "Création de votre boutique...",
@@ -55,11 +54,30 @@ const StoreGenerationPage = () => {
       const formData = new FormData();
       
       try {
-        // Configuration des durées pour chaque étape
-        const stepDuration = 3000; // 3 secondes par étape
-        const totalDuration = stepDuration * steps.length;
-        
-        // Fonction pour gérer la progression d'une étape
+        // Préparation des données pour l'API dès le début
+        const storeObject = {
+          firstName, lastName, email, phone_number: phone, birthDate, nationality,
+          identity_card_in_front: frontFile, identity_card_in_back: backFile, 
+          identity_card_with_the_person: withPersonFile,
+          shop_name: storeName, shop_description: storeDescription, shop_profile: logoFile,
+          town_id: storeTown, quarter_id: storeQuarter, password, 
+          product_type: productType,
+        };
+        Object.entries(storeObject).forEach(([key, value]) => {
+          if (value) formData.append(key, value);
+        });
+        const categories = JSON.parse(storeCategories || '[]');
+        for(let i = 0; i < categories.length; i++) {
+          formData.append('categories[]', categories[i]);
+        }
+        for (let i = 0; i < imageFiles.length; i++) {
+          formData.append('images[]', imageFiles[i]);
+        }
+
+        // Lancement de l'appel API immédiatement
+        const apiPromise = newStore(formData).unwrap();
+
+        const stepDuration = 3000;
         const handleStepProgress = (stepIndex: number) => {
           return new Promise<void>((resolve) => {
             setCurrentStep(stepIndex);
@@ -80,42 +98,26 @@ const StoreGenerationPage = () => {
           });
         };
 
-        // Exécution des étapes une par une
+        // Exécution des étapes visuelles pendant que l'API s'exécute
         for (let i = 0; i < steps.length - 1; i++) {
           await handleStepProgress(i);
         }
 
-        // Préparation et envoi des données
-        const storeObject = {
-          firstName, lastName, email, phone_number: phone, birthDate, nationality,
-          identity_card_in_front: frontFile, identity_card_in_back: backFile, 
-          identity_card_with_the_person: withPersonFile,
-          shop_name: storeName, shop_description: storeDescription, 
-          categories: storeCategories, shop_profile: logoFile,
-          town_id: storeTown, quarter_id: storeQuarter, password, 
-          product_type: productType,
-        };
-        Object.entries(storeObject).forEach(([key, value]) => {
-          if (value) formData.append(key, value);
-        });
-        for (let i = 0; i < imageFiles.length; i++) {
-        formData.append('images[]', imageFiles[i]); // Ajoute chaque image au tableau
-    }
-        console.log(formData.get('images'));
-
-        // Envoi à l'API
-        const storeData = await newStore(formData).unwrap();
+        // Attente de la réponse de l'API
+        const storeData = await apiPromise;
         console.log(storeData);
-        // Dernière étape après succès de l'API
+
+        // Dernière étape et finalisation
         await handleStepProgress(steps.length - 1);
         setProgress(100);
-        console.log(storeData);
+
         setTimeout(() => {
           localStorage.removeItem('storeCreationStarted');
           //navigate('/seller/dashboard');
         }, 1000);
 
-      } catch (error) {
+      } catch (error:any) {
+        console.log(error);
         setError("Une erreur est survenue lors de la création de votre boutique. Veuillez actualiser la page et réessayer.");
         localStorage.removeItem('storeCreationStarted');
       }
