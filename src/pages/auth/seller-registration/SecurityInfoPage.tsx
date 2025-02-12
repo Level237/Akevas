@@ -6,15 +6,17 @@ import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
-
+import { useDispatch } from 'react-redux';
+import { setSecurityInfo } from '@/store/seller/registerSlice';
 const SecurityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<SellerFormData['securityInfo']>({
     password: '',
     confirmPassword: '',
   });
-
+console.log(formData);
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.securityInfo) {
       setFormData(data.securityInfo);
@@ -24,7 +26,7 @@ const SecurityInfoPage = () => {
   const handleSubmit = async () => {
     // Validation
     const requiredFields = ['password', 'confirmPassword'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
 
     if (missingFields.length > 0) {
       alert('Veuillez remplir tous les champs obligatoires');
@@ -45,7 +47,10 @@ const SecurityInfoPage = () => {
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      const securityInfo = {
+        password: formData.password,
+      }
+      dispatch(setSecurityInfo(securityInfo));
       // Animation de succès finale
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';
