@@ -6,10 +6,12 @@ import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
-
+import { useDispatch } from 'react-redux';
+import { setAddressInfo } from '@/store/seller/registerSlice';
 const AddressInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<SellerFormData['addressInfo']>({
     street: null,
     city: null,
@@ -39,7 +41,11 @@ console.log(formData);
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const addressInfo = {
+        storeTown: formData.city,
+        storeQuarter: formData.street,
+      }
+      dispatch(setAddressInfo(addressInfo));
       // Animation de succès
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';
