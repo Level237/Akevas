@@ -7,7 +7,8 @@ import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
-import { setSecurityInfo } from '@/store/seller/registerSlice';
+import {setPassword} from '@/store/seller/registerSlice';
+import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
 const SecurityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,8 @@ console.log(formData);
       setFormData(data.securityInfo);
     }
   };
+
+ 
 
   const handleSubmit = async () => {
     // Validation
@@ -50,7 +53,7 @@ console.log(formData);
       const securityInfo = {
         password: formData.password,
       }
-      dispatch(setSecurityInfo(securityInfo));
+      dispatch(setPassword(securityInfo));
       // Animation de succès finale
       const element = document.createElement('div');
       element.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black/20';
@@ -97,6 +100,7 @@ console.log(formData);
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
+            
             <button
               onClick={handleSubmit}
               disabled={isLoading}
