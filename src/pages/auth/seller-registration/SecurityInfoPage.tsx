@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SecurityInfoStep from '@/components/seller/registration/steps/SecurityInfoStep';
 import { SellerFormData } from '@/types/seller-registration.types';
@@ -8,7 +8,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import {setPassword} from '@/store/seller/registerSlice';
-import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
+
 const SecurityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
