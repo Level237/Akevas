@@ -56,9 +56,9 @@ const registerSlice=createSlice({
         localStorage.setItem("storeImages", action.payload.storeImages);
         state.storeName = action.payload.storeName;
         state.storeDescription = action.payload.storeDescription;
-        state.storeCategories = action.payload.storeCategories;
+        state.storeCategories = JSON.parse(action.payload.storeCategories);
         state.storeLogo = action.payload.storeLogo;
-        state.storeImages = action.payload.storeImages;
+        state.storeImages = JSON.parse(action.payload.storeImages);
     },
     setSellerType:(state,action)=>{
         localStorage.setItem("sellerType", action.payload.sellerType);

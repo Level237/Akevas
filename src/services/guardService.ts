@@ -34,14 +34,7 @@ export const guardService=createApi({
             }),
             providesTags: ['guard'],
         }),
-        newStore:builder.mutation({
-            query:(data)=>({
-                url:"/api/create/seller",
-                method:"POST",
-                body:data,
-            }),
-            invalidatesTags: ['guard'],
-        })
+        
     })
 })
 
@@ -50,5 +43,4 @@ export const {
     useGetCategoriesQuery,
     useGetTownsQuery,
     useGetQuartersQuery,
-    useNewStoreMutation,
 }=guardService

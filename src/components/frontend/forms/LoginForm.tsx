@@ -18,7 +18,6 @@ export default function LoginForm() {
         e.preventDefault()
             const userObject={phone_number:phone,password:password}
             const userData=await login(userObject)
-            console.log(userObject)
             const userState={
                 'refreshToken':userData.data.refresh_token,
                 'accessToken':userData.data.access_token

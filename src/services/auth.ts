@@ -34,6 +34,15 @@ export const authService=createApi({
         },
         
         ),
+        newStore:builder.mutation({
+            query:(formData)=>({
+                url:"/api/create/seller",
+                method:"POST",
+                body:formData,
+                
+            }),
+            invalidatesTags: ['Auth'],
+        }),
         logout:builder.mutation({
             query:()=>({
                 url:"/api/v1/logout",
@@ -65,5 +74,6 @@ export const authService=createApi({
 export const {
     useLoginMutation,
     useGetUserQuery,
-    useLogoutMutation
+    useLogoutMutation,
+    useNewStoreMutation
 }=authService

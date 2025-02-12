@@ -19,6 +19,7 @@ interface ShopInfoStepProps {
 
 const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
   const {data:categories,isLoading}=useGetCategoriesQuery('guard')
+  console.log(categories);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
   ) => {
