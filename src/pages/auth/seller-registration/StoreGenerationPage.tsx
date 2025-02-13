@@ -20,7 +20,7 @@ const StoreGenerationPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
-  const {firstName, lastName, email, phone, birthDate, nationality, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password,productType} = useSelector((state: RootState) => state.registerSeller);
+  const {firstName, lastName, email, phone, birthDate, nationality,sellerType, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password,productType} = useSelector((state: RootState) => state.registerSeller);
 
   const [newStore] = useNewStoreMutation();
     const [login]=useLoginMutation()
@@ -64,7 +64,8 @@ const StoreGenerationPage = () => {
           identity_card_in_front: frontFile, identity_card_in_back: backFile, 
           identity_card_with_the_person: withPersonFile,
           shop_name: storeName, shop_description: storeDescription, shop_profile: logoFile,
-          town_id: storeTown, quarter_id: storeQuarter, password, 
+          town_id: storeTown, quarter_id: storeQuarter, password,
+          isWholesaler:sellerType,
           product_type: productType,
         };
         Object.entries(storeObject).forEach(([key, value]) => {
