@@ -2,19 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatDate } from "@/lib/formatDate"
+import { Seller } from "@/types/seller"
 
-interface User {
-  id: string
-  firstName: string
-  email: string
-  avatar: string,
-  shop:{ shop_name:string | null,shop_profile:string | null},
-  role: number
-  created_at: string
-}
+
 
 interface RecentUsersProps {
-  users: User[] | null
+  users: Seller[] | null
   title: string,
   isLoading:boolean | null
 }
@@ -35,7 +28,7 @@ export function RecentUsers({ users, title,isLoading }: RecentUsersProps) {
                 </div>
           </div>}
           {!isLoading && users?.map((user) => (
-            <div key={user.id} className="flex items-center space-x-4">
+            <div key={user.id} className="flex items-center space-x-4 max-sm:space-x-2">
               <Avatar>
                 {user.role==2 && <AvatarImage src={user.shop.shop_profile || ""} />}
                 
@@ -44,9 +37,9 @@ export function RecentUsers({ users, title,isLoading }: RecentUsersProps) {
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-medium leading-none">{user.role!==2 && <h2>{user.firstName}</h2>} 
                 {user.role===2 && <h2>{user.shop.shop_name}</h2>}</p>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
+                <p className="text-sm max-sm:text-xs text-muted-foreground">{user.email}</p>
               </div>
-              <div className="text-sm text-muted-foreground">{formatDate(user.created_at)}</div>
+              <div className="text-sm max-sm:text-xs max-sm:text-center text-muted-foreground">{formatDate(user.created_at)}</div>
             </div>
           ))}
           {!users && !isLoading && <div className="flex items-center justify-center">Aucun utilisateur ajouté</div>}

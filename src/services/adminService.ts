@@ -17,9 +17,16 @@ export const adminService=createApi({
                 providesTags: ['admin'],
                
         }),
+        listSellers:builder.query({
+           
+                query:()=>'/api/v1/sellers',
+                providesTags: ['admin'],
+               
+        }),
     })
 })
 
 export const {
-useRecentSellerQuery
+useRecentSellerQuery,
+useListSellersQuery
 }=adminService
