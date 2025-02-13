@@ -37,6 +37,7 @@ import AdminShopDetailPage from "@/pages/admin/shops/ShopDetailPage";
 import AdminShopPage from "@/pages/admin/shops/ShopPage";
 import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
 import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage"; 
+import { GuardRoute } from "@/pages/auth/guard-route";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -44,7 +45,7 @@ export const routes = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <LoginPage />
+    element: <GuardRoute><LoginPage /></GuardRoute>
   },
   {
     path: '/delivery/register',
