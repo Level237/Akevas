@@ -8,7 +8,7 @@ export default function RecentGridUser() {
   return (
    <div className="grid gap-4 md:grid-cols-2">
         <RecentUsers users={null} isLoading={isLoading} title="Livreurs Récents" />
-        <RecentUsers users={recentSellers} isLoading={isLoading} title="Boutiques Récents" />
+        <RecentUsers users={recentSellers} isLoading={isLoading} title="Boutiques Récentes" />
       </div>
   )
 }

@@ -81,7 +81,8 @@ const SecurityInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      navigate('/seller-registration/generating');
+      window.location.href='/seller-registration/generating'
+      
     } catch (error) {
       console.error('Error:', error);
     } finally {

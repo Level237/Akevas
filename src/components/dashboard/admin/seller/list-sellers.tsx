@@ -49,11 +49,11 @@ export default function ListSellers({shops,isLoading}:ListSellersProps) {
               <TableCell>
                 <Badge
                   className={
-                    shop.shop.status===true ? "bg-green-100 text-green-700" : !shop.shop.status ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-700"
+                    shop.shop.isPublished===true ? "bg-green-100 text-green-700" : !shop.shop.isPublished ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-700"
                   }
                 >
-                  {shop.shop.status==true && "publié"}
-                  {!shop.shop.status && "non publié"}
+                  {shop.shop.isPublished==true && "publié"}
+                  {!shop.shop.isPublished && "non publié"}
                 </Badge>
               </TableCell>
               <TableCell> {formatDate(shop.created_at)}</TableCell>

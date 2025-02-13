@@ -16,7 +16,7 @@ export interface Seller {
     shop_key:string | null,
     shop_profile:string | null,
     products_count:number | null,
-    status:boolean | null,
+    isPublished:boolean | null,
     images:image[] | null,
     town:string | null,
     quarter:string | string,

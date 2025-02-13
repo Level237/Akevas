@@ -52,11 +52,9 @@ const StoreGenerationPage = () => {
       return;
     }
     const createStore = async () => {
-      if (localStorage.getItem('storeCreationStarted')) {
-        return;
-      }
+     
       
-      localStorage.setItem('storeCreationStarted', 'true');
+     
       const formData = new FormData();
       
       try {
@@ -81,16 +79,8 @@ const StoreGenerationPage = () => {
         }
 
         // Lancement de l'appel API immédiatement
-        const apiPromise = newStore(formData).unwrap();
-        const userObject={phone_number:phone,password:password}
-         const userData=await login(userObject)
-            const userState={
-                'refreshToken':userData.data.refresh_token,
-                'accessToken':userData.data.access_token
-            }
-            
-            dispatch(authTokenChange(userState))
-            dispatch(removeData())
+        const apiPromise = newStore(formData);
+       
         const stepDuration = 3000;
         const handleStepProgress = (stepIndex: number) => {
           return new Promise<void>((resolve) => {
@@ -118,8 +108,17 @@ const StoreGenerationPage = () => {
         }
 
         // Attente de la réponse de l'API
-        const storeData = await apiPromise;
-        console.log(storeData);
+       
+        const userObject={phone_number:phone,password:password}
+         const userData=await login(userObject)
+         console.log(userData)
+            const userState={
+                'refreshToken':userData.data.refresh_token,
+                'accessToken':userData.data.access_token
+            }
+            
+            dispatch(authTokenChange(userState))
+            dispatch(removeData())
 
         // Dernière étape et finalisation
         await handleStepProgress(steps.length - 1);
@@ -133,7 +132,7 @@ const StoreGenerationPage = () => {
       } catch (error:any) {
         console.log(error);
         setError("Une erreur est survenue lors de la création de votre boutique. Veuillez actualiser la page et réessayer.");
-        localStorage.removeItem('storeCreationStarted');
+        
       }
     };
 
