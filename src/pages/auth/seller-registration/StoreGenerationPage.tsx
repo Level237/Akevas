@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/index';
 import { useLoginMutation,useNewStoreMutation } from '@/services/auth';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
+import { authTokenChange } from '@/store/authSlice';
+import { removeData } from '@/store/seller/registerSlice';
 const steps = [
   "Création de votre boutique...",
   "Configuration de votre espace vendeur...",
@@ -45,6 +47,10 @@ const StoreGenerationPage = () => {
       
    useEffect(() => {
     let isSubscribed = true;
+    if(!firstName || !lastName || !email || !phone || !birthDate || !nationality || !storeName || !storeDescription || !storeCategories || !storeTown || !storeQuarter || !password || !productType) {
+      navigate(-1);
+      return;
+    }
     const createStore = async () => {
       if (localStorage.getItem('storeCreationStarted')) {
         return;
@@ -76,7 +82,15 @@ const StoreGenerationPage = () => {
 
         // Lancement de l'appel API immédiatement
         const apiPromise = newStore(formData).unwrap();
-
+        const userObject={phone_number:phone,password:password}
+         const userData=await login(userObject)
+            const userState={
+                'refreshToken':userData.data.refresh_token,
+                'accessToken':userData.data.access_token
+            }
+            
+            dispatch(authTokenChange(userState))
+            dispatch(removeData())
         const stepDuration = 3000;
         const handleStepProgress = (stepIndex: number) => {
           return new Promise<void>((resolve) => {
@@ -113,7 +127,7 @@ const StoreGenerationPage = () => {
 
         setTimeout(() => {
           localStorage.removeItem('storeCreationStarted');
-          //navigate('/seller/dashboard');
+          navigate('/seller/dashboard');
         }, 1000);
 
       } catch (error:any) {

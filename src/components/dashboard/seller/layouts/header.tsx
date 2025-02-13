@@ -15,6 +15,7 @@ const handleLogout=async()=>{
     await logout('Auth');
     dispatch(logoutUser())
   }
+  console.log(userData)
     return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4">
@@ -53,7 +54,7 @@ const handleLogout=async()=>{
               </button>
               <div className="flex items-center space-x-3 pl-4 border-l">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900">{userData?.userName}</p>
+                  <p className="text-sm font-medium text-gray-900">{userData?.lastName}</p>
                   <p className="text-xs text-gray-500">Vendeur</p>
                 </div>
                 <div className="h-8 w-8  rounded-full flex items-center justify-center">

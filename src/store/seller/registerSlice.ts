@@ -75,9 +75,49 @@ const registerSlice=createSlice({
     setPassword:(state,action)=>{
         localStorage.setItem("password", action.payload.password);
         state.password = action.payload.password;
+    },
+    removeData:(state)=>{
+        localStorage.removeItem("firstName");
+        localStorage.removeItem("lastName");
+        localStorage.removeItem("email");
+        localStorage.removeItem("phone");
+        localStorage.removeItem("birthDate");
+        localStorage.removeItem("nationality");
+        localStorage.removeItem("identity_card_in_front");
+        localStorage.removeItem("identity_card_in_back"); 
+        localStorage.removeItem("identity_card_with_the_person");
+        localStorage.removeItem("storeName");
+        localStorage.removeItem("storeDescription");
+        localStorage.removeItem("storeCategories");
+        localStorage.removeItem("storeLogo");
+        localStorage.removeItem("storeImages");
+        localStorage.removeItem("sellerType");
+        localStorage.removeItem("productType");
+        localStorage.removeItem("storeTown");
+        localStorage.removeItem("storeQuarter");
+        localStorage.removeItem("password");
+        state.firstName = null;
+        state.lastName = null;
+        state.email = null;
+        state.phone = null;
+        state.birthDate = null;
+        state.nationality = null;
+        state.identity_card_in_front = null;
+        state.identity_card_in_back = null;
+        state.identity_card_with_the_person = null;
+        state.storeName = null;
+        state.storeDescription = null;
+        state.storeCategories = null;
+        state.storeLogo = null;
+        state.storeImages = null;
+        state.sellerType = null;
+        state.productType = null;
+        state.storeTown = null;
+        state.storeQuarter = null;
+        state.password = null;
     }
 }   
 })
 
-export const { setPersonalInfo, setIdentity, setShopInfo, setSellerType, setAddressInfo, setPassword } = registerSlice.actions;
+export const { setPersonalInfo, setIdentity, setShopInfo, setSellerType, setAddressInfo,removeData, setPassword } = registerSlice.actions;
 export default registerSlice;
