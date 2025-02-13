@@ -27,8 +27,8 @@ export default function LoginForm() {
             
             setPhone('')
             setPassword('')
-            navigate(`/authenticate?token=${encodeURIComponent(userData.data.access_token)}
-              &refresh_token=${encodeURIComponent(userData.data.refresh_token)}`)
+           window.location.href=`/authenticate?token=${encodeURIComponent(userData.data.access_token)}
+              &refresh_token=${encodeURIComponent(userData.data.refresh_token)}`
     }
   return (
     <div className="flex flex-col px-8 py-12 ">

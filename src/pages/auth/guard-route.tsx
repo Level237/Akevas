@@ -11,7 +11,7 @@ export const GuardRoute = ({children}:{children:React.ReactNode}) => {
 
     useEffect(() => {
         if(token) {
-            navigate(-1)
+            //navigate(-1)
         }
     }, [token, navigate])
     
