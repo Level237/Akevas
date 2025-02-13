@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatDate } from "@/lib/formatDate"
 
 interface User {
   id: string
@@ -9,7 +10,7 @@ interface User {
   avatar: string,
   shop:{ shop_name:string | null,shop_profile:string | null},
   role: number
-  joinedAt: string
+  created_at: string
 }
 
 interface RecentUsersProps {
@@ -45,9 +46,10 @@ export function RecentUsers({ users, title,isLoading }: RecentUsersProps) {
                 {user.role===2 && <h2>{user.shop.shop_name}</h2>}</p>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
               </div>
-              <div className="text-sm text-muted-foreground">{new Date(user.joinedAt).toLocaleDateString()}</div>
+              <div className="text-sm text-muted-foreground">{formatDate(user.created_at)}</div>
             </div>
           ))}
+          {!users && !isLoading && <div className="flex items-center justify-center">Aucun utilisateur ajouté</div>}
         </div>
       </CardContent>
     </Card>
