@@ -6,6 +6,8 @@ import { useListSellersQuery } from '@/services/adminService'
 import { Seller } from '@/types/seller'
 import { ExternalLink, Store } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { formatDate } from '@/lib/formatDate'
+import { Link } from 'react-router-dom'
 
 interface ListSellersProps{
     shops:Seller[];
@@ -19,10 +21,10 @@ export default function ListSellers({shops,isLoading}:ListSellersProps) {
         <TableHeader>
           <TableRow>
             <TableHead>Nom d'origine</TableHead>
-            <TableHead>Owner</TableHead>
-            <TableHead>Products</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Rating</TableHead>
+            <TableHead>Prioritaire</TableHead>
+            <TableHead>Nombre de Products</TableHead>
+            <TableHead>Statut</TableHead>
+            <TableHead>Date</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -54,19 +56,21 @@ export default function ListSellers({shops,isLoading}:ListSellersProps) {
                   {!shop.shop.status && "non publié"}
                 </Badge>
               </TableCell>
-              <TableCell></TableCell>
+              <TableCell> {formatDate(shop.created_at)}</TableCell>
               <TableCell className="text-right">
-                <Button variant="ghost" size="sm">
+                <Link to={`/admin/shops/${shop.shop.shop_id}`}> <Button variant="ghost" size="sm">
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  View
-                </Button>
+                 
+                  Visualiser
+                </Button></Link>
+               
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
       {isLoading &&
-          <div className="flex justify-center items-center">
+          <div className="flex mt-6 justify-center items-center">
               <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-[#ed7e0f] rounded-full" role="status" aria-label="loading">
                     <span className="sr-only">Loading...</span>
                 </div>

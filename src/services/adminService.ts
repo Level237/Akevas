@@ -23,10 +23,15 @@ export const adminService=createApi({
                 providesTags: ['admin'],
                
         }),
+        getSeller:builder.query({
+            query:(id)=>`/api/v1/sellers/${id}`,
+           
+        })
     })
 })
 
 export const {
 useRecentSellerQuery,
-useListSellersQuery
+useListSellersQuery,
+useGetSellerQuery
 }=adminService
