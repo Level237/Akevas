@@ -55,7 +55,7 @@ const handleLogout=async()=>{
               <div className="flex items-center space-x-3 pl-4 border-l">
                 <div className="text-right hidden sm:block">
                   <p className="text-sm font-medium text-gray-900">{userData?.lastName}</p>
-                  <p className="text-xs text-gray-500">Vendeur</p>
+                  <p className="text-xs text-gray-500">{userData?.isSeller === 0 && "En cours de validation"}</p>
                 </div>
                 <div className="h-8 w-8  rounded-full flex items-center justify-center">
                   <Avatar>

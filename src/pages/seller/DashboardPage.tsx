@@ -11,11 +11,12 @@ import {
 import { Card } from '@/components/ui/card';
 import Sidebar from '@/components/seller/Sidebar';
 import Header from '@/components/dashboard/seller/layouts/header';
+import { useGetUserQuery } from '@/services/auth';
 
 const DashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
+const {data:userData}=useGetUserQuery('Auth') 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
