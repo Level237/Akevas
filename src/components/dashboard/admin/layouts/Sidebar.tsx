@@ -66,8 +66,8 @@ export function Sidebar() {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16 border-b">
             <Link to="/" className="flex items-center space-x-2">
-              <Package className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">ECommHub</span>
+              <Package className="h-6 w-6 text-[#ed7e0f]" />
+              <span className="text-xl font-bold text-gray-900">Akevas</span>
             </Link>
           </div>
 
@@ -79,11 +79,11 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                   pathname === item.href
-                    ? "bg-blue-100 text-blue-600"
+                    ? "bg-[#ed7e0f]/10 text-[#ed7e0f]"
                     : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                 )}
               >
-                <item.icon className={cn("h-5 w-5", pathname === item.href ? "text-blue-600" : "text-gray-400")} />
+                <item.icon className={cn("h-5 w-5", pathname === item.href ? "text-[#ed7e0f]" : "text-gray-400")} />
                 <span>{item.label}</span>
               </Link>
             ))}

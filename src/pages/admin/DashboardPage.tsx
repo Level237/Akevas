@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/dashboard/admin/layouts/Sidebar"
 import { RecentProducts } from "@/components/dashboard/admin/recent-products"
 import { RecentUsers } from "@/components/dashboard/admin/recent-users"
 import { UserStats } from "@/components/dashboard/admin/user-stats"
+import RecentGridUser from "@/components/dashboard/admin/users/recent-grid-user"
 import { Users, TrendingUp, Package,ShoppingCart, DollarSign } from "lucide-react"
 
 
@@ -78,19 +79,19 @@ export default function DashboardAdminPage() {
         stats={[
           {
             title: "Total Revenue",
-            value: 52890,
+            value: 0,
             change: 12,
             icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
           },
           {
             title: "Active Orders",
-            value: 124,
+            value: 0,
             change: 8,
             icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />,
           },
           {
             title: "Total Products",
-            value: 1789,
+            value: 0,
             change: 3,
             icon: <Package className="h-4 w-4 text-muted-foreground" />,
           },
@@ -99,10 +100,7 @@ export default function DashboardAdminPage() {
     </div>
 
     <div className="grid gap-6 mb-6">
-      <div className="grid gap-4 md:grid-cols-2">
-        <RecentUsers users={recentDeliverers} title="Recent Deliverers" />
-        <RecentUsers users={recentSellers} title="Recent Sellers" />
-      </div>
+      <RecentGridUser/>
       <RecentProducts products={recentProducts} />
     </div>
 
