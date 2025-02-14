@@ -16,6 +16,7 @@ import { SellerResponse } from '@/types/seller';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 
 import VisibilityShop from '@/components/seller/VisibilityShop';
+import { Button } from '@/components/ui/button';
 
 const DashboardPage = () => {
 
@@ -120,20 +121,28 @@ const DashboardPage = () => {
             >
               <Card className="p-6 bg-[#ed7e0f]/5 border-[#ed7e0f]/20">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-full bg-[#ed7e0f] flex items-center justify-center">
+                  <div className="h-10 w-10 max-sm:h-6 max-sm:w-6 max-sm:p-5 rounded-full bg-[#ed7e0f] flex items-center justify-center">
                     <span className="text-white font-bold">2</span>
                   </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-900">Niveau 2 - Configuration de votre boutique</h2>
+                  <div className="flex-1">
+                    <h2 className="text-xl font-semibold max-sm:text-lg text-gray-900">Niveau 2 - Ajout d'un produit</h2>
                     <p className="text-gray-600 mt-1">
-                      Pour passer au niveau 3, ajoutez une photo de couverture à votre boutique pour la rendre plus attractive
+                     Vous pouvez desormais ajouter vos produits directements dans votre boutique
                     </p>
                   </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white font-semibold"
+                   
+                  >
+                   Ajouter un produit
+                  </Button>
                 </div>
               </Card>
             </motion.div>
           )}
-          {sellerData?.shop.level==="2" && <VisibilityShop/>}
+          {sellerData?.shop.level==="2" && <VisibilityShop sellerData={sellerData}/>}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -147,28 +156,28 @@ const DashboardPage = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="p-4 bg-[#ed7e0f]/5 rounded-lg">
                   <div className="text-3xl font-bold text-[#ed7e0f]">
-                    {sellerData?.shop.visits || 0}
+                    0
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Visites</div>
                 </div>
 
                 <div className="p-4 bg-[#ed7e0f]/5 rounded-lg">
                   <div className="text-3xl font-bold text-[#ed7e0f]">
-                    {sellerData?.shop.followers || 0}
+                   0
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Followers</div>
                 </div>
 
                 <div className="p-4 bg-[#ed7e0f]/5 rounded-lg">
                   <div className="text-3xl font-bold text-[#ed7e0f]">
-                    {sellerData?.shop.products || 0}
+                    {sellerData?.shop.products_count || 0}
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Produits</div>
                 </div>
 
                 <div className="p-4 bg-[#ed7e0f]/5 rounded-lg">
                   <div className="text-3xl font-bold text-[#ed7e0f]">
-                    {sellerData?.shop.sales || 0}
+                    0
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Ventes</div>
                 </div>
