@@ -39,6 +39,7 @@ import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
 import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage"; 
 import { GuardRoute } from "@/pages/auth/guard-route";
 import SellerRootDashboard from "@/components/Layouts/SellerRootDashboard";
+import StoreEditorPage from "@/pages/seller/StoreEditorPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -112,8 +113,13 @@ export const routes = createBrowserRouter([
     element: <CreateProductPage />
   },
   {
-    path: '/seller/boost',
+    path: '/seller/pro',
     element: <StoreBoostPage />
+  },
+  {
+
+    path: '/shop/editor',
+    element: <StoreEditorPage />
   },
   {
     path: '/seller/products',
@@ -142,7 +148,7 @@ export const routes = createBrowserRouter([
     element: <CheckoutPage />
   },
   {
-    path: '/stores/:code',
+    path: '/shop/:id',
     element: <StorePage />
   },
   {

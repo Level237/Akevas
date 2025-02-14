@@ -1,15 +1,15 @@
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+
 import AsyncLink from '@/components/ui/AsyncLink';
 import { Card } from '../ui/card';
-import dress from "../../assets/dress.jpg"
 import { Camera, Check } from 'lucide-react';
 import {motion} from "framer-motion"
-import { useState} from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 export default function VisibilityShop() {
-      const [isOpen, setIsOpen] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+      
   return (
       <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -38,17 +38,72 @@ export default function VisibilityShop() {
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Ajoutez une photo de couverture pour personnaliser votre boutique</p>
-                        <button className="text-[#ed7e0f] text-sm font-medium mt-1">Modifier</button>
                       </div>
                     </div>
                   </div>
 
-                  <AsyncLink to='/shop/preview' className="block">
-                    <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white font-semibold py-3">
-                      Voir ma boutique
+                  <div className="flex gap-3">
+                    <AsyncLink to='/shop/preview' className="flex-1">
+                      <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white font-semibold py-3">
+                        Voir ma boutique
+                      </Button>
+                    </AsyncLink>
+                    <Button onClick={() => setShowDialog(true)} className="flex-1 bg-white hover:bg-gray-50 text-[#ed7e0f] border-2 border-[#ed7e0f] font-semibold py-3">
+                      Modifier photo de couverture
                     </Button>
-                  </AsyncLink>
+                  </div>
                 </div>
+
+                <Dialog open={showDialog} onOpenChange={setShowDialog}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Photo de couverture de votre boutique</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="w-full h-40 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <Camera className="w-12 h-12 text-gray-400" />
+                      </div>
+                      <p className="text-gray-600">
+                        Personnalisez l'apparence de votre boutique en ajoutant une photo de couverture attractive. Cette image sera visible par tous vos clients potentiels.
+                      </p>
+                      <div className="flex flex-col gap-3">
+                        <Button 
+                          className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90"
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = (e) => {
+                              const file = (e.target as HTMLInputElement).files?.[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                  const img = document.querySelector('.w-full.h-40') as HTMLDivElement;
+                                  if (img) {
+                                    const imageUrl = e.target?.result as string;
+                                    setSelectedImage(imageUrl);
+                                    img.style.backgroundImage = `url(${imageUrl})`;
+                                    img.style.backgroundSize = 'cover';
+                                    img.style.backgroundPosition = 'center';
+                                    const camera = img.querySelector('.text-gray-400');
+                                    if (camera) camera.remove();
+                                  }
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            };
+                            input.click();
+                          }}
+                        >
+                          {selectedImage ? 'Enregistrer' : 'Choisir une nouvelle photo'}
+                        </Button>
+                        <Button variant="outline" onClick={() => {setShowDialog(false)}}>
+                          Annuler
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </Card>
 
               {/* Section Vendeur Pro */}
