@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 
 import { Check, X, MapPin, Phone, Mail, Globe, Package, Users, DollarSign } from "lucide-react"
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CheckStateSeller } from './list-sellers';
+import { useState } from 'react';
 
 
 
@@ -16,8 +17,39 @@ interface DetailSellerProps{
 }
 
 export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
-  const [confirmOrNotShop, {isLoading:isCOnfirm}] = useConfirmOrNotShopMutation();
-  
+  const [confirmOrNotShop, {isLoading:isConfirm,isSuccess}] = useConfirmOrNotShopMutation();
+  //const [stateSeller,setSeller]=useState(null)
+  const navigate=useNavigate()
+  const confirm = async (state: string) => {
+    if (state === "1") {
+      const data = {
+        state: state,
+        isPublished: true,
+        isSeller:true
+      };
+     const response= await confirmOrNotShop({
+        shop_id: shop.shop.shop_id,
+        formData: data
+      });
+      
+      
+          navigate("/admin/shops")
+      
+    }else{
+       const data = {
+        state: state,
+        isPublished: false,
+        isSeller:false
+      };
+     const response= await confirmOrNotShop({
+        shop_id: shop.shop.shop_id,
+        formData: data
+      });
+      
+      
+          navigate("/admin/shops")
+    }
+  }
   return (
        <>
         {isLoading &&
@@ -33,11 +65,14 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
           <div><div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold">Détails de la boutique</h1>
       <div className="space-x-2 max-sm:flex max-sm:flex-col max-sm:gap-4">
-        <Button variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
+        <Button disabled={isConfirm}  onClick={()=>confirm("0")}  variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
           <X className="mr-2 h-4 w-4" /> Rejeter
         </Button>
-        <Button variant="outline" className="bg-green-100 hover:bg-green-200 text-green-600">
-          <Check className="mr-2 h-4 w-4" /> Approuver
+        <Button disabled={isConfirm}  onClick={()=>confirm("1")} variant="outline" className="bg-green-100 hover:bg-green-200 text-green-600">
+          {isLoading ?  <div className="animate-spin inline-block w-5 h-5 size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
+                    <span className="sr-only">Loading...</span>
+                </div>: <><Check className="mr-2 h-4 w-4" /> Approuver</>}
+          
         </Button>
       </div>
     </div>

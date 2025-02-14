@@ -24,14 +24,15 @@ export const adminService=createApi({
         }),
         getSeller:builder.query({
             query:(id)=>`/api/v1/sellers/${id}`,
-           
+           providesTags: ['admin'],
         }),
         confirmOrNotShop:builder.mutation({
             query:({shop_id, formData})=>({
                 url:`/api/v1/shop/confirm/${shop_id}`,
                 method:'POST',
                 body:formData
-            })
+            }),
+            invalidatesTags:['admin']
         })
     })
 })
