@@ -21,6 +21,7 @@ export interface Seller {
     town:string | null,
     quarter:string | null,
     state:string | null
+    level:string | null
   },
   role: number,
   

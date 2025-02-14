@@ -25,7 +25,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
       const data = {
         state: state,
         isPublished: true,
-        shop_level:1,
+        shop_level:"2",
         isSeller:true
       };
      const response= await confirmOrNotShop({
@@ -41,7 +41,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
         state: state,
         isPublished: false,
         isSeller:false,
-        shop_level:0
+        shop_level:"1"
       };
      const response= await confirmOrNotShop({
         shop_id: shop.shop.shop_id,
