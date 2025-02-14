@@ -1,4 +1,3 @@
-
 import {createApi} from "@reduxjs/toolkit/query/react"
 import { baseQueryWithReauth } from "./baseQueryWithReauth";
 
@@ -26,6 +25,13 @@ export const adminService=createApi({
         getSeller:builder.query({
             query:(id)=>`/api/v1/sellers/${id}`,
            
+        }),
+        confirmOrNotShop:builder.mutation({
+            query:({shop_id, formData})=>({
+                url:`/api/v1/shop/confirm/${shop_id}`,
+                method:'POST',
+                body:formData
+            })
         })
     })
 })
@@ -33,5 +39,6 @@ export const adminService=createApi({
 export const {
 useRecentSellerQuery,
 useListSellersQuery,
-useGetSellerQuery
+useGetSellerQuery,
+useConfirmOrNotShopMutation
 }=adminService

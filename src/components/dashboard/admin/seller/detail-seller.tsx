@@ -1,4 +1,4 @@
-import { useGetSellerQuery } from '@/services/adminService';
+import { useConfirmOrNotShopMutation, useGetSellerQuery } from '@/services/adminService';
 import { Seller } from '@/types/seller';
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 
 import { Check, X, MapPin, Phone, Mail, Globe, Package, Users, DollarSign } from "lucide-react"
 import { useParams } from 'react-router-dom';
+import { CheckStateSeller } from './list-sellers';
 
 
 
@@ -15,6 +16,8 @@ interface DetailSellerProps{
 }
 
 export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
+  const [confirmOrNotShop, {isLoading:isCOnfirm}] = useConfirmOrNotShopMutation();
+  
   return (
        <>
         {isLoading &&
@@ -105,9 +108,16 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
           </CardHeader>
           <CardContent>
             
-            <Badge variant="outline" className="text-yellow-600 bg-yellow-100">
-              En attente d'approbation
-            </Badge>
+             <CheckStateSeller state={shop.shop.state || null} />
+          </CardContent>
+        </Card>
+         <Card>
+          <CardHeader>
+            <CardTitle>Categorie de la boutique</CardTitle>
+          </CardHeader>
+          <CardContent>
+            
+             <CheckStateSeller state={shop.shop.state || null} />
           </CardContent>
         </Card>
       </div>

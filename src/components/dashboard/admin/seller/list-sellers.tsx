@@ -23,7 +23,7 @@ export default function ListSellers({shops,isLoading}:ListSellersProps) {
             <TableHead>Nom d'origine</TableHead>
             <TableHead>Prioritaire</TableHead>
             <TableHead>Nombre de Products</TableHead>
-            <TableHead>Statut</TableHead>
+            <TableHead>Etat</TableHead>
             <TableHead>Date</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -47,14 +47,7 @@ export default function ListSellers({shops,isLoading}:ListSellersProps) {
               <TableCell>{shop.firstName}</TableCell>
               <TableCell>{shop.shop.products_count}</TableCell>
               <TableCell>
-                <Badge
-                  className={
-                    shop.shop.isPublished===true ? "bg-green-100 text-green-700" : !shop.shop.isPublished ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-700"
-                  }
-                >
-                  {shop.shop.isPublished==true && "publié"}
-                  {!shop.shop.isPublished && "non publié"}
-                </Badge>
+                <CheckStateSeller state={shop.shop.state || null} />
               </TableCell>
               <TableCell> {formatDate(shop.created_at)}</TableCell>
               <TableCell className="text-right">
@@ -83,4 +76,19 @@ export function ListSellersContainer() {
   const { data: { data: shops } = {}, isLoading } = useListSellersQuery('admin');
   
   return <ListSellers shops={shops} isLoading={isLoading} />;
+}
+
+export function CheckStateSeller({state}:{state:string | null}){
+
+  return (
+     <Badge
+                  className={
+                    state==="1" ? "bg-green-100 text-green-700" : state==="0" ? "bg-orange-100 text-orange-700" : "bg-red-100 text-red-700"
+                  }
+                >
+                  {state==="1" && "aprouvé"}
+                  {state==="0" && "non approuvé"}
+                  {state==="2" && "Rejeté"}
+                </Badge>
+  )
 }

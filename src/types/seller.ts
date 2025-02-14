@@ -19,7 +19,8 @@ export interface Seller {
     isPublished:boolean | null,
     images:image[] | null,
     town:string | null,
-    quarter:string | string,
+    quarter:string | null,
+    state:string | null
   },
   role: number,
   
