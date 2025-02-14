@@ -31,5 +31,6 @@ export interface Seller {
 export interface SellerResponse {
   data:{
     data: Seller |null;
-  }
+  },
+  isLoading:boolean
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+
 import { motion } from 'framer-motion';
 import {
   Clock,
@@ -9,23 +9,16 @@ import {
   Lock,
   X,
   Check,
-  Camera,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import Sidebar from '@/components/seller/Sidebar';
-import Header from '@/components/dashboard/seller/layouts/header';
-import { useGetUserQuery } from '@/services/auth';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import AsyncLink from '@/components/ui/AsyncLink';
+
+import VisibilityShop from '@/components/seller/VisibilityShop';
 
 const DashboardPage = () => {
-  const [isOpen, setIsOpen] = useState(false);
+
   const {data: { data: sellerData } = {},isLoading}=useCurrentSellerQuery<SellerResponse>('seller')
   
   const storeStatus = sellerData?.shop.state;
@@ -118,92 +111,7 @@ const DashboardPage = () => {
               </div>
             </Card>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-8"
-          >
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Section descriptive */}
-              <Card className="p-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Optimisez votre visibilité</h3>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center">
-                    <Check className="w-4 h-4 text-[#ed7e0f] mr-2" />
-                    Attirer plus de clients
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="w-4 h-4 text-[#ed7e0f] mr-2" />
-                    Renforcer la confiance
-                  </li>
-                </ul>
-              </Card>
-
-              {/* Section Call-to-Action */}
-              <Card className="relative overflow-hidden group cursor-pointer h-[140px]" onClick={() => setIsOpen(true)}>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                <img 
-                  src={sellerData?.shop.shop_profile || "/placeholder-cover.jpg"}
-                  alt="Couverture de la boutique"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-20">
-                  <Button
-                    variant="outline" 
-                    className="bg-white/90 hover:bg-white text-gray-800 border-0"
-                  >
-                    <Camera className="w-4 h-4 mr-2" />
-                    Ajouter une photo de couverture
-                  </Button>
-                </div>
-              </Card>
-
-              {/* Section Upgrade */}
-              <Card className="p-4 bg-gradient-to-br from-[#ed7e0f]/10 to-orange-50">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Visibilité de votre boutique</h3>
-                <p className="text-sm text-gray-600 mb-3">Soyez en tete de liste devant de nombreuses boutique</p>
-                <AsyncLink to='/seller/boost'>
-                <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white">
-                  Mettre à niveau
-                </Button>
-                </AsyncLink>
-              </Card>
-            </div>
-
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Modifier la photo de couverture</DialogTitle>
-                  <DialogDescription>
-                    Format recommandé: 1200x400px
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="cover-photo">Photo de couverture</Label>
-                    <Input
-                      id="cover-photo"
-                      type="file"
-                      accept="image/*"
-                      className="cursor-pointer"
-                      onChange={(e) => {
-                        // Gérer le changement de fichier ici
-                      }}
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsOpen(false)}>
-                    Annuler
-                  </Button>
-                  <Button type="submit" className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white">
-                    Sauvegarder
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </motion.div>
+          {sellerData?.shop.level==="2" && <VisibilityShop/>}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Prochaines étapes */}
