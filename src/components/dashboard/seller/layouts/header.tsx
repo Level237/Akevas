@@ -4,18 +4,25 @@ import { AvatarImage } from '@radix-ui/react-avatar'
 import { Bell, Settings } from 'lucide-react'
 import { Store } from 'lucide-react'
 import React from 'react'
-import { useGetUserQuery, useLogoutMutation } from '@/services/auth'
+
 import { useDispatch } from 'react-redux'
 import { logoutUser } from '@/store/authSlice'
-export default function Header({isMobile,setIsSidebarOpen}:{isMobile:boolean,setIsSidebarOpen:React.Dispatch<React.SetStateAction<boolean>>}) {
- const {data:userData}=useGetUserQuery('Auth')  
+import { Seller } from '@/types/seller'
+import { CheckStateSeller } from '../../admin/seller/list-sellers'
+import { useLogoutMutation } from '@/services/auth'
+
+
+export default function Header({isMobile,setIsSidebarOpen,sellerData}:{isMobile:boolean,setIsSidebarOpen:React.Dispatch<React.SetStateAction<boolean>>,sellerData:Seller | null | undefined}) {
+
+ 
+
  const [logout]=useLogoutMutation() 
  const dispatch=useDispatch();
 const handleLogout=async()=>{
     await logout('Auth');
     dispatch(logoutUser())
   }
-  console.log(userData)
+  
     return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4">
@@ -54,12 +61,13 @@ const handleLogout=async()=>{
               </button>
               <div className="flex items-center space-x-3 pl-4 border-l">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900">{userData?.lastName}</p>
-                  <p className="text-xs text-gray-500">{userData?.isSeller === 0 && "En cours de validation"}</p>
+                  <p className="text-sm font-medium text-gray-900">{sellerData?.shop.shop_name}</p>
+                  <CheckStateSeller state={sellerData?.shop.state || null}/>
+                 
                 </div>
                 <div className="h-8 w-8  rounded-full flex items-center justify-center">
                   <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarImage src={sellerData?.shop.shop_profile || ""} />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                 </div>

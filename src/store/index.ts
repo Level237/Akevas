@@ -5,6 +5,7 @@ import { checkTokenService } from "@/services/checkService";
 import registerSlice from "./seller/registerSlice";
 import { guardService } from "@/services/guardService";
 import { adminService } from "@/services/adminService";
+import { sellerService } from "@/services/sellerService";
 export const store=configureStore({
     reducer:{
         [authSlice.name]:authSlice.reducer,
@@ -12,11 +13,18 @@ export const store=configureStore({
         [checkTokenService.reducerPath]:checkTokenService.reducer,
         [registerSlice.name]:registerSlice.reducer,
         [guardService.reducerPath]:guardService.reducer,
-        [adminService.reducerPath]:adminService.reducer
+        [adminService.reducerPath]:adminService.reducer,
+        [sellerService.reducerPath]:sellerService.reducer
     },
     middleware:(getDefaultMiddleware)=>getDefaultMiddleware({
         serializableCheck:false
-    }).concat(authService.middleware,checkTokenService.middleware,guardService.middleware,adminService.middleware)
+    }).concat(
+        authService.middleware,
+        checkTokenService.middleware,
+        guardService.middleware,
+        adminService.middleware,
+        sellerService.middleware
+    )
 })
 
 export type RootState=ReturnType<typeof store.getState>

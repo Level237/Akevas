@@ -38,6 +38,7 @@ import AdminShopPage from "@/pages/admin/shops/ShopPage";
 import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
 import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage"; 
 import { GuardRoute } from "@/pages/auth/guard-route";
+import SellerRootDashboard from "@/components/Layouts/SellerRootDashboard";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -100,7 +101,7 @@ export const routes = createBrowserRouter([
     element: <IdentityInfoPage />
   },
   {
-    element:<PrivateRoute/>,
+    element:<SellerRootDashboard><PrivateRoute/></SellerRootDashboard>,
     children:[
 {
     path: '/seller/dashboard',
