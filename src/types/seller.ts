@@ -27,3 +27,8 @@ export interface Seller {
   created_at: string
 }
 
+export interface SellerResponse {
+  data:{
+    data: Seller |null;
+  }
+}

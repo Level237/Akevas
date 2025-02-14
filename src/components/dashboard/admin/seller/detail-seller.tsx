@@ -65,15 +65,17 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
           <div><div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold">Détails de la boutique</h1>
       <div className="space-x-2 max-sm:flex max-sm:flex-col max-sm:gap-4">
-        <Button disabled={isConfirm}  onClick={()=>confirm("0")}  variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
+        {shop.shop.state!=="2"  && shop.shop.state!=="1" && <Button disabled={isConfirm}  onClick={()=>confirm("2")}  variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
           <X className="mr-2 h-4 w-4" /> Rejeter
-        </Button>
-        <Button disabled={isConfirm}  onClick={()=>confirm("1")} variant="outline" className="bg-green-100 hover:bg-green-200 text-green-600">
+        </Button>}
+        
+        {shop.shop.state!=="1" && <Button disabled={isConfirm}  onClick={()=>confirm("1")} variant="outline" className="bg-green-100 hover:bg-green-200 text-green-600">
           {isLoading ?  <div className="animate-spin inline-block w-5 h-5 size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
                     <span className="sr-only">Loading...</span>
                 </div>: <><Check className="mr-2 h-4 w-4" /> Approuver</>}
           
-        </Button>
+        </Button>}
+        
       </div>
     </div>
      <div className="grid gap-6 md:grid-cols-3">

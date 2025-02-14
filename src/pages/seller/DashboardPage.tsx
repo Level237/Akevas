@@ -7,22 +7,26 @@ import {
   HelpCircle,
   FileText,
   Lock,
+  X,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import Sidebar from '@/components/seller/Sidebar';
 import Header from '@/components/dashboard/seller/layouts/header';
 import { useGetUserQuery } from '@/services/auth';
+import { useCurrentSellerQuery } from '@/services/sellerService';
+import { SellerResponse } from '@/types/seller';
+import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 
 const DashboardPage = () => {
   
-const {data: { data: sellerData } = {}}=useCurrentSellerQuery<SellerResponse>('seller')
+const {data: { data: sellerData } = {},isLoading}=useCurrentSellerQuery<SellerResponse>('seller')
  
 
-  const storeStatus = 'pending';
+  const storeStatus = sellerData?.shop.state;
 
   const getStatusContent = () => {
     switch (storeStatus) {
-      case 'pending':
+      case "0":
         return {
           icon: Clock,
           title: 'En attente de validation',
@@ -32,7 +36,7 @@ const {data: { data: sellerData } = {}}=useCurrentSellerQuery<SellerResponse>('s
           borderColor: 'border-amber-200',
           estimate: '24-48 heures'
         };
-      case 'approved':
+      case '1':
         return {
           icon: CheckCircle2,
           title: 'Boutique approuvée',
@@ -41,7 +45,7 @@ const {data: { data: sellerData } = {}}=useCurrentSellerQuery<SellerResponse>('s
           bgColor: 'bg-emerald-50',
           borderColor: 'border-emerald-200'
         };
-      case 'rejected':
+      case '2':
         return {
           icon: AlertCircle,
           title: 'Validation refusée',
@@ -70,8 +74,13 @@ const {data: { data: sellerData } = {}}=useCurrentSellerQuery<SellerResponse>('s
           >
             <Card className={`${status?.bgColor} border ${status?.borderColor}`}>
               <div className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-lg ${status?.color} bg-white`}>
+                <IsLoadingComponents isLoading={isLoading}/>
+                <div className="flex justify-between space-x-4">
+                  
+                  
+                         <div className='flex  gap-3'>
+                         <div className={`p-3 rounded-lg ${status?.color}  bg-white`}>
+                    
                     {status && <status.icon className="w-6 h-6" />}
                   </div>
                   <div>
@@ -85,9 +94,19 @@ const {data: { data: sellerData } = {}}=useCurrentSellerQuery<SellerResponse>('s
                       <div className="mt-3 flex items-center text-sm text-gray-500">
                         <Clock className="w-4 h-4 mr-1.5" />
                         Temps estimé: {status.estimate}
+                       
                       </div>
                     )}
+                     
                   </div>
+                  </div>
+                   <div className=''>
+                          <X className=''/>
+                        </div>
+                  
+                 
+                 
+                  
                 </div>
               </div>
             </Card>
@@ -107,7 +126,8 @@ const {data: { data: sellerData } = {}}=useCurrentSellerQuery<SellerResponse>('s
                       Prochaines étapes
                     </h3>
                     <span className="px-2.5 py-0.5 bg-[#ed7e0f]/10 text-[#ed7e0f] text-sm rounded-full">
-                      1/3 complété
+                     {sellerData?.shop.state==="0" &&  "1/3 complété"}
+                      {sellerData?.shop.state==="1" &&  "2/3 complété"}
                     </span>
                   </div>
                   <div className="space-y-6">

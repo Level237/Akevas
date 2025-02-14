@@ -3,13 +3,9 @@ import { useState, useEffect } from 'react';
 import Sidebar from '@/components/seller/Sidebar';
 import Header from '@/components/dashboard/seller/layouts/header';
 import { useCurrentSellerQuery } from '@/services/sellerService';
-import { Seller } from '@/types/seller';
+import {SellerResponse } from '@/types/seller';
 
-interface SellerResponse {
-  data:{
-    data: Seller |null;
-  }
-}
+
 
 export default function SellerRootDashboard({children}:{children:React.ReactNode}) {
 
