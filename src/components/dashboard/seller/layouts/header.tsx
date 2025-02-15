@@ -10,6 +10,7 @@ import { logoutUser } from '@/store/authSlice'
 import { Seller } from '@/types/seller'
 import { CheckStateSeller } from '../../admin/seller/list-sellers'
 import { useLogoutMutation } from '@/services/auth'
+import AsyncLink from '@/components/ui/AsyncLink'
 
 
 export default function Header({isMobile,setIsSidebarOpen,sellerData}:{isMobile:boolean,setIsSidebarOpen:React.Dispatch<React.SetStateAction<boolean>>,sellerData:Seller | null | undefined}) {
@@ -43,8 +44,10 @@ const handleLogout=async()=>{
                 </h1>
               </div>
               <nav className="hidden lg:flex space-x-6">
-                <span className="text-[#ed7e0f] font-medium">Tableau de bord</span>
-                <span className="text-gray-400 cursor-not-allowed">Produits</span>
+                <AsyncLink to='/seller/dashboard'><span className="text-[#ed7e0f] font-medium">Tableau de bord</span></AsyncLink>
+                {sellerData?.shop.level!=="1" && <AsyncLink to='/seller/products'><span className="text-gray-400 cursor-pointer">Produits</span></AsyncLink>}
+                {sellerData?.shop.level==="1" && <span className="text-gray-400 cursor-not-allowed">Produits</span>}
+                
                 <span className="text-gray-400 cursor-not-allowed">Commandes</span>
               </nav>
             </div>

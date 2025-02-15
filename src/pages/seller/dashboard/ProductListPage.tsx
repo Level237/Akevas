@@ -12,6 +12,7 @@ import {
   Package
 } from 'lucide-react';
 import Skeleton from '@/components/ui/Skeleton';
+import AsyncLink from '@/components/ui/AsyncLink';
 
 interface Product {
   id: string;
@@ -140,13 +141,13 @@ const DashboardProductListPage = () => {
                 <option value="draft">Brouillon</option>
                 <option value="out_of_stock">Rupture</option>
               </select>
-              <Link
+              <AsyncLink
                 to="/seller/create-product"
                 className="flex items-center gap-2 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/90 transition-colors"
               >
                 <Plus className="w-5 h-5" />
                 Nouveau produit
-              </Link>
+              </AsyncLink>
             </div>
           </div>
 
