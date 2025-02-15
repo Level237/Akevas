@@ -44,6 +44,7 @@ const CreateProductPage: React.FC = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [images, setImages] = useState<File[]>([]);
+  const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [attributes, setAttributes] = useState<ProductAttribute[]>([
     { name: 'Couleur', values: [] },
     { name: 'Taille', values: [] },
@@ -67,6 +68,16 @@ const CreateProductPage: React.FC = () => {
     'Sport',
     'Beauté'
   ];
+
+  const handleFeaturedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFeaturedImage(e.target.files[0]);
+    }
+  };
+
+  const removeFeaturedImage = () => {
+    setFeaturedImage(null);
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -255,17 +266,17 @@ const CreateProductPage: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h2 className="text-lg font-semibold mb-4">Photo mise en avant</h2>
               <div className="aspect-square w-full max-w-md mx-auto rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
-                {images[0] ? (
+                {featuredImage ? (
                   <div className="relative group h-full">
                     <img
-                      src={URL.createObjectURL(images[0])}
+                      src={URL.createObjectURL(featuredImage)}
                       alt="Featured product"
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         type="button"
-                        onClick={() => removeImage(0)}
+                        onClick={removeFeaturedImage}
                         className="p-2 bg-white rounded-full hover:bg-gray-100"
                       >
                         <X className="w-4 h-4" />
@@ -280,7 +291,7 @@ const CreateProductPage: React.FC = () => {
                       type="file"
                       className="hidden"
                       accept="image/*"
-                      onChange={handleImageUpload}
+                      onChange={handleFeaturedImageUpload}
                     />
                   </label>
                 )}
