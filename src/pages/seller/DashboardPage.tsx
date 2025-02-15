@@ -139,7 +139,7 @@ const DashboardPage = () => {
           )}
           {sellerData?.shop.level==="2" && <VisibilityShop sellerData={sellerData}/>}
           {parseInt(sellerData?.shop.level || "0")>=2 && <StatisticsOverview sellerData={sellerData}/>}
-
+          {sellerData?.shop.level==="3" && <VisibilityShop sellerData={sellerData}/>}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Prochaines étapes */}
             <div className="lg:col-span-2">
