@@ -10,7 +10,7 @@ import CartPage from "@/pages/CartPage";
 import StorePage from "@/pages/StorePage";
 import CheckoutPage from "@/pages/CheckoutPage";
 import StoreBoostPage from "@/pages/seller/StoreBoostPage";
-import CreateProductPage from "@/pages/seller/dashboard/CreateProductPage";
+import CreateProductPage from "@/pages/seller/CreateProductPage";
 import DashboardProductListPage from "@/pages/seller/dashboard/ProductListPage";
 import DeliveryRegisterPage from "@/pages/auth/delivery-registration/DeliveryRegisterPage";
 import VehicleInfoPage from "@/pages/auth/delivery-registration/VehicleInfoPage";
