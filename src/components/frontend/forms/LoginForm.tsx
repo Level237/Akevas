@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/services/auth";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "@/store";
 import { useState } from "react";
 import { authTokenChange } from "@/store/authSlice";
@@ -12,7 +11,7 @@ export default function LoginForm() {
     const [password,setPassword]=useState('');
    const [login,{isLoading,isError,error}]=useLoginMutation()
     const dispatch=useDispatch<AppDispatch>();
-    const navigate=useNavigate()
+    
 
     const handleSubmit=async(e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault()

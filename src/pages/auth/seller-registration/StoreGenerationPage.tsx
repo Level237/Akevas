@@ -80,7 +80,7 @@ const StoreGenerationPage = () => {
         }
 
         // Lancement de l'appel API immédiatement
-        const apiPromise = newStore(formData);
+        await newStore(formData);
        
         const stepDuration = 3000;
         const handleStepProgress = (stepIndex: number) => {

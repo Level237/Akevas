@@ -16,9 +16,18 @@ export const sellerService=createApi({
                 providesTags: ['seller'],
                
         }),
+        addProduct:builder.mutation({
+                query:(formData)=>({
+                        url:"/api/v1/products",
+                        method:"POST",
+                        body:formData
+                }),
+                invalidatesTags:["seller"]
+        })
         
 })
 })
 export const {
-useCurrentSellerQuery
+useCurrentSellerQuery,
+useAddProductMutation
 }=sellerService

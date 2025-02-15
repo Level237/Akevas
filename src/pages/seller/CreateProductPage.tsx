@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   Upload,
   Plus,
-  Minus,
+
   X,
   Save,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
-import Header from '@/components/ui/header';
+import { useAddProductMutation } from '@/services/sellerService';
+import { useGetCategoriesQuery } from '@/services/guardService';
+import { MultiSelect } from '@/components/ui/multiselect';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductAttribute {
   name: string;
@@ -42,7 +45,7 @@ const PREDEFINED_SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
 const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [attributes, setAttributes] = useState<ProductAttribute[]>([
@@ -59,25 +62,16 @@ const CreateProductPage: React.FC = () => {
   const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
   const [activeTab, setActiveTab] = useState<'product' | 'attributes'>('product');
 
+  const [addProduct,{isLoading:isLoadingAddProduct}]=useAddProductMutation()
+  const {data:categoriesData,isLoading:isLoadingCategories}=useGetCategoriesQuery('guard')
+  const navigate=useNavigate()
   // Liste des catégories disponibles
-  const availableCategories = [
-    'Vêtements',
-    'Chaussures',
-    'Accessoires',
-    'Électronique',
-    'Maison',
-    'Sport',
-    'Beauté'
-  ];
+
 
   // Nouvelle fonction pour gérer la sélection/déselection des catégories
-  const toggleCategory = (category: string) => {
-    if (categories.includes(category)) {
-      setCategories(categories.filter(cat => cat !== category));
-    } else {
-      setCategories([...categories, category]);
-    }
-  };
+   const handleChangeCategories = (selected: number[]) => {
+      setSelectedCategories(selected);
+    };
 
   const handleFeaturedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -181,23 +175,34 @@ const CreateProductPage: React.FC = () => {
       !attributes[1].values.includes(size)
     );
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Implémenter la logique de soumission
-    console.log({
-      name,
-      description,
-      categories,
-      images,
-      attributes,
-      variants
-    });
+    
+   try {
+    const formData = new FormData()
+    formData.append('product_name', name);
+    formData.append('product_price', price);
+    formData.append('product_quantity', stock);
+    formData.append('product_description', description);
+    
+    if (featuredImage) {
+      formData.append('product_profile', featuredImage);
+    }
+    
+    images.forEach(image => formData.append('images[]', image));
+    selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
+      
+    await addProduct(formData);
+
+    navigate('/seller/products')
+   }catch(error){
+    console.log(error)
+   }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType='multipart/form-data'>
         {/* Boutons fixes pour mobile en haut */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-b z-50">
           <div className="flex gap-3">
@@ -264,7 +269,7 @@ const CreateProductPage: React.FC = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div  className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Colonne principale */}
             <div className={`md:col-span-2 space-y-6 ${activeTab === 'attributes' ? 'hidden md:block' : ''}`}>
               {/* Informations de base */}
@@ -307,36 +312,17 @@ const CreateProductPage: React.FC = () => {
                 <div className="relative">
                   <label className="block text-lg font-semibold mb-4">Catégories</label>
                   <div className="flex flex-row flex-wrap gap-2 mb-4">
-                    {categories.map((cat) => (
-                      <span 
-                        key={cat} 
-                        onClick={() => toggleCategory(cat)}
-                        className="inline-flex cursor-pointer items-center px-4 py-2 rounded-xl text-sm bg-gray-100 hover:bg-gray-200 transition-colors"
-                      >
-                        {cat}
-                        <button
-                          type="button"
-                          
-                          className="ml-2 text-gray-400 hover:text-gray-600"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </span>
-                    ))}
+                 
                   </div>
-                  <select
-                    className="w-full  px-4 py-4 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                    onChange={(e) => toggleCategory(e.target.value)}
-                    value=""
-                  >
-                    <option value="" disabled>Sélectionner des catégories</option>
-                    {availableCategories
-                      .filter(cat => !categories.includes(cat))
-                      .map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))
-                    }
-                  </select>
+              {isLoadingCategories ? <div>Loading...</div> : (
+              <MultiSelect
+              
+        options={categoriesData?.categories}
+        selected={selectedCategories}
+        onChange={handleChangeCategories}
+        placeholder="Select categories..."
+      />
+            )}
                 </div>
               </div>
               {/* Photo mise en avant */}
@@ -678,11 +664,11 @@ const CreateProductPage: React.FC = () => {
                   type="submit"
                   className="flex-1 px-6 py-2.5 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium"
                 >
-                  Publier
+                  {isLoadingAddProduct ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Publier'}
                 </button>
               </div>
             </div>
-          </form>
+          </div>
         </main>
       </form>
     </div>
