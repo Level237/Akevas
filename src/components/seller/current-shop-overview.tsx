@@ -51,9 +51,7 @@ interface StoreCategory {
   products: StoreProduct[];
 }
 export default function CurrentShopOverView({shop}:{shop:Seller}) {
-  if (!shop) {
-    return <CurrentShopOverViewSkeleton />
-  }
+  
 
   const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews'|'categories'|'all'>('products');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

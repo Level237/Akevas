@@ -15,8 +15,10 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 
-import VisibilityShop from '@/components/seller/VisibilityShop';
+import VisibilityShop from '@/components/seller/level/Two/VisibilityShop';
 import { Button } from '@/components/ui/button';
+import AsyncLink from '@/components/ui/AsyncLink';
+import TitleOverview from '../../components/seller/level/Two/TitleOverview';
 
 const DashboardPage = () => {
 
@@ -72,7 +74,9 @@ const DashboardPage = () => {
             transition={{ duration: 0.5 }}
             className="mb-8"
           >
-            <Card className={`${status?.bgColor} border ${status?.borderColor}`}>
+            {sellerData?.shop.level !=="2" && sellerData?.shop.level==="1"
+            &&
+              <Card className={`${status?.bgColor} border ${status?.borderColor}`}>
               <div className="p-6">
                 <IsLoadingComponents isLoading={isLoading}/>
                 <div className="flex justify-between space-x-4">
@@ -111,36 +115,11 @@ const DashboardPage = () => {
                 </div>
               </div>
             </Card>
+            }
+          
           </motion.div>
           {sellerData?.shop.level === "2" && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mb-8"
-            >
-              <Card className="p-6 bg-[#ed7e0f]/5 border-[#ed7e0f]/20">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 max-sm:h-6 max-sm:w-6 max-sm:p-5 rounded-full bg-[#ed7e0f] flex items-center justify-center">
-                    <span className="text-white font-bold">2</span>
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="text-xl font-semibold max-sm:text-lg text-gray-900">Niveau 2 - Ajout d'un produit</h2>
-                    <p className="text-gray-600 mt-1">
-                     Vous pouvez desormais ajouter vos produits directements dans votre boutique
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white font-semibold"
-                   
-                  >
-                   Ajouter un produit
-                  </Button>
-                </div>
-              </Card>
-            </motion.div>
+            <TitleOverview/>
           )}
           {sellerData?.shop.level==="2" && <VisibilityShop sellerData={sellerData}/>}
           <motion.div
@@ -236,10 +215,10 @@ const DashboardPage = () => {
                       </div>
                       <div className="ml-4 flex-1">
                         <h4 className="text-sm font-medium text-gray-900">
-                          Configuration de la boutique
+                          Ajouter un produit
                         </h4>
                         <p className="mt-1 text-sm text-gray-500">
-                          Personnalisez votre espace de vente
+                          Créer votre première produit et démarrez vos ventes !
                         </p>
                       </div>
                       {sellerData?.shop.level === "2" ? <Clock className="w-5 h-5 text-[#ed7e0f]" /> : <Lock className="w-5 h-5 text-gray-400" />}

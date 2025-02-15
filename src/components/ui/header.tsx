@@ -88,6 +88,123 @@ const searchCategories = [
   { id: 'stores', label: 'Boutiques' },
   { id: 'cities', label: 'Villes' },
 ]
+
+const CategoryNavigation = () => {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  return (
+    <nav className="relative bg-white">
+      <div className="container mx-auto">
+        <ul className="flex justify-center items-center gap-8">
+          {/* Menu Promotions */}
+          <li 
+            className="relative group py-4"
+            onMouseEnter={() => setActiveCategory('promo')}
+            onMouseLeave={() => setActiveCategory(null)}
+          >
+            <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+              <Tag className="h-4 w-4" />
+              <span>Promotions</span>
+              <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+            </button>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ 
+                opacity: activeCategory === 'promo' ? 1 : 0,
+                y: activeCategory === 'promo' ? 0 : 10 
+              }}
+              className={`absolute top-full z-50 left-0 w-64 bg-white shadow-xl rounded-lg p-4 ${activeCategory === 'promo' ? 'block' : 'hidden'}`}
+            >
+              <div className="grid gap-2">
+                <Link 
+                  to="/promotions/offres"
+                  className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg group"
+                >
+                  <div className="p-2 bg-orange-100 rounded-lg group-hover:bg-orange-200">
+                    <TrendingUp className="h-4 w-4 text-orange-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Offres du moment</h4>
+                    <p className="text-sm text-gray-500">Jusqu'à -50%</p>
+                  </div>
+                </Link>
+                {/* Autres liens promotions... */}
+              </div>
+            </motion.div>
+          </li>
+          {/* Menu Catégories Principales */}
+          {Object.entries(categories).map(([key, category]) => (
+            <li 
+              key={key}
+              className="relative group py-4"
+              onMouseEnter={() => setActiveCategory(key)}
+              onMouseLeave={() => setActiveCategory(null)}
+            >
+              <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+                {category.icon}
+                <span>{category.title}</span>
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              </button>
+              <div className='relative w-full h-full'>
+                   <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ 
+                  opacity: activeCategory === key ? 1 : 0,
+                  y: activeCategory === key ? 0 : 10 
+                }}
+                className={`absolute z-[100] top-full left-1/2 mx-auto flex -translate-x-1/2 w-[800px] bg-white shadow-xl rounded-lg ${activeCategory === key ? 'block' : 'hidden'}`}
+              >
+                <div className="p-6 grid grid-cols-4 gap-8">
+                  {/* Section À la une */}
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-orange-500">À la une</h3>
+                    <div className="space-y-2">
+                      {category.featured.map((item) => (
+                        <Link
+                          key={item}
+                          to={`/${key}/${item.toLowerCase()}`}
+                          className="flex items-center gap-2 text-gray-600 hover:text-orange-500"
+                        >
+                          <Sparkle className="h-4 w-4" />
+                          <span>{item}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Sections de catégories */}
+                  <div className="col-span-3 grid grid-cols-3 gap-8">
+                    {Object.entries(category.sections).map(([section, items]) => (
+                      <div key={section} className="space-y-4">
+                        <h3 className="font-medium">{section}</h3>
+                        <ul className="space-y-2">
+                          {items.map((item) => (
+                            <li key={item}>
+                              <Link
+                                to={`/${key}/${item.toLowerCase()}`}
+                                className="text-gray-600 hover:text-orange-500 text-sm"
+                              >
+                                {item}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+              </div>
+             
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  );
+};
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -217,128 +334,9 @@ const Header = () => {
         </div>
 
         {/* Navigation avec menus déroulants */}
-        <NavigationMenu className="mt-4  w-full z-[99999]">
-          <NavigationMenuList className="flex justify-center mx-12 w-full">
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="flex items-center w-full gap-2">
-                <Tag className="h-4 w-4" />
-                Promotion
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid gap-3 p-6 w-[400px]">
-                  <ListItem title="Offres du moment" href="/promotions/offres">
-                    Découvrez nos meilleures offres
-                  </ListItem>
-                  <ListItem title="Ventes Flash" href="/promotions/flash">
-                    Promotions limitées dans le temps
-                  </ListItem>
-                  <ListItem title="Outlet" href="/promotions/outlet">
-                    Jusqu'à -70% sur une sélection
-                  </ListItem>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {Object.entries(categories).map(([key, category]) => (
-              <NavigationMenuItem key={key}>
-                <NavigationMenuTrigger className="flex items-center gap-2">
-                  {category.icon}
-                  {category.title}
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid w-[800px] grid-cols-4 p-6">
-                    <div className="col-span-1">
-                      <h3 className="font-bold mb-4">À la une</h3>
-                      <ul className="space-y-2">
-                        {category.featured.map((item) => (
-                          <li key={item}>
-                            <Link 
-                              to={`/${key}/${item.toLowerCase()}`}
-                              className="text-sm hover:text-orange-500"
-                            >
-                              {item}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="col-span-3 grid grid-cols-3 gap-6">
-                      {Object.entries(category.sections).map(([section, items]) => (
-                        <div key={section}>
-                          <h3 className="font-bold mb-4">{section}</h3>
-                          <ul className="space-y-2">
-                            {items.map((item) => (
-                              <li key={item}>
-                                <Link 
-                                  to={`/${key}/${item.toLowerCase()}`}
-                                  className="text-sm hover:text-orange-500"
-                                >
-                                  {item}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            ))}
-
-            {/* Autres catégories qui n'ont pas encore de sous-menus détaillés */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="flex items-center gap-2">
-                <Heart className="h-4 w-4" />
-                Lingerie
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4">
-                  <ListItem title="Nouveautés" href="/lingerie/nouveautes">
-                    Découvrez les dernières collections
-                  </ListItem>
-                  <ListItem title="Collections" href="/lingerie/collections">
-                    Explorez nos différentes gammes
-                  </ListItem>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="flex items-center gap-2">
-                <Dumbbell className="h-4 w-4" />
-                Sport
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4">
-                  <ListItem title="Vêtements de sport" href="/sport/vetements">
-                    Pour tous vos entraînements
-                  </ListItem>
-                  <ListItem title="Équipement" href="/sport/equipement">
-                    Tout le matériel nécessaire
-                  </ListItem>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="flex items-center gap-2">
-                <Sparkle className="h-4 w-4" />
-                Beauté
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4">
-                  <ListItem title="Maquillage" href="/beaute/maquillage">
-                    Toutes nos marques de cosmétiques
-                  </ListItem>
-                  <ListItem title="Soins" href="/beaute/soins">
-                    Produits de soin pour le visage et le corps
-                  </ListItem>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+        <div className="flex justify-center w-full">
+          <CategoryNavigation />
+        </div>
       </div>
       </header>
 

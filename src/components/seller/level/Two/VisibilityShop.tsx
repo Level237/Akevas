@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 
 import AsyncLink from '@/components/ui/AsyncLink';
-import { Card } from '../ui/card';
+import { Card } from '../../../ui/card';
 import { Check, Package, MapPin, Store } from 'lucide-react';
 import {motion} from "framer-motion"
 import { Seller } from '@/types/seller';
@@ -94,7 +94,7 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
               </Card>
               <Card className="p-6 bg-gradient-to-br from-[#ed7e0f]/10 to-orange-50 border-2 border-[#ed7e0f]/20">
                 <div className="space-y-5">
-                  <h3 className="text-xl font-bold text-gray-900">Devenez Vendeur Pro 🌟</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Booster la visibilité de vos produits 🌟</h3>
                   <ul className="space-y-3">
                     <li className="flex items-center space-x-3">
                       <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#ed7e0f] flex items-center justify-center">
