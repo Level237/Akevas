@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import {motion} from "framer-motion"
 
-export default function TitleOverview() {
+export default function TitleOverview({title,content,link,number,cta}:{title:string,content:string,link:string,number:number,cta:string}) {
   return (
     <div>
                   <motion.div
@@ -15,22 +15,22 @@ export default function TitleOverview() {
               <Card className="p-6 bg-[#ed7e0f]/5 border-[#ed7e0f]/20">
                 <div className="flex items-center gap-4">
                   <div className="h-10 w-10 max-sm:h-6 max-sm:w-6 max-sm:p-5 rounded-full bg-[#ed7e0f] flex items-center justify-center">
-                    <span className="text-white font-bold">2</span>
+                    <span className="text-white font-bold">{number}</span>
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-xl font-semibold max-sm:text-lg text-gray-900">Niveau 2 - Ajout d'un produit</h2>
+                    <h2 className="text-xl font-semibold max-sm:text-lg text-gray-900">{title}</h2>
                     <p className="text-gray-600 mt-1">
-                     Vous pouvez desormais ajouter vos produits directements dans votre boutique
+                     {content}
                     </p>
                   </div>
                 </div>
                 <div className="mt-4 flex justify-end">
-                  <AsyncLink to='/seller/create-product'>
+                  <AsyncLink to={link}>
                   <Button
                     className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white font-semibold"
                    
                   >
-                   Ajouter un produit
+                   {cta}
                   </Button>
                 </AsyncLink>
                 </div>

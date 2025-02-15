@@ -120,10 +120,25 @@ const DashboardPage = () => {
           
           </motion.div>
           {sellerData?.shop.level === "2" && (
-            <TitleOverview/>
+            <TitleOverview 
+            number={2} 
+            title="Niveau 2 - Ajout d'un produit" 
+            link="/seller/create-product" 
+            content="Vous pouvez desormais ajouter vos produits directements dans votre boutique"
+            cta="Ajouter un produit"
+            />
+          )}
+           {sellerData?.shop.level === "3" && (
+            <TitleOverview 
+            number={3} 
+            title="Niveau 3 - Mise en avant de votre boutique" 
+            link="/seller/pro" 
+            content="Devenez vendeur pro et positionnez votre boutique en tete de liste de la marketplace"
+            cta="Devenez vendeur pro"
+            />
           )}
           {sellerData?.shop.level==="2" && <VisibilityShop sellerData={sellerData}/>}
-          {sellerData?.shop.level==="2" && <StatisticsOverview sellerData={sellerData}/>}
+          {parseInt(sellerData?.shop.level || "0")>=2 && <StatisticsOverview sellerData={sellerData}/>}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Prochaines étapes */}
@@ -139,8 +154,9 @@ const DashboardPage = () => {
                       Prochaines étapes
                     </h3>
                     <span className="px-2.5 py-0.5 bg-[#ed7e0f]/10 text-[#ed7e0f] text-sm rounded-full">
-                     {sellerData?.shop.level==="0" &&  "1/3 complété"}
-                      {sellerData?.shop.level==="1" &&  "2/3 complété"}
+                     {sellerData?.shop.level==="1" &&  "0/3 complété"}
+                      {sellerData?.shop.level==="2" &&  "1/3 complété"}
+                      {sellerData?.shop.level==="3" &&  "2/3 complété"}
                     </span>
                   </div>
                   <div className="space-y-6">
@@ -163,8 +179,8 @@ const DashboardPage = () => {
                     </div>
 
                     {/* Étape 2 - Verrouillée */}
-                    <div className={`flex items-center ${sellerData?.shop.level==="2" ? "" : "opacity-50"}`}>
-                      <div className={`flex-shrink-0 w-8 h-8 rounded-full ${sellerData?.shop.level==="2" ? "bg-[#ed7e0f] text-white" : "bg-gray-200 text-gray-500"}   flex items-center justify-center`}>
+                    <div className={`flex items-center ${parseInt(sellerData?.shop.level || "0")>=2 ? "" : "opacity-50"}`}>
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-full ${parseInt(sellerData?.shop.level || "0")>=2 ? "bg-[#ed7e0f] text-white" : "bg-gray-200 text-gray-500"}   flex items-center justify-center`}>
                         2
                       </div>
                       <div className="ml-4 flex-1">
@@ -175,8 +191,10 @@ const DashboardPage = () => {
                           Créer votre première produit et démarrez vos ventes !
                         </p>
                       </div>
-                      {sellerData?.shop.level === "2" ? <Clock className="w-5 h-5 text-[#ed7e0f]" /> : <Lock className="w-5 h-5 text-gray-400" />}
+                      {parseInt(sellerData?.shop.level || "0")==2 && <Clock className="w-5 h-5 text-[#ed7e0f]" /> }
+                      {parseInt(sellerData?.shop.level || "0")<2 && <Lock className="w-5 h-5 text-gray-400" />}
                       
+                      {parseInt(sellerData?.shop.level || "0")>2 && <Check className="w-5 h-5 text-[#ed7e0f]" />}
                     </div>
 
                     {/* Étape 3 - Verrouillée */}
@@ -186,13 +204,16 @@ const DashboardPage = () => {
                       </div>
                       <div className="ml-4 flex-1">
                         <h4 className="text-sm font-medium text-gray-900">
-                          Ajout de produits
+                          Devenez vendeur pro
                         </h4>
                         <p className="mt-1 text-sm text-gray-500">
-                          Commencez à créer votre catalogue
+                          Positionnez votre boutique en tete de liste de la marketplace
                         </p>
                       </div>
-                      <Lock className="w-5 h-5 text-gray-400" />
+                      {parseInt(sellerData?.shop.level || "0")==3 && <Clock className="w-5 h-5 text-[#ed7e0f]" /> }
+                      {parseInt(sellerData?.shop.level || "0")<3 && <Lock className="w-5 h-5 text-gray-400" />}
+                      
+                      {parseInt(sellerData?.shop.level || "0")>3 && <Check className="w-5 h-5 text-[#ed7e0f]" />}
                     </div>
                   </div>
                 </Card>

@@ -3,7 +3,7 @@ import { Seller } from "@/types/seller"
 
 import {motion} from "framer-motion"
 
-export default function StatisticsOverview(sellerData:{sellerData:Seller}) {
+export default function StatisticsOverview(sellerData:{sellerData:Seller | null | undefined}) {
   return (
     <div>
           <motion.div
@@ -33,7 +33,7 @@ export default function StatisticsOverview(sellerData:{sellerData:Seller}) {
 
                 <div className="p-4 bg-[#ed7e0f]/5 rounded-lg">
                   <div className="text-3xl font-bold text-[#ed7e0f]">
-                    {sellerData?.sellerData.shop.products_count || 0}
+                    {sellerData?.sellerData?.shop.products_count || 0}
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Produits</div>
                 </div>
