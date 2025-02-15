@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import Skeleton from '@/components/ui/Skeleton';
 import AsyncLink from '@/components/ui/AsyncLink';
-
+import { ProductListContainer } from '@/components/seller/products/ProductListOverview';
 interface Product {
   id: string;
   name: string;
@@ -48,62 +48,13 @@ const DashboardProductListPage = () => {
         // Add more mock products
       ]);
       setLoading(false);
-    }, 4000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-700';
-      case 'draft':
-        return 'bg-gray-100 text-gray-700';
-      case 'out_of_stock':
-        return 'bg-red-100 text-red-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'Actif';
-      case 'draft':
-        return 'Brouillon';
-      case 'out_of_stock':
-        return 'Rupture';
-      default:
-        return status;
-    }
-  };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <Skeleton className="h-8 w-64 mb-2" />
-          <Skeleton className="h-4 w-48" />
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-sm">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <Skeleton className="h-10 w-64" />
-              <Skeleton className="h-10 w-32" />
-            </div>
-
-            <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map((item) => (
-                <Skeleton key={item} className="h-20 w-full" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -151,99 +102,7 @@ const DashboardProductListPage = () => {
             </div>
           </div>
 
-          {/* Products Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="px-4 py-3 text-left">Produit</th>
-                  <th className="px-4 py-3 text-left">Catégorie</th>
-                  <th className="px-4 py-3 text-left">Prix</th>
-                  <th className="px-4 py-3 text-left">Stock</th>
-                  <th className="px-4 py-3 text-left">Status</th>
-                  <th className="px-4 py-3 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center">
-                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-500">Aucun produit trouvé</p>
-                      <Link
-                        to="/seller/create-product"
-                        className="text-[#ed7e0f] hover:underline mt-2 inline-block"
-                      >
-                        Ajouter votre premier produit
-                      </Link>
-                    </td>
-                  </tr>
-                ) : (
-                  products.map((product) => (
-                    <tr key={product.id} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-12 h-12 rounded-lg object-cover"
-                          />
-                          <div>
-                            <h3 className="font-medium">{product.name}</h3>
-                            <p className="text-sm text-gray-500">
-                              {product.createdAt}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 text-gray-600">
-                        {product.category}
-                      </td>
-                      <td className="px-4 py-4">
-                        <span className="font-medium">
-                          {product.price.toLocaleString()} FCFA
-                        </span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <span className="font-medium">{product.stock}</span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
-                            product.status
-                          )}`}
-                        >
-                          {getStatusText(product.status)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            className="p-2 hover:bg-gray-100 rounded-lg"
-                            title="Voir"
-                          >
-                            <Eye className="w-5 h-5 text-gray-600" />
-                          </button>
-                          <button
-                            className="p-2 hover:bg-gray-100 rounded-lg"
-                            title="Modifier"
-                          >
-                            <Edit className="w-5 h-5 text-gray-600" />
-                          </button>
-                          <button
-                            className="p-2 hover:bg-gray-100 rounded-lg"
-                            title="Supprimer"
-                          >
-                            <Trash2 className="w-5 h-5 text-gray-600" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+        <ProductListContainer/>
         </div>
       </div>
     </div>
