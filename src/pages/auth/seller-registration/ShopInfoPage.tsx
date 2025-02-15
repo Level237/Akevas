@@ -66,6 +66,10 @@ const ShopInfoPage = () => {
       document.body.removeChild(element);
       navigate('/seller-registration/seller-type');
     } catch (error) {
+      if (error=== 'QuotaExceededError') {
+        console.error('Quota exceeded! Please clear some space in localStorage.');
+        // Logique pour gérer l'erreur
+    }
       console.error('Error:', error);
     } finally {
       setIsLoading(false);

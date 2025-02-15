@@ -62,6 +62,12 @@ export default function ListSellers({shops,isLoading}:ListSellersProps) {
           ))}
         </TableBody>
       </Table>
+      {!isLoading && shops?.length === 0 && (
+        <div className="text-center py-12">
+          <Store className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+          <p className="text-gray-500">Aucune boutique trouvée</p>
+        </div>
+      )}
       {isLoading &&
           <div className="flex mt-6 justify-center items-center">
               <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-[#ed7e0f] rounded-full" role="status" aria-label="loading">

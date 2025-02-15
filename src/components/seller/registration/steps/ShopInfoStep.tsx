@@ -27,6 +27,11 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
     if(type === 'file' && files) {
        if (name === 'images') {
         // Traitement de plusieurs fichiers
+        if (files && files.length > 3) {
+                    alert('Vous ne pouvez sélectionner que 3 images maximum');
+                    e.target.value = '';
+                    return;
+                  }
         const fileArray = Array.from(files);
         Promise.all(
           fileArray.map((file) => {
