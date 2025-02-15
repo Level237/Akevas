@@ -34,12 +34,16 @@ export const guardService=createApi({
             }),
             providesTags: ['guard'],
         }),
+        getShop:builder.query({
+            query:(id)=>`/api/shop/${id}`,
+           providesTags: ['guard'],
+        })
         
     })
 })
 
 export const {
-   
+   useGetShopQuery,
     useGetCategoriesQuery,
     useGetTownsQuery,
     useGetQuartersQuery,
