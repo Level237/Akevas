@@ -297,9 +297,11 @@ const CreateProductPage: React.FC = () => {
               </div>
             </div>
             {/* Photo mise en avant */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold mb-4">Photo mise en avant</h2>
-              <div className="aspect-square w-full max-w-md mx-auto rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
+            <div className="bg-white rounded-2xl shadow-sm p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-semibold">Photo mise en avant</h2>
+              </div>
+              <div className="aspect-[4/3] w-full max-w-sm mx-auto rounded-lg overflow-hidden border border-dashed border-gray-200 bg-gray-50">
                 {featuredImage ? (
                   <div className="relative group h-full">
                     <img
@@ -311,7 +313,7 @@ const CreateProductPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={removeFeaturedImage}
-                        className="p-2 bg-white rounded-full hover:bg-gray-100"
+                        className="p-1.5 bg-white/90 rounded-full hover:bg-white"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -319,8 +321,8 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 ) : (
                   <label className="h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
-                    <Upload className="w-12 h-12 text-gray-400" />
-                    <span className="mt-2 text-sm text-gray-500">Ajouter une photo principale</span>
+                    <Upload className="w-8 h-8 text-gray-400" />
+                    <span className="mt-1 text-sm text-gray-500">Ajouter une photo</span>
                     <input
                       type="file"
                       className="hidden"
