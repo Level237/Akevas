@@ -4,7 +4,7 @@ import Header from '@/components/ui/header';
 import { Link, ScrollRestoration, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileNav from '@/components/ui/mobile-nav';
-import CurrentShopOverView from '@/components/seller/current-shop-overview';
+import CurrentShopOverView, { CurrentShopOverViewSkeleton } from '@/components/seller/current-shop-overview';
 import { useGetShopQuery } from '@/services/guardService';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 
@@ -20,7 +20,7 @@ const StorePage: React.FC = () => {
       <Header />
       <ScrollRestoration />
     
-    <IsLoadingComponents isLoading={isLoading}/>
+    {isLoading && <CurrentShopOverViewSkeleton/>}
      {!isLoading && <CurrentShopOverView shop={shop}/>}
 
       {/* Mobile Bottom Navigation */}

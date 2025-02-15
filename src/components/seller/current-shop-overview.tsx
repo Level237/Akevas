@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
+
+
 interface StoreProduct {
   id: string;
   name: string;
@@ -49,7 +51,11 @@ interface StoreCategory {
   products: StoreProduct[];
 }
 export default function CurrentShopOverView({shop}:{shop:Seller}) {
-const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews'|'categories'|'all'>('products');
+  if (!shop) {
+    return <CurrentShopOverViewSkeleton />
+  }
+
+  const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews'|'categories'|'all'>('products');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
@@ -618,6 +624,118 @@ const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews'|'cat
                     </>
                   )}
                 </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+export function CurrentShopOverViewSkeleton() {
+  return (
+    <div>
+      {/* En-tête du magasin - Version desktop */}
+      <div className="relative block max-sm:hidden h-64 bg-gray-100 animate-pulse">
+        <div className="absolute bottom-0 left-0 right-0 p-8">
+          <div className="max-w-7xl mx-auto flex items-end gap-6">
+            {/* Logo du magasin */}
+            <div className="w-32 h-32 rounded-xl bg-gray-200" />
+            
+            <div className="flex-1">
+              {/* Nom du magasin */}
+              <div className="h-8 w-64 bg-gray-200 rounded mb-4" />
+              
+              {/* Statistiques */}
+              <div className="flex items-center gap-6">
+                <div className="h-4 w-24 bg-gray-200 rounded" />
+                <div className="h-4 w-24 bg-gray-200 rounded" />
+                <div className="h-4 w-32 bg-gray-200 rounded" />
+                <div className="h-4 w-32 bg-gray-200 rounded" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* En-tête du magasin - Version mobile */}
+      <div className="relative hidden max-sm:block h-[300px] bg-gray-100 animate-pulse">
+        <div className="relative container mx-auto px-4 h-full flex flex-col justify-end pb-6">
+          <div className="flex flex-col items-start gap-4">
+            {/* Logo */}
+            <div className="w-24 h-24 rounded-xl bg-gray-200" />
+            
+            {/* Informations */}
+            <div className="w-full">
+              <div className="h-6 w-48 bg-gray-200 rounded mb-3" />
+              <div className="flex flex-col gap-2">
+                <div className="h-4 w-32 bg-gray-200 rounded" />
+                <div className="h-4 w-24 bg-gray-200 rounded" />
+              </div>
+            </div>
+            
+            {/* Actions */}
+            <div className="flex gap-3 w-full">
+              <div className="h-10 w-full bg-gray-200 rounded" />
+              <div className="h-10 w-full bg-gray-200 rounded" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contenu principal */}
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-12 gap-8">
+          {/* Sidebar */}
+          <div className="col-span-3">
+            <div className="bg-gray-100 rounded-2xl p-6 animate-pulse">
+              <div className="h-6 w-48 bg-gray-200 rounded mb-4" />
+              <div className="space-y-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-4 w-full bg-gray-200 rounded" />
+                ))}
+              </div>
+            </div>
+
+            {/* Catégories */}
+            <div className="mt-6 bg-gray-100 rounded-2xl p-6 animate-pulse">
+              <div className="h-6 w-32 bg-gray-200 rounded mb-4" />
+              <div className="space-y-2">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="h-10 w-full bg-gray-200 rounded" />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Grille de produits */}
+          <div className="col-span-9">
+            {/* Barre d'outils */}
+            <div className="bg-gray-100 rounded-2xl p-4 mb-6 animate-pulse">
+              <div className="flex justify-between">
+                <div className="h-8 w-48 bg-gray-200 rounded" />
+                <div className="h-8 w-32 bg-gray-200 rounded" />
+              </div>
+            </div>
+
+            {/* Grille de produits */}
+            <div className="grid grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-gray-100 rounded-2xl overflow-hidden animate-pulse">
+                  {/* Image */}
+                  <div className="aspect-square bg-gray-200" />
+                  
+                  {/* Contenu */}
+                  <div className="p-4 space-y-3">
+                    <div className="h-5 w-3/4 bg-gray-200 rounded" />
+                    <div className="h-4 w-1/2 bg-gray-200 rounded" />
+                    <div className="flex justify-between items-center">
+                      <div className="h-6 w-20 bg-gray-200 rounded" />
+                      <div className="h-8 w-24 bg-gray-200 rounded" />
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
