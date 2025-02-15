@@ -42,7 +42,7 @@ const PREDEFINED_SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
 const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [attributes, setAttributes] = useState<ProductAttribute[]>([
@@ -58,8 +58,8 @@ const CreateProductPage: React.FC = () => {
   const [showColorSuggestions, setShowColorSuggestions] = useState(false);
   const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
 
-  // Catégories disponibles
-  const categories = [
+  // Liste des catégories disponibles
+  const availableCategories = [
     'Vêtements',
     'Chaussures',
     'Accessoires',
@@ -68,6 +68,15 @@ const CreateProductPage: React.FC = () => {
     'Sport',
     'Beauté'
   ];
+
+  // Nouvelle fonction pour gérer la sélection/déselection des catégories
+  const toggleCategory = (category: string) => {
+    if (categories.includes(category)) {
+      setCategories(categories.filter(cat => cat !== category));
+    } else {
+      setCategories([...categories, category]);
+    }
+  };
 
   const handleFeaturedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -178,7 +187,7 @@ const CreateProductPage: React.FC = () => {
     console.log({
       name,
       description,
-      category,
+      categories,
       images,
       attributes,
       variants
@@ -215,6 +224,8 @@ const CreateProductPage: React.FC = () => {
           {/* Colonne principale */}
           <div className="col-span-2 space-y-6">
             {/* Informations de base */}
+          
+
             <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
               <input
                 type="text"
@@ -225,17 +236,6 @@ const CreateProductPage: React.FC = () => {
               />
               
               <div className="flex gap-4">
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="px-4 py-2 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                >
-                  <option value="">Catégorie</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-
                 <input
                   type="number"
                   value={price}
@@ -261,7 +261,41 @@ const CreateProductPage: React.FC = () => {
                 placeholder="Description détaillée du produit..."
               />
             </div>
-
+  <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+              <div className="relative">
+                <label className="block text-lg font-semibold mb-4">Catégories</label>
+                <div className="flex flex-row flex-wrap gap-2 mb-4">
+                  {categories.map((cat) => (
+                    <span 
+                      key={cat} 
+                      className="inline-flex items-center px-4 py-2 rounded-xl text-sm bg-gray-100 hover:bg-gray-200 transition-colors"
+                    >
+                      {cat}
+                      <button
+                        type="button"
+                        onClick={() => toggleCategory(cat)}
+                        className="ml-2 text-gray-400 hover:text-gray-600"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <select
+                  className="w-full px-4 py-2 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                  onChange={(e) => toggleCategory(e.target.value)}
+                  value=""
+                >
+                  <option value="" disabled>Sélectionner des catégories</option>
+                  {availableCategories
+                    .filter(cat => !categories.includes(cat))
+                    .map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))
+                  }
+                </select>
+              </div>
+            </div>
             {/* Photo mise en avant */}
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h2 className="text-lg font-semibold mb-4">Photo mise en avant</h2>
