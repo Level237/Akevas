@@ -174,7 +174,7 @@ const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews'|'cat
                 </div>
                 <div className="flex items-center">
                   <Clock className="w-5 h-5 mr-1" />
-                  <span>Depuis {shop.created_at}</span>
+                  <span>Depuis {new Date(shop.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
                 </div>
               </div>
             </div>
@@ -375,7 +375,7 @@ const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews'|'cat
                   À propos de la boutique
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  {store.description}
+                  {shop.shop.shop_description}
                 </p>
 
                 <div className="space-y-4">
