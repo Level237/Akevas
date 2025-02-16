@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple, Heart, Dumbbell, Sparkle, ShoppingBag, ChevronDown, Menu, ChevronRight, Clock, TrendingUp } from 'lucide-react'
+import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple, Heart, Dumbbell, Sparkle, ShoppingBag, ChevronDown, Menu, ChevronRight, Clock, TrendingUp, Lock } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from './navigation-menu';
 import { cn } from '@/lib/utils';
 import AsyncLink from './AsyncLink';
 import { DropdownAccount } from './dropdown-account';
-
+import { useCurrentSellerQuery } from '@/services/sellerService';
+import { Avatar, AvatarImage, AvatarFallback } from './avatar';
+import { Button } from './button';
+import { useGetUserQuery } from '@/services/auth';
 // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
@@ -210,8 +213,18 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchCategories[0])
-
+  const {data:{data:seller}={},isLoading}=useCurrentSellerQuery('seller')
+  let userData=null;
+  const {data:userDataAuth}=useGetUserQuery('Auth')
   const [showCategories, setShowCategories] = useState(false)
+  console.log(userDataAuth)
+
+  if(userDataAuth?.role_id===2){
+      userData=seller;
+  }else if(userDataAuth?.role_id===1){
+    userData=userDataAuth;
+  }
+  console.log(userData)
   // Fermer le menu et la recherche lors du changement de route
   useEffect(() => {
     setIsMenuOpen(false);
@@ -309,17 +322,37 @@ const Header = () => {
           <div className="flex items-center justify-between gap-8">
 
                 
-                    <DropdownAccount>
-                    <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                    <DropdownAccount currentUser={userData}>
+
+                      {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
                       <User className="h-7 w-7" />
                       <p className="text-sm">Connexion</p>
-                      </div>
+                      </div>}
+                        {userData && userData.role_id===2 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                      <Avatar>
+                        <AvatarImage src={userData.shop.shop_profile} />
+                        <AvatarFallback>
+                          {userData.firstName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      </div>}
+                       {userData && userData.role_id===1 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                      <Avatar>
+                        <AvatarImage src={userData.profile} />
+                        <AvatarFallback>
+                          {userData.firstName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      </div>}
                     </DropdownAccount>
-                
-              
 
-                  <AsyncLink to="/cart">
-                  <div
+                        {userData && userData.role_id===2 && <AsyncLink to="/seller/pro">
+                          <Button  className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
+                        </AsyncLink>}
+
+{userData && userData.role_id !==2 || !userData && <AsyncLink to="/cart">
+
+                   <div
              
              className="relative text-gray-700 hover:text-[#ed7e0f]"
            >
@@ -328,8 +361,20 @@ const Header = () => {
                0
              </span>
            </div>
-                  </AsyncLink>
+                  </AsyncLink>}
+                  
+          {userData && userData.role_id===1 &&  <AsyncLink to="/cart">
 
+                   <div
+             
+             className="relative text-gray-700 hover:text-[#ed7e0f]"
+           >
+             <ShoppingCart className="w-6 h-6" />
+             <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+               0
+             </span>
+           </div>
+                  </AsyncLink>}
           </div>
         </div>
 

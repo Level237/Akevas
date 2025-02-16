@@ -24,7 +24,7 @@ export interface Seller {
     level:string | null,
     cover:string | null
   },
-  role: number,
+  role_id: number,
   
   created_at: string
 }
