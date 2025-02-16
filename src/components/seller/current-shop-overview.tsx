@@ -137,18 +137,21 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
     <div>
         {/* Couverture et informations de la boutique */}
       <div className="relative block max-sm:hidden h-64 bg-gray-900">
-        <img
-          src={shop.shop.cover || null || undefined}
-          alt="Store cover"
-          className="w-full h-full object-cover opacity-50"
-        />
+        {shop.shop.images?.[0]?.path && (
+          <img
+            src={shop.shop.images?.[0]?.path}
+            alt="Store cover"
+            className="w-full h-full object-cover opacity-50"
+          />
+        )}
+       
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         
         <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="max-w-7xl mx-auto flex items-end gap-6">
             <div className="w-32 h-32 rounded-xl overflow-hidden border-4 border-white">
               <img
-                src={shop.shop.shop_profile}
+                src={shop.shop.shop_profile || null || undefined}
                 alt={store.name}
                 className="w-full h-full object-cover"
               />
