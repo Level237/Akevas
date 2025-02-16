@@ -1,3 +1,5 @@
+import { Category } from "./products"
+
 type image={
   id:number,
   path:string
@@ -7,6 +9,9 @@ export interface Seller {
   id: string
   firstName: string,
   phone_number:string,
+  identity_card_in_front:string | null,
+  identity_card_in_back:string | null,
+  identity_card_with_the_person:string | null,
   email: string
   avatar: string,
   shop:{
@@ -14,6 +19,7 @@ export interface Seller {
     shop_name:string | null,
     shop_description:string | null,
     shop_key:string | null,
+    categories:Category[] | null,
     shop_profile:string | null,
     products_count:number | null,
     isPublished:boolean | null,

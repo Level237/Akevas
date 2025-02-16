@@ -95,7 +95,9 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
               className="w-full h-64 object-cover rounded-lg"
             />
           </div>
+          <h2 className='text-xl font-semibold mb-4'>Galerie de la boutique</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            
             {shop?.shop.images?.map((img, index) => (
               <img
                 key={index}
@@ -107,8 +109,21 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
               />
             ))}
           </div>
+          <h2 className='text-xl font-semibold mb-4'>Document personnel du vendeur</h2>
+          <div className='grid grid-cols-3 gap-4'>
+            <div>
+              <img src={shop?.identity_card_in_front || "/placeholder.svg"} alt={shop?.shop.shop_name || ""} width={200} height={200} className="w-full h-32 object-cover rounded-lg" />
+            </div>
+            <div>
+              <img src={shop?.identity_card_in_back || "/placeholder.svg"} alt={shop?.shop.shop_name || ""} width={200} height={200} className="w-full h-32 object-cover rounded-lg" />
+            </div>
+            <div>
+              <img src={shop?.identity_card_with_the_person || "/placeholder.svg"} alt={shop?.shop.shop_name || ""} width={200} height={200} className="w-full h-32 object-cover rounded-lg" />
+            </div>
+
+          </div>
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">À propos de {shop?.shop.shop_name}</h2>
+            <h2 className="text-xl font-semibold mt-6">À propos de {shop?.shop.shop_name}</h2>
             <p>{shop?.shop.shop_description}</p>
             <div className="grid gap-2">
               <p className="flex items-center">
@@ -154,8 +169,11 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
             <CardTitle>Categorie de la boutique</CardTitle>
           </CardHeader>
           <CardContent>
-            
-             <CheckStateSeller state={shop.shop.state || null} />
+              <div className='flex flex-wrap gap-2'>
+             {shop.shop.categories?.map((category,index)=>(
+              <p className='text-sm bg-gray-100 p-2 rounded-md' key={index}>{category.category_name}</p>
+             ))}
+             </div>
           </CardContent>
         </Card>
       </div>
