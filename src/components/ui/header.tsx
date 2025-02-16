@@ -350,7 +350,7 @@ const Header = () => {
                           <Button  className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
                         </AsyncLink>}
 
-{userData && userData.role_id !==2 || !userData && <AsyncLink to="/cart">
+        {!userData && <AsyncLink to="/cart">
 
                    <div
              
