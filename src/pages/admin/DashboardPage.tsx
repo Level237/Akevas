@@ -7,44 +7,7 @@ import RecentGridUser from "@/components/dashboard/admin/users/recent-grid-user"
 import { Users, TrendingUp, Package,ShoppingCart, DollarSign } from "lucide-react"
 
 
-// Mock data (unchanged)
-const recentDeliverers = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: "/placeholder.svg",
-    role: "deliverer",
-    joinedAt: "2023-01-15",
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    avatar: "/placeholder.svg",
-    role: "deliverer",
-    joinedAt: "2023-01-18",
-  },
-]
 
-const recentSellers = [
-  {
-    id: "3",
-    name: "Alice Johnson",
-    email: "alice@example.com",
-    avatar: "/placeholder.svg",
-    role: "seller",
-    joinedAt: "2023-01-20",
-  },
-  {
-    id: "4",
-    name: "Bob Williams",
-    email: "bob@example.com",
-    avatar: "/placeholder.svg",
-    role: "seller",
-    joinedAt: "2023-01-22",
-  },
-]
 
 const recentProducts = [
   { id: "1", name: "Wireless Earbuds", price: 79.99, image: "/placeholder.svg", addedAt: "2023-01-25" },
