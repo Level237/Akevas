@@ -5,13 +5,11 @@ import {
   Star,
   Heart,
   Share2,
-  ShoppingCart,
   Truck,
   Shield,
   ArrowRight,
   MessageCircle,
   ThumbsUp,
-  ChevronDown
 } from 'lucide-react';
 import shoes from "../assets/shoes1.webp"
 import dress from "../assets/dress.jpg"

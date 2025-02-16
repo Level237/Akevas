@@ -1,7 +1,6 @@
 import delivery from "../../assets/livraisond.webp"
 import dress from "../../assets/dress.jpg"
-import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+
 
 export default function StoreHero() {
   return (

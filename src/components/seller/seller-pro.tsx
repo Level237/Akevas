@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { Card } from '../ui/card'
 import { Check } from 'lucide-react'
 import AsyncLink from '../ui/AsyncLink'

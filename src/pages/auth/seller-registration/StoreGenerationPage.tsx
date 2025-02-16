@@ -46,7 +46,7 @@ const StoreGenerationPage = () => {
       );
       
    useEffect(() => {
-    let isSubscribed = true;
+    
     if(!firstName || !lastName || !email || !phone || !birthDate || !nationality || !storeName || !storeDescription || !storeCategories || !storeTown || !storeQuarter || !password || !productType) {
       navigate(-1);
       return;
@@ -139,9 +139,7 @@ const StoreGenerationPage = () => {
 
     createStore();
 
-    return () => {
-      isSubscribed = false;
-    };
+    
   }, [navigate, newStore]);
 
   return (

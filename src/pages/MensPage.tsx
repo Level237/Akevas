@@ -1,5 +1,4 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+
 import Header from '@/components/ui/header';
 import TopBar from '@/components/ui/topBar';
 import MobileNav from '@/components/ui/mobile-nav';

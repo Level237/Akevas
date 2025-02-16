@@ -9,8 +9,6 @@ import {
   ChevronDown,
   ChevronUp,
   X,
-  Check,
-  SlidersHorizontal
 } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { ScrollRestoration } from 'react-router-dom';

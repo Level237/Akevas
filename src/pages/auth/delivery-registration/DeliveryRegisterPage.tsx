@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+
 import {
   User,
   Truck,
@@ -8,9 +8,8 @@ import {
   CheckCircle,
   ChevronRight
 } from 'lucide-react';
-import { Link, ScrollRestoration } from 'react-router-dom';
-import Header from '@/components/ui/header';
 import AsyncLink from '@/components/ui/AsyncLink';
+import { ScrollRestoration } from 'react-router-dom';
 
 const steps = [
   {
@@ -75,7 +74,7 @@ const DeliveryRegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ScrollRestoration />
+      <ScrollRestoration/>
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">

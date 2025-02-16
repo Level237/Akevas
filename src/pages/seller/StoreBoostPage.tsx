@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Rocket,
   Check,
   Star,
   TrendingUp,
@@ -10,7 +9,7 @@ import {
   CreditCard,
   Phone
 } from 'lucide-react';
-import Header from '@/components/ui/header';
+
 
 interface BoostPlan {
   id: string;

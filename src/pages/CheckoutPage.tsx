@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   CreditCard,
   Phone,
   ChevronRight,
-  MapPin,
   Truck,
   Shield,
-  AlertCircle,
 } from 'lucide-react';
 import Header from '@/components/ui/header';
 import shoes from "../assets/shoes1.webp";

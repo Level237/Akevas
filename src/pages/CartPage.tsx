@@ -1,17 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Minus, X, ArrowLeft, Truck, Shield, CreditCard, ShoppingBag, ShoppingCart } from 'lucide-react';
+import { Plus, Minus, X, ArrowLeft, Truck, Shield, CreditCard,ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import type { CartItem } from '@/components/cart/CartModal';
 import shoes from "../assets/shoes1.webp"
-import { useRef } from 'react';
 import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';
 
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
-  const loadingBarRef = useRef(null);
+ 
   const [items, setItems] = React.useState<CartItem[]>([
     {
       id: '1',
@@ -45,9 +44,7 @@ const CartPage: React.FC = () => {
   const shipping = 0; // Gratuit pour cet exemple
   const total = subtotal + shipping;
 
-  const goTo=()=>{
-
-  }
+  
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       <Header />

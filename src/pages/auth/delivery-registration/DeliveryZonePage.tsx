@@ -8,8 +8,7 @@ import {
   ChevronRight,
   ChevronLeft,
 } from 'lucide-react';
-import { Link, ScrollRestoration } from 'react-router-dom';
-import Header from '@/components/ui/header';
+import { ScrollRestoration } from 'react-router-dom';
 import AsyncLink from '@/components/ui/AsyncLink';
 import { Button } from '@/components/ui/button';
 

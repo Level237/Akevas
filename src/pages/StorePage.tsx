@@ -6,14 +6,14 @@ import { Button } from '@/components/ui/button';
 import MobileNav from '@/components/ui/mobile-nav';
 import CurrentShopOverView, { CurrentShopOverViewSkeleton } from '@/components/seller/current-shop-overview';
 import { useGetShopQuery } from '@/services/guardService';
-import IsLoadingComponents from '@/components/ui/isLoadingComponents';
+
 
 
 
 const StorePage: React.FC = () => {
 
   const {id}=useParams()
-  const { data: { data: shop } = {}, isLoading,isError }=useGetShopQuery(id)
+  const { data: { data: shop } = {}, isLoading}=useGetShopQuery(id)
   console.log(shop)
   return (
     <div className="min-h-screen bg-gray-50">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ScrollRestoration, useNavigate } from 'react-router-dom';
 import ShopInfoStep from '@/components/seller/registration/steps/ShopInfoStep';
 import { SellerFormData } from '@/types/seller-registration.types';
@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { setShopInfo } from '@/store/seller/registerSlice';
 const ShopInfoPage = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<SellerFormData['shopInfo']>({

@@ -134,34 +134,8 @@ interface Store {
   ]
   
 
-  
-  interface StoreSelect {
-    id: string;
-    code: string;
-    coverImage: string;
-    rating: number;
-    totalSales: number;
-    productCount: number;
-    joinedDate: string;
-    badges: string[];
-    isVerified: boolean;
-    isFeatured: boolean;
-    category: string;
-  }
-  interface Category {
-    id: number
-    name: string
-    productCount: number
-  }
-  
-  interface Product {
-    id: number
-    name: string
-    price: number
-    image: string
-    rating: number
-    sales: number
-  }
+
+ 
   export default function StoreStories() {
     const scrollContainerRef = useRef<HTMLDivElement>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)

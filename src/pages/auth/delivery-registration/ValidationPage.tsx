@@ -13,7 +13,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Link, ScrollRestoration } from 'react-router-dom';
-import Header from '@/components/ui/header';
+
 
 const steps = [
   {

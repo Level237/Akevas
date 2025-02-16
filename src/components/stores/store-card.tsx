@@ -2,13 +2,10 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Star, ShoppingBag, Clock, X, Heart, ExternalLink, MapPin } from 'lucide-react'
+import { Star, ShoppingBag, Clock} from 'lucide-react'
 import { AnimatePresence, motion } from "framer-motion"
 import shoes from "../../assets/shoes1.webp"
 import { useState } from "react"
-
-import { StoreBadges } from "../seller/store-badge"
-import { Separator } from "../ui/separator"
 interface StoreCardProps {
   name: string
   category: string

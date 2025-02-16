@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion} from 'framer-motion';
 import logo from "../../assets/logo.png"
 import {
   X,
@@ -9,7 +9,6 @@ import {
   Settings,
   HelpCircle,
   ChevronRight,
-  Menu
 } from 'lucide-react';
 import AsyncLink from '../ui/AsyncLink';
 

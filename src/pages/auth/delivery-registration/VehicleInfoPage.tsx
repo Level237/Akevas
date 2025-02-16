@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   User,
   Truck,
@@ -13,8 +12,7 @@ import {
   Monitor,
 
 } from 'lucide-react';
-import { Link, ScrollRestoration } from 'react-router-dom';
-import Header from '@/components/ui/header';
+import { ScrollRestoration } from 'react-router-dom';
 import AsyncLink from '@/components/ui/AsyncLink';
 
 const steps = [

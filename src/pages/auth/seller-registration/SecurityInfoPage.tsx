@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import SecurityInfoStep from '@/components/seller/registration/steps/SecurityInfoStep';
 import { SellerFormData } from '@/types/seller-registration.types';
 import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/store';
+import { useDispatch, } from 'react-redux';
+import { AppDispatch} from '@/store';
 import {setPassword} from '@/store/seller/registerSlice';
 
 
 const SecurityInfoPage = () => {
-   const {storeLogo} = useSelector((state: RootState) => state.registerSeller);
    
-  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState<SellerFormData['securityInfo']>({

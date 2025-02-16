@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
@@ -6,9 +6,6 @@ import {
   Package,
   Truck,
   CreditCard,
-  Settings,
-  ShieldCheck,
-  HelpCircle,
   Users,
   Star,
   Banknote

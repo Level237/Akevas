@@ -2,12 +2,11 @@ import { useConfirmOrNotShopMutation, useGetSellerQuery } from '@/services/admin
 import { Seller } from '@/types/seller';
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 
-import { Check, X, MapPin, Phone, Mail, Globe, Package, Users, DollarSign } from "lucide-react"
+import { Check, X, MapPin, Phone, Mail, Globe} from "lucide-react"
 import { useNavigate, useParams } from 'react-router-dom';
 import { CheckStateSeller } from './list-sellers';
-import { useState } from 'react';
+
 
 
 
@@ -17,7 +16,7 @@ interface DetailSellerProps{
 }
 
 export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
-  const [confirmOrNotShop, {isLoading:isConfirm,isSuccess}] = useConfirmOrNotShopMutation();
+  const [confirmOrNotShop, {isLoading:isConfirm}] = useConfirmOrNotShopMutation();
   //const [stateSeller,setSeller]=useState(null)
   const navigate=useNavigate()
   const confirm = async (state: string) => {
@@ -28,7 +27,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
         shop_level:"2",
         isSeller:true
       };
-     const response= await confirmOrNotShop({
+     await confirmOrNotShop({
         shop_id: shop.shop.shop_id,
         formData: data
       });
@@ -43,7 +42,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
         isSeller:false,
         shop_level:"1"
       };
-     const response= await confirmOrNotShop({
+     await confirmOrNotShop({
         shop_id: shop.shop.shop_id,
         formData: data
       });

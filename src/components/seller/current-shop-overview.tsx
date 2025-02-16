@@ -11,7 +11,6 @@ import {
   Package,
   Clock,
   Shield,
-  ChevronDown,
   Grid,
   List,
   SlidersHorizontal,

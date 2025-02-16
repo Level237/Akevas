@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+
 
 import {
   Sheet,
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet"
 import { Separator } from "../ui/separator"
 
-export function CartSheet({children}:{children:any}) {
+export function CartSheet({children}:{children:React.ReactNode}) {
   return (
     <>
      <Sheet>

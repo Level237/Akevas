@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge"
-import { Crown, Package, Recycle, Tags } from 'lucide-react'
+import { Crown, Package, Recycle} from 'lucide-react'
 
 interface StoreBadgeProps {
   isPremium?: boolean

@@ -16,8 +16,6 @@ import { SellerResponse } from '@/types/seller';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 
 import VisibilityShop from '@/components/seller/level/Two/VisibilityShop';
-import { Button } from '@/components/ui/button';
-import AsyncLink from '@/components/ui/AsyncLink';
 import TitleOverview from '../../components/seller/level/Two/TitleOverview';
 import StatisticsOverview from '@/components/seller/level/Two/StatisticsOverview';
 

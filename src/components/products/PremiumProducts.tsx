@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Heart, ShoppingCart, X, Plus, Minus, Check, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Star, Heart, ShoppingCart, X, Plus, Minus,ChevronRight } from 'lucide-react';
 import shoes from "../../assets/shoes1.webp"
 import AsyncLink from '../ui/AsyncLink';
 interface ProductVariant {

@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import {
   Upload,
   Plus,
-  Minus,
   X,
   Save,
   AlertCircle
 } from 'lucide-react';
-import Header from '@/components/ui/header';
+
 
 interface ProductAttribute {
   name: string;

@@ -1,9 +1,8 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Package, Search, Plus, Edit, Trash2 } from "lucide-react"
+
+import { Search, Plus} from "lucide-react"
 import { ListProductsContainer } from "@/components/dashboard/admin/products/list-products"
 
 

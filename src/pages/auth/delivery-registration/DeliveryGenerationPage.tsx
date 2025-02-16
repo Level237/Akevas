@@ -27,8 +27,6 @@ const steps = [
 
 const DeliveryGenerationPage: React.FC = () => {
   const [currentStep, setCurrentStep] = React.useState(0);
-  const [error, setError] = React.useState<string | null>(null);
-
   useEffect(() => {
     const timer = setInterval(() => {
       if (currentStep < steps.length - 1) {
@@ -122,11 +120,7 @@ const DeliveryGenerationPage: React.FC = () => {
           ))}
         </div>
 
-        {error && (
-          <div className="mt-4 p-4 bg-red-50 rounded-lg text-red-600 text-sm">
-            {error}
-          </div>
-        )}
+       
 
         <div className="mt-8 text-center text-sm text-white">
           <p>Ne fermez pas cette fenêtre</p>

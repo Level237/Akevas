@@ -1,6 +1,4 @@
 import { DetailSellerContainer } from "@/components/dashboard/admin/seller/detail-seller";
-import { useGetSellerQuery } from "@/services/adminService";
-import { useParams } from "react-router-dom";
 
 
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Star, MapPin, Package, Users, BadgeCheck, Shield, Heart, ChevronRight } from 'lucide-react';
+import { X, Star, MapPin, BadgeCheck, Shield, Heart, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import AsyncLink from '../ui/AsyncLink';
 import img from "../../assets/dress.jpg";

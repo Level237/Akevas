@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Star, TrendingUp, Clock, ShoppingBag, Shield, Award, ArrowRight, BadgeInfo, X, Heart, Badge, ExternalLink, MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Star, TrendingUp, Clock, ShoppingBag, Shield,ArrowRight, BadgeInfo, X, Heart, Badge, ExternalLink, MapPin } from 'lucide-react';
 import shoes from "../../assets/shoes1.webp"
 import shirt from "../../assets/dress.jpg"
 import TooltipChildren from '../frontend/TooltipChildren';

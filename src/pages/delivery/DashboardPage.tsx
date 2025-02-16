@@ -1,6 +1,6 @@
 'use client'
 
-import { Activity, Bell, Box, ChevronDown, Clock, DollarSign, Home, Package, Settings, Star, Truck, Users } from 'lucide-react'
+import { Box, ChevronDown, DollarSign, Package, Star,Users } from 'lucide-react'
 
 
 import { Button } from "@/components/ui/button"

@@ -1,7 +1,7 @@
-import React from 'react'
+
 import { Button } from '../ui/button'
-import { AlignJustify, Search } from 'lucide-react'
-import { Input } from '../ui/input'
+import { AlignJustify } from 'lucide-react'
+
 
 export default function CategoryHeader() {
   return (

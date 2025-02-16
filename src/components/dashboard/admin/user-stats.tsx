@@ -1,4 +1,4 @@
-import { Users, TrendingUp, Package } from "lucide-react"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface Stat {

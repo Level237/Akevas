@@ -1,7 +1,6 @@
-import { Header } from "@/components/dashboard/admin/layouts/Header"
-import { Sidebar } from "@/components/dashboard/admin/layouts/Sidebar"
+
 import { RecentProducts } from "@/components/dashboard/admin/recent-products"
-import { RecentUsers } from "@/components/dashboard/admin/recent-users"
+
 import { UserStats } from "@/components/dashboard/admin/user-stats"
 import RecentGridUser from "@/components/dashboard/admin/users/recent-grid-user"
 import { useRecentProductsQuery } from "@/services/adminService"
@@ -10,11 +9,6 @@ import { Users, TrendingUp, Package,ShoppingCart, DollarSign } from "lucide-reac
 
 
 
-const recentProducts = [
-  { id: "1", name: "Wireless Earbuds", price: 79.99, image: "/placeholder.svg", addedAt: "2023-01-25" },
-  { id: "2", name: "Smart Watch", price: 199.99, image: "/placeholder.svg", addedAt: "2023-01-26" },
-  { id: "3", name: "Portable Charger", price: 49.99, image: "/placeholder.svg", addedAt: "2023-01-27" },
-]
 
 const sellerStats = [
   { title: "Total Sellers", value: 1234, change: 12, icon: <Users className="h-4 w-4 text-muted-foreground" /> },

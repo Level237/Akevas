@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import {
-  MapPin, Star, Package, Clock, Shield, 
-  ChevronDown, Grid, List, SlidersHorizontal, 
-  Edit2, Camera, Save, Eye
+  MapPin, Star, Package,
+  Edit2, Camera,Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCurrentSellerQuery } from '@/services/sellerService';
@@ -15,7 +13,6 @@ import { Badge } from '@/components/ui/badge';
 export default function StoreEditorPage() {
   const [isEditingInfo, setIsEditingInfo] = useState(false);
   const {data: { data: sellerData } = {}} = useCurrentSellerQuery('seller');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [activeTab, setActiveTab] = useState('products');
 
   return (
@@ -148,18 +145,14 @@ export default function StoreEditorPage() {
               <label className="text-sm font-medium">Nom de la boutique</label>
               <Input
                 value={sellerData?.shop.shop_name}
-                onChange={(e) => {
-                  // Handle name change
-                }}
+                
               />
             </div>
             <div>
               <label className="text-sm font-medium">Description</label>
               <Textarea
                 value={sellerData?.shop.shop_description}
-                onChange={(e) => {
-                  // Handle description change
-                }}
+               
               />
             </div>
             <Button onClick={() => setIsEditingInfo(false)}>Enregistrer</Button>

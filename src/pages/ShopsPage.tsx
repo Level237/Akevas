@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, MapPin, Package, Clock, Shield, Search, Filter, ChevronLeft, ChevronRight, Shirt, ShoppingBag, Heart, Users, BadgeCheck } from 'lucide-react';
+import { Star, MapPin, Package, Clock, Shield, Search, ChevronLeft, ChevronRight,Heart, Users, BadgeCheck } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AsyncLink from '@/components/ui/AsyncLink';
 import { ScrollRestoration } from 'react-router-dom';
 import img from "../assets/dress.jpg"
-import { cn } from '@/lib/utils';
 import MobileNav from '@/components/ui/mobile-nav';
 
 // Mock data for shops with enhanced information
