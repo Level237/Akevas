@@ -42,7 +42,8 @@ export function RecentUsers({ users, title,isLoading }: RecentUsersProps) {
               <div className="text-sm max-sm:text-xs max-sm:text-center text-muted-foreground">{formatDate(user.created_at)}</div>
             </div>
           ))}
-          {!users && !isLoading && <div className="flex items-center justify-center">Aucun utilisateur ajouté</div>}
+          {!users && !isLoading  && <div className="flex items-center justify-center">Aucun livreur ajouté</div>}
+          {users && users?.length === 0 && <div className="flex items-center justify-center">Aucune boutique ajoutée</div>}
         </div>
       </CardContent>
     </Card>

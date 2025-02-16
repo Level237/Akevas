@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit, Trash2,Package } from 'lucide-react'
 import { Product } from '@/types/products'
 import { Badge } from '@/components/ui/badge'
 import React from 'react'
@@ -14,6 +14,7 @@ export default function ListProducts({products,isLoading}:{products:Product[],is
   return (
     <div>
             <Table>
+                
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
@@ -25,6 +26,7 @@ export default function ListProducts({products,isLoading}:{products:Product[],is
           </TableRow>
         </TableHeader>
         <TableBody>
+                  
           {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell className="font-medium flex items-center gap-2"> <Avatar>
@@ -49,6 +51,12 @@ export default function ListProducts({products,isLoading}:{products:Product[],is
           ))}
         </TableBody>
       </Table>
+      {!isLoading && products?.length === 0 && (
+        <div className="text-center py-12">
+          <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+          <p className="text-gray-500">Aucun produit trouvé</p>
+        </div>
+      )}
     </div>
   )
 }
