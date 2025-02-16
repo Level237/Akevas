@@ -24,13 +24,13 @@ import { logoutUser } from "@/store/authSlice"
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
-  { icon: Truck, label: "Deliverers", href: "/deliverers" },
-  { icon: Store, label: "Shops", href: "/admin/shops" },
-  { icon: Users, label: "Users", href: "/users" },
-  { icon: ShoppingCart, label: "Orders", href: "/orders" },
-  { icon: BarChart2, label: "Analytics", href: "/analytics" },
-  { icon: Settings, label: "Settings", href: "/settings" },
-  { icon: HelpCircle, label: "Help", href: "/help" },
+  { icon: Truck, label: "Deliverers", href: "#" },
+  { icon: Store, label: "Boutiques", href: "/admin/shops" },
+  { icon: Users, label: "Users", href: "#" },
+  { icon: ShoppingCart, label: "Orders", href: "#" },
+  { icon: BarChart2, label: "Analytics", href: "#" },
+  { icon: Settings, label: "Settings", href: "#" },
+  { icon: HelpCircle, label: "Help", href: "#" },
 ]
 
 export function Sidebar() {
