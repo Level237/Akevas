@@ -2,8 +2,6 @@ import { Seller } from '@/types/seller'
 
 import dress from "../../assets/dress.jpg"
 import shoes from "../../assets/shoes1.webp"
-
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   MapPin,
@@ -21,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 
 interface StoreProduct {

@@ -3,7 +3,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Edit, Trash2,Package } from 'lucide-react'
 import { Product } from '@/types/products'
 import { Badge } from '@/components/ui/badge'
-import React from 'react'
 import { useAdminListProductsQuery } from '@/services/adminService'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'

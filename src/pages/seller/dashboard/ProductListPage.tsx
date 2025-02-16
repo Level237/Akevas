@@ -1,58 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+
 import {
-  Edit,
-  Trash2,
-  Eye,
   Plus,
   Search,
-  Filter,
-  ArrowUpDown,
-  MoreVertical,
-  Package
 } from 'lucide-react';
-import Skeleton from '@/components/ui/Skeleton';
+
 import AsyncLink from '@/components/ui/AsyncLink';
 import { ProductListContainer } from '@/components/seller/products/ProductListOverview';
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  status: 'active' | 'draft' | 'out_of_stock';
-  image: string;
-  category: string;
-  createdAt: string;
-}
+
 
 const DashboardProductListPage = () => {
-  const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState<Product[]>([]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
-  useEffect(() => {
-    // Simulate API call
-    const timer = setTimeout(() => {
-      setProducts([
-        {
-          id: '1',
-          name: 'T-shirt Premium',
-          price: 15000,
-          stock: 50,
-          status: 'active',
-          image: '/product1.jpg',
-          category: 'Vêtements',
-          createdAt: '2025-01-20'
-        },
-        // Add more mock products
-      ]);
-      setLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
+ 
 
 
 

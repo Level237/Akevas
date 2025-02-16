@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -7,16 +7,12 @@ import {
   Home,
   Search,
   Heart,
-  ShoppingBag,
   User,
   ChevronRight,
   ChevronDown,
   Gem,
   Shirt,
-  Shoe,
   Sparkles,
-  Dumbbell,
-  Watch
 } from 'lucide-react';
 
 const categories = [
@@ -32,7 +28,7 @@ const categories = [
   {
     id: 'chaussures',
     name: 'Chaussures',
-    icon: Shoe,
+
     subcategories: [
       { name: 'Femmes', items: ['Sneakers', 'Talons', 'Bottes', 'Sandales'] },
       { name: 'Hommes', items: ['Sneakers', 'Ville', 'Bottes', 'Sport'] }
@@ -176,7 +172,7 @@ const MobileNav = () => {
                         className="flex items-center justify-between w-full p-4 hover:bg-gray-50"
                       >
                         <div className="flex items-center gap-3">
-                          <category.icon className="w-5 h-5 text-gray-600" />
+                         
                           <span>{category.name}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400" />

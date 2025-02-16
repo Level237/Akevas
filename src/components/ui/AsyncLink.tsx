@@ -10,18 +10,18 @@ interface AsyncLinkProps {
   }
 const AsyncLink = ({ to, className, children, OnClick }: AsyncLinkProps) => {
   const navigate = useNavigate();
-  const { startLoading, completeLoading } = useLoader();
+  const loaderContext = useLoader();
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault(); // Empêcher le comportement par défaut
-    startLoading();
+    loaderContext?.startLoading?.();
 
     // Simuler une opération asynchrone (comme un appel API)
     await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 secondes de délai
 
     navigate(to); // Naviguer vers la nouvelle page
-    completeLoading();
-    OnClick && OnClick();
+    loaderContext?.completeLoading?.();
+    OnClick?.();
   };
 
   return (

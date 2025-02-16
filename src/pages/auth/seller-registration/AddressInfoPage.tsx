@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddressInfoStep from '@/components/seller/registration/steps/AddressInfoStep';
 import { SellerFormData } from '@/types/seller-registration.types';

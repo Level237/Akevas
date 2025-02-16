@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
+import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export interface CartItem {

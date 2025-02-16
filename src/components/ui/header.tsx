@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple, Heart, Dumbbell, Sparkle, ShoppingBag, ChevronDown, Menu, ChevronRight, Clock, TrendingUp, Lock } from 'lucide-react'
+import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple,Sparkle,ChevronDown, Menu,Clock, TrendingUp, Lock } from 'lucide-react'
 import logo from '../../assets/logo.png';
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from './navigation-menu';
+import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
 import AsyncLink from './AsyncLink';
 import { DropdownAccount } from './dropdown-account';
@@ -354,6 +354,7 @@ const Header = () => {
                   
                   </div>}
                     {userData && userData.role_id===2 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                  
                   <Avatar>
                     <AvatarImage src={userData.shop.shop_profile} />
                     <AvatarFallback>
@@ -365,7 +366,7 @@ const Header = () => {
                   <Avatar>
                     <AvatarImage src={userData.profile} />
                     <AvatarFallback>
-                      {userData.firstName.charAt(0)}
+                      {userData?.userName.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   </div>}

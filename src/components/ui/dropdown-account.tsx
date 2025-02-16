@@ -2,12 +2,14 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
-import { MessageCircle, Package, Heart, CreditCard, Ticket, Settings, Building2, User, ChevronRight } from 'lucide-react'
+import { MessageCircle, Package, Heart, CreditCard, Ticket,ChevronRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import AsyncLink from "./AsyncLink"
 
-export function DropdownAccount({children,currentUser}: {children: React.ReactNode,currentUser:User | null}) {
+
+
+export function DropdownAccount({children,currentUser}: {children: React.ReactNode,currentUser:any | null}) {
   const [isOpen, setIsOpen] = useState(false)
   console.log("currentUser")
   console.log(currentUser)

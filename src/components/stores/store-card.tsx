@@ -13,7 +13,6 @@ interface StoreCardProps {
   sales: number
   products: number
   since: string
-  image: string
   isPremium?: boolean
   isTopSeller?: boolean,
   openModal: () => void
@@ -26,7 +25,6 @@ export function StoreCard({
   sales,
   products,
   since,
-  image,
   openModal,
   isPremium,
   isTopSeller,
