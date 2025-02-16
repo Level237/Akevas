@@ -40,6 +40,7 @@ import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage";
 import { GuardRoute } from "@/pages/auth/guard-route";
 import SellerRootDashboard from "@/components/Layouts/SellerRootDashboard";
 import StoreEditorPage from "@/pages/seller/StoreEditorPage";
+import MensPage from "@/pages/MensPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -198,5 +199,9 @@ export const routes = createBrowserRouter([
   {
     path:'/authenticate',
     element:<AuthenticatePage/>
+  },
+  {
+    path:'/accueil-homme',
+    element:<MensPage/>
   }
 ]);

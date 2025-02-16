@@ -211,6 +211,13 @@ const CategoryNavigation = () => {
   );
 };
 
+// Ajouter cette constante pour les genres
+const genders = [
+  { id: 'femme', label: 'FEMME' },
+  { id: 'homme', label: 'HOMME' },
+  { id: 'enfant', label: 'ENFANT' },
+];
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -220,6 +227,7 @@ const Header = () => {
   let userData=null;
   const {data:userDataAuth}=useGetUserQuery('Auth')
   const [showCategories, setShowCategories] = useState(false)
+ 
   console.log(userDataAuth)
 
   if(userDataAuth?.role_id===2){
@@ -271,121 +279,136 @@ const Header = () => {
             </div>
           </div>
         </div>
-        <div className=" max-sm:hidden block mx-16 px-4 py-3">
-        {/* Top bar avec logo, recherche et actions */}
-        <div className="flex items-center justify-between gap-4">
-          <AsyncLink to="/" className="flex-shrink-0">
-            <img
-              src={logo}
-              alt="AKEVAS"
-              className="h-28 w-auto"
-            />
-          </AsyncLink>
+        <div className="max-sm:hidden block mx-16 px-4 py-3">
+          {/* Top bar avec logo, recherche et actions */}
+          <div className="flex items-center justify-between gap-4">
+            <AsyncLink to="/" className="flex-shrink-0">
+              <img
+                src={logo}
+                alt="AKEVAS"
+                className="h-28 w-auto"
+              />
+            </AsyncLink>
 
-          <div className="flex flex-1 max-w-xl items-center gap-2">
-          <div className="relative w-full">
-          <div className="relative">
-                <button
-                  onClick={() => setShowCategories(!showCategories)}
-                  className="absolute left-0 top-0 h-full px-3 flex items-center gap-1 text-gray-500 hover:text-gray-700 border-r"
-                >
-                  {selectedCategory.label}
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  className="w-full pl-32 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                />
-                <button className="absolute right-0 top-0 h-full px-3 text-gray-500 hover:text-gray-700">
-                  <Search className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Categories Dropdown */}
-              {showCategories && (
-                <div className="absolute top-full z-[999999] left-0 w-48 mt-1 bg-white rounded-lg shadow-lg border">
-                  {searchCategories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => {
-                        setSelectedCategory(category)
-                        setShowCategories(false)
-                      }}
-                      className="w-full  px-4 py-2 text-left hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
-                    >
-                      {category.label}
-                    </button>
-                  ))}
+            <div className="flex flex-1 items-center justify-end gap-8">
+              {/* Barre de recherche redimensionnable */}
+              <div className={`transition-all duration-300 ease-in-out 
+                 w-[500px] 
+              `}>
+                <div className="relative w-full">
+                  <button
+                    onClick={() => setShowCategories(!showCategories)}
+                    className="absolute left-0 top-0 h-full px-2 flex items-center gap-1 text-gray-500 hover:text-gray-700 border-r"
+                  >
+                    {selectedCategory.label}
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Rechercher..."
+                    className="w-full pl-24 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent text-sm"
+                   
+                  />
+                  <button className="absolute right-0 top-0 h-full px-3 text-gray-500 hover:text-gray-700">
+                    <Search className="w-4 h-4" />
+                  </button>
                 </div>
-              )}
+
+                {/* Categories Dropdown */}
+                {showCategories && (
+                  <div className="absolute top-full z-[999999] left-0 w-48 mt-1 bg-white rounded-lg shadow-lg border">
+                    {searchCategories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => {
+                          setSelectedCategory(category)
+                          setShowCategories(false)
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
+                      >
+                        {category.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-          </div>
 
-          <div className="flex items-center justify-between gap-8">
+              {/* Navigation par genre */}
+              <nav className="flex items-center gap-6">
+                {genders.map((gender) => (
+                  <AsyncLink
+                    key={gender.id}
+                    to={`/${gender.id}`}
+                    className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors whitespace-nowrap"
+                  >
+                    {gender.label}
+                  </AsyncLink>
+                ))}
+              </nav>
 
-                
-                    <DropdownAccount currentUser={userData}>
-
-                      {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                      <User className="h-7 w-7" />
-                      <p className="text-sm">Connexion</p>
-                      </div>}
-                        {userData && userData.role_id===2 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                      <Avatar>
-                        <AvatarImage src={userData.shop.shop_profile} />
-                        <AvatarFallback>
-                          {userData.firstName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      </div>}
-                       {userData && userData.role_id===1 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                      <Avatar>
-                        <AvatarImage src={userData.profile} />
-                        <AvatarFallback>
-                          {userData.firstName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      </div>}
-                    </DropdownAccount>
-
-                        {userData && userData.role_id===2 && <AsyncLink to="/seller/pro">
-                          <Button  className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
-                        </AsyncLink>}
-
-        {!userData && <AsyncLink to="/cart">
-
-                   <div
-             
-             className="relative text-gray-700 hover:text-[#ed7e0f]"
-           >
-             <ShoppingCart className="w-6 h-6" />
-             <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-               0
-             </span>
-           </div>
-                  </AsyncLink>}
+              {/* Actions (compte, panier, etc.) */}
+              <div className="flex items-center gap-4">
+                <DropdownAccount currentUser={userData}>
+                  {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                  <User className="h-7 w-7" />
                   
-          {userData && userData.role_id===1 &&  <AsyncLink to="/cart">
+                  </div>}
+                    {userData && userData.role_id===2 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                  <Avatar>
+                    <AvatarImage src={userData.shop.shop_profile} />
+                    <AvatarFallback>
+                      {userData.firstName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  </div>}
+                   {userData && userData.role_id===1 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                  <Avatar>
+                    <AvatarImage src={userData.profile} />
+                    <AvatarFallback>
+                      {userData.firstName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  </div>}
+                </DropdownAccount>
 
-                   <div
-             
-             className="relative text-gray-700 hover:text-[#ed7e0f]"
-           >
-             <ShoppingCart className="w-6 h-6" />
-             <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-               0
-             </span>
-           </div>
-                  </AsyncLink>}
+                    {userData && userData.role_id===2 && <AsyncLink to="/seller/pro">
+                      <Button  className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
+                    </AsyncLink>}
+
+            {!userData && <AsyncLink to="/cart">
+
+                       <div
+                 
+                 className="relative text-gray-700 hover:text-[#ed7e0f]"
+               >
+                 <ShoppingCart className="w-6 h-6" />
+                 <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                   0
+                 </span>
+               </div>
+                    </AsyncLink>}
+                    
+            {userData && userData.role_id===1 &&  <AsyncLink to="/cart">
+
+                       <div
+                 
+                 className="relative text-gray-700 hover:text-[#ed7e0f]"
+               >
+                 <ShoppingCart className="w-6 h-6" />
+                 <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                   0
+                 </span>
+               </div>
+                    </AsyncLink>}
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation avec menus déroulants */}
+          <div className="flex justify-center w-full">
+            <CategoryNavigation />
           </div>
         </div>
-
-        {/* Navigation avec menus déroulants */}
-        <div className="flex justify-center w-full">
-          <CategoryNavigation />
-        </div>
-      </div>
       </header>
 
       {/* Menu Mobile Overlay */}
