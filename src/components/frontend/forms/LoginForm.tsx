@@ -91,20 +91,10 @@ export default function LoginForm() {
           />
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="terms"
-              className="h-4 w-4 rounded border-gray-300"
-              required
-            />
-            <label htmlFor="terms" className="text-sm text-muted-foreground">
-              I agree to all Term, Privacy Policy and Fees
-            </label>
-          </div>
+        <div className="space-y-12 ">
+          
 
-          <Button disabled={isLoading} type="submit" className="w-full py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
+          <Button disabled={isLoading} type="submit" className="w-full mt-12 py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
             {isLoading ?  <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
                     <span className="sr-only">Loading...</span>
                 </div>: "Connexion"}

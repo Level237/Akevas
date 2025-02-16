@@ -198,8 +198,8 @@ const DashboardPage = () => {
                     </div>
 
                     {/* Étape 3 - Verrouillée */}
-                    <div className="flex items-center opacity-50">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center">
+                    <div className={`flex items-center ${parseInt(sellerData?.shop.level || "0")>=3 ? "" : "opacity-50"}`}>
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-full ${parseInt(sellerData?.shop.level || "0")>=3 ? "bg-[#ed7e0f] text-white" : "bg-gray-200 text-gray-500"}   flex items-center justify-center`}>
                         3
                       </div>
                       <div className="ml-4 flex-1">

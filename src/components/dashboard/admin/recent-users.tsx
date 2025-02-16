@@ -30,13 +30,13 @@ export function RecentUsers({ users, title,isLoading }: RecentUsersProps) {
           {!isLoading && users?.map((user) => (
             <div key={user.id} className="flex items-center space-x-4 max-sm:space-x-2">
               <Avatar>
-                {user.role==2 && <AvatarImage src={user.shop.shop_profile || ""} />}
+                {user.role_id==2 && <AvatarImage src={user.shop.shop_profile || ""} />}
                 
                 <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium leading-none">{user.role!==2 && <h2>{user.firstName}</h2>} 
-                {user.role===2 && <h2>{user.shop.shop_name}</h2>}</p>
+                <p className="text-sm font-medium leading-none">{user.role_id!==2 && <h2>{user.firstName}</h2>} 
+                {user.role_id===2 && <h2>{user.shop.shop_name}</h2>}</p>
                 <p className="text-sm max-sm:text-xs text-muted-foreground">{user.email}</p>
               </div>
               <div className="text-sm max-sm:text-xs max-sm:text-center text-muted-foreground">{formatDate(user.created_at)}</div>
