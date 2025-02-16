@@ -112,7 +112,13 @@ const CategoryNavigation = () => {
             </button>
 
             {activeCategory === 'promo' && (
-              <div className="fixed left-0 right-0  z-50 mx-auto w-full bg-white shadow-xl">
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="fixed left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
+              >
                 <div className="container mx-auto">
                   <div className="grid grid-cols-4 gap-8 p-8">
                     <div className="space-y-4">
@@ -130,7 +136,7 @@ const CategoryNavigation = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )}
           </li>
 
@@ -149,7 +155,13 @@ const CategoryNavigation = () => {
               </button>
 
               {activeCategory === key && (
-                <div className="fixed left-0 right-0  z-50 mx-auto w-full bg-white shadow-xl">
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="fixed left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
+                >
                   <div className="container mx-auto">
                     <div className="grid grid-cols-5 gap-8 p-8">
                       {/* Section Featured */}
@@ -189,7 +201,7 @@ const CategoryNavigation = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )}
             </li>
           ))}
