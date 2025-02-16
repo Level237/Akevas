@@ -4,14 +4,8 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Package, Search, Plus, Edit, Trash2 } from "lucide-react"
+import { ListProductsContainer } from "@/components/dashboard/admin/products/list-products"
 
-const products = [
-  { id: 1, name: "Wireless Earbuds", category: "Electronics", price: 79.99, stock: 120, status: "In Stock" },
-  { id: 2, name: "Smart Watch", category: "Electronics", price: 199.99, stock: 75, status: "Low Stock" },
-  { id: 3, name: "Portable Charger", category: "Electronics", price: 49.99, stock: 200, status: "In Stock" },
-  { id: 4, name: "Laptop Backpack", category: "Accessories", price: 59.99, stock: 85, status: "In Stock" },
-  { id: 5, name: "Bluetooth Speaker", category: "Electronics", price: 89.99, stock: 60, status: "Low Stock" },
-]
 
 export default function AdminProductListPage() {
   return (
@@ -32,39 +26,7 @@ export default function AdminProductListPage() {
           <Button variant="outline">Filter</Button>
         </div>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Stock</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {products.map((product) => (
-            <TableRow key={product.id}>
-              <TableCell className="font-medium">{product.name}</TableCell>
-              <TableCell>{product.category}</TableCell>
-              <TableCell>${product.price.toFixed(2)}</TableCell>
-              <TableCell>{product.stock}</TableCell>
-              <TableCell>
-                <Badge  className={product.status === "In Stock" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}>{product.status}</Badge>
-              </TableCell>
-              <TableCell className="text-right">
-                <Button variant="ghost" size="icon" className="mr-2">
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <ListProductsContainer/>
     </div>
   </main>
   )

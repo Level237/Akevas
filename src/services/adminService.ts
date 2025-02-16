@@ -37,6 +37,10 @@ export const adminService=createApi({
         recentProducts:builder.query({
             query:()=>'/api/v1/recent/products',
             providesTags: ['admin'],
+        }),
+        adminListProducts:builder.query({
+            query:()=>'/api/v1/admin/products',
+            providesTags: ['admin'],
         })
     })
 })
@@ -46,5 +50,6 @@ useRecentSellerQuery,
 useListSellersQuery,
 useGetSellerQuery,
 useConfirmOrNotShopMutation,
-useRecentProductsQuery
+useRecentProductsQuery,
+useAdminListProductsQuery
 }=adminService
