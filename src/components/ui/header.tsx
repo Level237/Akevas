@@ -101,105 +101,96 @@ const CategoryNavigation = () => {
         <ul className="flex justify-center items-center gap-8">
           {/* Menu Promotions */}
           <li 
-            className="relative group py-4"
+            className="relative py-4"
             onMouseEnter={() => setActiveCategory('promo')}
             onMouseLeave={() => setActiveCategory(null)}
           >
             <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
               <Tag className="h-4 w-4" />
               <span>Promotions</span>
-              <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeCategory === 'promo' ? 'rotate-180' : ''}`} />
             </button>
 
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ 
-                opacity: activeCategory === 'promo' ? 1 : 0,
-                y: activeCategory === 'promo' ? 0 : 10 
-              }}
-              className={`absolute top-full z-50 left-0 w-64 bg-white shadow-xl rounded-lg p-4 ${activeCategory === 'promo' ? 'block' : 'hidden'}`}
-            >
-              <div className="grid gap-2">
-                <Link 
-                  to="/promotions/offres"
-                  className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg group"
-                >
-                  <div className="p-2 bg-orange-100 rounded-lg group-hover:bg-orange-200">
-                    <TrendingUp className="h-4 w-4 text-orange-600" />
+            {activeCategory === 'promo' && (
+              <div className="fixed left-0 right-0  z-50 mx-auto w-full bg-white shadow-xl">
+                <div className="container mx-auto">
+                  <div className="grid grid-cols-4 gap-8 p-8">
+                    <div className="space-y-4">
+                      <h3 className="font-medium text-orange-500">Offres Spéciales</h3>
+                      <div className="space-y-2">
+                        <Link to="/promotions/nouveaux-clients" className="flex items-center gap-2 p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-md">
+                          <Sparkle className="h-4 w-4" />
+                          <span>-10% Nouveaux Clients</span>
+                        </Link>
+                        <Link to="/promotions/ventes-flash" className="flex items-center gap-2 p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-md">
+                          <Clock className="h-4 w-4" />
+                          <span>Ventes Flash</span>
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-medium">Offres du moment</h4>
-                    <p className="text-sm text-gray-500">Jusqu'à -50%</p>
-                  </div>
-                </Link>
-                {/* Autres liens promotions... */}
+                </div>
               </div>
-            </motion.div>
+            )}
           </li>
-          {/* Menu Catégories Principales */}
+
+          {/* Catégories Principales */}
           {Object.entries(categories).map(([key, category]) => (
             <li 
               key={key}
-              className="relative group py-4"
+              className="relative py-4"
               onMouseEnter={() => setActiveCategory(key)}
               onMouseLeave={() => setActiveCategory(null)}
             >
               <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
                 {category.icon}
                 <span>{category.title}</span>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeCategory === key ? 'rotate-180' : ''}`} />
               </button>
-              <div className='relative w-full h-full'>
-                   <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ 
-                  opacity: activeCategory === key ? 1 : 0,
-                  y: activeCategory === key ? 0 : 10 
-                }}
-                className={`absolute z-[100] top-full left-1/2 mx-auto flex -translate-x-1/2 w-[800px] bg-white shadow-xl rounded-lg ${activeCategory === key ? 'block' : 'hidden'}`}
-              >
-                <div className="p-6 grid grid-cols-4 gap-8">
-                  {/* Section À la une */}
-                  <div className="space-y-4">
-                    <h3 className="font-bold text-orange-500">À la une</h3>
-                    <div className="space-y-2">
-                      {category.featured.map((item) => (
-                        <Link
-                          key={item}
-                          to={`/${key}/${item.toLowerCase()}`}
-                          className="flex items-center gap-2 text-gray-600 hover:text-orange-500"
-                        >
-                          <Sparkle className="h-4 w-4" />
-                          <span>{item}</span>
-                        </Link>
-                      ))}
+
+              {activeCategory === key && (
+                <div className="fixed left-0 right-0  z-50 mx-auto w-full bg-white shadow-xl">
+                  <div className="container mx-auto">
+                    <div className="grid grid-cols-5 gap-8 p-8">
+                      {/* Section Featured */}
+                      <div className="space-y-6">
+                        <h3 className="font-medium text-orange-500">À la une</h3>
+                        {category.featured.map((item) => (
+                          <Link
+                            key={item}
+                            to={`/${key}/${item.toLowerCase()}`}
+                            className="flex items-center gap-2 p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-md"
+                          >
+                            <Sparkle className="h-4 w-4" />
+                            <span>{item}</span>
+                          </Link>
+                        ))}
+                      </div>
+
+                      {/* Sections Principales */}
+                      <div className="col-span-4 grid grid-cols-4 gap-8">
+                        {Object.entries(category.sections).map(([section, items]) => (
+                          <div key={section} className="space-y-4">
+                            <h3 className="font-medium text-gray-900">{section}</h3>
+                            <ul className="space-y-2">
+                              {items.map((item) => (
+                                <li key={item}>
+                                  <Link
+                                    to={`/${key}/${item.toLowerCase()}`}
+                                    className="block p-2 text-sm text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-md"
+                                  >
+                                    {item}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-
-                  {/* Sections de catégories */}
-                  <div className="col-span-3 grid grid-cols-3 gap-8">
-                    {Object.entries(category.sections).map(([section, items]) => (
-                      <div key={section} className="space-y-4">
-                        <h3 className="font-medium">{section}</h3>
-                        <ul className="space-y-2">
-                          {items.map((item) => (
-                            <li key={item}>
-                              <Link
-                                to={`/${key}/${item.toLowerCase()}`}
-                                className="text-gray-600 hover:text-orange-500 text-sm"
-                              >
-                                {item}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              </motion.div>
-              </div>
-             
+              )}
             </li>
           ))}
         </ul>
@@ -301,7 +292,7 @@ const Header = () => {
 
               {/* Categories Dropdown */}
               {showCategories && (
-                <div className="absolute top-full z-[999999] left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border">
+                <div className="absolute top-full z-[999999] left-0 w-48 mt-1 bg-white rounded-lg shadow-lg border">
                   {searchCategories.map((category) => (
                     <button
                       key={category.id}
