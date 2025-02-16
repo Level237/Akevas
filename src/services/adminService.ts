@@ -33,6 +33,10 @@ export const adminService=createApi({
                 body:formData
             }),
             invalidatesTags:['admin']
+        }),
+        recentProducts:builder.query({
+            query:()=>'/api/v1/recent/products',
+            providesTags: ['admin'],
         })
     })
 })
@@ -41,5 +45,6 @@ export const {
 useRecentSellerQuery,
 useListSellersQuery,
 useGetSellerQuery,
-useConfirmOrNotShopMutation
+useConfirmOrNotShopMutation,
+useRecentProductsQuery
 }=adminService

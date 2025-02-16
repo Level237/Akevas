@@ -4,6 +4,7 @@ import { RecentProducts } from "@/components/dashboard/admin/recent-products"
 import { RecentUsers } from "@/components/dashboard/admin/recent-users"
 import { UserStats } from "@/components/dashboard/admin/user-stats"
 import RecentGridUser from "@/components/dashboard/admin/users/recent-grid-user"
+import { useRecentProductsQuery } from "@/services/adminService"
 import { Users, TrendingUp, Package,ShoppingCart, DollarSign } from "lucide-react"
 
 
@@ -33,6 +34,9 @@ const delivererStats = [
 ]
 
 export default function DashboardAdminPage() {
+
+  const {data:{data:recentProducts}={},isLoading}=useRecentProductsQuery('admin')
+  console.log(recentProducts)
   return (
     <main className="p-4 md:p-6 mt-16">
     <h1 className="text-2xl font-bold mb-6">Akevas Dashboard</h1>
@@ -64,7 +68,7 @@ export default function DashboardAdminPage() {
 
     <div className="grid gap-6 mb-6">
       <RecentGridUser/>
-      <RecentProducts products={recentProducts} />
+      <RecentProducts products={recentProducts} isLoading={isLoading} />
     </div>
 
     <div className="grid gap-6">
