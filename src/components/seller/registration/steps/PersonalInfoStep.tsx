@@ -90,8 +90,8 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
             type="date"
             id="birthDate"
             name="birthDate"
-            min={new Date().toISOString().split('T')[0]}
-            max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+            min="1950-01-01" 
+            max="2008-01-01"
             value={data.birthDate}
             onChange={handleChange}
             className="py-6"
