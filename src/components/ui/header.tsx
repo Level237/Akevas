@@ -232,7 +232,7 @@ const Header = () => {
 
   if(userDataAuth?.role_id===2){
       userData=seller;
-  }else if(userDataAuth?.role_id===1){
+  }else if(userDataAuth?.role_id===1 || userDataAuth?.role_id===3){
     userData=userDataAuth;
   }
   console.log(userData)
@@ -362,7 +362,7 @@ const Header = () => {
                     </AvatarFallback>
                   </Avatar>
                   </div>}
-                   {userData && userData.role_id===1 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                   {userData && (userData.role_id===1 || userData.role_id===3) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
                   <Avatar>
                     <AvatarImage src={userData.profile} />
                     <AvatarFallback>
@@ -376,7 +376,7 @@ const Header = () => {
                       <Button  className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
                     </AsyncLink>}
 
-            {!userData && <AsyncLink to="/cart">
+                    {!userData && <AsyncLink to="/cart">
 
                        <div
                  
@@ -389,7 +389,7 @@ const Header = () => {
                </div>
                     </AsyncLink>}
                     
-            {userData && userData.role_id===1 &&  <AsyncLink to="/cart">
+                    {userData && (userData.role_id===1 || userData.role_id===3) &&  <AsyncLink to="/cart">
 
                        <div
                  

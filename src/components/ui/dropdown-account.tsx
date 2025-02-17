@@ -13,6 +13,9 @@ export function DropdownAccount({children,currentUser}: {children: React.ReactNo
   const [isOpen, setIsOpen] = useState(false)
   console.log("currentUser")
   console.log(currentUser)
+  if(currentUser){
+    console.log(currentUser.role_id)
+  }
   const menuItems = [
     { icon: Package, text: "Mes Commandes" },
     { icon: Package, text: "Mes pièces" },
@@ -47,11 +50,12 @@ export function DropdownAccount({children,currentUser}: {children: React.ReactNo
               className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
             >
               <div className="px-4 py-3 border-b border-gray-100">
-                {!currentUser && <><Link to={"/login"}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button></Link>
+                {!currentUser && <><Link to={"/login"}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">{currentUser?.role_id}</Button></Link>
                 <Link to={"/register"}><Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button></Link></>}
                 {currentUser && currentUser.role_id===2 && <><AsyncLink to={"/shop/"+currentUser.shop.shop_id}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Voir ma boutique</Button></AsyncLink>
                 <AsyncLink to={"/seller/dashboard"}><Button variant="ghost" className="w-full text-sm">Tableau de bord</Button></AsyncLink></>}
               {currentUser && currentUser.role_id===1 && <AsyncLink to={"/admin/dashboard"}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
+              {currentUser && currentUser.role_id===3 && <AsyncLink to={"/user/dashboard"}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
               </div>
 
               <div className="py-2">
