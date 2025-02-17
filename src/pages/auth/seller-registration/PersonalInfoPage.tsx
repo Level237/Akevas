@@ -8,11 +8,12 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { setPersonalInfo } from '@/store/seller/registerSlice';
-
+import { useCheckIfEmailExistsMutation } from '@/services/guardService';
 const PersonalInfoPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [checkIfEmailExists]=useCheckIfEmailExistsMutation()
   const [formData, setFormData] = useState<SellerFormData['personalInfo']>({
     firstName: '',
     lastName: '',
@@ -43,6 +44,17 @@ const PersonalInfoPage = () => {
       alert('Email invalide');
       return;
     }
+    const form=new FormData()
+    form.append("email",formData.email)
+    console.log(formData.email)
+    form.append("phone",formData.phone)
+    const response=await checkIfEmailExists(form)
+
+    if(response.error){
+      alert(response.error?.data?.message);
+      return;
+    }
+    
 
     setIsLoading(true);
 

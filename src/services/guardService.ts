@@ -37,6 +37,15 @@ export const guardService=createApi({
         getShop:builder.query({
             query:(id)=>`/api/shop/${id}`,
            providesTags: ['guard'],
+        }),
+        checkIfEmailExists:builder.mutation({
+            query:(formData)=>({
+                url:`/api/check/email-and-phone-number`,
+                method:"POST",
+               
+                body:formData,
+            }),
+            invalidatesTags: ['guard'],
         })
         
     })
@@ -47,4 +56,5 @@ export const {
     useGetCategoriesQuery,
     useGetTownsQuery,
     useGetQuartersQuery,
+    useCheckIfEmailExistsMutation,
 }=guardService

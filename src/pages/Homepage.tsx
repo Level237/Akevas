@@ -11,12 +11,12 @@ import StoreStories from '@/components/stores/store-stories'
 import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
 import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
-import { useGetUserQuery } from '@/services/auth';
+
 
 const Homepage = () => {
   //t [loading, setLoading] = useState(true);
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
-  const {data:userData,isLoading}=useGetUserQuery('Auth')
+  
   useEffect(() => {
     // Simulate loading delay
     //const timer = setTimeout(() => {
@@ -96,7 +96,7 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
       <section className='overflow-hidden'>
-        {!userData && !isLoading && <TopBar />}
+         <TopBar />
         
         <Header />
         <StoreHero />
