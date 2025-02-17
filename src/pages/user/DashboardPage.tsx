@@ -1,18 +1,22 @@
 import { motion } from 'framer-motion';
-import { useGetUserQuery } from '@/services/auth';
+import { useGetUserQuery, useLogoutMutation } from '@/services/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { LogOut, Package, Heart, Clock, MapPin, Settings, CreditCard } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '@/store/authSlice';
 
 const UserDashboardPage = () => {
   const { data: userData } = useGetUserQuery('Auth');
-  const navigate = useNavigate();
 
-  const handleLogout = () => {
+   const dispatch=useDispatch();
+const [logout]=useLogoutMutation() 
+  const handleLogout = async() => {
     // Logique de déconnexion
-    navigate('/auth/login');
+    await logout('Auth')
+    dispatch(logoutUser())
+    
   };
 
   return (
