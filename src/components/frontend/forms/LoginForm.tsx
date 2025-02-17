@@ -70,7 +70,7 @@ export default function LoginForm() {
             required
             type="phone"
             autoComplete='billing home email webauthn'
-            className="py-6"
+            className="py-6 rounded-xl bg-white"
             name="phone"
             value={phone}
             onChange={(e)=>setPhone(e.target.value)}
@@ -84,7 +84,7 @@ export default function LoginForm() {
             placeholder="Enter your password"
             required
             type="password"
-            className="py-6"
+            className="py-6 rounded-xl bg-white"
             name="password"
             value={password}
             onChange={(e)=>setPassword(e.target.value)}

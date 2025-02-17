@@ -41,6 +41,7 @@ import { GuardRoute } from "@/pages/auth/guard-route";
 import SellerRootDashboard from "@/components/Layouts/SellerRootDashboard";
 import StoreEditorPage from "@/pages/seller/StoreEditorPage";
 import MensPage from "@/pages/MensPage";
+import RegisterPage from "@/pages/auth/RegisterPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -49,6 +50,10 @@ export const routes = createBrowserRouter([
   {
     path: '/login',
     element: <GuardRoute><LoginPage /></GuardRoute>
+  },
+  {
+    path: '/register',
+    element:<GuardRoute><RegisterPage /></GuardRoute>
   },
   {
     path: '/delivery/register',
