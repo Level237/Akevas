@@ -30,7 +30,7 @@ export const AuthenticatePage=()=>{
                     navigate('/seller/dashboard')
                     break;
                 case 3:
-                    navigate('/user')
+                    navigate('/user/dashboard')
                     break;
                 case 4:
                     navigate('/delivery/dashboard')

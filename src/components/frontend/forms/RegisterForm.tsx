@@ -1,11 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useRegisterMutation } from "@/services/auth";
 import {
   Form,
   FormControl,
@@ -18,6 +12,9 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { AppDispatch } from "@/store";
+import { useDispatch } from "react-redux";
+import { authTokenChange } from "@/store/authSlice";
 
 const formSchema = z.object({
   
@@ -43,9 +40,32 @@ export default function RegisterForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const [register, {isLoading}] = useRegisterMutation()
+   const dispatch=useDispatch<AppDispatch>();
+  const onSubmit=async(values: z.infer<typeof formSchema>) =>{
     // Gérer la soumission du formulaire ici
     console.log(values);
+    try{
+      const formData={
+        userName:values.username,
+        email:values.email,
+        phone_number:values.phone,
+        password:values.password,
+      }
+      const response=await register(formData)
+      console.log(response)
+      const userState={
+                'refreshToken':response.data.refresh_token,
+                'accessToken':response.data.access_token
+            }
+            
+            dispatch(authTokenChange(userState))
+            
+           window.location.href=`/authenticate?token=${encodeURIComponent(response.data.access_token)}
+              &refresh_token=${encodeURIComponent(response.data.refresh_token)}`
+    }catch(error){
+      console.log(error)
+    }
   }
 
   return (
@@ -126,8 +146,10 @@ export default function RegisterForm() {
               )}
             />
 
-            <Button className="w-full h-12 rounded-xl bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white" type="submit">
-              S'inscrire
+            <Button disabled={isLoading} className="w-full h-12 rounded-xl bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white" type="submit">
+              {isLoading ? <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
+                    <span className="sr-only">Loading...</span>
+                </div>: "S'inscrire"}
             </Button>
           </form>
         </Form>
