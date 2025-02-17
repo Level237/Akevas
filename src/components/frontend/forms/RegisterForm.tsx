@@ -40,7 +40,7 @@ export default function RegisterForm() {
     },
   });
 
-  const [register, {isLoading}] = useRegisterMutation()
+  const [register, {isLoading,isError,error}] = useRegisterMutation()
    const dispatch=useDispatch<AppDispatch>();
   const onSubmit=async(values: z.infer<typeof formSchema>) =>{
     // Gérer la soumission du formulaire ici
@@ -73,7 +73,7 @@ export default function RegisterForm() {
       
         <Form {...form}>
           <form  onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-             
+            
             
             <FormField
               control={form.control}

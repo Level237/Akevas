@@ -64,16 +64,12 @@ export const authService=createApi({
                 providesTags: ['Auth'],
                 transformErrorResponse: (baseQueryResult) => {
                     // Ici, vous pouvez personnaliser la réponse d'erreur
-                    
-                     if(baseQueryResult.status===401){
-                        return { error: "l'email et le mot de passe ne peut pas etre vide" };
-                    }else if(baseQueryResult.status===500){
-                        return { error: baseQueryResult };
+                    console.log(baseQueryResult.status)
+                    console.log("dd")
+                     if(baseQueryResult.status===400){
+                        return { error: "le numero de telephone est incorrect" };
                     }
-                    else {
-                       
-                      return { error: baseQueryResult.data };
-                    }
+                   
                   },
         }),
     })

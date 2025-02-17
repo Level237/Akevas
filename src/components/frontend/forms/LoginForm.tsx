@@ -11,8 +11,9 @@ export default function LoginForm() {
     const [password,setPassword]=useState('');
    const [login,{isLoading,isError,error}]=useLoginMutation()
     const dispatch=useDispatch<AppDispatch>();
-    
-
+    if(error){
+      console.log(error)
+    }
     const handleSubmit=async(e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault()
             const userObject={phone_number:phone,password:password}
@@ -59,7 +60,7 @@ export default function LoginForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
-          {'data' in error ? JSON.stringify(error.data) : 'Une erreur est survenue'}
+          {'data' in error ? JSON.stringify(error.data) : 'le numero de telephone ou le mot de passe est incorrect'}
         </div>}
         
         <div className="space-y-2">
