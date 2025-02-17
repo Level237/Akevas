@@ -43,6 +43,7 @@ import StoreEditorPage from "@/pages/seller/StoreEditorPage";
 import MensPage from "@/pages/MensPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import UserDashboardPage from "@/pages/user/DashboardPage";
+import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -212,6 +213,12 @@ export const routes = createBrowserRouter([
   },
   {
     path:'/user/dashboard',
-    element:<UserDashboardPage/>
+    element:<UserRootDashboard><PrivateRoute/></UserRootDashboard>,
+    children:[
+      {
+        path:'/user/dashboard',
+        element:<UserDashboardPage/>
+      }
+    ]
   }
 ]);

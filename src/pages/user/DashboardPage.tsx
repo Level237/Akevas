@@ -1,57 +1,17 @@
 import { motion } from 'framer-motion';
-import { useGetUserQuery, useLogoutMutation } from '@/services/auth';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, Package, Heart, Clock, MapPin, Settings, CreditCard } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { useDispatch } from 'react-redux';
-import { logoutUser } from '@/store/authSlice';
+import { Package, Heart, Clock, MapPin, Settings, CreditCard } from 'lucide-react';
+
 
 const UserDashboardPage = () => {
-  const { data: userData } = useGetUserQuery('Auth');
 
-   const dispatch=useDispatch();
-const [logout]=useLogoutMutation() 
-  const handleLogout = async() => {
-    // Logique de déconnexion
-    await logout('Auth')
-    dispatch(logoutUser())
-    
-  };
+
+
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header personnalisé */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={userData?.profile} />
-                <AvatarFallback className="bg-[#ed7e0f] text-white text-xl">
-                  {userData?.userName.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h1 className="text-xl font-semibold">Bonjour, {userData?.userName}</h1>
-                <p className="text-gray-500 text-sm">Bienvenue sur votre espace personnel</p>
-              </div>
-            </div>
-            <Button 
-              variant="ghost" 
-              onClick={handleLogout}
-              className="flex items-center gap-2 hover:text-red-600"
-            >
-              <LogOut className="w-4 h-4" />
-              Déconnexion
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Section des statistiques */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
             { title: 'Commandes', icon: Package, value: '12', color: 'bg-blue-500' },
             { title: 'Liste de souhaits', icon: Heart, value: '8', color: 'bg-pink-500' },
@@ -131,8 +91,7 @@ const [logout]=useLogoutMutation()
             </Card>
           </motion.div>
         </div>
-      </main>
-    </div>
+    </>
   );
 };
 
