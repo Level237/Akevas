@@ -62,7 +62,7 @@ export default function RegisterForm() {
             dispatch(authTokenChange(userState))
             
            window.location.href=`/authenticate?token=${encodeURIComponent(response.data.access_token)}
-              &refresh_token=${encodeURIComponent(response.data.refresh_token)}`
+              //&refresh_token=${encodeURIComponent(response.data.refresh_token)}`
     }catch(error){
       console.log(error)
     }
