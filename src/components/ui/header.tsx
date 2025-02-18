@@ -149,23 +149,49 @@ const CategoryNavigation = () => {
                     <div className="grid grid-cols-3 gap-8 p-8">
                       {/* Sections Principales */}
                       <div className="col-span-4 grid grid-cols-4 gap-8">
-                        {!isLoadingChildren && Object.entries(categoriesChildren).map(([gender, categories]) => (
-                          <div key={gender} className="space-y-4">
-                            <h3 className="font-medium text-lg">{gender}</h3>
-                            <ul className="space-y-2">
-                              {categories.map((item: any) => (
-                                <li key={item.id}>
-                                  <AsyncLink 
-                                    to={`/category/${item.category_url}`}
-                                    className="text-sm text-gray-600 hover:text-orange-500"
-                                  >
-                                    {item.category_name}
-                                  </AsyncLink>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
+                        {!isLoadingChildren && Object.entries(categoriesChildren).map(([key, categories]) => {
+                          if (key === 'sans_genre') {
+                            // Grouper les catégories par parent_id
+                            const parentCategories = categories.filter(cat => cat.children && cat.children.length > 0);
+                            
+                            return parentCategories.map(parentCat => (
+                              <div key={parentCat.id} className="space-y-4">
+                                <h3 className="font-medium text-lg">{parentCat.category_name}</h3>
+                                <ul className="space-y-2">
+                                  {parentCat.children.map((childCat: any) => (
+                                    <li key={childCat.id}>
+                                      <AsyncLink 
+                                        to={`/category/${childCat.category_url}`}
+                                        className="text-sm text-gray-600 hover:text-orange-500"
+                                      >
+                                        {childCat.category_name}
+                                      </AsyncLink>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ));
+                          }
+                          
+                          // Comportement existant pour les autres cas
+                          return (
+                            <div key={key} className="space-y-4">
+                              <h3 className="font-medium text-lg">{key}</h3>
+                              <ul className="space-y-2">
+                                {categories.map((item: any) => (
+                                  <li key={item.id}>
+                                    <AsyncLink 
+                                      to={`/category/${item.category_url}`}
+                                      className="text-sm text-gray-600 hover:text-orange-500"
+                                    >
+                                      {item.category_name}
+                                    </AsyncLink>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
