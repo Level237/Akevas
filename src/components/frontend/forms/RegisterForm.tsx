@@ -40,11 +40,9 @@ export default function RegisterForm() {
     },
   });
 
-  const [register, {isLoading,isError,error}] = useRegisterMutation()
+  const [register, {isLoading}] = useRegisterMutation()
    const dispatch=useDispatch<AppDispatch>();
   const onSubmit=async(values: z.infer<typeof formSchema>) =>{
-    // Gérer la soumission du formulaire ici
-    console.log(values);
     try{
       const formData={
         userName:values.username,

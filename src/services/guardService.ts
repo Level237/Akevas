@@ -46,7 +46,21 @@ export const guardService=createApi({
                 body:formData,
             }),
             invalidatesTags: ['guard'],
-        })
+        }),
+        getCategoriesWithParentIdNull:builder.query({
+            query:()=>({
+                url:`/api/categories/with-parent-id-null`,
+                method:"GET",
+            }),
+            providesTags: ['guard'],
+        }),
+        getCategoriesWithParentId:builder.query({
+            query:(id)=>({
+                url:`/api/category/gender/${id}`,
+                method:"GET",
+            }),
+            providesTags: ['guard'],
+        }),
         
     })
 })
@@ -57,4 +71,6 @@ export const {
     useGetTownsQuery,
     useGetQuartersQuery,
     useCheckIfEmailExistsMutation,
+    useGetCategoriesWithParentIdNullQuery,
+    useGetCategoriesWithParentIdQuery,
 }=guardService

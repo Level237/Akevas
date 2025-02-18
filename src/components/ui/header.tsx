@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple,Sparkle,ChevronDown, Menu,Clock, TrendingUp, Lock } from 'lucide-react'
+import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple,Sparkle,ChevronDown, Menu,Clock, TrendingUp, Lock, Loader2 } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,8 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
-// Données de démonstration pour l'historique et les suggestions
+import { useGetCategoriesWithParentIdNullQuery, useGetCategoriesWithParentIdQuery } from '@/services/guardService';
+  // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
   'Nike Air Max',
@@ -93,68 +94,50 @@ const searchCategories = [
 ]
 
 const CategoryNavigation = () => {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<number | null>(0);
+  const {data:{data:categoriesParent}={},isLoading}=useGetCategoriesWithParentIdNullQuery('guard')
+  const {data:categoriesChildren,isLoading:isLoadingChildren}=useGetCategoriesWithParentIdQuery(activeCategory)
 
+  if(isLoading){
+    return (
+      <div className="container mx-auto">
+        <ul className="flex justify-center items-center gap-8">
+          {[1, 2, 3, 4, 5].map((item) => (
+            <li key={item} className="py-4">
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 bg-gray-200 animate-pulse rounded-full" />
+                <div className="h-4 w-24 bg-gray-200 animate-pulse rounded-md" />
+                <div className="h-4 w-4 bg-gray-200 animate-pulse rounded-full" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
   return (
     <nav className="relative bg-white">
       <div className="container mx-auto">
         <ul className="flex justify-center items-center gap-8">
-          {/* Menu Promotions */}
-          <li 
-            className="relative py-4"
-            onMouseEnter={() => setActiveCategory('promo')}
-            onMouseLeave={() => setActiveCategory(null)}
-          >
-            <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
-              <Tag className="h-4 w-4" />
-              <span>Promotions</span>
-              <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeCategory === 'promo' ? 'rotate-180' : ''}`} />
-            </button>
 
-            {activeCategory === 'promo' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="fixed left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
-              >
-                <div className="container mx-auto">
-                  <div className="grid grid-cols-4 gap-8 p-8">
-                    <div className="space-y-4">
-                      <h3 className="font-medium text-orange-500">Offres Spéciales</h3>
-                      <div className="space-y-2">
-                        <Link to="/promotions/nouveaux-clients" className="flex items-center gap-2 p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-md">
-                          <Sparkle className="h-4 w-4" />
-                          <span>-10% Nouveaux Clients</span>
-                        </Link>
-                        <Link to="/promotions/ventes-flash" className="flex items-center gap-2 p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-md">
-                          <Clock className="h-4 w-4" />
-                          <span>Ventes Flash</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </li>
 
           {/* Catégories Principales */}
-          {Object.entries(categories).map(([key, category]) => (
+         
+          {!isLoading && Object.entries(categoriesParent).map(([key, category]) => (
             <li 
               key={key}
               className="relative py-4"
-              onMouseEnter={() => setActiveCategory(key)}
-              onMouseLeave={() => setActiveCategory(null)}
+              onMouseEnter={() => setActiveCategory(category.id)}
+              onMouseLeave={() => setActiveCategory(0)}
             >
-              <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
-                {category.icon}
-                <span>{category.title}</span>
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeCategory === key ? 'rotate-180' : ''}`} />
+              <button className="flex text-sm items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+               
+                <span>{category.category_name}</span>
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeCategory === category.id ? 'rotate-180' : ''}`} />
               </button>
 
-              {activeCategory === key && (
+              
+              {activeCategory === category.id && categoriesChildren && Object.keys(categoriesChildren).length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
@@ -163,36 +146,21 @@ const CategoryNavigation = () => {
                   className="fixed left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
                 >
                   <div className="container mx-auto">
-                    <div className="grid grid-cols-5 gap-8 p-8">
-                      {/* Section Featured */}
-                      <div className="space-y-6">
-                        <h3 className="font-medium text-orange-500">À la une</h3>
-                        {category.featured.map((item) => (
-                          <Link
-                            key={item}
-                            to={`/${key}/${item.toLowerCase()}`}
-                            className="flex items-center gap-2 p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-md"
-                          >
-                            <Sparkle className="h-4 w-4" />
-                            <span>{item}</span>
-                          </Link>
-                        ))}
-                      </div>
-
+                    <div className="grid grid-cols-3 gap-8 p-8">
                       {/* Sections Principales */}
                       <div className="col-span-4 grid grid-cols-4 gap-8">
-                        {Object.entries(category.sections).map(([section, items]) => (
-                          <div key={section} className="space-y-4">
-                            <h3 className="font-medium text-gray-900">{section}</h3>
+                        {!isLoadingChildren && Object.entries(categoriesChildren).map(([gender, categories]) => (
+                          <div key={gender} className="space-y-4">
+                            <h3 className="font-medium text-lg">{gender}</h3>
                             <ul className="space-y-2">
-                              {items.map((item) => (
-                                <li key={item}>
-                                  <Link
-                                    to={`/${key}/${item.toLowerCase()}`}
-                                    className="block p-2 text-sm text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-md"
+                              {categories.map((item: any) => (
+                                <li key={item.id}>
+                                  <AsyncLink 
+                                    to={`/category/${item.category_url}`}
+                                    className="text-sm text-gray-600 hover:text-orange-500"
                                   >
-                                    {item}
-                                  </Link>
+                                    {item.category_name}
+                                  </AsyncLink>
                                 </li>
                               ))}
                             </ul>
