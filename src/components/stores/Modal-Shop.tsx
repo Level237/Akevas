@@ -1,10 +1,10 @@
 import { Separator } from "../ui/separator";
 import { motion } from "framer-motion";
 import { useGetShopQuery } from "@/services/guardService";
-import { ExternalLink,Star, X, PackageOpen, ShoppingBag, Clock, MapPin, UserPlus } from "lucide-react";
+import { ExternalLink,Star, X, PackageOpen, ShoppingBag, Clock, MapPin, UserPlus, Badge, Heart } from "lucide-react";
 import { StoreBadges } from "../seller/store-badge";
 import { Button } from "../ui/button";
-import { Category} from "@/types/products";
+import { Category,Product } from "@/types/products";
 import AsyncLink from "../ui/AsyncLink";
 
 
@@ -165,7 +165,35 @@ export default function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isModalOp
                              </div>
                              )}
                              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                               
+                                {shop.shop.products.map((product:Product) => (
+                          <motion.div
+                            key={product.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 12 * 0.1 }}
+                            className="group relative overflow-hidden rounded-lg border bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md"
+                          >
+                            <div className="relative mb-3 aspect-square overflow-hidden rounded-lg">
+                              <img
+                                src={product.product_profile}
+                                alt={product.product_name}
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                              <button className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 opacity-0 transition-opacity duration-300 hover:bg-white group-hover:opacity-100">
+                                <Heart className="h-4 w-4" />
+                              </button>
+                            </div>
+                            <h4 className="mb-2 line-clamp-2 text-sm font-medium">
+                              {product.product_name}
+                            </h4>
+                            <div className="flex items-center justify-between">
+                              <span className="text-lg font-bold">${product.product_price}</span>
+                              <Badge className="text-xs">
+                                12 sold
+                              </Badge>
+                            </div>
+                          </motion.div>
+                        ))}
     
                              </div>
                              {!isLoading && shop.shop.products_count == 0 && <div className="flex flex-col w-full items-center justify-center py-16">
