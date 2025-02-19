@@ -61,6 +61,13 @@ export const guardService=createApi({
             }),
             providesTags: ['guard'],
         }),
+        getCategoryByGender:builder.query({
+            query:(id)=>({
+                url:`/api/get/category/by-gender/${id}`,
+                method:"GET",
+            }),
+            providesTags: ['guard'],
+        }),
         
     })
 })
@@ -73,4 +80,5 @@ export const {
     useCheckIfEmailExistsMutation,
     useGetCategoriesWithParentIdNullQuery,
     useGetCategoriesWithParentIdQuery,
+    useGetCategoryByGenderQuery,
 }=guardService

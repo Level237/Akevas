@@ -9,9 +9,10 @@ import {
   Loader2
 } from 'lucide-react';
 import { useAddProductMutation } from '@/services/sellerService';
-import { useGetCategoriesQuery } from '@/services/guardService';
+import { useGetCategoriesQuery, useGetCategoryByGenderQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate } from 'react-router-dom';
+import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 
 interface ProductAttribute {
   name: string;
@@ -61,9 +62,11 @@ const CreateProductPage: React.FC = () => {
   const [showColorSuggestions, setShowColorSuggestions] = useState(false);
   const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
   const [activeTab, setActiveTab] = useState<'product' | 'attributes'>('product');
-
+  const [gender,setGender]=useState<number>()
   const [addProduct,{isLoading:isLoadingAddProduct}]=useAddProductMutation()
   const {data:categoriesData,isLoading:isLoadingCategories}=useGetCategoriesQuery('guard')
+  const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
+ 
   const navigate=useNavigate()
   // Liste des catégories disponibles
 
@@ -200,6 +203,10 @@ const CreateProductPage: React.FC = () => {
    }
   };
 
+  const handleChangeGender = (value: string) => {
+    setGender(Number(value))
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <form onSubmit={handleSubmit} encType='multipart/form-data'>
@@ -278,7 +285,7 @@ const CreateProductPage: React.FC = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 text-2xl font-medium border-0 focus:ring-0"
+                  className="w-full px-4 py-3 text-2xl font-medium border-[1px] rounded-lg border-[#0000007a] focus:ring-0"
                   placeholder="Nom du produit"
                 />
                 
@@ -308,16 +315,33 @@ const CreateProductPage: React.FC = () => {
                   placeholder="Description détaillée du produit..."
                 />
               </div>
+                            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+                <div className="relative">
+                  <label className="block text-lg font-semibold mb-4">Genre produit</label>
+
+              <Select name='gender' onValueChange={handleChangeGender}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir un genre" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="1">Homme</SelectItem>
+                    <SelectItem value="2">Femme</SelectItem>
+                    <SelectItem value="3">Enfant</SelectItem>
+                    <SelectItem value="4">Mixte</SelectItem>
+                </SelectContent>
+              </Select>
+                </div>
+              </div>
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
                 <div className="relative">
                   <label className="block text-lg font-semibold mb-4">Catégories</label>
                   <div className="flex flex-row flex-wrap gap-2 mb-4">
                  
                   </div>
-              {isLoadingCategories ? <div>Loading...</div> : (
+              {isLoadingCategoriesByGender ? <div>Loading...</div> : (
               <MultiSelect
               
-        options={categoriesData?.categories}
+        options={categoriesByGender?.categories}
         selected={selectedCategories}
         onChange={handleChangeCategories}
         placeholder="Select categories..."

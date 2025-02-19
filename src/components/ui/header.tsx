@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple,Sparkle,ChevronDown, Menu,Clock, TrendingUp, Lock, Loader2 } from 'lucide-react'
 import logo from '../../assets/logo.png';
+import dress from "../../assets/dress.jpg"
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
 import AsyncLink from './AsyncLink';
@@ -146,9 +147,9 @@ const CategoryNavigation = () => {
                   className="fixed left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
                 >
                   <div className="container mx-auto">
-                    <div className="grid grid-cols-3 gap-8 p-8">
+                    <div className="grid grid-cols-4 gap-8 p-8">
                       {/* Sections Principales */}
-                      <div className="col-span-4 grid grid-cols-4 gap-8">
+                      <div className="col-span-3 grid grid-cols-3 gap-8">
                         {!isLoadingChildren && Object.entries(categoriesChildren).map(([key, categories]) => {
                           if (key === 'sans_genre') {
                             // Grouper les catégories par parent_id
@@ -192,6 +193,40 @@ const CategoryNavigation = () => {
                             </div>
                           );
                         })}
+                      </div>
+
+                      {/* Nouvelle section promotionnelle */}
+                      <div className="col-span-1 space-y-6">
+                        <div className="relative group overflow-hidden rounded-lg">
+                          <img 
+                            src={dress} 
+                            alt="Promotion" 
+                            className="w-full h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white">
+                            <h3 className="text-xl font-bold mb-2">Collection {category.category_name}</h3>
+                            <p className="text-sm mb-4">Découvrez nos nouveautés</p>
+                            <AsyncLink 
+                              to={`/category/${category.category_url}`}
+                              className="inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-orange-500 hover:text-white transition-colors"
+                            >
+                              Découvrir
+                              <Sparkle className="w-4 h-4" />
+                            </AsyncLink>
+                          </div>
+                        </div>
+
+                        <div className="bg-orange-50 p-4 rounded-lg">
+                          <h4 className="font-medium text-orange-800 mb-2">Offre Spéciale</h4>
+                          <p className="text-sm text-orange-700 mb-3">Jusqu'à -50% sur la nouvelle collection</p>
+                          <AsyncLink 
+                            to="/promotions"
+                            className="text-sm text-orange-500 hover:text-orange-600 font-medium inline-flex items-center gap-1"
+                          >
+                            Voir les offres
+                            <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
+                          </AsyncLink>
+                        </div>
                       </div>
                     </div>
                   </div>
