@@ -68,7 +68,13 @@ export const guardService=createApi({
             }),
             providesTags: ['guard'],
         }),
-        
+        getSubCategories:builder.query({
+            query:(id)=>({
+                url:`/api/get/sub-categories/${id}`,
+                method:"GET",
+            }),
+            providesTags: ['guard'],
+        }),
     })
 })
 
@@ -81,4 +87,5 @@ export const {
     useGetCategoriesWithParentIdNullQuery,
     useGetCategoriesWithParentIdQuery,
     useGetCategoryByGenderQuery,
+    useGetSubCategoriesQuery,
 }=guardService

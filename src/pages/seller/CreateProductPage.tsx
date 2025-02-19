@@ -9,7 +9,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { useAddProductMutation } from '@/services/sellerService';
-import { useGetCategoriesQuery, useGetCategoryByGenderQuery } from '@/services/guardService';
+import { useGetCategoryByGenderQuery, useGetSubCategoriesQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
@@ -47,6 +47,7 @@ const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [attributes, setAttributes] = useState<ProductAttribute[]>([
@@ -64,17 +65,22 @@ const CreateProductPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'product' | 'attributes'>('product');
   const [gender,setGender]=useState<number>()
   const [addProduct,{isLoading:isLoadingAddProduct}]=useAddProductMutation()
-  const {data:categoriesData,isLoading:isLoadingCategories}=useGetCategoriesQuery('guard')
   const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
- 
+  const {data:subCategoriesByGender,isLoading:isLoadingSubCategoriesByParentId}=useGetSubCategoriesQuery(selectedCategories)
   const navigate=useNavigate()
+
+  console.log(selectedSubCategories)
   // Liste des catégories disponibles
 
 
   // Nouvelle fonction pour gérer la sélection/déselection des catégories
-   const handleChangeCategories = (selected: number[]) => {
-      setSelectedCategories(selected);
-    };
+    const handleChangeCategories = (selected: number[]) => {
+        setSelectedCategories(selected);
+      };
+
+      const handleChangeSubCategories = (selected: number[]) => {
+        setSelectedSubCategories(selected);
+      };
 
   const handleFeaturedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -194,7 +200,7 @@ const CreateProductPage: React.FC = () => {
     
     images.forEach(image => formData.append('images[]', image));
     selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
-      
+    selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
     await addProduct(formData);
 
     navigate('/seller/products')
@@ -346,6 +352,25 @@ const CreateProductPage: React.FC = () => {
         onChange={handleChangeCategories}
         placeholder="Select categories..."
       />
+            )}
+                </div>
+              </div>
+                            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+                <div className="relative">
+                  <label className="block text-lg font-semibold mb-4">Sous catégories</label>
+                  <div className="flex flex-row flex-wrap gap-2 mb-4">
+                 
+                  </div>
+                  {selectedCategories.length > 0 && (
+              !isLoadingSubCategoriesByParentId && (
+              <MultiSelect
+              
+        options={subCategoriesByGender?.categories}
+        selected={selectedSubCategories}
+        onChange={handleChangeSubCategories}
+        placeholder="Select sub categories..."
+      />
+            )
             )}
                 </div>
               </div>
