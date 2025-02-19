@@ -1,11 +1,6 @@
-
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Gem, Shirt, Hand, Sparkles, Dumbbell, Watch } from 'lucide-react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
 import bijoux from '../../assets/dress.jpg';
 
 const categories = [
@@ -70,69 +65,49 @@ const ShopByCategory = () => {
           </p>
         </div>
 
-        <Swiper
-          modules={[Navigation, Autoplay]}
-          spaceBetween={24}
-          slidesPerView={1.2}
-          navigation
-          autoplay={{
-            delay: 3000,
-            disableOnInteraction: false,
-          }}
-          breakpoints={{
-            640: {
-              slidesPerView: 2.2,
-            },
-            768: {
-              slidesPerView: 3.2,
-            },
-            1024: {
-              slidesPerView: 4.2,
-            },
-          }}
-          className="!pb-12"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {categories.map((category) => (
-            <SwiperSlide key={category.id}>
-              <motion.div
-                whileHover={{ y: -5 }}
-                className="group relative overflow-hidden rounded-2xl aspect-[4/5]"
-              >
-                <Link to={`/category/${category.id}`} className="block h-full">
-                  <div className="relative h-full">
-                    {/* Background Image */}
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transform transition-transform duration-500 group-hover:scale-110"
-                      style={{
-                        backgroundImage: `url(${category.image})`,
-                      }}
-                    />
-                    
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <motion.div
+              key={category.id}
+              whileHover={{ y: -5 }}
+              className="group relative overflow-hidden rounded-2xl aspect-[4/5] hover:shadow-xl transition-shadow duration-300"
+            >
+              <Link to={`/category/${category.id}`} className="block h-full">
+                <div className="relative h-full">
+                  {/* Background Image */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transform transition-transform duration-500 group-hover:scale-110"
+                    style={{
+                      backgroundImage: `url(${category.image})`,
+                    }}
+                  />
+                  
+                  {/* Gradient Overlay avec un effet plus doux */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
 
-                    {/* Content */}
-                    <div className="absolute inset-0 p-6 flex flex-col justify-between">
-                      <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: category.color }}
-                      >
-                        <category.icon className="w-6 h-6 text-white" />
-                      </div>
-                      
-                      <div className="text-white">
-                        <h3 className="text-2xl font-bold mb-2">
-                          {category.name}
-                        </h3>
-                        <p className="text-white/80">{category.count}</p>
-                      </div>
+                  {/* Content */}
+                  <div className="absolute inset-0 p-6 flex flex-col justify-between">
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center transform transition-transform duration-300 group-hover:scale-110"
+                      style={{ backgroundColor: category.color }}
+                    >
+                      <category.icon className="w-6 h-6 text-white" />
+                    </div>
+                    
+                    <div className="text-white">
+                      <h3 className="text-2xl font-bold mb-2 transform transition-all duration-300 group-hover:translate-x-2">
+                        {category.name}
+                      </h3>
+                      <p className="text-white/80 transform transition-all duration-300 group-hover:translate-x-2">
+                        {category.count}
+                      </p>
                     </div>
                   </div>
-                </Link>
-              </motion.div>
-            </SwiperSlide>
+                </div>
+              </Link>
+            </motion.div>
           ))}
-        </Swiper>
+        </div>
       </div>
     </div>
   );
