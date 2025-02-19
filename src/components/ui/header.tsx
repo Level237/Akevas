@@ -185,7 +185,7 @@ const CategoryNavigation = () => {
                                       to={`/category/${item.category_url}`}
                                       className="text-sm text-gray-600 hover:text-orange-500"
                                     >
-                                      {item.category_name}
+                                      {item.category_name} {key}
                                     </AsyncLink>
                                   </li>
                                 ))}

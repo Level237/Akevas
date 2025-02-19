@@ -37,114 +37,79 @@ export function StoreCard({
         openModal()
     }
   return (
-    <section className="w-full cursor-pointer">
-     <motion.div 
-     onClick={()=>open()}
-      className="relative bg-gray-500 rounded-xl max-sm:w-[250px] max-sm:h-[300px] overflow-hidden shadow-lg w-[250px] h-[300px] group"
+<motion.div
+      className="w-[300px] h-[400px] relative rounded-2xl overflow-hidden cursor-pointer"
       whileHover={{ scale: 1.02 }}
-      onHoverStart={()=>{setShowOverlay(true);setShowStore(true)}}
-      onHoverEnd={()=>{setShowOverlay(false);setShowStore(false)}}
-      transition={{ type: "spring", stiffness: 300 }}
+      onHoverStart={() => setShowOverlay(true)}
+      onHoverEnd={() => setShowOverlay(false)}
+      onClick={openModal}
     >
-      {/* Image de fond */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center" 
+      {/* Image de fond avec un effet de zoom au hover */}
+      <motion.div 
+        className="absolute inset-0 bg-cover bg-center"
+        animate={{ scale: showOverlay ? 1.1 : 1 }}
+        transition={{ duration: 0.4 }}
         style={{ backgroundImage: `url(${shoes})` }}
       />
-      
-      {/* Overlay gradient */}
-      <motion.div 
-        className="absolute inset-0 bg-black"
-        initial={{ opacity: 0.3 }}
-        whileHover={{ opacity: 0.7 }}
-        transition={{ duration: 0.3 }}
-      />
 
-      {/* Badges */}
-      <div className="absolute top-4 left-4 flex gap-2 z-10">
+      {/* Overlay gradient sophistiqué */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+      {/* Badges avec animation */}
+      <motion.div 
+        className="absolute top-4 left-4 flex gap-2"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+      >
         {isPremium && (
-          <Badge variant="secondary" className="bg-white/90 text-black">
+          <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-0">
             Premium
           </Badge>
         )}
         {isTopSeller && (
-          <Badge variant="secondary" className="bg-white/90 text-black">
+          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
             Top Seller
           </Badge>
         )}
-      </div>
+      </motion.div>
 
-      {/* Contenu */}
-      <AnimatePresence>
-
-        
-     {showOverlay && (
-        <motion.div className='absolute inset-0 z-10 flex justify-center items-center'
-        initial={{ 
-            opacity:0
-         }}
-         animate={{ 
-            opacity:1
-          }}
-
-          exit={{ 
-            opacity:1
-           }}
-
-        >
-            <div className='absolute bg-black pointer-events-none opacity-50 h-full w-full'></div>
-            
-            {showStore &&  <motion.div 
-        className="absolute inset-x-0 bottom-0 p-6 text-white"
-    
+      {/* Contenu principal */}
+      <motion.div 
+        className="absolute bottom-0 w-full p-6 space-y-4"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
       >
-        <h3 className="font-bold  text-xl mb-2">{name}</h3>
-        <motion.div
-          
-        >
-          <p className="text-gray-200 text-sm mb-4">{category}</p>
-          
-          <div className="grid grid-cols-2 gap-y-3 text-sm mb-4">
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 text-yellow-400 fill-current" />
-              <span className="text-gray-100">{rating.toFixed(1)}/5.0</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ShoppingBag className="h-4 w-4 text-gray-300" />
-              <span className="text-gray-100">{sales} ventes</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ShoppingBag className="h-4 w-4 text-gray-300" />
-              <span className="text-gray-100">{products} produits</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4 text-gray-300" />
-              <span className="text-gray-100">Depuis {since}</span>
-            </div>
-          </div>
+        <div className="space-y-2">
+          <h3 className="text-2xl font-bold text-white">{name}</h3>
+          <p className="text-gray-300 text-sm">{category}</p>
+        </div>
 
-          <motion.div
-            initial={{ y: 0 }}
-            whileHover={{  y: 0 }}
-            transition={{ duration: 0.2, delay: 0.1 }}
-          >
-            <Button className="w-full bg-orange-500 hover:bg-orange-600">
-              Visiter la boutique
-            </Button>
-          </motion.div>
-        </motion.div>
-      </motion.div>}
-      
-        </motion.div>
-     )}</AnimatePresence>
-     <AnimatePresence>
-        {!showOverlay && <div className="absolute inset-x-0 bottom-0 p-6 text-white"><h3 className="font-bold  text-xl mb-2">{name}</h3></div>}
-     
-     </AnimatePresence>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white/10 backdrop-blur-md rounded-lg p-3">
+            <div className="flex items-center gap-2">
+              <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+              <span className="text-white font-medium">{rating.toFixed(1)}</span>
+            </div>
+            <p className="text-xs text-gray-300 mt-1">Note moyenne</p>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-md rounded-lg p-3">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-blue-400" />
+              <span className="text-white font-medium">{sales}</span>
+            </div>
+            <p className="text-xs text-gray-300 mt-1">Ventes totales</p>
+          </div>
+        </div>
+
+        <Button 
+          className="w-full bg-[#ed702d] border-0 text-white font-medium"
+        >
+          Découvrir la boutique
+        </Button>
+      </motion.div>
     </motion.div>
-    
-    
-    </section>
    
   )
 }
