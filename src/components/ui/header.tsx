@@ -199,15 +199,15 @@ const CategoryNavigation = () => {
                       <div className="col-span-1 space-y-6">
                         <div className="relative group overflow-hidden rounded-lg">
                           <img 
-                            src={dress} 
-                            alt="Promotion" 
+                            src={category.category_profile}
+                            alt={category.category_name} 
                             className="w-full h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white">
                             <h3 className="text-xl font-bold mb-2">Collection {category.category_name}</h3>
                             <p className="text-sm mb-4">Découvrez nos nouveautés</p>
                             <AsyncLink 
-                              to={`/category/${category.category_url}`}
+                              to={`/category/${category.category_name}`}
                               className="inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-orange-500 hover:text-white transition-colors"
                             >
                               Découvrir
@@ -367,7 +367,7 @@ const Header = () => {
                 {genders.map((gender) => (
                   <AsyncLink
                     key={gender.id}
-                    to={`/${gender.id}`}
+                    to={`/accueil-homme`}
                     className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors whitespace-nowrap"
                   >
                     {gender.label}
