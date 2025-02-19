@@ -63,7 +63,7 @@ const CreateProductPage: React.FC = () => {
   const [showColorSuggestions, setShowColorSuggestions] = useState(false);
   const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
   const [activeTab, setActiveTab] = useState<'product' | 'attributes'>('product');
-  const [gender,setGender]=useState<number>()
+  const [gender,setGender]=useState<number>(0)
   const [addProduct,{isLoading:isLoadingAddProduct}]=useAddProductMutation()
   const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
   const {data:subCategoriesByGender,isLoading:isLoadingSubCategoriesByParentId}=useGetSubCategoriesQuery(selectedCategories)
@@ -193,7 +193,7 @@ const CreateProductPage: React.FC = () => {
     formData.append('product_price', price);
     formData.append('product_quantity', stock);
     formData.append('product_description', description);
-    
+    formData.append('product_gender', gender.toString());
     if (featuredImage) {
       formData.append('product_profile', featuredImage);
     }
@@ -338,7 +338,8 @@ const CreateProductPage: React.FC = () => {
               </Select>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+                { gender !==0 && (
+                                <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
                 <div className="relative">
                   <label className="block text-lg font-semibold mb-4">Catégories</label>
                   <div className="flex flex-row flex-wrap gap-2 mb-4">
@@ -355,7 +356,9 @@ const CreateProductPage: React.FC = () => {
             )}
                 </div>
               </div>
-                            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+                )}
+                            {selectedCategories.length > 0 && (
+                              <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
                 <div className="relative">
                   <label className="block text-lg font-semibold mb-4">Sous catégories</label>
                   <div className="flex flex-row flex-wrap gap-2 mb-4">
@@ -374,6 +377,8 @@ const CreateProductPage: React.FC = () => {
             )}
                 </div>
               </div>
+                            )}
+                            
               {/* Photo mise en avant */}
               <div className="bg-white rounded-2xl shadow-sm p-4">
                 <div className="flex items-center justify-between mb-3">
