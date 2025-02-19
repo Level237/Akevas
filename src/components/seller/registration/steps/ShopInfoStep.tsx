@@ -6,7 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Upload } from 'lucide-react';
 import { MultiSelect } from '@/components/ui/multiselect';
-import { useGetCategoriesQuery } from '@/services/guardService';
+import { useGetCategoriesQuery, useGetCategoryByGenderQuery } from '@/services/guardService';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 interface ShopInfoStepProps {
   data: SellerFormData['shopInfo'];
   onUpdate: (data: Partial<SellerFormData>) => void;
@@ -19,6 +20,8 @@ interface ShopInfoStepProps {
 
 const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
   const {data:categories,isLoading}=useGetCategoriesQuery('guard')
+   const [gender,setGender]=useState<number>(0)
+    const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
   console.log(categories);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
@@ -86,7 +89,16 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
         },
       });
     };
-
+    
+    const handleChangeGender = (value: string) => {
+      setGender(parseInt(value));
+      onUpdate({
+        shopInfo: {
+          ...data,  
+          gender: parseInt(value),
+        },
+      });
+    };
   return (
     <div className="space-y-8">
       <div className="space-y-2">
@@ -121,19 +133,41 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             className="min-h-[120px]"
           />
         </div>
-
+        <div className="space-y-2">
+          <Label htmlFor="gender">Sélectionnez le genre de votre boutique</Label>
+        <Select name='gender' onValueChange={handleChangeGender}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir un genre" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="1">Homme</SelectItem>
+                    <SelectItem value="2">Femme</SelectItem>
+                    <SelectItem value="3">Enfant</SelectItem>
+                    <SelectItem value="4">Mixte</SelectItem>
+                </SelectContent>
+              </Select>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="category">Catégorie produit</Label>
-            {isLoading ? <div>Loading...</div> : (
+                            { gender !==0 && (
+                                <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+                <div className="relative">
+                  <label className="block text-lg font-semibold mb-4">Catégories</label>
+                  <div className="flex flex-row flex-wrap gap-2 mb-4">
+                 
+                  </div>
+              {isLoadingCategoriesByGender ? <div>Loading...</div> : (
               <MultiSelect
               
-        options={categories?.categories}
+        options={categoriesByGender?.categories}
         selected={selectedCategories}
         onChange={handleChangeCategories}
         placeholder="Select categories..."
       />
             )}
+                </div>
+              </div>
+                )}
           </div>
 
           

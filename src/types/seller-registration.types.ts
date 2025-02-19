@@ -22,6 +22,7 @@ export interface SellerFormData {
     category: string[];
     logo: string | null;
     images: string[];
+    gender: number;
   };
   // Informations bancaires
   bankInfo: {

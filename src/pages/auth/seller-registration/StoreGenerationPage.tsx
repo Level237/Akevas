@@ -20,7 +20,7 @@ const StoreGenerationPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
-  const {firstName, lastName, email, phone, birthDate, nationality,sellerType, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password,productType} = useSelector((state: RootState) => state.registerSeller);
+  const {firstName, lastName,gender, email, phone, birthDate, nationality,sellerType, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password,productType} = useSelector((state: RootState) => state.registerSeller);
 
   const [newStore] = useNewStoreMutation();
     const [login]=useLoginMutation()
@@ -47,7 +47,7 @@ const StoreGenerationPage = () => {
       
    useEffect(() => {
     
-    if(!firstName || !lastName || !email || !phone || !birthDate || !nationality || !storeName || !storeDescription || !storeCategories || !storeTown || !storeQuarter || !password || !productType) {
+    if(!firstName || !lastName || !email || !phone || !birthDate || !nationality || !storeName || !storeDescription || !storeCategories || !storeTown || !storeQuarter || !password || !productType || !gender) {
       navigate(-1);
       return;
     }
@@ -67,6 +67,7 @@ const StoreGenerationPage = () => {
           town_id: storeTown, quarter_id: storeQuarter, password,
           isWholesaler:sellerType,
           product_type: productType,
+          store_gender:gender,
         };
         Object.entries(storeObject).forEach(([key, value]) => {
           if (value) formData.append(key, value);

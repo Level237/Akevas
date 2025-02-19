@@ -9,6 +9,7 @@ const registerSlice=createSlice({
       email: localStorage.getItem("email") || null,
       phone: localStorage.getItem("phone") || null,
       birthDate: localStorage.getItem("birthDate") || null,
+      gender: localStorage.getItem("gender") || null,
       nationality: localStorage.getItem("nationality") || null,
       identity_card_in_front: localStorage.getItem("identity_card_in_front") || null,
       identity_card_in_back: localStorage.getItem("identity_card_in_back") || null,
@@ -54,11 +55,13 @@ const registerSlice=createSlice({
         localStorage.setItem("storeCategories", action.payload.storeCategories);
         localStorage.setItem("storeLogo", action.payload.storeLogo);
         localStorage.setItem("storeImages", action.payload.storeImages);
+        localStorage.setItem("storeGender", action.payload.gender);
         state.storeName = action.payload.storeName;
         state.storeDescription = action.payload.storeDescription;
         state.storeCategories = JSON.parse(action.payload.storeCategories);
         state.storeLogo = action.payload.storeLogo;
         state.storeImages = JSON.parse(action.payload.storeImages);
+        state.gender = action.payload.gender;
     },
     setSellerType:(state,action)=>{
         localStorage.setItem("sellerType", action.payload.sellerType);

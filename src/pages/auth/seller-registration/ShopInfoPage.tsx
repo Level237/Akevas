@@ -18,8 +18,9 @@ const ShopInfoPage = () => {
     images: [],
     logo: null,
     category: [],
+    gender: 0,
   });
-
+  console.log(formData);
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.shopInfo) {
       setFormData(data.shopInfo);
@@ -51,6 +52,7 @@ const ShopInfoPage = () => {
         'storeCategories':JSON.stringify(formData.category),
         'storeLogo':formData.logo,
         'storeImages':JSON.stringify(formData.images),
+        'storeGender':formData.gender,
       }
       dispatch(setShopInfo(shopInfoState));
       // Animation de succès
