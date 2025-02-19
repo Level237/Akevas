@@ -75,6 +75,13 @@ export const guardService=createApi({
             }),
             providesTags: ['guard'],
         }),
+        getHomeShops:builder.query({
+            query:()=>({
+                url:`/api/shops`,
+                method:"GET",
+            }),
+            providesTags: ['guard'],
+        }),
     })
 })
 
@@ -88,4 +95,5 @@ export const {
     useGetCategoriesWithParentIdQuery,
     useGetCategoryByGenderQuery,
     useGetSubCategoriesQuery,
+    useGetHomeShopsQuery,
 }=guardService

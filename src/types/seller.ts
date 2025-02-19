@@ -1,6 +1,6 @@
-import { Category } from "./products"
+import { Category, Product } from "./products"
 
-type image={
+export type Image={
   id:number,
   path:string
 }
@@ -22,11 +22,12 @@ export interface Seller {
     categories:Category[] | null,
     shop_profile:string | null,
     products_count:number | null,
+    products:Product[] | null,
     isPublished:boolean | null,
-    images:image[] | null,
+    images:Image[] | null,
     town:string | null,
     quarter:string | null,
-    state:string | null
+    state:string | null,
     level:string | null,
     cover:string | null
   },

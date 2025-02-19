@@ -126,10 +126,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
       comment: 'Boutique sympa, mais les délais de livraison sont un peu longs.'
     }
   ];
-  const products = store.categories.flatMap(cat => cat.products);
-  const displayedProducts = selectedCategory
-    ? store.categories.find(cat => cat.id === selectedCategory)?.products || []
-    : products;
+
     
   return (
     <div>
@@ -271,22 +268,22 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
       <div className="container hidden max-sm:block mx-auto px-4 py-6">
         {activeTab === 'products' && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {products.map((product) => (
+            {shop.shop.products?.map((product) => (
               <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <Link to={`/product/${product.id}`} className="block aspect-square">
                   <img
-                    src={product.image}
-                    alt={product.name}
+                    src={product.product_profile}
+                    alt={product.product_name}
                     className="w-full h-full object-cover"
                   />
                 </Link>
                 <div className="p-4">
                   <Link to={`/product/${product.id}`} className="block">
                     <h3 className="font-medium text-gray-900 mb-1 line-clamp-1">
-                      {product.name}
+                      {product.product_name}
                     </h3>
                     <p className="text-[#ed7e0f] font-semibold">
-                      {product.price} €
+                      {product.product_price} FCFA
                     </p>
                   </Link>
                 </div>
@@ -421,7 +418,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                   Catégories
                 </h2>
                 <div className="space-y-2">
-                  {store.categories.map((category) => (
+                  {shop.shop.categories?.map((category) => (
                     <button
                       key={category.id}
                       onClick={() => setSelectedCategory(
@@ -433,8 +430,8 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                           : 'hover:bg-gray-100'
                       }`}
                     >
-                      <span>{category.name}</span>
-                      <span className="text-sm">({category.count})</span>
+                      <span>{category.category_name}</span>
+                      <span className="text-sm">(12)</span>
                     </button>
                   ))}
                 </div>
@@ -516,14 +513,23 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 </motion.div>
               )}
             </div>
-
+              {shop.shop.products?.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16">
+          <div className="w-16 h-16 mb-4 text-gray-400">
+            <Package className="w-16 h-16" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Aucun produit disponible</h2>
+         
+        </div>
+              )}
             {/* Grille de produits */}
             <div className={
               viewMode === 'grid'
                 ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
                 : 'space-y-4'
             }>
-              {displayedProducts.map((product) => (
+
+              {shop.shop.products?.map((product) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -539,37 +545,39 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                     <>
                       <div className="relative aspect-square">
                         <img
-                          src={product.image}
-                          alt={product.name}
+                          src={product.product_profile}
+                          alt={product.product_name}
                           className="w-full h-full object-cover"
                         />
-                        {product.isPremium && (
+                       
                           <div className="absolute top-4 left-4">
                             <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
                               Premium
                             </span>
                           </div>
-                        )}
+                        
                       </div>
 
                       <div className="p-4">
                         <h3 className="font-medium text-gray-900 mb-1">
-                          {product.name}
+                          {product.product_name}
                         </h3>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center">
                             <Star className="w-4 h-4 text-yellow-400" />
                             <span className="ml-1 text-sm text-gray-600">
-                              {product.rating}
+                             12
                             </span>
                           </div>
-                          <span className="text-sm text-gray-500">
-                            {product.category}
-                          </span>
+                          {product.product_categories.map((category) => (
+                            <span className="text-sm text-gray-500">
+                              {category.category_name}
+                            </span>
+                          ))}
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-lg font-bold text-gray-900">
-                            {product.price} €
+                            {product.product_price} €
                           </span>
                           <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
                             Voir
@@ -581,8 +589,8 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                     <>
                       <div className="w-48 h-48">
                         <img
-                          src={product.image}
-                          alt={product.name}
+                          src={product.product_profile}
+                          alt={product.product_name}
                           className="w-full h-full object-cover rounded-lg"
                         />
                       </div>
@@ -590,30 +598,32 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="text-lg font-medium text-gray-900">
-                            {product.name}
+                            {product.product_name}
                           </h3>
-                          {product.isPremium && (
+                          
                             <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
                               Premium
                             </span>
-                          )}
+                        
                         </div>
 
                         <div className="flex items-center gap-4 mb-4">
                           <div className="flex items-center">
                             <Star className="w-4 h-4 text-yellow-400" />
                             <span className="ml-1 text-sm text-gray-600">
-                              {product.rating}
+                             12
                             </span>
                           </div>
-                          <span className="text-sm text-gray-500">
-                            {product.category}
+                          {product.product_categories.map((category) => (
+                            <span className="text-sm text-gray-500">
+                            {category.category_name}
                           </span>
+                        ))}
                         </div>
 
                         <div className="flex items-center justify-between mt-4">
                           <span className="text-xl font-bold text-gray-900">
-                            {product.price} €
+                            {product.product_price} FCFA
                           </span>
                           <button className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
                             Voir le produit

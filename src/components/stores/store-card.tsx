@@ -6,28 +6,15 @@ import { Star, ShoppingBag, Clock} from 'lucide-react'
 import { AnimatePresence, motion } from "framer-motion"
 import shoes from "../../assets/shoes1.webp"
 import { useState } from "react"
+import { Shop } from "../../types/shop"
 interface StoreCardProps {
-  name: string
-  category: string
-  rating: number
-  sales: number
-  products: number
-  since: string
-  isPremium?: boolean
-  isTopSeller?: boolean,
+  shop: Shop
   openModal: () => void
 }
 
 export function StoreCard({
-  name,
-  category,
-  rating,
-  sales,
-  products,
-  since,
-  openModal,
-  isPremium,
-  isTopSeller,
+  shop,
+  openModal
 }: StoreCardProps) {
    
     const [showOverlay,setShowOverlay]=useState(false)
@@ -49,7 +36,7 @@ export function StoreCard({
         className="absolute inset-0 bg-cover bg-center"
         animate={{ scale: showOverlay ? 1.1 : 1 }}
         transition={{ duration: 0.4 }}
-        style={{ backgroundImage: `url(${shoes})` }}
+        style={{ backgroundImage: `url(${shop.shop_profile})` }}
       />
 
       {/* Overlay gradient sophistiqué */}
@@ -62,16 +49,12 @@ export function StoreCard({
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
       >
-        {isPremium && (
+        
           <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-0">
             Premium
           </Badge>
-        )}
-        {isTopSeller && (
-          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
-            Top Seller
-          </Badge>
-        )}
+   
+        
       </motion.div>
 
       {/* Contenu principal */}
@@ -81,15 +64,15 @@ export function StoreCard({
         animate={{ y: 0, opacity: 1 }}
       >
         <div className="space-y-2">
-          <h3 className="text-2xl font-bold text-white">{name}</h3>
-          <p className="text-gray-300 text-sm">{category}</p>
+          <h3 className="text-2xl font-bold text-white">{shop.shop_key}</h3>
+          <p className="text-gray-300 text-sm">{shop.categories[0].category_name}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-white/10 backdrop-blur-md rounded-lg p-3">
             <div className="flex items-center gap-2">
               <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-              <span className="text-white font-medium">{rating.toFixed(1)}</span>
+              <span className="text-white font-medium">{12}</span>
             </div>
             <p className="text-xs text-gray-300 mt-1">Note moyenne</p>
           </div>
@@ -97,7 +80,7 @@ export function StoreCard({
           <div className="bg-white/10 backdrop-blur-md rounded-lg p-3">
             <div className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5 text-blue-400" />
-              <span className="text-white font-medium">{sales}</span>
+              <span className="text-white font-medium">{shop.products_count}</span>
             </div>
             <p className="text-xs text-gray-300 mt-1">Ventes totales</p>
           </div>
