@@ -157,7 +157,7 @@ const ShopsPage = () => {
                   <div className="w-16 h-16 rounded-xl overflow-hidden border-4 border-white shadow-lg">
                     <img
                       src={shop.shop_profile}
-                      alt={shop.name}
+                      alt={shop.shop_name}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -170,7 +170,7 @@ const ShopsPage = () => {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {shop.shop_name}
+                        {shop.shop_key}
                       </h3>
                       {shop.verifiedSeller && (
                         <BadgeCheck className="w-5 h-5 text-[#ed7e0f]" />
