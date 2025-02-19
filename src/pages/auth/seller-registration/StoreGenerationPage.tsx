@@ -67,7 +67,7 @@ const StoreGenerationPage = () => {
           town_id: storeTown, quarter_id: storeQuarter, password,
           isWholesaler:sellerType,
           product_type: productType,
-          store_gender:gender,
+          shop_gender:gender,
         };
         Object.entries(storeObject).forEach(([key, value]) => {
           if (value) formData.append(key, value);

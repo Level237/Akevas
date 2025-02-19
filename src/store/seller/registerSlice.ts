@@ -9,7 +9,7 @@ const registerSlice=createSlice({
       email: localStorage.getItem("email") || null,
       phone: localStorage.getItem("phone") || null,
       birthDate: localStorage.getItem("birthDate") || null,
-      gender: localStorage.getItem("gender") || null,
+      gender: localStorage.getItem("storeGender") || null,
       nationality: localStorage.getItem("nationality") || null,
       identity_card_in_front: localStorage.getItem("identity_card_in_front") || null,
       identity_card_in_back: localStorage.getItem("identity_card_in_back") || null,

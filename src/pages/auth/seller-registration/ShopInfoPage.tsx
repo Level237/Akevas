@@ -51,6 +51,7 @@ const ShopInfoPage = () => {
         'storeDescription':formData.description,
         'storeCategories':JSON.stringify(formData.category),
         'storeLogo':formData.logo,
+        'gender':formData.gender,
         'storeImages':JSON.stringify(formData.images),
         'storeGender':formData.gender,
       }
