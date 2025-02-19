@@ -8,6 +8,7 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import { ScrollRestoration } from 'react-router-dom';
 import img from "../assets/dress.jpg"
 import MobileNav from '@/components/ui/mobile-nav';
+import { useGetAllShopsQuery } from '@/services/guardService';
 
 // Mock data for shops with enhanced information
 const shops = Array.from({ length: 50 }, (_, i) => ({
@@ -42,52 +43,13 @@ const ShopsPage = () => {
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'premium'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('rating');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  const {data:{data:shops}={},isLoading,isError}=useGetAllShopsQuery()
   const itemsPerPage = 9;
 
   // Filter and sort shops
-  const filteredShops = shops
-    .filter(shop => {
-      if (searchQuery) {
-        return shop.name.toLowerCase().includes(searchQuery.toLowerCase());
-      }
-      return true;
-    })
-    .filter(shop => {
-      if (selectedFilter === 'premium') return shop.isPremium;
-      return true;
-    })
-    .filter(shop => {
-      if (categoryFilter === 'all') return true;
-      return shop.categories.some(cat => 
-        cat.toLowerCase() === categoryFilter
-      );
-    })
-    .sort((a, b) => {
-      // Premium shops always first
-      if (a.isPremium !== b.isPremium) {
-        return a.isPremium ? -1 : 1;
-      }
-      
-      // Then sort by selected criteria
-      switch (sortBy) {
-        case 'rating':
-          return parseFloat(b.rating) - parseFloat(a.rating);
-        case 'products':
-          return b.productsCount - a.productsCount;
-        case 'followers':
-          return b.followers - a.followers;
-        case 'newest':
-          return parseInt(b.joinDate) - parseInt(a.joinDate);
-        default:
-          return 0;
-      }
-    });
+  
 
-  const totalPages = Math.ceil(filteredShops.length / itemsPerPage);
-  const currentShops = filteredShops.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -164,7 +126,7 @@ const ShopsPage = () => {
 
         {/* Shops Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {currentShops.map((shop) => (
+          {!isLoading && !isError && shops.map((shop) => (
             <motion.div
               key={shop.id}
               initial={{ opacity: 0, y: 20 }}
@@ -174,8 +136,8 @@ const ShopsPage = () => {
               {/* Cover Image */}
               <div className="relative h-48">
                 <img
-                  src={shop.coverImage}
-                  alt={`${shop.name} cover`}
+                  src={shop.images[0].path}
+                  alt={`${shop.shop_name} cover`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
@@ -194,7 +156,7 @@ const ShopsPage = () => {
                 <div className="absolute -bottom-6 left-6">
                   <div className="w-16 h-16 rounded-xl overflow-hidden border-4 border-white shadow-lg">
                     <img
-                      src={shop.logo}
+                      src={shop.shop_profile}
                       alt={shop.name}
                       className="w-full h-full object-cover"
                     />
@@ -208,7 +170,7 @@ const ShopsPage = () => {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {shop.name}
+                        {shop.shop_name}
                       </h3>
                       {shop.verifiedSeller && (
                         <BadgeCheck className="w-5 h-5 text-[#ed7e0f]" />
@@ -216,7 +178,7 @@ const ShopsPage = () => {
                     </div>
                     <div className="flex items-center text-sm text-gray-500 mt-1">
                       <MapPin className="w-4 h-4 mr-1" />
-                      {shop.location}
+                      {shop.town}-{shop.quarter}
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-yellow-400">
@@ -232,7 +194,7 @@ const ShopsPage = () => {
                       key={index}
                       className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full"
                     >
-                      {category}
+                      {category.category_name}
                     </span>
                   ))}
                 </div>
@@ -244,7 +206,7 @@ const ShopsPage = () => {
                       <Package className="w-4 h-4" />
                       <span className="text-sm">Produits</span>
                     </div>
-                    <p className="font-semibold">{shop.productsCount}</p>
+                    <p className="font-semibold">{shop.products.length}</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
@@ -258,13 +220,13 @@ const ShopsPage = () => {
                       <Clock className="w-4 h-4" />
                       <span className="text-sm">Réponse</span>
                     </div>
-                    <p className="font-semibold">{shop.stats.responseTime}</p>
+                    <p className="font-semibold">12</p>
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-3">
-                  <AsyncLink to={`/stores/${shop.id}`} className="flex-1">
+                  <AsyncLink to={`/shop/${shop.shop_id}`} className="flex-1">
                     <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90">
                       Voir la boutique
                     </Button>
@@ -278,50 +240,6 @@ const ShopsPage = () => {
           ))}
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-8 flex justify-center items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            
-            <div className="flex items-center gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter(page => {
-                  return (
-                    page === 1 ||
-                    page === totalPages ||
-                    Math.abs(page - currentPage) <= 1
-                  );
-                })
-                .map((page, index, array) => (
-                  <React.Fragment key={page}>
-                    {index > 0 && array[index - 1] !== page - 1 && (
-                      <span className="px-2">...</span>
-                    )}
-                    <Button
-                      variant={currentPage === page ? 'default' : 'outline'}
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </Button>
-                  </React.Fragment>
-                ))}
-            </div>
-
-            <Button
-              variant="outline"
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        )}
       </main>
     </div>
   );
