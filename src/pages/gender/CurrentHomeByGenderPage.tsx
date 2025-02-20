@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import StoreStories from '@/components/stores/store-stories';
+import ProductListGrid from '@/components/products/ProductListGrid';
+import { ChevronRight } from 'lucide-react';
+import AsyncLink from '@/components/ui/AsyncLink';
 const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)
     const {data:{data:currentGender}={},isLoading}=useGetCurrentHomeByGenderQuery(currentGenderId)
@@ -51,6 +54,22 @@ const CurrentHomeByGenderPage = () => {
         <div className='mt-12'>
             <StoreStories shops={currentGender?.shops} isLoading={isLoading} title={`Boutiques ${currentGender?.gender_name}`} description={`Découvrez nos meilleures boutiques ${currentGender?.gender_name}`} />
         </div>  
+              {/* Tendances du moment */}
+      <div className="bg-gray-200 py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-baseline mb-8">
+            <h2 className="text-2xl font-bold text-black">Tendances du moment</h2>
+            <AsyncLink
+              to={`/products?g=${currentGender.gender_name}`}
+              className="text-black flex items-center text-sm hover:underline"
+            >
+              Voir tous les produits
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </AsyncLink>
+          </div>
+          <ProductListGrid products={currentGender.products} isLoading={isLoading} />
+        </div>
+      </div>
       {/* Catégories populaires */}
       <div className="container mx-auto px-4 py-16">
         <h2 className="text-2xl font-bold mb-8">Catégories populaires</h2>
@@ -73,30 +92,7 @@ const CurrentHomeByGenderPage = () => {
         </div>
       </div>
 
-      {/* Tendances du moment */}
-      <div className="bg-white py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8">Tendances du moment</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {trendingProducts.map((product) => (
-              <div key={product.id} className="group">
-                <div className="relative aspect-[3/4] mb-4">
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <button className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                    Voir le produit
-                  </button>
-                </div>
-                <h3 className="font-medium">{product.name}</h3>
-                <p className="text-gray-600">{product.price} €</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+
 
       {/* Newsletter */}
       <div className="bg-gray-100 py-16">
