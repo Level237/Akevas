@@ -60,14 +60,14 @@ const CurrentHomeByGenderPage = () => {
           <div className="flex justify-between items-baseline mb-8">
             <h2 className="text-2xl font-bold text-black">Tendances du moment</h2>
             <AsyncLink
-              to={`/products?g=${currentGender.gender_name}`}
+              to={`/products?g=${currentGender?.gender_name}`}
               className="text-black flex items-center text-sm hover:underline"
             >
               Voir tous les produits
               <ChevronRight className="ml-1 h-4 w-4" />
             </AsyncLink>
           </div>
-          <ProductListGrid products={currentGender.products} isLoading={isLoading} />
+          <ProductListGrid products={currentGender?.products} isLoading={isLoading} />
         </div>
       </div>
       {/* Catégories populaires */}
