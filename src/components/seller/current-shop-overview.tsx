@@ -577,7 +577,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-lg font-bold text-gray-900">
-                            {product.product_price} €
+                            {product.product_price} FCFA
                           </span>
                           <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
                             Voir

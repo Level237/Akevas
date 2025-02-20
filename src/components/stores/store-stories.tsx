@@ -4,10 +4,10 @@
 import { ChevronRight } from 'lucide-react'
 import AsyncLink from '../ui/AsyncLink'
 import SlideFeatureShop from './slide-feature-shop'
-
+import { Shop } from '@/types/shop'
 
  
-  export default function StoreStories() {
+  export default function StoreStories({title,description,shops,isLoading}:{title:string,description:string,shops:Shop[],isLoading:boolean}) {
     
     
   
@@ -17,8 +17,8 @@ import SlideFeatureShop from './slide-feature-shop'
         <div className="overflow-x-hidden  px-4">
           <div className="flex justify-between items-baseline mb-6">
             <div className="mx-2">
-              <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-white">Nos Boutiques</h2>
-              <p className="text-xl md:text-2xl max-sm:text-sm  text-gray-200">Découvrez nos meilleures boutiques</p>
+              <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-white">{title}</h2>
+              <p className="text-xl md:text-2xl max-sm:text-sm  text-gray-200">{description}</p>
             </div>
             <AsyncLink
               to="/shops" 
@@ -29,7 +29,7 @@ import SlideFeatureShop from './slide-feature-shop'
             </AsyncLink>
           </div>
 
-          <SlideFeatureShop/>
+          <SlideFeatureShop shops={shops} isLoading={isLoading}/>
           <AsyncLink
             to="/stores" 
             className="flex md:hidden text-white items-center  justify-center mt-6 text-sm hover:underline"

@@ -11,12 +11,14 @@ import StoreStories from '@/components/stores/store-stories'
 import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
 import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
+import { useGetHomeShopsQuery } from '@/services/guardService';
 
 
 const Homepage = () => {
   //t [loading, setLoading] = useState(true);
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
-  
+  const {data:{data:shops}={},isLoading}=useGetHomeShopsQuery("guard")
+    console.log(shops)
   useEffect(() => {
     // Simulate loading delay
     //const timer = setTimeout(() => {
@@ -101,7 +103,7 @@ const Homepage = () => {
         <Header />
         <StoreHero />
 
-        <StoreStories />
+        <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={shops} isLoading={isLoading} />
         <PremiumProducts />
         <ShopByCategory />
 

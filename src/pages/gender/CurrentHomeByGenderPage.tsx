@@ -6,13 +6,14 @@ import { useGetCurrentHomeByGenderQuery } from '@/services/guardService';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import StoreStories from '@/components/stores/store-stories';
 const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)
-    const {data:{data:currentGender}={},isLoading,isError}=useGetCurrentHomeByGenderQuery(currentGenderId)
+    const {data:{data:currentGender}={},isLoading}=useGetCurrentHomeByGenderQuery(currentGenderId)
+    console.log(currentGender)
     const [searchParams]=useSearchParams();
     const searchGenderId=searchParams.get("g");
     
-    console.log(searchGenderId)
     useEffect(()=>{
         if(searchGenderId==="homme"){
             setCurrentGenderId(1)
@@ -47,8 +48,9 @@ const CurrentHomeByGenderPage = () => {
           </div>
         </div>
       </div>}
-
-
+        <div className='mt-12'>
+            <StoreStories shops={currentGender?.shops} isLoading={isLoading} title={`Boutiques ${currentGender?.gender_name}`} description={`Découvrez nos meilleures boutiques ${currentGender?.gender_name}`} />
+        </div>  
       {/* Catégories populaires */}
       <div className="container mx-auto px-4 py-16">
         <h2 className="text-2xl font-bold mb-8">Catégories populaires</h2>

@@ -24,9 +24,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 
   
 
-export default function SlideFeatureShop() {
-    const {data:{data:shops}={},isLoading}=useGetHomeShopsQuery("guard")
-    console.log(shops)
+export default function SlideFeatureShop({shops,isLoading}:{shops:Shop[],isLoading:boolean}) {
+    
     const scrollContainerRef = useRef<HTMLDivElement>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [shopId, setShopId] = useState<string>("")

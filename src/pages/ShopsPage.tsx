@@ -10,29 +10,7 @@ import img from "../assets/dress.jpg"
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetAllShopsQuery } from '@/services/guardService';
 
-// Mock data for shops with enhanced information
-const shops = Array.from({ length: 50 }, (_, i) => ({
-  id: `shop-${i + 1}`,
-  name: `Boutique ${i + 1}`,
-  logo: img,
-  coverImage: img,
-  rating: (4 + Math.random()).toFixed(1),
-  location: 'Paris, France',
-  productsCount: Math.floor(Math.random() * 1000),
-  isPremium: i < 10,
-  joinDate: '2023',
-  description: 'Une boutique de qualité avec des produits exceptionnels',
-  followers: Math.floor(Math.random() * 1000),
-  categories: ['Mode', 'Accessoires', 'Beauté'].slice(0, Math.floor(Math.random() * 3) + 1),
-  stats: {
-    totalSales: Math.floor(Math.random() * 10000),
-    averageShipping: '2-3 jours',
-    satisfactionRate: '98%',
-    responseRate: '95%',
-    responseTime: '< 1 heure'
-  },
-  verifiedSeller: Math.random() > 0.5
-}));
+
 
 type SortOption = 'rating' | 'products' | 'followers' | 'newest';
 type CategoryFilter = 'all' | 'mode' | 'accessoires' | 'beaute';

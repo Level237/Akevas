@@ -187,7 +187,7 @@ export default function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isModalOp
                               {product.product_name}
                             </h4>
                             <div className="flex items-center justify-between">
-                              <span className="text-lg font-bold">${product.product_price}</span>
+                              <span className="text-lg font-bold">{product.product_price} FCFA</span>
                               <Badge className="text-xs">
                                 12 sold
                               </Badge>
