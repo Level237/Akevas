@@ -34,9 +34,7 @@ const ProductDetailPage: React.FC = () => {
         <nav className="flex max-sm:mx-9 items-center text-sm text-gray-500 mb-8">
           <a href="/" className="hover:text-gray-900">Accueil</a>
           <ArrowRight className="w-4 h-4 mx-2" />
-          <a href="/category/figurines" className="hover:text-gray-900">Figurines</a>
-          <ArrowRight className="w-4 h-4 mx-2" />
-          <span className="text-gray-900">Demon Slayer</span>
+          <span className="text-gray-900">{product?.product_name}</span>
         </nav>
 
         {/* Section principale */}
@@ -88,11 +86,16 @@ const ProductDetailPage: React.FC = () => {
 
             {/* Informations produit */}
             <div>
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
-                    Premium
-                  </span>
+              <div className="mb-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
+                      Premium
+                    </span>
+                    <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+                      En stock
+                    </span>
+                  </div>
                   <div className="flex items-center gap-4">
                     <button className="p-2 rounded-full hover:bg-gray-100">
                       <Heart className="w-6 h-6" />
@@ -103,30 +106,46 @@ const ProductDetailPage: React.FC = () => {
                   </div>
                 </div>
 
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-gray-900">
                   {product.product_name}
                 </h1>
 
-                <div className="flex items-center gap-4 mb-4">
+                <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center">
-                    <Star className="w-5 h-5 text-yellow-400" />
-                    <span className="ml-1 font-medium">12</span>
-                    <span className="ml-1 text-gray-500">
-                      (12 avis)
-                    </span>
+                    <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                    <span className="ml-1 font-medium">4.8</span>
+                    <span className="ml-1 text-gray-500">(128 avis)</span>
                   </div>
-                  <span className="text-gray-500">
-                    Code: {product.shop_key}
-                  </span>
+                  <span className="text-gray-500">•</span>
+                  <span className="text-gray-500">1250+ vendus</span>
+                  <span className="text-gray-500">•</span>
+                  <span className="text-gray-500">Code: {product.shop_key}</span>
                 </div>
 
-                <div className="flex items-baseline gap-4 mb-6">
+                <div className="flex items-baseline gap-4">
                   <span className="text-3xl font-bold text-gray-900">
                     {product.product_price} FCFA
                   </span>
-                
+                  <span className="text-lg text-gray-500 line-through">
+                    299,000 FCFA
+                  </span>
+                  <span className="text-sm font-medium text-green-600">-25%</span>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-xl">
+                  <div className="flex items-center gap-3">
+                    <img src={product.shop_profile} alt="Boutique" className="w-12 h-12 rounded-full" />
+                    <div>
+                      <p className="font-medium text-gray-900">Boutique Officielle</p>
+                      <p className="text-sm text-gray-500">Dépuis {product.shop_key}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col text-sm text-gray-500">
+                    <span>✓ 98% évaluations positives</span>
+                    <span>✓ Expédition en 24h</span>
+                    <span>✓ Service client réactif</span>
+                  </div>
+                </div>
 
                 {/* Quantité et ajout au panier */}
                 <div className="flex items-center gap-4 mb-8">
@@ -252,41 +271,77 @@ const ProductDetailPage: React.FC = () => {
               )}
 
               {selectedTab === 'reviews' && (
-                <div>
-            
-                    <div
-                      key={12}
-                      className="border-b last:border-0 pb-6 mb-6 last:pb-0 last:mb-0"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-medium text-gray-900">
-                              level
-                            </span>
-                            <div className="flex items-center text-yellow-400">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star key={i} className="w-4 h-4 fill-current" />
-                              ))}
-                            </div>
+                <div className="space-y-8">
+                  {/* Résumé des avis */}
+                  <div className="flex gap-8 p-6 bg-gray-50 rounded-xl">
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-gray-900">4.8</div>
+                      <div className="flex items-center justify-center text-yellow-400 my-2">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star key={i} className="w-5 h-5 fill-current" />
+                        ))}
+                      </div>
+                      <div className="text-sm text-gray-500">Basé sur 128 avis</div>
+                    </div>
+                    <div className="flex-1">
+                      {[5, 4, 3, 2, 1].map((stars) => (
+                        <div key={stars} className="flex items-center gap-2 mb-2">
+                          <span className="w-8 text-sm text-gray-600">{stars}★</span>
+                          <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-yellow-400 rounded-full"
+                              style={{ width: `${stars === 5 ? '70%' : stars === 4 ? '20%' : '10%'}` }}
+                            />
                           </div>
-                          <span className="text-sm text-gray-500">
-                            12
+                          <span className="w-8 text-sm text-gray-600">
+                            {stars === 5 ? '70%' : stars === 4 ? '20%' : '10%'}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <button className="flex items-center gap-1 text-gray-500 hover:text-gray-900">
-                            <ThumbsUp className="w-4 h-4" />
-                              <span className="text-sm">12</span>
-                          </button>
-                          <button className="text-gray-500 hover:text-gray-900">
-                            <MessageCircle className="w-4 h-4" />
-                          </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Liste des avis */}
+                  <div className="space-y-6">
+                    {/* ... existing reviews ... */}
+                  </div>
+
+                  {/* Formulaire d'avis */}
+                  <div className="border-t pt-8 mt-8">
+                    <h3 className="text-lg font-semibold mb-4">Donnez votre avis</h3>
+                    <form className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
+                        <div className="flex gap-2">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              className="text-gray-300 hover:text-yellow-400"
+                            >
+                              <Star className="w-8 h-8 fill-current" />
+                            </button>
+                          ))}
                         </div>
                       </div>
-                      <p className="text-gray-600 mb-4">12</p>
-
-                    </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Votre commentaire
+                        </label>
+                        <textarea
+                          rows={4}
+                          className="w-full rounded-lg border-gray-200 resize-none focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
+                          placeholder="Partagez votre expérience avec ce produit..."
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full bg-[#ed7e0f] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
+                      >
+                        Publier mon avis
+                      </button>
+                    </form>
+                  </div>
                 </div>
               )}
             </div>
@@ -300,3 +355,4 @@ const ProductDetailPage: React.FC = () => {
 };
 
 export default ProductDetailPage;
+
