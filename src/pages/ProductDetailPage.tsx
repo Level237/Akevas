@@ -15,65 +15,15 @@ import shoes from "../assets/shoes1.webp"
 import dress from "../assets/dress.jpg"
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
-
+import { useGetProductByUrlQuery } from '@/services/guardService';
 const ProductDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [selectedImage, setSelectedImage] = useState(0);
+  const { url } = useParams<{ url: string }>();
+   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedTab, setSelectedTab] = useState('description');
   const [quantity, setQuantity] = useState(1);
+  const { data:{data:product}={},isLoading } = useGetProductByUrlQuery(url);
+  console.log(product)
 
-  // Mock data - À remplacer par les données de l'API
-  const product = {
-    id,
-    name: 'Figurine Collector Demon Slayer',
-    description: `Figurine collector édition limitée de Tanjiro Kamado en pose de combat.
-    Fabriquée avec les meilleurs matériaux et une attention particulière aux détails.
-    
-    Caractéristiques:
-    - Hauteur: 24cm
-    - Matériau: PVC et ABS
-    - Peinture de haute qualité
-    - Base incluse
-    - Certificat d'authenticité`,
-    price: 129.99,
-    originalPrice: 159.99,
-    images: [
-      shoes,
-      dress,
-      shoes,
-      shoes
-    ],
-    rating: 4.8,
-    reviewCount: 128,
-    storeCode: 'JP_STORE_8472',
-    category: 'Figurines',
-    tags: ['Premium', 'Collector', 'Demon Slayer'],
-    variants: {
-      sizes: [
-        { id: 's1', name: '18cm', value: '18cm', inStock: true },
-        { id: 's2', name: '24cm', value: '24cm', inStock: true, price: 149.99 }
-      ]
-    },
-    specifications: [
-      { name: 'Marque', value: 'Demon Slayer Official' },
-      { name: 'Matériau', value: 'PVC, ABS' },
-      { name: 'Hauteur', value: '24cm' },
-      { name: 'Poids', value: '800g' },
-      { name: 'Origine', value: 'Japon' }
-    ],
-    reviews: [
-      {
-        id: 1,
-        user: 'Alex D.',
-        rating: 5,
-        date: '2024-12-28',
-        content: 'Qualité exceptionnelle, les détails sont incroyables !',
-        likes: 12,
-        images: [shoes]
-      },
-      // Ajoutez plus d'avis
-    ]
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -90,6 +40,8 @@ const ProductDetailPage: React.FC = () => {
         </nav>
 
         {/* Section principale */}
+
+        {!isLoading && product && (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-8 p-8">
             {/* Galerie d'images */}
@@ -97,8 +49,8 @@ const ProductDetailPage: React.FC = () => {
               <div className="aspect-square rounded-lg overflow-hidden mb-4">
                 <motion.img
                   key={selectedImage}
-                  src={product.images[selectedImage]}
-                  alt={product.name}
+                 src={selectedImage === null ? product.product_profile : product.product_images[selectedImage].path}
+                  alt={product.product_name}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
@@ -106,7 +58,18 @@ const ProductDetailPage: React.FC = () => {
                 />
               </div>
               <div className="grid grid-cols-4 gap-4">
-                {product.images.map((image, idx) => (
+                 <button
+                      className={`aspect-square rounded-lg overflow-hidden border-2 shadow-sm hover:shadow-md transition-all
+                        ${selectedImage === null ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20' : 'border-transparent'}`}
+                      onClick={() => setSelectedImage(null)}
+                    >
+                      <img
+                        src={product.product_profile}
+                        alt={product.product_name}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                {product.product_images.map((image:string, idx:number) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
@@ -114,8 +77,8 @@ const ProductDetailPage: React.FC = () => {
                       ${selectedImage === idx ? 'border-[#ed7e0f]' : 'border-transparent hover:border-gray-200'}`}
                   >
                     <img
-                      src={image}
-                      alt={`${product.name} ${idx + 1}`}
+                      src={image.path}
+                      alt={`${product.product_name} ${idx + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -141,52 +104,29 @@ const ProductDetailPage: React.FC = () => {
                 </div>
 
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {product.name}
+                  {product.product_name}
                 </h1>
 
                 <div className="flex items-center gap-4 mb-4">
                   <div className="flex items-center">
                     <Star className="w-5 h-5 text-yellow-400" />
-                    <span className="ml-1 font-medium">{product.rating}</span>
+                    <span className="ml-1 font-medium">12</span>
                     <span className="ml-1 text-gray-500">
-                      ({product.reviewCount} avis)
+                      (12 avis)
                     </span>
                   </div>
                   <span className="text-gray-500">
-                    Code: {product.storeCode}
+                    Code: {product.shop_key}
                   </span>
                 </div>
 
                 <div className="flex items-baseline gap-4 mb-6">
                   <span className="text-3xl font-bold text-gray-900">
-                    {product.price} €
+                    {product.product_price} FCFA
                   </span>
-                  {product.originalPrice && (
-                    <span className="text-xl text-gray-500 line-through">
-                      {product.originalPrice} €
-                    </span>
-                  )}
+                
                 </div>
 
-                {/* Variants */}
-                {Object.entries(product.variants).map(([type, variants]) => (
-                  <div key={type} className="mb-6">
-                    <h3 className="text-sm font-medium text-gray-900 mb-3">
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {variants.map(variant => (
-                        <button
-                          key={variant.id}
-                          className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-900 hover:bg-gray-200"
-                        >
-                          {variant.name}
-                          {variant.price && ` (+${variant.price - product.price}€)`}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
 
                 {/* Quantité et ajout au panier */}
                 <div className="flex items-center gap-4 mb-8">
@@ -198,7 +138,7 @@ const ProductDetailPage: React.FC = () => {
                       -
                     </button>
                     <span className="w-12 text-center font-medium">
-                      {quantity}
+                      {product.product_quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(q => q + 1)}
@@ -290,84 +230,69 @@ const ProductDetailPage: React.FC = () => {
               {selectedTab === 'description' && (
                 <div className="prose max-w-none">
                   <p className="whitespace-pre-line">
-                    {product.description}
+                    {product.product_description}
                   </p>
                 </div>
               )}
 
               {selectedTab === 'specifications' && (
                 <div className="grid grid-cols-2 gap-6">
-                  {product.specifications.map((spec, idx) => (
+                 
                     <div
-                      key={idx}
+                      
                       className="flex items-center justify-between py-3 border-b"
                     >
-                      <span className="text-gray-600">{spec.name}</span>
+                      <span className="text-gray-600">12</span>
                       <span className="font-medium text-gray-900">
-                        {spec.value}
+                        12
                       </span>
                     </div>
-                  ))}
+
                 </div>
               )}
 
               {selectedTab === 'reviews' && (
                 <div>
-                  {product.reviews.map(review => (
+            
                     <div
-                      key={review.id}
+                      key={12}
                       className="border-b last:border-0 pb-6 mb-6 last:pb-0 last:mb-0"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium text-gray-900">
-                              {review.user}
+                              level
                             </span>
                             <div className="flex items-center text-yellow-400">
-                              {Array.from({ length: review.rating }).map((_, i) => (
+                              {Array.from({ length: 5 }).map((_, i) => (
                                 <Star key={i} className="w-4 h-4 fill-current" />
                               ))}
                             </div>
                           </div>
                           <span className="text-sm text-gray-500">
-                            {review.date}
+                            12
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <button className="flex items-center gap-1 text-gray-500 hover:text-gray-900">
                             <ThumbsUp className="w-4 h-4" />
-                            <span className="text-sm">{review.likes}</span>
+                              <span className="text-sm">12</span>
                           </button>
                           <button className="text-gray-500 hover:text-gray-900">
                             <MessageCircle className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
-                      <p className="text-gray-600 mb-4">{review.content}</p>
-                      {review.images && review.images.length > 0 && (
-                        <div className="flex gap-2">
-                          {review.images.map((image, idx) => (
-                            <div
-                              key={idx}
-                              className="w-20 h-20 rounded-lg overflow-hidden"
-                            >
-                              <img
-                                src={image}
-                                alt={`Review ${review.id} image ${idx + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      <p className="text-gray-600 mb-4">12</p>
+
                     </div>
-                  ))}
                 </div>
               )}
             </div>
           </div>
         </div>
+        )}
       </main>
       <MobileNav />
     </div>

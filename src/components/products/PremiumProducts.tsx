@@ -1,104 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Heart, ShoppingCart, X, Plus, Minus,ChevronRight } from 'lucide-react';
-import shoes from "../../assets/shoes1.webp"
 import AsyncLink from '../ui/AsyncLink';
 import { useGetHomeProductsQuery } from '@/services/guardService';
 import { Product } from '@/types/products';
-interface ProductVariant {
-  id: string;
-  name: string;
-  type: 'color' | 'size' | 'weight';
-  value: string;
-  inStock: boolean;
-  price?: number;
-}
 
 
-// Mock data
-const premiumProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Figurine Collector Demon Slayer',
-    description: 'Figurine collector édition limitée de Tanjiro Kamado en pose de combat.',
-    price: 129.99,
-    originalPrice: 159.99,
-    images: [shoes, shoes],
-    rating: 4.8,
-    reviewCount: 128,
-    storeCode: 'JP_STORE_8472',
-    category: 'Figurines',
-    tags: ['Premium', 'Collector', 'Demon Slayer'],
-    variants: {
-      sizes: [
-        { id: 's1', name: '18cm', type: 'size', value: '18cm', inStock: true },
-        { id: 's2', name: '24cm', type: 'size', value: '24cm', inStock: true, price: 149.99 },
-      ]
-    },
-    isPremium: true
-  },
-  {
-    id: '1',
-    name: 'Figurine Collector Demon Slayer',
-    description: 'Figurine collector édition limitée de Tanjiro Kamado en pose de combat.',
-    price: 129.99,
-    originalPrice: 159.99,
-    images: [shoes, shoes],
-    rating: 4.8,
-    reviewCount: 128,
-    storeCode: 'JP_STORE_8472',
-    category: 'Figurines',
-    tags: ['Premium', 'Collector', 'Demon Slayer'],
-    variants: {
-      sizes: [
-        { id: 's1', name: '18cm', type: 'size', value: '18cm', inStock: true },
-        { id: 's2', name: '24cm', type: 'size', value: '24cm', inStock: true, price: 149.99 },
-      ]
-    },
-    isPremium: true
-  },
-  {
-    id: '1',
-    name: 'Figurine Collector Demon Slayer',
-    description: 'Figurine collector édition limitée de Tanjiro Kamado en pose de combat.',
-    price: 129.99,
-    originalPrice: 159.99,
-    images: [shoes, shoes],
-    rating: 4.8,
-    reviewCount: 128,
-    storeCode: 'JP_STORE_8472',
-    category: 'Figurines',
-    tags: ['Premium', 'Collector', 'Demon Slayer'],
-    variants: {
-      sizes: [
-        { id: 's1', name: '18cm', type: 'size', value: '18cm', inStock: true },
-        { id: 's2', name: '24cm', type: 'size', value: '24cm', inStock: true, price: 149.99 },
-      ]
-    },
-    isPremium: true
-  },
-  {
-    id: '1',
-    name: 'Figurine Collector Demon Slayer',
-    description: 'Figurine collector édition limitée de Tanjiro Kamado en pose de combat.',
-    price: 129.99,
-    originalPrice: 159.99,
-    images: [shoes, shoes],
-    rating: 4.8,
-    reviewCount: 128,
-    storeCode: 'JP_STORE_8472',
-    category: 'Figurines',
-    tags: ['Premium', 'Collector', 'Demon Slayer'],
-    variants: {
-      sizes: [
-        { id: 's1', name: '18cm', type: 'size', value: '18cm', inStock: true },
-        { id: 's2', name: '24cm', type: 'size', value: '24cm', inStock: true, price: 149.99 },
-      ]
-    },
-    isPremium: true
-  },
-  // Ajoutez plus de produits ici
-];
 
 const ProductModal: React.FC<{
   product: Product;
@@ -111,11 +18,7 @@ const ProductModal: React.FC<{
 
   const handleAddToCart = () => {
     // Implémentez la logique d'ajout au panier
-    console.log('Adding to cart:', {
-      product,
-      variants: selectedVariants,
-      quantity
-    });
+    
     setSelectedImage(null)
     onClose();
   };
