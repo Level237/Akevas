@@ -2,9 +2,8 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Star, ShoppingBag, Clock} from 'lucide-react'
-import { AnimatePresence, motion } from "framer-motion"
-import shoes from "../../assets/shoes1.webp"
+import { Star, ShoppingBag} from 'lucide-react'
+import { motion } from "framer-motion"
 import { useState } from "react"
 import { Shop } from "../../types/shop"
 interface StoreCardProps {
@@ -18,14 +17,12 @@ export function StoreCard({
 }: StoreCardProps) {
    
     const [showOverlay,setShowOverlay]=useState(false)
-    const [showStore,setShowStore]=useState(false)
     
-    const open=()=>{
-        openModal()
-    }
+    
+
   return (
 <motion.div
-      className="w-[300px] h-[400px] relative rounded-2xl overflow-hidden cursor-pointer"
+      className="w-[300px] max-sm:w-[100%] h-[400px] relative rounded-2xl overflow-hidden cursor-pointer"
       whileHover={{ scale: 1.02 }}
       onHoverStart={() => setShowOverlay(true)}
       onHoverEnd={() => setShowOverlay(false)}
