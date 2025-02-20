@@ -242,9 +242,9 @@ const CategoryNavigation = () => {
 
 // Ajouter cette constante pour les genres
 const genders = [
-  { id: 'femme', label: 'FEMME' },
-  { id: 'homme', label: 'HOMME' },
-  { id: 'enfant', label: 'ENFANT' },
+  { id: 'femme', label: 'FEMME',"url":"femme" },
+  { id: 'homme', label: 'HOMME',"url":"homme" },
+  { id: 'enfant', label: 'ENFANT',"url":"enfant" },
 ];
 
 const Header = () => {
@@ -367,7 +367,7 @@ const Header = () => {
                 {genders.map((gender) => (
                   <AsyncLink
                     key={gender.id}
-                    to={`/accueil-homme`}
+                    to={`/home?g=${gender.url}`}
                     className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors whitespace-nowrap"
                   >
                     {gender.label}

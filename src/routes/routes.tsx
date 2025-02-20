@@ -40,7 +40,7 @@ import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage";
 import { GuardRoute } from "@/pages/auth/guard-route";
 import SellerRootDashboard from "@/components/Layouts/SellerRootDashboard";
 import StoreEditorPage from "@/pages/seller/StoreEditorPage";
-import MensPage from "@/pages/MensPage";
+import CurrentHomeByGenderPage from "@/pages/gender/CurrentHomeByGenderPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import UserDashboardPage from "@/pages/user/DashboardPage";
 import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
@@ -208,8 +208,8 @@ export const routes = createBrowserRouter([
     element:<AuthenticatePage/>
   },
   {
-    path:'/accueil-homme',
-    element:<MensPage/>
+    path:'/home',
+    element:<CurrentHomeByGenderPage/>
   },
   {
     path:'/user/dashboard',

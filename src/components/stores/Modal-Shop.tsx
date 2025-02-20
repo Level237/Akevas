@@ -100,7 +100,7 @@ export default function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isModalOp
                                    </span>
                                    <span className="text-white/60">•</span>
                                    <span className="text-white/90">
-                                     15234 products
+                                     {shop.shop.products_count} products
                                    </span>
                                  </div>
                                  <div className="mt-4">
