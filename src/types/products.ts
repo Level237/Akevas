@@ -11,6 +11,10 @@ export interface Product{
     shop_profile:string,
     shop_created_at:string,
     shop_id:string,
+<<<<<<< HEAD
+=======
+    product_url:string,
+>>>>>>> f5122a9 (update)
     product_images:Image[],
     product_categories:Category[],
     product_attributes:string[] | null,
