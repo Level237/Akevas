@@ -9,7 +9,7 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useSelector,useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';  
-import { clearCart } from '@/store/cartSlice';
+import { clearCart,removeItem } from '@/store/cartSlice';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
  
@@ -38,9 +38,7 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const removeItem = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
-  };
+
 
 
   const totalQuantity=useSelector((state:RootState)=>state.cart.totalQuantity)
@@ -48,6 +46,9 @@ const CartPage: React.FC = () => {
   const dispatch=useDispatch<AppDispatch>()
   const handleClearCart = () => {
     dispatch(clearCart())
+  }
+  const handleRemoveItem=(product)=>{
+    dispatch(removeItem({product}))
   }
   const cartItems=useSelector((state:RootState)=>state.cart.cartItems)
   return (
@@ -117,7 +118,7 @@ const CartPage: React.FC = () => {
                             </p>
                           </div>
                           <button
-                            onClick={() => removeItem(item.product.id)}
+                            onClick={() => handleRemoveItem(item.product)}
                             className="text-gray-400 hover:text-gray-500"
                           >
                             <X className="w-5 h-5" />

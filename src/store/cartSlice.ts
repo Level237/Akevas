@@ -24,12 +24,13 @@ const cartSlice=createSlice({
             localStorage.setItem('cartItems',JSON.stringify(state.cartItems))
         },
         removeItem:(state,action)=>{
-            const item=state.cartItems.find((item:{product:Product})=>item.product.id===action.payload.id)
+            const item=state.cartItems.find((item:{product:Product})=>item.product.id===action.payload.product.id)
+            console.log(item)
             if(item){
                 item.quantity-=1
             }
             if(item?.quantity===0){
-                state.cartItems=state.cartItems.filter((item:{product:Product})=>item.product.id!==action.payload.id)
+                state.cartItems=state.cartItems.filter((item:{product:Product})=>item.product.id!==action.payload.product.id)
             }
             state.totalQuantity=state.totalQuantity-1
             state.totalPrice=state.totalPrice-parseInt(action.payload.product.product_price)
