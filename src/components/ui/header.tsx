@@ -13,6 +13,8 @@ import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
 import { useGetCategoriesWithParentIdNullQuery, useGetCategoriesWithParentIdQuery } from '@/services/guardService';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
   // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
@@ -271,6 +273,7 @@ const Header = () => {
     setIsSearchOpen(false);
   }, [location.pathname]);
 
+  const totalQuantity=useSelector((state:RootState)=>state.cart.totalQuantity)
   return (
     <>
       {/* Header Principal */}
@@ -413,7 +416,7 @@ const Header = () => {
                >
                  <ShoppingCart className="w-6 h-6" />
                  <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                   0
+                   {totalQuantity}
                  </span>
                </div>
                     </AsyncLink>}

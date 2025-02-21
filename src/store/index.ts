@@ -6,10 +6,12 @@ import registerSlice from "./seller/registerSlice";
 import { guardService } from "@/services/guardService";
 import { adminService } from "@/services/adminService";
 import { sellerService } from "@/services/sellerService";
+import cartSlice from "./cartSlice";
 export const store=configureStore({
     reducer:{
         [authSlice.name]:authSlice.reducer,
         [authService.reducerPath]:authService.reducer,
+        [cartSlice.name]:cartSlice.reducer,
         [checkTokenService.reducerPath]:checkTokenService.reducer,
         [registerSlice.name]:registerSlice.reducer,
         [guardService.reducerPath]:guardService.reducer,

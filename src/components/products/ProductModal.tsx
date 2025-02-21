@@ -7,16 +7,24 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, Minus, Plus,ShoppingCart, Star, X } from "lucide-react";
 
 import AsyncLink from "../ui/AsyncLink";
-
+import { useDispatch } from "react-redux";
+import { addItem } from "@/store/cartSlice";
 export default function ProductModal({product,isOpen,onClose}:{product:Product,isOpen:boolean,onClose:()=>void}) {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showCartButton, setShowCartButton] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleAddToCart = () => {
-    // Implémentez la logique d'ajout au panier
+  const handleAddToCart = async () => {
+    setIsLoading(true);
+    dispatch(addItem({product,quantity}));
     
-    setSelectedImage(null)
-    onClose();
+    // Simuler un délai pour montrer le loading
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    setIsLoading(false);
+    setShowCartButton(true);
   };
 
   return (
@@ -167,6 +175,7 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
                       <button
                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
                         className="p-3 text-gray-600 hover:text-gray-900"
+                        disabled={isLoading}
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -174,17 +183,37 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
                       <button
                         onClick={() => setQuantity(q => q + 1)}
                         className="p-3 text-gray-600 hover:text-gray-900"
+                        disabled={isLoading}
                       >
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    <button
-                      onClick={handleAddToCart}
-                      className="flex-1 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <ShoppingCart className="w-5 h-5" />
-                      Ajouter au panier
-                    </button>
+                    {!showCartButton ? (
+                      <button
+                        onClick={handleAddToCart}
+                        disabled={isLoading}
+                        className="flex-1 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors flex items-center justify-center gap-2"
+                      >
+                        {isLoading ? (
+                          <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent text-white rounded-full">
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        ) : (
+                          <>
+                            <ShoppingCart className="w-5 h-5" />
+                            Ajouter au panier
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <AsyncLink 
+                        to="/cart"
+                        className="flex-1 bg-green-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <ShoppingCart className="w-5 h-5" />
+                        Voir le panier
+                      </AsyncLink>
+                    )}
                   </div>
                 </div>
               </div>
