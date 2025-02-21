@@ -106,7 +106,7 @@ const Homepage = () => {
         <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={shops} isLoading={isLoading} />
         <PremiumProducts />
         <ShopByCategory />
-
+      
       </section>
       <MobileNav />
       <FeaturedShopModal
