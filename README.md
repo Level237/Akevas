@@ -1,50 +1,59 @@
-# React + TypeScript + Vite
+# Akevas: Online Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+Welcome to Akevas, a dynamic online marketplace built with React.js! Akevas serves as a platform for various online shops, facilitating easy navigation and encouraging seamless transactions between buyers and sellers. Our mission is to create a user-friendly shopping experience while providing shop owners with the tools they need to manage their stores effectively.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![image](https://github.com/user-attachments/assets/3b8ae905-ad63-4476-94bb-3348e967ac17)
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Features
 
-- Configure the top-level `parserOptions` property like this:
+- **User-Friendly Interface**: A visually appealing and intuitive design that enhances the shopping experience.
+- **Shop Management Tools**: A comprehensive dashboard for shop owners to manage products, track sales, and analyze performance.
+- **Search and Filter Options**: Advanced search features that allow users to find products quickly and easily.
+- **Secure Payment Integration**: Support for various payment gateways to ensure secure and reliable transactions.
+- **Responsive Design**: An adaptable user interface that works seamlessly on both desktop and mobile devices.
+- **Customer Reviews and Ratings**: Features that allow buyers to leave feedback on products to help inform future customers.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Installation
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/akevas.git
+   ```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+2. Navigate to the project directory:
+   ```bash
+   cd akevas
+   ```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+3. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Start the development server:
+   ```bash
+   npm start
+   ```
+
+Your application will be running on `http://localhost:3000`.
+
+## Usage
+
+Once installed, you can register as a shop owner or a customer to start exploring the marketplace. Browse various online shops, manage your store, or shop for your favorite products with ease!
+
+## License
+
+This project is licensed under a private license. For more details regarding the terms of use, please refer to the LICENSE file in the repository.
+
+## Contributing
+
+We welcome contributions to Akevas! If you're interested in helping improve the project, please fork the repository and submit a pull request. Before contributing, please make sure to discuss your ideas with the team.
+
+## Contact
+
+For any inquiries or support, please contact our developper at bramslevel129@gmail.com
+
+Thank you for being a part of Akevas! Happy shopping and selling!
