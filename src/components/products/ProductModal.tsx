@@ -90,11 +90,11 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
                   {/* En-tête produit */}
                   <div className="mb-6">
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-<<<<<<< HEAD
-                      <span className="px-3 py-1 bg-gray-100 rounded-full">{product.product_categories[0].category_name}</span>
-=======
+
+                      
+
                       <span className="px-3 py-1 bg-gray-100 max-sm:text-xs rounded-full">{product.product_categories[0].category_name}</span>
->>>>>>> f5122a9 (update)
+
                       <ChevronRight className="w-4 h-4" />
                       <span className="px-3 py-1 bg-gray-100 rounded-full">Code: {product.shop_key}</span>
                     </div>
@@ -127,7 +127,6 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
                       {product.product_description}
                     </p>
                   </div>
-<<<<<<< HEAD
 
                   {/* Informations boutique */}
                   <div className="mb-8 p-4 bg-gray-50 rounded-xl">
@@ -160,40 +159,6 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
                         <div className="text-xs text-gray-600">Ventes</div>
                       </div>
                     </div>
-=======
-                  {/* Informations produit */}
-                  <div className="mb-8 p-4 bg-gray-50 rounded-xl">
-                    <div className="flex items-center gap-4 mb-3">
-                      <div className="w-12 h-12 rounded-full bg-white p-2 flex items-center justify-center">
-                        <ShoppingBag className="w-8 h-8 text-gray-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-900">État du stock</h4>
-                        {product.product_quantity > 0 ? (
-                          <p className="text-sm text-green-600">En stock ({product.product_quantity} disponibles)</p>
-                        ) : (
-                          <p className="text-sm text-red-600">Rupture de stock</p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div className="bg-white p-2 rounded-lg">
-                        <div className="font-medium text-gray-900">{product.product_quantity}</div>
-                        <div className="text-xs text-gray-600">Quantité</div>
-                      </div>
-                      <div className="bg-white p-2 rounded-lg">
-                        <div className="font-medium text-gray-900">24-48h</div>
-                        <div className="text-xs text-gray-600">Délai livraison</div>
-                      </div>
-                      <div className="bg-white p-2 rounded-lg">
-                        <div className="font-medium text-gray-900">Gratuit</div>
-                        <div className="text-xs text-gray-600">Retour</div>
-                      </div>
-                    </div>
-                    <AsyncLink to={`/produit/${product.product_url}`} className="mt-4 block text-center text-[#ed7e0f] hover:underline text-sm font-medium">
-                      Detail du produit
-                    </AsyncLink>
->>>>>>> f5122a9 (update)
                   </div>
 
                   {/* Actions */}
@@ -205,22 +170,9 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-<<<<<<< HEAD
                       <span className="w-12 text-center font-medium">{quantity}</span>
                       <button
                         onClick={() => setQuantity(q => q + 1)}
-=======
-                      <span className="w-12 text-center font-medium"> {quantity}</span>
-                      <button
-                        onClick={() => {
-                          if(quantity==product.product_quantity){
-                            return ;
-                          }else{
-                              setQuantity(q=>q+1)
-                          }
-                          
-                        }}
->>>>>>> f5122a9 (update)
                         className="p-3 text-gray-600 hover:text-gray-900"
                       >
                         <Plus className="w-4 h-4" />
