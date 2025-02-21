@@ -9,7 +9,8 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useSelector,useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';  
-import { clearCart,removeItem } from '@/store/cartSlice';
+import { clearCart,removeItem,updateQuantity } from '@/store/cartSlice';
+import { Product } from '@/types/products';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
  
@@ -28,15 +29,7 @@ const CartPage: React.FC = () => {
     // Ajoutez plus d'items
   ]);
 
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity === 0) {
-      setItems(items.filter(item => item.id !== id));
-    } else {
-      setItems(items.map(item =>
-        item.id === id ? { ...item, quantity } : item
-      ));
-    }
-  };
+
 
 
 
@@ -47,8 +40,11 @@ const CartPage: React.FC = () => {
   const handleClearCart = () => {
     dispatch(clearCart())
   }
-  const handleRemoveItem=(product)=>{
+  const handleRemoveItem=(product:Product)=>{
     dispatch(removeItem({product}))
+  }
+  const handleUpdateQuantity=(product:Product,quantity:number)=>{
+    dispatch(updateQuantity({product,quantity}))
   }
   const cartItems=useSelector((state:RootState)=>state.cart.cartItems)
   return (
@@ -130,7 +126,7 @@ const CartPage: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center border rounded-lg max-sm:w-20">
                             <button
-                              onClick={() => updateQuantity(item.product.id, Math.max(0, item.quantity - 1))}
+                              onClick={() => handleUpdateQuantity(item.product, Math.max(0, item.quantity - 1))}
                               className="p-2 text-gray-600 hover:text-gray-900"
                             >
                               <Minus className="w-4 h-4" />
@@ -139,7 +135,7 @@ const CartPage: React.FC = () => {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                              onClick={() => handleUpdateQuantity(item.product, item.quantity + 1)}
                               className="p-2 text-gray-600 hover:text-gray-900"
                             >
                               <Plus className="w-4 h-4" />
