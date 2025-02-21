@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple,Sparkle,ChevronDown, Menu,Clock, TrendingUp, Lock, Loader2 } from 'lucide-react'
+import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple,Sparkle,ChevronDown, Menu,Clock, TrendingUp, Lock, Loader2, ArrowRight } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import dress from "../../assets/dress.jpg"
 import { NavigationMenuLink } from './navigation-menu';
@@ -15,7 +15,10 @@ import { useGetUserQuery } from '@/services/auth';
 import { useGetCategoriesWithParentIdNullQuery, useGetCategoriesWithParentIdQuery } from '@/services/guardService';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-  // Données de démonstration pour l'historique et les suggestions
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { CategoryNavigation } from '../categories/CategoryNavigation';
+import MobileCategoryMenu from '../categories/MobileCategoryMenu';
+    // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
   'Nike Air Max',
@@ -96,151 +99,7 @@ const searchCategories = [
   { id: 'cities', label: 'Villes' },
 ]
 
-const CategoryNavigation = () => {
-  const [activeCategory, setActiveCategory] = useState<number | null>(0);
-  const {data:{data:categoriesParent}={},isLoading}=useGetCategoriesWithParentIdNullQuery('guard')
-  const {data:categoriesChildren,isLoading:isLoadingChildren}=useGetCategoriesWithParentIdQuery(activeCategory)
 
-  if(isLoading){
-    return (
-      <div className="container mx-auto">
-        <ul className="flex justify-center items-center gap-8">
-          {[1, 2, 3, 4, 5].map((item) => (
-            <li key={item} className="py-4">
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-4 bg-gray-200 animate-pulse rounded-full" />
-                <div className="h-4 w-24 bg-gray-200 animate-pulse rounded-md" />
-                <div className="h-4 w-4 bg-gray-200 animate-pulse rounded-full" />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-  return (
-    <nav className="relative bg-white">
-      <div className="container mx-auto">
-        <ul className="flex justify-center items-center gap-8">
-
-
-          {/* Catégories Principales */}
-         
-          {!isLoading && Object.entries(categoriesParent).map(([key, category]) => (
-            <li 
-              key={key}
-              className="relative py-4"
-              onMouseEnter={() => setActiveCategory(category.id)}
-              onMouseLeave={() => setActiveCategory(0)}
-            >
-              <button className="flex text-sm items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
-               
-                <span>{category.category_name}</span>
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${activeCategory === category.id ? 'rotate-180' : ''}`} />
-              </button>
-
-              
-              {activeCategory === category.id && categoriesChildren && Object.keys(categoriesChildren).length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="fixed left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
-                >
-                  <div className="container mx-auto">
-                    <div className="grid grid-cols-4 gap-8 p-8">
-                      {/* Sections Principales */}
-                      <div className="col-span-3 grid grid-cols-3 gap-8">
-                        {!isLoadingChildren && Object.entries(categoriesChildren).map(([key, categories]) => {
-                          if (key === 'sans_genre') {
-                            // Grouper les catégories par parent_id
-                            const parentCategories = categories.filter(cat => cat.children && cat.children.length > 0);
-                            
-                            return parentCategories.map(parentCat => (
-                              <div key={parentCat.id} className="space-y-4">
-                                <h3 className="font-medium text-lg">{parentCat.category_name}</h3>
-                                <ul className="space-y-2">
-                                  {parentCat.children.map((childCat: any) => (
-                                    <li key={childCat.id}>
-                                      <AsyncLink 
-                                        to={`/category/${childCat.category_url}`}
-                                        className="text-sm text-gray-600 hover:text-orange-500"
-                                      >
-                                        {childCat.category_name}
-                                      </AsyncLink>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ));
-                          }
-                          
-                          // Comportement existant pour les autres cas
-                          return (
-                            <div key={key} className="space-y-4">
-                              <h3 className="font-medium text-lg">{key}</h3>
-                              <ul className="space-y-2">
-                                {categories.map((item: any) => (
-                                  <li key={item.id}>
-                                    <AsyncLink 
-                                      to={`/category/${item.category_url}`}
-                                      className="text-sm text-gray-600 hover:text-orange-500"
-                                    >
-                                      {item.category_name} {key}
-                                    </AsyncLink>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Nouvelle section promotionnelle */}
-                      <div className="col-span-1 space-y-6">
-                        <div className="relative group overflow-hidden rounded-lg">
-                          <img 
-                            src={category.category_profile}
-                            alt={category.category_name} 
-                            className="w-full h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white">
-                            <h3 className="text-xl font-bold mb-2">Collection {category.category_name}</h3>
-                            <p className="text-sm mb-4">Découvrez nos nouveautés</p>
-                            <AsyncLink 
-                              to={`/category/${category.category_name}`}
-                              className="inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-orange-500 hover:text-white transition-colors"
-                            >
-                              Découvrir
-                              <Sparkle className="w-4 h-4" />
-                            </AsyncLink>
-                          </div>
-                        </div>
-
-                        <div className="bg-orange-50 p-4 rounded-lg">
-                          <h4 className="font-medium text-orange-800 mb-2">Offre Spéciale</h4>
-                          <p className="text-sm text-orange-700 mb-3">Jusqu'à -50% sur la nouvelle collection</p>
-                          <AsyncLink 
-                            to="/promotions"
-                            className="text-sm text-orange-500 hover:text-orange-600 font-medium inline-flex items-center gap-1"
-                          >
-                            Voir les offres
-                            <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
-                          </AsyncLink>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
-  );
-};
 
 // Ajouter cette constante pour les genres
 const genders = [
@@ -459,7 +318,7 @@ const Header = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'tween' }}
-              className="absolute top-0 left-0 bottom-0 w-4/5 max-w-sm bg-white"
+              className="absolute top-0 left-0 bottom-0 w-full max-w-sm bg-white"
               onClick={e => e.stopPropagation()}
             >
               {/* Menu Header */}
@@ -471,9 +330,7 @@ const Header = () => {
               </div>
 
               {/* Menu Content */}
-              <div className="overflow-y-auto h-full pb-20">
-              
-              </div>
+                <MobileCategoryMenu />
             </motion.div>
           </motion.div>
         )}
@@ -563,5 +420,7 @@ const Header = () => {
     </>
   );
 };
+
+
 
 export default Header;

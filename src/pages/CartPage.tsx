@@ -218,11 +218,11 @@ const CartPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                 
-                <button onClick={handleClearCart}  className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
+                 <AsyncLink to="/checkout" >
+                <button   className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                   Procéder au paiement
                 </button>
-               
+               </AsyncLink>
                 <p className="mt-4 text-sm text-gray-500 text-center">
                   Paiement 100% sécurisé
                 </p>

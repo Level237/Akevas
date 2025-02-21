@@ -177,6 +177,7 @@ const ProductListPage: React.FC = () => {
       >
         {viewMode === 'grid' ? (
           <div className="group bg-white max-sm:w-[20.9rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            
             <div className="relative aspect-square">
               <img
                 src={product.product_profile}
@@ -275,9 +276,28 @@ const ProductListPage: React.FC = () => {
                     {product.product_price} Fcfa
                   </span>
                 </div>
-                <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
-                  Ajouter au panier
+                {
+                  !showCartButton ? (
+                       <button  onClick={() => handleAddToCart(product)} className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
+                   {isLoading ? (
+                      <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent text-white rounded-full">
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    ) : (
+                      "Ajouter au panier"
+                    )}
                 </button>
+                
+                  ): (
+                  <AsyncLink 
+                    to="/cart"
+                    className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors text-sm"
+                  >
+                    Voir le panier
+                  </AsyncLink>
+                )
+                }
+               
               </div>
             </div>
           </>
