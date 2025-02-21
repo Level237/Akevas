@@ -15,6 +15,10 @@ import { ScrollRestoration } from 'react-router-dom';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetAllProductsQuery } from '@/services/guardService';
 import { Product } from '@/types/products';
+import { useDispatch } from 'react-redux';
+import { addItem } from '@/store/cartSlice';
+import AsyncLink from '@/components/ui/AsyncLink';
+;
 
 interface FilterOption {
   id: string;
@@ -87,7 +91,8 @@ const ProductListPage: React.FC = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const { data: { productList,totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery(currentPage);
- 
+  const dispatch = useDispatch();
+
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev =>
       prev.includes(sectionId)
@@ -146,6 +151,139 @@ const ProductListPage: React.FC = () => {
       top: 0,
       behavior: 'smooth'
     });
+  };
+
+  
+
+  const ProductCard = ({ product }: { product: Product }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [showCartButton, setShowCartButton] = useState(false);
+
+    const handleAddToCart = async (product: Product) => {
+      setIsLoading(true);
+      dispatch(addItem({ product, quantity: 1 }));
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsLoading(false);
+      setShowCartButton(true);
+    };
+
+    return (
+      <motion.div
+        key={product.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className={viewMode === 'grid' ? '' : 'flex gap-6 bg-white rounded-2xl shadow-sm p-4'}
+      >
+        {viewMode === 'grid' ? (
+          <div className="group bg-white max-sm:w-[20.9rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div className="relative aspect-square">
+              <img
+                src={product.product_profile}
+                alt={product.product_name}
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute top-4 right-4">
+                <button className="p-2 rounded-full bg-white/90 text-gray-900 hover:bg-white transition-colors">
+                  <Heart className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="absolute top-4 left-4 flex flex-col gap-2">
+                <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
+                  Premium
+                </span>
+                <div className="flex items-center bg-white/90 px-2 py-1 rounded-full">
+                  <Star className="w-4 h-4 text-yellow-400" />
+                  <span className="ml-1 text-xs font-medium">12</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4">
+              <h3 className="font-medium text-gray-900 mb-1 truncate">
+                {product.product_name}
+              </h3>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-500">
+                  Stock: {product.product_quantity} disponibles
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-bold text-gray-900">
+                  {product.product_price} Fcfa
+                </span>
+                {!showCartButton ? (
+                  <button 
+                    onClick={() => handleAddToCart(product)}
+                    disabled={isLoading}
+                    className="px-3 py-2 rounded-lg bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90 transition-colors text-sm"
+                  >
+                    {isLoading ? (
+                      <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent text-white rounded-full">
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    ) : (
+                      "Ajouter au panier"
+                    )}
+                  </button>
+                ) : (
+                  <AsyncLink 
+                    to="/cart"
+                    className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors text-sm"
+                  >
+                    Voir le panier
+                  </AsyncLink>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="relative w-48 h-48">
+              <img
+                src={product.product_profile}
+                alt={product.product_name}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {product.product_name}
+                </h3>
+                <button className="p-2 rounded-full hover:bg-gray-100">
+                  <Heart className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center">
+                  <Star className="w-4 h-4 text-yellow-400" />
+                  <span className="ml-1 text-sm text-gray-600">
+                    12
+                  </span>
+                </div>
+                <span className="text-sm text-gray-500">
+                  Code: {product.shop_key}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between mt-4">
+                <div>
+                  <span className="text-xl font-bold text-gray-900">
+                    {product.product_price} Fcfa
+                  </span>
+                </div>
+                <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
+                  Ajouter au panier
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </motion.div>
+    );
   };
 
   return (
@@ -290,114 +428,7 @@ const ProductListPage: React.FC = () => {
           <div className="lg:col-span-3">
             <div className={viewMode === 'grid' ? 'grid grid-cols-1 max-sm:flex max-sm:flex-col max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
               { !isLoading && productList && productList.map((product:Product) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className={viewMode === 'grid' ? '' : 'flex gap-6  bg-white rounded-2xl shadow-sm p-4'}
-                >
-                  {viewMode === 'grid' ? (
-                    // Vue grille
-                    <div className="group bg-white max-sm:w-[20.9rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                      <div className="relative aspect-square">
-                        <img
-                          src={product.product_profile}
-                          alt={product.product_name}
-                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                        />
-                        <div className="absolute top-4 right-4">
-                          <button className="p-2 rounded-full bg-white/90 text-gray-900 hover:bg-white transition-colors">
-                            <Heart className="w-5 h-5" />
-                          </button>
-                        </div>
-                        
-                          <div className="absolute top-4 left-4">
-                            <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
-                              Premium
-                            </span>
-                          </div>
-                      
-                      </div>
-
-                      <div className="p-4">
-                        <h3 className="font-medium text-gray-900 mb-1 truncate">
-                          {product.product_name}
-                        </h3>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 text-yellow-400" />
-                            <span className="ml-1 text-sm text-gray-600">
-                             12
-                            </span>
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            Code: {product.shop_key}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <span className="text-lg font-bold text-gray-900">
-                              {product.product_price} Fcfa
-                            </span>
-                           
-                          </div>
-                          <button className="p-2 rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors">
-                            <ShoppingCart className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    // Vue liste
-                    <>
-                      <div className="relative w-48 h-48">
-                        <img
-                          src={product.product_profile}
-                          alt={product.product_name}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-
-                      </div>
-
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-lg font-medium text-gray-900">
-                            {product.product_name}
-                          </h3>
-                          <button className="p-2 rounded-full hover:bg-gray-100">
-                            <Heart className="w-5 h-5" />
-                          </button>
-                        </div>
-
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 text-yellow-400" />
-                            <span className="ml-1 text-sm text-gray-600">
-                             12
-                            </span>
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            Code: {product.shop_key}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between mt-4">
-                          <div>
-                            <span className="text-xl font-bold text-gray-900">
-                              {product.product_price} Fcfa
-                            </span>
-                           
-                          </div>
-                          <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
-                            Ajouter au panier
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </motion.div>
-                
+                <ProductCard product={product} />
               ))}
               <div>
                 <div className="flex items-center justify-center gap-2 mt-8">
