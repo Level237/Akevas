@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 
 
-import { ChevronRight, Minus, Plus, ShoppingBag, ShoppingCart, Star, X } from "lucide-react";
+import { ChevronRight, Minus, Plus,ShoppingCart, Star, X } from "lucide-react";
 
 import AsyncLink from "../ui/AsyncLink";
 
