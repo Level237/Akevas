@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search,X, Tag, Shirt, FootprintsIcon as Shoe, ShoppingBagIcon as HandbagSimple,Sparkle,ChevronDown, Menu,Clock, TrendingUp, Lock, Loader2, ArrowRight } from 'lucide-react'
+import { ShoppingCart, User, Search,X,ChevronDown, Menu,Clock, TrendingUp, Lock } from 'lucide-react'
 import logo from '../../assets/logo.png';
-import dress from "../../assets/dress.jpg"
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
 import AsyncLink from './AsyncLink';
@@ -12,10 +11,9 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
-import { useGetCategoriesWithParentIdNullQuery, useGetCategoriesWithParentIdQuery } from '@/services/guardService';
+
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
     // Données de démonstration pour l'historique et les suggestions
@@ -32,40 +30,6 @@ const trendingSearches = [
   'Accessoires homme',
   'Bijoux argent'
 ];
-
-const categories = {
-  mode: {
-    icon: <Shirt className="h-4 w-4" />,
-    title: "Mode",
-    featured: ["Nouveautés", "Meilleures ventes", "Tendances"],
-    sections: {
-      "Vêtements femme": ["Robes", "Tops", "Pantalons", "Jeans", "Vestes", "Manteaux"],
-      "Vêtements homme": ["T-shirts", "Chemises", "Pantalons", "Jeans", "Vestes", "Pulls"],
-      "Collections": ["Été 2024", "Basiques", "Sport", "Soirée", "Business"]
-    }
-  },
-  chaussures: {
-    icon: <Shoe className="h-4 w-4" />,
-    title: "Chaussures",
-    featured: ["Nouveautés", "Marques populaires", "Outlet"],
-    sections: {
-      "Femme": ["Sneakers", "Talons", "Bottes", "Sandales", "Sport"],
-      "Homme": ["Sneakers", "Chaussures de ville", "Bottes", "Sport"],
-      "Par marque": ["Nike", "Adidas", "Puma", "New Balance"]
-    }
-  },
-  accessoires: {
-    icon: <HandbagSimple className="h-4 w-4" />,
-    title: "Accessoires",
-    featured: ["Nouveautés", "Tendances", "Cadeaux"],
-    sections: {
-      "Sacs": ["Sacs à main", "Sacs à dos", "Pochettes", "Bagages"],
-      "Bijoux": ["Colliers", "Bagues", "Bracelets", "Boucles d'oreilles"],
-      "Autres": ["Ceintures", "Écharpes", "Lunettes", "Montres"]
-    }
-  },
-  // ... autres catégories
-}
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,

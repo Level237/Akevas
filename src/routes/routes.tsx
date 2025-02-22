@@ -44,6 +44,7 @@ import CurrentHomeByGenderPage from "@/pages/gender/CurrentHomeByGenderPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import UserDashboardPage from "@/pages/user/DashboardPage";
 import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
+import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -138,6 +139,10 @@ export const routes = createBrowserRouter([
   {
     path: '/seller/guide',
     element: <SellerGuidePage />
+  },
+  {
+    path:'/delivery/guide',
+    element:<DeliveryGuidePage/>
   },
   {
     path: '/products',

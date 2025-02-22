@@ -178,6 +178,7 @@ const ProductListPage: React.FC = () => {
         {viewMode === 'grid' ? (
           <div className="group bg-white max-sm:w-[20.9rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
             
+            <AsyncLink to={`/produit/${product.product_url}`}>
             <div className="relative aspect-square">
               <img
                 src={product.product_profile}
@@ -199,7 +200,7 @@ const ProductListPage: React.FC = () => {
                 </div>
               </div>
             </div>
-
+            </AsyncLink>
             <div className="p-4">
               <h3 className="font-medium text-gray-900 mb-1 truncate">
                 {product.product_name}
@@ -451,11 +452,11 @@ const ProductListPage: React.FC = () => {
                 <ProductCard product={product} />
               ))}
               <div>
-                <div className="flex items-center justify-center gap-2 mt-8">
+                <div className="flex items-center justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
                     {currentPage > 1 && (
                         <button 
                             onClick={() => handlePageChange(currentPage - 1)}
-                            className="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50"
+                            className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
                         >
                             Précédent
                         </button>
@@ -497,7 +498,7 @@ const ProductListPage: React.FC = () => {
                     {currentPage < totalPages && (
                         <button
                             onClick={() => handlePageChange(currentPage + 1)}
-                            className="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50"
+                            className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
                         >
                             Suivant
                         </button>

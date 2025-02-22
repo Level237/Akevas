@@ -10,6 +10,7 @@ import StoreStories from '@/components/stores/store-stories';
 import ProductListGrid from '@/components/products/ProductListGrid';
 import { ChevronRight } from 'lucide-react';
 import AsyncLink from '@/components/ui/AsyncLink';
+import CategoryGridList from '@/components/categories/CategoryGridList';
 const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)
     const {data:{data:currentGender}={},isLoading}=useGetCurrentHomeByGenderQuery(currentGenderId)
@@ -71,26 +72,7 @@ const CurrentHomeByGenderPage = () => {
         </div>
       </div>
       {/* Catégories populaires */}
-      <div className="container mx-auto px-4 py-16">
-        <h2 className="text-2xl font-bold mb-8">Catégories populaires</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {!isLoading && currentGender.categories.map((category) => (
-            <div key={category.name} className="group cursor-pointer">
-              <div className="relative overflow-hidden rounded-lg aspect-square">
-                <img 
-                  src={category.category_profile} 
-                  alt={category.category_name}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="text-xl font-semibold">{category.category_name}</h3>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <CategoryGridList title='Catégories populaires' categories={currentGender?.categories} isLoading={isLoading} />
 
 
 

@@ -11,16 +11,17 @@ import StoreStories from '@/components/stores/store-stories'
 import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
 import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
-import { useGetHomeShopsQuery } from '@/services/guardService';
-
+import { useGetCategoriesWithParentIdNullQuery, useGetHomeShopsQuery } from '@/services/guardService';
+import CategoryGridList from '@/components/categories/CategoryGridList';
 
 const Homepage = () => {
   //t [loading, setLoading] = useState(true);
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
   const {data:{data:shops}={},isLoading}=useGetHomeShopsQuery("guard")
+  const {data:{data:categories}={},isLoading:isLoadingCategories}=useGetCategoriesWithParentIdNullQuery("guard")
     console.log(shops)
   useEffect(() => {
-    // Simulate loading delay
+    // Simulate loading delay 
     //const timer = setTimeout(() => {
     //setLoading(false);
     //}, 4000);
@@ -105,7 +106,7 @@ const Homepage = () => {
 
         <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={shops} isLoading={isLoading} />
         <PremiumProducts />
-        <ShopByCategory />
+        <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
       
       </section>
       <MobileNav />

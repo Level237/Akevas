@@ -9,6 +9,7 @@ export interface Product{
     product_description:string,
     product_profile:string,
     shop_profile:string,
+    product_url:string,
     shop_created_at:string,
     shop_id:string,
     product_images:Image[],
