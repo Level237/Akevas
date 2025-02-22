@@ -13,6 +13,10 @@ const deliverySlice=createSlice({
       idNumber: localStorage.getItem("idNumberDelivery") || null,
       city: localStorage.getItem("cityDelivery") || null,
       quarter: localStorage.getItem("quarterDelivery") || null,
+      vehicleType: localStorage.getItem("vehicleTypeDelivery") || null,
+      vehicleModel: localStorage.getItem("vehicleModelDelivery") || null,
+      vehiclePlate: localStorage.getItem("vehiclePlateDelivery") || null,
+      vehicleState: localStorage.getItem("vehicleStateDelivery") || null,
 },
 
     reducers:{
@@ -36,9 +40,19 @@ const deliverySlice=createSlice({
         state.city = action.payload.city;
         state.quarter = action.payload.quarter;
        },
+       setVehicleInfoDelivery: (state, action) => {
+        localStorage.setItem("vehicleTypeDelivery", action.payload.vehicleType);
+        localStorage.setItem("vehicleModelDelivery", action.payload.vehicleModel);
+        localStorage.setItem("vehiclePlateDelivery", action.payload.vehiclePlate);
+        localStorage.setItem("vehicleStateDelivery", action.payload.vehicleState);
+        state.vehicleType = action.payload.vehicleType;
+        state.vehicleModel = action.payload.vehicleModel;
+        state.vehiclePlate = action.payload.vehiclePlate;
+        state.vehicleState = action.payload.vehicleState;
+       },
        
 }   
 })
 
-export const { setPersonalInfoDelivery} = deliverySlice.actions;
+export const { setPersonalInfoDelivery, setVehicleInfoDelivery} = deliverySlice.actions;
 export default deliverySlice;

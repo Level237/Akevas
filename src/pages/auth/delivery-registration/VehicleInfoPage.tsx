@@ -10,12 +10,14 @@ import {
   Bike,
   Car,
   Monitor,
-
+  Loader2
 } from 'lucide-react';
-import { ScrollRestoration } from 'react-router-dom';
+import { ScrollRestoration, useNavigate } from 'react-router-dom';
 import AsyncLink from '@/components/ui/AsyncLink';
 import { PageTransition } from '@/components/ui/page-transition';
-
+import { Button } from '@/components/ui/button';
+import { useDispatch } from 'react-redux';
+import { setVehicleInfoDelivery } from '@/store/delivery/deliverySlice';
 const steps = [
   {
     id: 1,
@@ -51,19 +53,19 @@ const steps = [
 
 const vehicleTypes = [
   {
-    id: 'bike',
+    id: '1',
     name: 'Vélo',
     icon: Bike,
     description: 'Idéal pour les livraisons en centre-ville'
   },
   {
-    id: 'motorcycle',
+    id: '2',
     name: 'Moto/Scooter',
     icon: Monitor,
     description: 'Parfait pour les livraisons rapides'
   },
   {
-    id: 'car',
+    id: '3',
     name: 'Voiture',
     icon: Car,
     description: 'Pour les livraisons volumineuses'
@@ -72,13 +74,13 @@ const vehicleTypes = [
 
 const VehicleInfoPage: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    brand: '',
+    etat: '',
     model: '',
-    year: '',
     licensePlate: '',
-    insurance: '',
-    color: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,10 +91,21 @@ const VehicleInfoPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+   await new Promise(resolve => setTimeout(resolve, 500));
     // Implement form submission
     console.log({ vehicleType: selectedType, ...formData });
+    const vehicleInfo = {
+      vehicleType: selectedType,
+      vehicleModel: formData.model,
+      vehiclePlate: formData.licensePlate,
+      vehicleState: formData.etat
+    };
+    dispatch(setVehicleInfoDelivery(vehicleInfo));
+    navigate('/delivery/zone');
+    setIsLoading(false);
   };
 
   return (
@@ -177,68 +190,41 @@ const VehicleInfoPage: React.FC = () => {
               {selectedType && (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
+                    
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Marque
+                        Etat
                       </label>
-                      <input
-                        type="text"
-                        name="brand"
-                        value={formData.brand}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                      <select
+                        name="etat"
+                        value={formData.etat}
+                        onChange={(e) => setFormData({ ...formData, etat: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                         required
-                      />
+                      > 
+                        <option value="1">Fonctionnel</option>
+                        <option value="0">Problème de fonctionnement</option>
+                      </select> 
                     </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Modèle
+                    {selectedType !== '1' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Modèle
                       </label>
                       <input
                         type="text"
                         name="model"
                         value={formData.model}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                        required
-                      />
-                    </div>
+                          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                          required
+                        />
+                      </div>
+                    )}
                   </div>
 
-                  <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Année
-                      </label>
-                      <input
-                        type="number"
-                        name="year"
-                        value={formData.year}
-                        onChange={handleChange}
-                        min="1990"
-                        max="2024"
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                        required
-                      />
-                    </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Couleur
-                      </label>
-                      <input
-                        type="text"
-                        name="color"
-                        value={formData.color}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {selectedType !== 'bike' && (
+                  {selectedType !== '1' && (
                     <>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -248,20 +234,6 @@ const VehicleInfoPage: React.FC = () => {
                           type="text"
                           name="licensePlate"
                           value={formData.licensePlate}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Numéro d'assurance
-                        </label>
-                        <input
-                          type="text"
-                          name="insurance"
-                          value={formData.insurance}
                           onChange={handleChange}
                           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                           required
@@ -278,13 +250,14 @@ const VehicleInfoPage: React.FC = () => {
                       <ChevronLeft className="w-4 h-4" />
                       Retour
                     </AsyncLink>
-                    <AsyncLink
-                      to="/delivery/zone"
+                    <Button
+                        disabled={!selectedType || !formData.etat}
+                        type="submit"
                       className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                     >
-                      Suivant
+                      {isLoading ? <div className='flex items-center gap-2'><Loader2 className='w-4 h-4 animate-spin' />Chargement...</div> : 'Suivant'}
                       <ChevronRight className="w-4 h-4" />
-                    </AsyncLink>
+                    </Button>
                   </div>
                 </form>
               )}
