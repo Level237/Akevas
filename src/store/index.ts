@@ -7,6 +7,7 @@ import { guardService } from "@/services/guardService";
 import { adminService } from "@/services/adminService";
 import { sellerService } from "@/services/sellerService";
 import cartSlice from "./cartSlice";
+import deliverySlice from "./delivery/deliverySlice";
 export const store=configureStore({
     reducer:{
         [authSlice.name]:authSlice.reducer,
@@ -16,7 +17,8 @@ export const store=configureStore({
         [registerSlice.name]:registerSlice.reducer,
         [guardService.reducerPath]:guardService.reducer,
         [adminService.reducerPath]:adminService.reducer,
-        [sellerService.reducerPath]:sellerService.reducer
+        [sellerService.reducerPath]:sellerService.reducer,
+        [deliverySlice.name]:deliverySlice.reducer
     },
     middleware:(getDefaultMiddleware)=>getDefaultMiddleware({
         serializableCheck:false

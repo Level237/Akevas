@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   User,
@@ -6,18 +6,22 @@ import {
   MapPin,
   FileText,
   CheckCircle,
-  ChevronRight
+  ChevronRight,
+  Loader2
 } from 'lucide-react';
-import { ScrollRestoration } from 'react-router-dom';
+import { ScrollRestoration,useNavigate } from 'react-router-dom';
 import { PageTransition } from '@/components/ui/page-transition';
 import TopLoader from '@/components/ui/top-loader';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { useGetTownsQuery, useGetQuartersQuery } from '@/services/guardService';
+import { useGetQuartersQuery } from '@/services/guardService';
+import { useGetTownsQuery } from '@/services/guardService';
+import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
+import { SelectTrigger } from '@/components/ui/select';
+import { SelectContent } from '@/components/ui/select';
+import { SelectItem } from '@/components/ui/select';
+import { SelectValue } from '@/components/ui/select';
+import { useDispatch } from 'react-redux';
+import { setPersonalInfoDelivery } from '@/store/delivery/deliverySlice';
 const steps = [
   {
     id: 1,
@@ -52,52 +56,64 @@ const steps = [
 ];
 
 
-const formSchema=z.object({
-  firstName:z.string().min(2,"le prenom doit contenir au moins 2 caractères"),
-  lastName:z.string().min(2,"le nom doit contenir au moins 2 caractères"),
-  email:z.string().email("email invalide"),
-  phone:z.string().min(10,"le numero de telephone doit contenir au moins 10 caractères"),
-  birthDate:z.string().min(10,"la date de naissance est obligatoire"),
-  nationality:z.string().min(2,"la nationalité est obligatoire"),
-  idNumber:z.string().min(2,"le numero de piece d'identité est obligatoire"),
-  address:z.string().min(2,"l'adresse est obligatoire"),
-  city:z.string().min(1,"la ville est obligatoire"),
-  quarter:z.string().min(1,"le quartier est obligatoire"),
-  
-})
 const DeliveryRegisterPage: React.FC = () => {
-  const form=useForm<z.infer<typeof formSchema>>({
-    resolver:zodResolver(formSchema),
-    defaultValues:{
-      firstName:'',
-      lastName:'',
-      email:'',
-      phone:'',
-      birthDate:'',
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    birthDate: '',
     nationality: '',
     idNumber: '',
     city: '',
     quarter: ''
-  }
-}
-);
-const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
- const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
-  const [townId,setTownId]=useState<string>('')
-  const filteredQuarters = quarters?.quarters.filter((quarter: { town_id: string }) => quarter.town_id === parseInt(townId));
-  const onSubmit=async(values:z.infer<typeof formSchema>)=>{
-    console.log(values)
-  }
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
+  const [isLoading,setIsLoading]=useState<boolean>(false);
+  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+  const [townId,setTownId]=useState<string>('');
+  const navigate=useNavigate();
+  const filteredQuarters = quarters?.quarters.filter((quarter: { town_id: number }) => quarter.town_id === parseInt(townId));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+     const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'birthDate', 'nationality', 'idNumber', 'city', 'quarter'];
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+    setIsLoading(true);
+    if (missingFields.length > 0) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+    // Implement form submission
+    //console.log(formData);
+    const deliveryData = {
+      ...formData,
+      town_id: parseInt(townId),
+      quarter_id: parseInt(formData.quarter)
+    };
+    dispatch(setPersonalInfoDelivery(deliveryData));
+     await new Promise(resolve => setTimeout(resolve, 500));
+     setIsLoading(false);
+     navigate('/delivery/vehicle');
+  };
 
   return (
     <PageTransition>
     <div className="min-h-screen bg-gray-50">
-      <TopLoader progress={16.7} />
+      
       <ScrollRestoration/>
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            
+            <TopLoader progress={16.7} />
             Devenir livreur partenaire
           </h1>
           <p className="mt-2 text-gray-600">
@@ -146,207 +162,159 @@ const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
                 Informations personnelles
               </h2>
 
-            <Form {...form}>
-
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
-                  
-                    <FormField
-                      control={form.control}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Prénom
+                    </label>
+                    <input
+                      type="text"
                       name="firstName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Prénom</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                              
-                      />
-                      </FormControl>
-                      <FormMessage />
-                      </FormItem>
-                      )}
-                      />
-                  
-
-                  
-                    <FormField
-                      control={form.control}
-                      name="lastName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nom</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  
-                </div>
-
-
-                <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
-                  
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  
-
-                 
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Téléphone</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                            />
-                      </FormControl>
-                      <FormMessage />
-                      </FormItem>
-                      )}
-                      />
-                     
-                </div>
-
-
-                <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
-                  
-                    <FormField
-                      control={form.control}
-                      name="birthDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Date de naissance</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                            />
-                          </FormControl>  
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                                      <FormField
-                      control={form.control}
-                      name="nationality"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nationalité</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                      
                     />
                   </div>
 
-
-                  
-               
-
-              
-
-                  
-                  <FormField
-                    control={form.control}
-                    name="idNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Numéro de pièce d'identité</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-           
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nom
+                    </label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                      
+                    />
+                  </div>
+                </div>
 
                 <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
-              
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-              <FormItem>
-              <FormLabel>Ville</FormLabel>
-              <Select onValueChange={(value) => {
-          field.onChange(value); // Met à jour la valeur du champ
-          setTownId(value); // Met à jour l'état townId
-        }} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selectionnez une ville" />
-                  </SelectTrigger>
-                </FormControl>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                      
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Téléphone
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                      
+                    />
+                  </div>
+                </div>
+
+                <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Date de naissance
+                    </label>
+                    <input
+                      type="date"
+                      name="birthDate"
+                      value={formData.birthDate}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                      
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nationalité
+                    </label>
+                    <input
+                      type="text"
+                      name="nationality"
+                      value={formData.nationality}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                      
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Numéro de pièce d'identité
+                  </label>
+                  <input
+                    type="text"
+                    name="idNumber"
+                    value={formData.idNumber}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                    
+                  />
+                </div>
+
+
+                <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="city">Ville</Label>
+              <Select
+                name="city"
+                onValueChange={(value) => {
+                  setTownId(value);
+                  setFormData(prev => ({
+                    ...prev,
+                    city: value,
+                  }));
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir une ville" />
+                </SelectTrigger>
                 <SelectContent>
                   {townsLoading ? (
                     <SelectItem value="loading">Chargement des villes...</SelectItem>
                   ) : (
-                    towns.towns.map((town:{id:string,town_name:string}) => (
+                    towns?.towns.map((town:{id:string,town_name:string}) => (
                       <SelectItem key={town.id} value={String(town.id)}>
                         {town.town_name}
                       </SelectItem>
                     ))
                   )}
-                    
                 </SelectContent>
               </Select>
-              
-              <FormMessage />
-            </FormItem>
-                       
-                      )}
-                    />
-                            <FormField
-                        control={form.control}
-                      name="quarter"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Quartier</FormLabel>
-                          <Select 
-                              onValueChange={field.onChange}  
-                              defaultValue={field.value}
-                            >
-                          <FormControl>
-                            
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selectionnez un quartier" />
-                              </SelectTrigger>
-                               </FormControl>
-                              <SelectContent>
-                               {quartersLoading ? (
+            </div>
+
+
+            <div className="space-y-2">
+            <Label htmlFor="street">Quartier</Label>
+            <Select 
+            name="quarter"
+            onValueChange={(value) => {
+              setFormData(prev => ({
+                ...prev,
+                quarter: value,
+              }));
+            }}
+            disabled={quartersLoading}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choisir un quartier" />
+              </SelectTrigger>
+              <SelectContent>
+                {quartersLoading ? (
                   <SelectItem value="loading">Chargement des quartiers...</SelectItem>
                 ) : (
                   filteredQuarters?.map((quarter:{id:string,quarter_name:string}) => (
@@ -358,35 +326,22 @@ const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
                 {filteredQuarters?.length === 0 && (
                   <SelectItem value="no-quarters">Aucun quartier trouvé,veuillez verifier votre ville</SelectItem>
                 )}
-                              </SelectContent>
-                              </Select>
-                              <FormMessage />
-                              
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                    
-           
-
-
-                
-
-                  
-               
+              </SelectContent>
+            </Select>
+          </div>
+                </div>
 
                 <div className="flex justify-end">
                   <button
+                    disabled={isLoading}
                     type="submit"
                     className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                   >
-                    Suivant
+                    {isLoading ? <div className='flex items-center gap-2'><Loader2 className='w-4 h-4 animate-spin' />Chargement...</div> : 'Suivant'}
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
               </form>
-            </Form>
             </div>
           </div>
 

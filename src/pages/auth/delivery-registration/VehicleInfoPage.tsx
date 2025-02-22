@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { ScrollRestoration } from 'react-router-dom';
 import AsyncLink from '@/components/ui/AsyncLink';
+import { PageTransition } from '@/components/ui/page-transition';
 
 const steps = [
   {
@@ -95,6 +96,7 @@ const VehicleInfoPage: React.FC = () => {
   };
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-gray-50">
       
       <ScrollRestoration />
@@ -304,7 +306,8 @@ const VehicleInfoPage: React.FC = () => {
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </PageTransition>
   );
 };
 
