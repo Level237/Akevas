@@ -11,6 +11,8 @@ import {
 import { ScrollRestoration } from 'react-router-dom';
 import AsyncLink from '@/components/ui/AsyncLink';
 import { Button } from '@/components/ui/button';
+import { useGetTownsQuery } from '@/services/guardService';
+import { useGetQuartersQuery } from '@/services/guardService';
 
 const steps = [
   {
@@ -61,7 +63,9 @@ const cities = [
 const DeliveryZonePage: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
-
+  const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
+  const [isLoading,setIsLoading]=useState<boolean>(false);
+  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
   const handleDistrictToggle = (district: string) => {
     if (selectedDistricts.includes(district)) {
       setSelectedDistricts(selectedDistricts.filter(d => d !== district));
@@ -173,7 +177,7 @@ const DeliveryZonePage: React.FC = () => {
 
             <div className="px-6 py-4 bg-gray-50 rounded-b-2xl border-t flex justify-between">
               <AsyncLink
-                to="/auth/delivery/vehicle"
+                to="/delivery/vehicle"
                 className="px-6 py-2 border rounded-lg hover:bg-gray-50 flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />

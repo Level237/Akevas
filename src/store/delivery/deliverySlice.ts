@@ -17,6 +17,7 @@ const deliverySlice=createSlice({
       vehicleModel: localStorage.getItem("vehicleModelDelivery") || null,
       vehiclePlate: localStorage.getItem("vehiclePlateDelivery") || null,
       vehicleState: localStorage.getItem("vehicleStateDelivery") || null,
+        vehicleImage:localStorage.getItem("vehicleImage") || ""
 },
 
     reducers:{
@@ -45,10 +46,12 @@ const deliverySlice=createSlice({
         localStorage.setItem("vehicleModelDelivery", action.payload.vehicleModel);
         localStorage.setItem("vehiclePlateDelivery", action.payload.vehiclePlate);
         localStorage.setItem("vehicleStateDelivery", action.payload.vehicleState);
+        localStorage.setItem("vehicleImage",action.payload.vehicleImage)
         state.vehicleType = action.payload.vehicleType;
         state.vehicleModel = action.payload.vehicleModel;
         state.vehiclePlate = action.payload.vehiclePlate;
         state.vehicleState = action.payload.vehicleState;
+        state.vehicleImage=action.payload.vehicleImage
        },
        
 }   
