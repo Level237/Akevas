@@ -18,7 +18,10 @@ const deliverySlice=createSlice({
       vehiclePlate: localStorage.getItem("vehiclePlateDelivery") || null,
       vehicleState: localStorage.getItem("vehicleStateDelivery") || null,
       vehicleImage:localStorage.getItem("vehicleImage") || "",
-      selectedQuarters: localStorage.getItem("selectedQuarters") || null
+      selectedQuarters: localStorage.getItem("selectedQuarters") || null,
+      identity_card_in_front:localStorage.getItem("identity_card_in_front") || null,
+      identity_card_with_the_person:localStorage.getItem("identity_card_with_the_person") || null,
+      drivers_license:localStorage.getItem("drivers_license")  || null
 },
 
     reducers:{
@@ -57,9 +60,18 @@ const deliverySlice=createSlice({
        setDeliveryZone: (state, action) => {
         localStorage.setItem("selectedQuarters", action.payload.selectedQuarters);
         state.selectedQuarters = action.payload.selectedQuarters;
+       },
+
+       setDocument:(state,action)=>{
+        localStorage.setItem("drivers_license",action.payload.drivers_license)
+        localStorage.setItem("identity_card_in_front",action.payload.identity_card_in_front)
+        localStorage.setItem("identity_card_with_the_person",action.payload.identity_card_with_the_person)
+        state.drivers_license=action.payload.drivers_license
+        state.identity_card_in_front=action.payload.identity_card_in_front
+        state.identity_card_with_the_person=action.payload.identity_card_with_the_person
        }
 }   
 })
 
-export const { setPersonalInfoDelivery, setVehicleInfoDelivery, setDeliveryZone} = deliverySlice.actions;
+export const { setPersonalInfoDelivery, setVehicleInfoDelivery, setDeliveryZone,setDocument} = deliverySlice.actions;
 export default deliverySlice;

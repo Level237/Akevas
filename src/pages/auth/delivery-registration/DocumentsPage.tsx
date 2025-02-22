@@ -9,12 +9,14 @@ import {
   ChevronLeft,
   Upload,
   X,
-  Check
+  Check,
+  Loader2
 } from 'lucide-react';
-import { ScrollRestoration } from 'react-router-dom';
+import { ScrollRestoration,useNavigate } from 'react-router-dom';
 import AsyncLink from '@/components/ui/AsyncLink';
 import { Button } from '@/components/ui/button';
-
+import { useDispatch } from 'react-redux';
+import { setDocument } from '@/store/delivery/deliverySlice';
 const steps = [
   {
     id: 1,
@@ -53,49 +55,45 @@ interface Document {
   name: string;
   description: string;
   required: boolean;
-  file?: File;
+  file?: string;
 }
 
 const requiredDocuments: Document[] = [
   {
     id: 'id_card',
-    name: 'Pièce d\'identité',
-    description: 'Carte nationale d\'identité, passeport ou permis de conduire',
+    name: 'identity_card_in_front',
+    description: 'Carte nationale d\'identité,ou passeport',
     required: true
+  },
+    {
+    id: 'drivers_license',
+    name: 'drivers_license',
+    description: 'Pour les véhicules motorisés uniquement',
+    required: false
   },
   {
     id: 'photo',
-    name: 'Photo d\'identité',
-    description: 'Photo récente sur fond blanc',
+    name: 'identity_card_with_the_person',
+    description: 'Photo + votre carte',
     required: true
   },
-  {
-    id: 'criminal_record',
-    name: 'Casier judiciaire',
-    description: 'Extrait de casier judiciaire de moins de 3 mois',
-    required: true
-  },
-  {
-    id: 'drivers_license',
-    name: 'Permis de conduire',
-    description: 'Pour les véhicules motorisés uniquement',
-    required: false
-  },
-  {
-    id: 'insurance',
-    name: 'Attestation d\'assurance',
-    description: 'Pour les véhicules motorisés uniquement',
-    required: false
-  }
+
 ];
 
 const DocumentsPage: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>(requiredDocuments);
-
+  const dispatch = useDispatch();
+  const navigate=useNavigate()
+  const [isLoading,setIsLoading]=useState<boolean>(false)
+  console.log(documents[0].file)
   const handleFileChange = (documentId: string, file: File) => {
-    setDocuments(documents.map(doc => 
-      doc.id === documentId ? { ...doc, file } : doc
+    const reader = new FileReader();
+    reader.onload = () => {
+      setDocuments(documents.map(doc => 
+      doc.id === documentId ? { ...doc, file:reader.result as string } : doc
     ));
+    };
+    reader.readAsDataURL(file);
   };
 
   const removeFile = (documentId: string) => {
@@ -108,6 +106,19 @@ const DocumentsPage: React.FC = () => {
     return documents
       .filter(doc => doc.required)
       .every(doc => doc.file);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true)
+    await new Promise(resolve => setTimeout(resolve, 500));
+    dispatch(setDocument({
+      drivers_license:documents[1].file,
+      identity_card_in_front:documents[0].file,
+      identity_card_with_the_person:documents[2].file
+    }));
+    navigate('/delivery/validation');
+    setIsLoading(false)
   };
 
   return (
@@ -158,8 +169,10 @@ const DocumentsPage: React.FC = () => {
 
         {/* Documents List */}
         <div className="max-w-2xl mx-auto">
+          <form onSubmit={handleSubmit}>  
           <div className="bg-white rounded-2xl shadow-sm">
             <div className="p-6">
+              
               <div className="space-y-6">
                 {documents.map((doc) => (
                   <div
@@ -201,6 +214,7 @@ const DocumentsPage: React.FC = () => {
                         </div>
                         <input
                           type="file"
+                          required
                           className="hidden"
                           accept=".pdf,.jpg,.jpeg,.png"
                           onChange={(e) => {
@@ -228,9 +242,9 @@ const DocumentsPage: React.FC = () => {
                 <ChevronLeft className="w-4 h-4" />
                 Retour
               </AsyncLink>
-              <AsyncLink to="/delivery/validation">
+              
               <Button
-                
+                type='submit'
                 className={`px-6 py-2 rounded-lg flex items-center gap-2 ${
                   isComplete()
                     ? 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
@@ -242,15 +256,13 @@ const DocumentsPage: React.FC = () => {
                   }
                 }}
               >
-                Suivant
+                {isLoading ? <div className='flex items-center gap-2'><Loader2 className='w-4 h-4 animate-spin' />Chargement...</div> : 'Suivant'}
                 <ChevronRight className="w-4 h-4" />
               </Button>
-
-              </AsyncLink>
              
             </div>
           </div>
-
+          </form>
           {/* Tips */}
           <div className="mt-8 bg-white p-6 rounded-xl shadow-sm">
             <h3 className="font-medium mb-4 flex items-center gap-2">
