@@ -17,7 +17,8 @@ const deliverySlice=createSlice({
       vehicleModel: localStorage.getItem("vehicleModelDelivery") || null,
       vehiclePlate: localStorage.getItem("vehiclePlateDelivery") || null,
       vehicleState: localStorage.getItem("vehicleStateDelivery") || null,
-        vehicleImage:localStorage.getItem("vehicleImage") || ""
+      vehicleImage:localStorage.getItem("vehicleImage") || "",
+      selectedQuarters: localStorage.getItem("selectedQuarters") || null
 },
 
     reducers:{
@@ -53,9 +54,12 @@ const deliverySlice=createSlice({
         state.vehicleState = action.payload.vehicleState;
         state.vehicleImage=action.payload.vehicleImage
        },
-       
+       setDeliveryZone: (state, action) => {
+        localStorage.setItem("selectedQuarters", action.payload.selectedQuarters);
+        state.selectedQuarters = action.payload.selectedQuarters;
+       }
 }   
 })
 
-export const { setPersonalInfoDelivery, setVehicleInfoDelivery} = deliverySlice.actions;
+export const { setPersonalInfoDelivery, setVehicleInfoDelivery, setDeliveryZone} = deliverySlice.actions;
 export default deliverySlice;

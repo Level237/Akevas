@@ -7,13 +7,15 @@ import {
   CheckCircle,
   ChevronRight,
   ChevronLeft,
+  Loader2,
 } from 'lucide-react';
-import { ScrollRestoration } from 'react-router-dom';
+import { ScrollRestoration, useNavigate } from 'react-router-dom';
 import AsyncLink from '@/components/ui/AsyncLink';
 import { Button } from '@/components/ui/button';
 import { useGetTownsQuery } from '@/services/guardService';
 import { useGetQuartersQuery } from '@/services/guardService';
-
+import { setDeliveryZone } from '@/store/delivery/deliverySlice';
+import { useDispatch } from 'react-redux';
 const steps = [
   {
     id: 1,
@@ -47,35 +49,35 @@ const steps = [
   }
 ];
 
-const cities = [
-  { id: 'abidjan', name: 'Abidjan', districts: [
-    'Abobo', 'Adjamé', 'Attécoubé', 'Cocody', 'Koumassi', 
-    'Marcory', 'Plateau', 'Port-Bouët', 'Treichville', 'Yopougon'
-  ]},
-  { id: 'yamoussoukro', name: 'Yamoussoukro', districts: [
-    'Assabou', 'Dioulakro', 'Habitat', 'Millionnaire', 'N\'Zuessi'
-  ]},
-  { id: 'bouake', name: 'Bouaké', districts: [
-    'Air France', 'Belleville', 'Commerce', 'Koko', 'N\'Gattakro'
-  ]}
-];
 
 const DeliveryZonePage: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
+  const dispatch=useDispatch();
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const [isLoading,setIsLoading]=useState<boolean>(false);
   const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
-  const handleDistrictToggle = (district: string) => {
-    if (selectedDistricts.includes(district)) {
-      setSelectedDistricts(selectedDistricts.filter(d => d !== district));
+  const handleDistrictToggle = (districtId: string) => {
+    if (selectedDistricts.includes(districtId)) {
+      setSelectedDistricts(selectedDistricts.filter(d => d !== districtId));
     } else {
-      setSelectedDistricts([...selectedDistricts, district]);
+      setSelectedDistricts([...selectedDistricts, districtId]);
     }
   };
-
-  const currentCity = cities.find(city => city.id === selectedCity);
-
+  const navigate=useNavigate()
+ const filteredQuarters = quarters?.quarters.filter((quarter: { town_id: number }) => quarter.town_id === parseInt(selectedCity));
+ 
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+    setIsLoading(true); 
+   await new Promise(resolve => setTimeout(resolve, 500));
+ const dataZone={
+  selectedQuarters:JSON.stringify(selectedDistricts)
+ }
+  dispatch(setDeliveryZone(dataZone));
+  navigate('/delivery/documents');
+  setIsLoading(false);
+}
   return (
     <div className="min-h-screen bg-gray-50">
      <ScrollRestoration />
@@ -124,6 +126,7 @@ const DeliveryZonePage: React.FC = () => {
         </nav>
 
         {/* Form */}
+        <form onSubmit={handleSubmit}>
         <div className="max-w-2xl mx-auto">
           <div className="bg-white rounded-2xl shadow-sm">
             <div className="p-6">
@@ -131,8 +134,8 @@ const DeliveryZonePage: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-4">
                   Sélectionnez votre ville
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {cities.map((city) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {!townsLoading && towns?.towns.map((city:{id:string,town_name:string}) => (
                     <button
                       key={city.id}
                       onClick={() => setSelectedCity(city.id)}
@@ -145,29 +148,29 @@ const DeliveryZonePage: React.FC = () => {
                       <MapPin className={`w-6 h-6 mb-2 ${
                         selectedCity === city.id ? 'text-[#ed7e0f]' : 'text-gray-400'
                       }`} />
-                      <h3 className="font-medium">{city.name}</h3>
+                      <h3 className="font-medium">{city.town_name}</h3>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {currentCity && (
+              {selectedCity && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">
                     Sélectionnez vos quartiers de livraison
                   </h2>
                   <div className="grid grid-cols-2 gap-3">
-                    {currentCity.districts.map((district) => (
+                    {filteredQuarters?.map((district:{id:string,quarter_name:string}) => (
                       <button
-                        key={district}
-                        onClick={() => handleDistrictToggle(district)}
+                        key={district.id}
+                        onClick={() => handleDistrictToggle(district.id)}
                         className={`p-3 rounded-lg border text-left transition-colors ${
-                          selectedDistricts.includes(district)
+                          selectedDistricts.includes(district.id)
                             ? 'border-[#ed7e0f] bg-orange-50 text-[#ed7e0f]'
                             : 'border-gray-200 hover:border-gray-300 text-gray-700'
                         }`}
                       >
-                        {district}
+                        {district.quarter_name}
                       </button>
                     ))}
                   </div>
@@ -183,8 +186,9 @@ const DeliveryZonePage: React.FC = () => {
                 <ChevronLeft className="w-4 h-4" />
                 Retour
               </AsyncLink>
-              <AsyncLink to="/delivery/documents">
+
               <Button
+                type="submit"
                 className={`px-6 py-2 rounded-lg flex items-center gap-2 ${
                   selectedCity && selectedDistricts.length > 0
                     ? 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
@@ -196,10 +200,9 @@ const DeliveryZonePage: React.FC = () => {
                   }
                 }}
               >
-                Suivant
+               {isLoading ? <div className='flex items-center gap-2'><Loader2 className='w-4 h-4 animate-spin' />Chargement...</div> : 'Suivant'}
                 <ChevronRight className="w-4 h-4" />
               </Button>
-              </AsyncLink>
             </div>
           </div>
 
@@ -216,7 +219,8 @@ const DeliveryZonePage: React.FC = () => {
               <li>• Plus vous sélectionnez de zones, plus vous aurez d'opportunités</li>
             </ul>
           </div>
-        </div>
+          </div>
+        </form>
       </main>
     </div>
   );
