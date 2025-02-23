@@ -49,6 +49,18 @@ export const adminService=createApi({
         adminListProducts:builder.query({
             query:()=>'/api/v1/admin/products',
             providesTags: ['admin'],
+        }),
+        getDelivery:builder.query({
+            query:(id)=>`/api/v1/admin/deliveries/${id}`,
+            providesTags: ['admin'],
+        }),
+        confirmOrNotDelivery:builder.mutation({
+            query:({delivery_id,formData})=>({
+                url:`/api/v1/delivery/confirm/${delivery_id}`,
+                method:'POST',
+                body:formData
+            }),
+            invalidatesTags:['admin']
         })
     })
 })
@@ -61,5 +73,7 @@ useConfirmOrNotShopMutation,
 useRecentProductsQuery,
 useRecentDeliveryQuery,
 useAdminListProductsQuery,
-useAdminListDeliveryQuery
+useAdminListDeliveryQuery,
+useGetDeliveryQuery,
+useConfirmOrNotDeliveryMutation 
 }=adminService

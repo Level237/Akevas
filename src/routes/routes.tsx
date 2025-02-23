@@ -46,6 +46,7 @@ import UserDashboardPage from "@/pages/user/DashboardPage";
 import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
 import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
 import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
+import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -184,6 +185,10 @@ export const routes = createBrowserRouter([
       },{
         path:"admin/delivery",
         element:<ListDeveryPage/>
+      },
+      {
+        path:"admin/delivery/:id",
+        element:<DeliveryDetailPage/>
       }
     ]
   },
