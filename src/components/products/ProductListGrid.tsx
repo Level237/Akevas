@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Product } from '@/types/products'
 import { motion } from 'framer-motion'
 import { Heart, Star, ShoppingCart } from 'lucide-react'

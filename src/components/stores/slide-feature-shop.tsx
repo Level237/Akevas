@@ -1,22 +1,17 @@
-import React, { useRef, useState } from 'react'
+import  { useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, ShoppingBag, Clock, Heart, MapPin, Badge, X, UserPlus, ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { StoreCard } from './store-card'    
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/swiper-bundle.css'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-import { Separator } from '@/components/ui/separator';
-import shoes from "../../assets/shoes1.webp"
-import shirt from "../../assets/dress.jpg"
-import { Button } from '@/components/ui/button';
-import AsyncLink from '@/components/ui/AsyncLink';
-import { Link } from 'react-router-dom';
-import { Star } from 'lucide-react';
-import { StoreBadges } from '../seller/store-badge';
-import { useGetHomeShopsQuery } from '../../services/guardService';
+
+
 import { Shop } from '../../types/shop';
 import ModalShop from './Modal-Shop';
 import { Skeleton } from '@/components/ui/skeleton';
+
+
 
 
 

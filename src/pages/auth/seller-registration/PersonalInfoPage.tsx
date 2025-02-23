@@ -51,7 +51,7 @@ const PersonalInfoPage = () => {
     const response=await checkIfEmailExists(form)
 
     if(response.error){
-      alert(response.error?.data?.message);
+      alert("ce mail ou ce numéro de téléphone existe déjà");
       return;
     }
     

@@ -3,43 +3,25 @@ import { motion } from 'framer-motion';
 import { Plus, Minus, X, ArrowLeft, Truck, Shield, CreditCard,ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/ui/header';
-import type { CartItem } from '@/components/cart/CartModal';
-import shoes from "../assets/shoes1.webp"
 import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useSelector,useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';  
-import { clearCart,removeItem,updateQuantity } from '@/store/cartSlice';
+import { removeItem,updateQuantity } from '@/store/cartSlice';
 import { Product } from '@/types/products';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
- 
-  const [items, setItems] = React.useState<CartItem[]>([
-    {
-      id: '1',
-      name: 'Figurine Collector Demon Slayer',
-      price: 129.99,
-      quantity: 2,
-      image: shoes,
-      storeCode: 'JP_STORE_8472',
-      variants: {
-        size: '24cm'
-      }
-    },
-    // Ajoutez plus d'items
-  ]);
 
 
 
 
 
 
-  const totalQuantity=useSelector((state:RootState)=>state.cart.totalQuantity)
+
+
   const totalPrice=useSelector((state:RootState)=>state.cart.totalPrice)
   const dispatch=useDispatch<AppDispatch>()
-  const handleClearCart = () => {
-    dispatch(clearCart())
-  }
+
   const handleRemoveItem=(product:Product)=>{
     dispatch(removeItem({product}))
   }

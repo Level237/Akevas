@@ -102,7 +102,7 @@ const Homepage = () => {
          <TopBar />
         
         <Header />
-        <div className="hidden sticky top-0 w-full z-50 justify-center max-sm:flex items-center gap-6 py-6 bg-white/80 backdrop-blur-sm shadow-lg">
+        <div className="hidden w-full z-50 justify-center max-sm:flex items-center gap-6 py-6 bg-white/80 backdrop-blur-sm shadow-lg">
           <AsyncLink to="/home?g=homme" className="relative group px-4 py-2 rounded-full hover:bg-orange-50 transition-all duration-300">
             <span className="text-md font-semibold text-gray-800 group-hover:text-[#ed7e0f] transition-colors flex items-center">
               

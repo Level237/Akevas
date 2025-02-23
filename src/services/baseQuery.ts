@@ -2,7 +2,7 @@ import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { RootState } from "../store";
 
 export const baseQuery=fetchBaseQuery({
-       baseUrl:"http://127.0.0.1:8000",
+       baseUrl:"https://api-akevas.akevas.com",
      prepareHeaders:(headers,{getState})=>{
         headers.set('Access-Control-Allow-Origin', '*')
         headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

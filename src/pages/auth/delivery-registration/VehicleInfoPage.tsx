@@ -21,9 +21,6 @@ import { PageTransition } from '@/components/ui/page-transition';
 import { Button } from '@/components/ui/button';
 import { useDispatch } from 'react-redux';
 import { setVehicleInfoDelivery } from '@/store/delivery/deliverySlice';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import TopLoader from '@/components/ui/top-loader';
 
   const steps = [

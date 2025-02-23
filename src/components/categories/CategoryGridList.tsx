@@ -1,4 +1,3 @@
-import React from 'react'
 
 export default function CategoryGridList({categories,isLoading,title}:{categories:any,isLoading:boolean,title:string}) {
   return (

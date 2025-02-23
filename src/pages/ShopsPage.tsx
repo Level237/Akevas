@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, MapPin, Package, Clock, Shield, Search, ChevronLeft, ChevronRight,Heart, Users, BadgeCheck } from 'lucide-react';
+import { Star, MapPin, Package, Clock, Shield, Search,Heart, Users } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,8 @@ import { ScrollRestoration } from 'react-router-dom';
 import img from "../assets/dress.jpg"
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetAllShopsQuery } from '@/services/guardService';
+import { Category } from '@/types/products';
+import { Shop } from '@/types/shop';
 
 
 
@@ -16,13 +18,12 @@ type SortOption = 'rating' | 'products' | 'followers' | 'newest';
 type CategoryFilter = 'all' | 'mode' | 'accessoires' | 'beaute';
 
 const ShopsPage = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'premium'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('rating');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
-  const {data:{data:shops}={},isLoading,isError}=useGetAllShopsQuery()
-  const itemsPerPage = 9;
+  const {data:{data:shops}={},isLoading,isError}=useGetAllShopsQuery('guard')
+
 
   // Filter and sort shops
   
@@ -104,9 +105,9 @@ const ShopsPage = () => {
 
         {/* Shops Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {!isLoading && !isError && shops.map((shop) => (
+          {!isLoading && !isError && shops.map((shop:Shop) => (
             <motion.div
-              key={shop.id}
+              key={shop.shop_id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-2xl shadow-sm overflow-hidden group hover:shadow-md transition-shadow"
@@ -121,14 +122,14 @@ const ShopsPage = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                 
                 {/* Premium Badge */}
-                {shop.isPremium && (
+                
                   <div className="absolute top-4 right-4">
                     <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full flex items-center gap-1">
                       <Shield className="w-3 h-3" />
                       Premium
                     </span>
                   </div>
-                )}
+                
 
                 {/* Shop Logo */}
                 <div className="absolute -bottom-6 left-6">
@@ -150,9 +151,7 @@ const ShopsPage = () => {
                       <h3 className="text-lg font-semibold text-gray-900">
                         {shop.shop_key}
                       </h3>
-                      {shop.verifiedSeller && (
-                        <BadgeCheck className="w-5 h-5 text-[#ed7e0f]" />
-                      )}
+                      
                     </div>
                     <div className="flex items-center text-sm text-gray-500 mt-1">
                       <MapPin className="w-4 h-4 mr-1" />
@@ -161,13 +160,13 @@ const ShopsPage = () => {
                   </div>
                   <div className="flex items-center gap-1 text-yellow-400">
                     <Star className="w-5 h-5 fill-current" />
-                    <span className="font-semibold text-gray-900">{shop.rating}</span>
+                    <span className="font-semibold text-gray-900">12</span>
                   </div>
                 </div>
 
                 {/* Categories */}
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {shop.categories.map((category, index) => (
+                  {shop.categories.map((category:Category, index:number) => (
                     <span
                       key={index}
                       className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full"
@@ -191,7 +190,7 @@ const ShopsPage = () => {
                       <Users className="w-4 h-4" />
                       <span className="text-sm">Followers</span>
                     </div>
-                    <p className="font-semibold">{shop.followers}</p>
+                    <p className="font-semibold">12</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">

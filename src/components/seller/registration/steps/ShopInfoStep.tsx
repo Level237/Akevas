@@ -19,7 +19,7 @@ interface ShopInfoStepProps {
 
 
 const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
-  const {data:categories,isLoading}=useGetCategoriesQuery('guard')
+  const {data:categories}=useGetCategoriesQuery('guard')
    const [gender,setGender]=useState<number>(0)
     const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
   console.log(categories);

@@ -3,9 +3,8 @@ import { motion } from 'framer-motion';
 import { Loader2, CheckCircle } from 'lucide-react';
 import logo from '../../../assets/logo.png';
 import { useCreateDeliveryMutation } from '@/services/guardService';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '@/store/store';
+import { AppDispatch } from '@/store';
 import { RootState } from '@/store';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
 import { authTokenChange } from '@/store/authSlice';
@@ -35,7 +34,6 @@ const steps = [
 ];
 
 const DeliveryGenerationPage: React.FC = () => {
-  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = React.useState(0);
   const [createDelivery] = useCreateDeliveryMutation()
   const dispatch=useDispatch<AppDispatch>()

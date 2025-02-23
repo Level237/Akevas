@@ -43,7 +43,7 @@ const cartSlice=createSlice({
     const item = state.cartItems.find((item) => item.product.id === action.payload.product.id);
     
     if (item) {
-        const oldQuantity = item.quantity;
+        
         
         // Mettre à jour la quantité
         item.quantity = action.payload.quantity;
@@ -55,7 +55,7 @@ const cartSlice=createSlice({
         
         // Mise à jour des totaux
         state.totalQuantity = state.cartItems.reduce((total, item) => total + item.quantity, 0);
-        state.totalPrice = state.cartItems.reduce((total, item) => total + item.product.product_price * item.quantity, 0);
+        state.totalPrice = state.cartItems.reduce((total, item) => total + parseInt(item.product.product_price) * item.quantity, 0);
     }
 
     // Sauvegarde dans localStorage

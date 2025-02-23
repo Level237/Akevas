@@ -8,11 +8,9 @@ import {
   Truck,
   Shield,
   ArrowRight,
-  MessageCircle,
-  ThumbsUp,
+
 } from 'lucide-react';
-import shoes from "../assets/shoes1.webp"
-import dress from "../assets/dress.jpg"
+
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetProductByUrlQuery } from '@/services/guardService';
@@ -20,7 +18,6 @@ const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
    const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedTab, setSelectedTab] = useState('description');
-  const [quantity, setQuantity] = useState(1);
   const { data:{data:product}={},isLoading } = useGetProductByUrlQuery(url);
   console.log(product)
 
@@ -67,7 +64,7 @@ const ProductDetailPage: React.FC = () => {
                         className="w-full h-full object-cover"
                       />
                     </button>
-                {product.product_images.map((image:string, idx:number) => (
+                {product.product_images.map((image:{path:string}, idx:number) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
@@ -151,7 +148,7 @@ const ProductDetailPage: React.FC = () => {
                 <div className="flex items-center gap-4 mb-8">
                   <div className="flex items-center border rounded-lg">
                     <button
-                      onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                      
                       className="p-3 text-gray-600 hover:text-gray-900"
                     >
                       -
@@ -160,7 +157,7 @@ const ProductDetailPage: React.FC = () => {
                       {product.product_quantity}
                     </span>
                     <button
-                      onClick={() => setQuantity(q => q + 1)}
+                      
                       className="p-3 text-gray-600 hover:text-gray-900"
                     >
                       +

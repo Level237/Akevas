@@ -13,5 +13,6 @@ export interface Shop {
     town: string;
     categories: Category[];
     images: Image[];
+    quarter: string;
 
 }

@@ -14,7 +14,7 @@ import { useGetUserQuery } from '@/services/auth';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { CategoryNavigation } from '../categories/CategoryNavigation';
+import { CategoryNavigation, MemoizedCategories } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
     // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
@@ -82,14 +82,14 @@ const Header = () => {
   const {data:userDataAuth}=useGetUserQuery('Auth')
   const [showCategories, setShowCategories] = useState(false)
  
-  console.log(userDataAuth)
+  
 
   if(userDataAuth?.role_id===2){
       userData=seller;
   }else if(userDataAuth?.role_id===1 || userDataAuth?.role_id===3){
     userData=userDataAuth;
   }
-  console.log(userData)
+
   // Fermer le menu et la recherche lors du changement de route
   useEffect(() => {
     setIsMenuOpen(false);
@@ -262,7 +262,7 @@ const Header = () => {
 
           {/* Navigation avec menus déroulants */}
           <div className="flex justify-center w-full">
-            <CategoryNavigation />
+            <MemoizedCategories />
           </div>
         </div>
       </header>

@@ -99,18 +99,5 @@ const CurrentHomeByGenderPage = () => {
   );
 };
 
-const categories = [
-  { name: 'Vestes', image: '/images/mens-jackets.jpg' },
-  { name: 'Chemises', image: '/images/mens-shirts.jpg' },
-  { name: 'Chaussures', image: '/images/mens-shoes.jpg' },
-  { name: 'Accessoires', image: '/images/mens-accessories.jpg' },
-];
-
-const trendingProducts = [
-  { id: 1, name: 'Veste en cuir premium', price: 199.99, image: '/images/leather-jacket.jpg' },
-  { id: 2, name: 'Chemise oxford bleue', price: 59.99, image: '/images/oxford-shirt.jpg' },
-  { id: 3, name: 'Jean slim noir', price: 79.99, image: '/images/black-jeans.jpg' },
-  { id: 4, name: 'Sneakers urbaines', price: 89.99, image: '/images/sneakers.jpg' },
-];
 
 export default CurrentHomeByGenderPage; 

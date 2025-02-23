@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useGetCategoriesWithParentIdNullQuery, useGetCategoriesWithParentIdQuery } from '@/services/guardService';
 
 import { ChevronDown, Sparkle } from 'lucide-react';
@@ -9,7 +9,7 @@ export const CategoryNavigation = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(0);
   const {data:{data:categoriesParent}={},isLoading}=useGetCategoriesWithParentIdNullQuery('guard')
   const {data:categoriesChildren,isLoading:isLoadingChildren}=useGetCategoriesWithParentIdQuery(activeCategory)
-
+  console.log('dd')
   if(isLoading){
     return (
       <div className="container mx-auto">
@@ -151,3 +151,5 @@ export const CategoryNavigation = () => {
     </nav>
   );
 };
+
+export const MemoizedCategories=React.memo(CategoryNavigation)

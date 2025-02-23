@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import shoes from "../assets/shoes1.webp"
 import {
   Star,
   Heart,
-  ShoppingCart,
   Filter,
   ChevronDown,
   ChevronUp,
@@ -131,18 +129,7 @@ const ProductListPage: React.FC = () => {
     );
   };
 
-  // Mock products data
-  const products = Array.from({ length: 12 }, (_, i) => ({
-    id: `${i + 1}`,
-    name: `Figurine Collector ${i + 1}`,
-    price: 99.99 + i * 10,
-    originalPrice: i % 2 === 0 ? 129.99 + i * 10 : undefined,
-    image: shoes,
-    rating: 4.5,
-    reviewCount: 128,
-    storeCode: `JP_STORE_${8472 + i}`,
-    isPremium: i % 3 === 0
-  }));
+
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);

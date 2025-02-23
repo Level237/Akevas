@@ -23,4 +23,9 @@ export interface Product{
 export type Category = {
     id:string,
     category_name:string,
+    category_url:string,
+    category_profile:string,
+    category_description:string,
+    category_parent_id:string,
+    category_created_at:string,
 }

@@ -57,7 +57,7 @@ const DeliveryZonePage: React.FC = () => {
   const dispatch=useDispatch();
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const [isLoading,setIsLoading]=useState<boolean>(false);
-  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+  const { data: quarters } = useGetQuartersQuery('guard');
   const handleDistrictToggle = (districtId: string) => {
     if (selectedDistricts.includes(districtId)) {
       setSelectedDistricts(selectedDistricts.filter(d => d !== districtId));

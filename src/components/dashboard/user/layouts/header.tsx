@@ -5,7 +5,7 @@ import { logoutUser } from '@/store/authSlice'
 import { User } from '@/types/user'
 import { useDispatch } from 'react-redux'
 import { LogOut } from 'lucide-react'
-import React from 'react'
+
 
 export default function Header({userData}:{userData:User | null | undefined}) {
   const [logout]=useLogoutMutation() 

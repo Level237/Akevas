@@ -1,8 +1,8 @@
 import AsyncLink from "../ui/AsyncLink";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
-import { useGetCategoriesWithParentIdNullQuery, useGetCurrentHomeByGenderQuery } from "@/services/guardService";
-import { ArrowRight } from "lucide-react";
+import { useGetCurrentHomeByGenderQuery } from "@/services/guardService";
+import { Category } from "@/types/products";
 import { useState } from "react";
 
     const MobileCategoryMenu = () => {
@@ -44,7 +44,7 @@ import { useState } from "react";
         {/* Contenu FEMME */}
         <TabsContent value={currentGenderId.toString()} className="mt-0">
           <div className="grid grid-cols-2 gap-4 px-4">
-            {!isLoading && currentGender.id===currentGenderId && currentGender?.categories?.map((category) => (
+            {!isLoading && currentGender.id===currentGenderId && currentGender?.categories?.map((category:Category) => (
              
                 <AsyncLink 
                   key={category.id}

@@ -228,7 +228,7 @@ const DocumentsPage: React.FC = () => {
                     ) : (
                       <div className="flex items-center gap-3 text-sm text-gray-600">
                         <FileText className="w-5 h-5 text-[#ed7e0f]" />
-                        {doc.file.name}
+                        {doc.file?.split('/').pop()}
                       </div>
                     )}
                   </div>
