@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Delivery } from '@/types/delivery'
 import { Link } from 'react-router-dom'
 export default function ListDeliveries({deliveries,isLoading}:{deliveries:Delivery[],isLoading:boolean}) {
-  console.log(deliveries)
+
   if(isLoading){
     return <IsLoadingComponents isLoading={isLoading}/>
   }

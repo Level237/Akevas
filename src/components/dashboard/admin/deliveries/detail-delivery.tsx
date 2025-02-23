@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Check, X,Phone, Mail, Globe} from "lucide-react"
 import { useNavigate, useParams } from 'react-router-dom';
 import { Quarter, Delivery } from '@/types/delivery';
-import { cp } from 'fs';
 
 
 
