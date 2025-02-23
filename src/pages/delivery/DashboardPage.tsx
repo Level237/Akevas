@@ -11,16 +11,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useGetUserQuery } from '@/services/auth'
+import { AccountPendingMessage } from '@/components/delivery/account-pending-message'
 
 
 
 
 export default function DeliveryDashboard() {
+
+  const {data:userData}=useGetUserQuery('Auth')
+  console.log(userData?.isDelivery)
   return (
     <>
-    <div className="flex items-center justify-between mb-6">
+    {userData?.isDelivery===0 && <AccountPendingMessage/>}
+
+    {userData?.isDelivery===1 && <div>
+      <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold">Bonjour, Thomas</h1>
+              <h1 className="text-2xl font-bold">Bonjour, {userData?.firstName}</h1>
               <p className="text-muted-foreground">Voici un aperçu de votre activité</p>
             </div>
             <Button className='bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 py-5'>
@@ -140,6 +148,7 @@ export default function DeliveryDashboard() {
               </div>
             </CardContent>
           </Card>
+    </div>}
     </>
   )
 }
