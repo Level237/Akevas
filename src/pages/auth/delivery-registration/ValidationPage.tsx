@@ -10,10 +10,12 @@ import {
   Eye,
   EyeOff,
   Lock,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 import { Link, ScrollRestoration } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux';
+import { setPassword } from '@/store/delivery/deliverySlice';
 
 const steps = [
   {
@@ -56,6 +58,8 @@ const ValidationPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const dispatch=useDispatch()
+  const [isLoading,setIsLoading]=useState<boolean>(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -71,14 +75,7 @@ const ValidationPage: React.FC = () => {
       setError('Le mot de passe doit contenir au moins 8 caractères');
       return false;
     }
-    if (!/[A-Z]/.test(formData.password)) {
-      setError('Le mot de passe doit contenir au moins une majuscule');
-      return false;
-    }
-    if (!/[0-9]/.test(formData.password)) {
-      setError('Le mot de passe doit contenir au moins un chiffre');
-      return false;
-    }
+    
     if (formData.password !== formData.confirmPassword) {
       setError('Les mots de passe ne correspondent pas');
       return false;
@@ -86,11 +83,14 @@ const ValidationPage: React.FC = () => {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validatePassword()) {
-      // Redirect to generation page
+      setIsLoading(true)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      dispatch(setPassword({password:formData.password}))
       window.location.href = '/delivery/generating';
+      setIsLoading(false)
     }
   };
 
@@ -219,7 +219,7 @@ const ValidationPage: React.FC = () => {
                     type="submit"
                     className="px-6 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                   >
-                    Finaliser l'inscription
+                    {isLoading ? <div className='flex items-center gap-2'><Loader2 className='w-4 h-4 animate-spin' />Chargement...</div> : 'Finaliser l\'inscription'}
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>

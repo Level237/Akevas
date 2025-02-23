@@ -21,7 +21,8 @@ const deliverySlice=createSlice({
       selectedQuarters: localStorage.getItem("selectedQuarters") || null,
       identity_card_in_front:localStorage.getItem("identity_card_in_front") || null,
       identity_card_with_the_person:localStorage.getItem("identity_card_with_the_person") || null,
-      drivers_license:localStorage.getItem("drivers_license")  || null
+      drivers_license:localStorage.getItem("drivers_license")  || null,
+      password:localStorage.getItem("password")  || null,
 },
 
     reducers:{
@@ -69,9 +70,53 @@ const deliverySlice=createSlice({
         state.drivers_license=action.payload.drivers_license
         state.identity_card_in_front=action.payload.identity_card_in_front
         state.identity_card_with_the_person=action.payload.identity_card_with_the_person
+       },
+       setPassword:(state,action)=>{
+        localStorage.setItem("password",action.payload.password)
+        state.password=action.payload.password
+       },
+       clearData:(state)=>{
+        localStorage.removeItem("firstNameDelivery")
+        localStorage.removeItem("lastNameDelivery")
+        localStorage.removeItem("emailDelivery")
+        localStorage.removeItem("phoneDelivery")
+        localStorage.removeItem("birthDateDelivery")
+        localStorage.removeItem("nationalityDelivery")
+        localStorage.removeItem("idNumberDelivery")
+        localStorage.removeItem("cityDelivery")
+        localStorage.removeItem("quarterDelivery")
+        localStorage.removeItem("vehicleTypeDelivery")
+        localStorage.removeItem("vehicleModelDelivery")
+        localStorage.removeItem("vehiclePlateDelivery")
+        localStorage.removeItem("vehicleStateDelivery")
+        localStorage.removeItem("vehicleImage")
+        localStorage.removeItem("selectedQuarters")
+        localStorage.removeItem("identity_card_in_front")
+        localStorage.removeItem("identity_card_with_the_person")
+        localStorage.removeItem("drivers_license")
+        localStorage.removeItem("password")
+        state.firstName=null
+        state.lastName=null
+        state.email=null
+        state.phone=null
+        state.birthDate=null
+        state.nationality=null
+        state.idNumber=null
+        state.city=null
+        state.quarter=null
+        state.vehicleType=null
+        state.vehicleModel=null
+        state.vehiclePlate=null
+        state.vehicleState=null
+        state.vehicleImage=""
+        state.selectedQuarters=null
+        state.identity_card_in_front=null
+        state.identity_card_with_the_person=null
+        state.drivers_license=null
+        state.password=null
        }
 }   
 })
 
-export const { setPersonalInfoDelivery, setVehicleInfoDelivery, setDeliveryZone,setDocument} = deliverySlice.actions;
+export const { setPersonalInfoDelivery, setVehicleInfoDelivery, setDeliveryZone,setDocument,setPassword,clearData} = deliverySlice.actions;
 export default deliverySlice;
