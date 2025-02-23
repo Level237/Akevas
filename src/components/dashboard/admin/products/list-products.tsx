@@ -7,6 +7,7 @@ import { useAdminListProductsQuery } from '@/services/adminService'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 export default function ListProducts({products,isLoading}:{products:Product[],isLoading:boolean}) {
+  console.log(products)
   if(isLoading){
     return <IsLoadingComponents isLoading={isLoading}/>
   }

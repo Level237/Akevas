@@ -45,6 +45,7 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import UserDashboardPage from "@/pages/user/DashboardPage";
 import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
 import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
+import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -180,6 +181,9 @@ export const routes = createBrowserRouter([
       },{
         path:"admin/shops",
         element:<AdminShopPage/>
+      },{
+        path:"admin/delivery",
+        element:<ListDeveryPage/>
       }
     ]
   },
