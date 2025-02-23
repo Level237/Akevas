@@ -24,6 +24,8 @@ import { setVehicleInfoDelivery } from '@/store/delivery/deliverySlice';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import TopLoader from '@/components/ui/top-loader';
+
   const steps = [
   {
     id: 1,
@@ -132,6 +134,7 @@ const VehicleInfoPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       
       <ScrollRestoration />
+        <TopLoader progress={40} />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -305,7 +308,7 @@ const VehicleInfoPage: React.FC = () => {
                       Retour
                     </AsyncLink>
                     <Button
-                        disabled={!selectedType || !formData.etat}
+                        disabled={!selectedType}
                         type="submit"
                       className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
                     >

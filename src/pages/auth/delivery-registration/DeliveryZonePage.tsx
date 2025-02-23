@@ -16,6 +16,7 @@ import { useGetTownsQuery } from '@/services/guardService';
 import { useGetQuartersQuery } from '@/services/guardService';
 import { setDeliveryZone } from '@/store/delivery/deliverySlice';
 import { useDispatch } from 'react-redux';
+import TopLoader from '@/components/ui/top-loader';
 const steps = [
   {
     id: 1,
@@ -85,6 +86,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
+            <TopLoader progress={60} />
             Zone de livraison
           </h1>
           <p className="mt-2 text-gray-600">
@@ -137,6 +139,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {!townsLoading && towns?.towns.map((city:{id:string,town_name:string}) => (
                     <button
+                    type='button'
                       key={city.id}
                       onClick={() => setSelectedCity(city.id)}
                       className={`p-4 rounded-xl border-2 text-left transition-colors ${
@@ -162,6 +165,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   <div className="grid grid-cols-2 gap-3">
                     {filteredQuarters?.map((district:{id:string,quarter_name:string}) => (
                       <button
+                        type='button'
                         key={district.id}
                         onClick={() => handleDistrictToggle(district.id)}
                         className={`p-3 rounded-lg border text-left transition-colors ${

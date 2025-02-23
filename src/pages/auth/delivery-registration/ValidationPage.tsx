@@ -16,6 +16,7 @@ import {
 import { Link, ScrollRestoration } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setPassword } from '@/store/delivery/deliverySlice';
+import TopLoader from '@/components/ui/top-loader';
 
 const steps = [
   {
@@ -101,6 +102,7 @@ const ValidationPage: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
+            <TopLoader progress={100} />
             Validation finale
           </h1>
           <p className="mt-2 text-gray-600">

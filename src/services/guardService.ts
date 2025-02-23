@@ -124,6 +124,14 @@ export const guardService=createApi({
             }),
             providesTags: ['guard'],
         }),
+        createDelivery:builder.mutation({
+            query:(formData)=>({
+                url:`/api/create/delivery`,
+                method:"POST",
+                body:formData,
+            }),
+            invalidatesTags: ['guard'],
+        }),
     }),
 })
 export const {
@@ -142,4 +150,5 @@ export const {
     useGetHomeProductsQuery,
     useGetProductByUrlQuery,
     useGetAllProductsQuery,
+    useCreateDeliveryMutation,
 }=guardService

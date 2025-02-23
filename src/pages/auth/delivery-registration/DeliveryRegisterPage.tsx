@@ -113,7 +113,7 @@ const DeliveryRegisterPage: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            <TopLoader progress={16.7} />
+            <TopLoader progress={20} />
             Devenir livreur partenaire
           </h1>
           <p className="mt-2 text-gray-600">

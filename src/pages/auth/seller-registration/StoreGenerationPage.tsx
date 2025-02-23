@@ -113,7 +113,7 @@ const StoreGenerationPage = () => {
        
         const userObject={phone_number:phone,password:password}
          const userData=await login(userObject)
-         console.log(userData)
+         
             const userState={
                 'refreshToken':userData.data.refresh_token,
                 'accessToken':userData.data.access_token

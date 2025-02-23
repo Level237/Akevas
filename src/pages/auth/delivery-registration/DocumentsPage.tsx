@@ -17,6 +17,7 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import { Button } from '@/components/ui/button';
 import { useDispatch } from 'react-redux';
 import { setDocument } from '@/store/delivery/deliverySlice';
+import TopLoader from '@/components/ui/top-loader';
 const steps = [
   {
     id: 1,
@@ -61,19 +62,19 @@ interface Document {
 const requiredDocuments: Document[] = [
   {
     id: 'id_card',
-    name: 'identity_card_in_front',
+    name: 'Carte nationale d\'identité,ou passeport',
     description: 'Carte nationale d\'identité,ou passeport',
     required: true
   },
     {
     id: 'drivers_license',
-    name: 'drivers_license',
-    description: 'Pour les véhicules motorisés uniquement',
+    name: 'Permis de conduire',
+    description: 'Permis de conduire',
     required: false
   },
   {
     id: 'photo',
-    name: 'identity_card_with_the_person',
+    name: 'Photo de vous tenant votre carte',
     description: 'Photo + votre carte',
     required: true
   },
@@ -127,6 +128,7 @@ const DocumentsPage: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
+            <TopLoader progress={80} />
             Documents requis
           </h1>
           <p className="mt-2 text-gray-600">

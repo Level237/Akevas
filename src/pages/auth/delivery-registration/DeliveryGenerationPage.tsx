@@ -2,6 +2,15 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2, CheckCircle } from 'lucide-react';
 import logo from '../../../assets/logo.png';
+import { useCreateDeliveryMutation } from '@/services/guardService';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '@/store/store';
+import { RootState } from '@/store';
+import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
+import { authTokenChange } from '@/store/authSlice';
+import { clearData } from '@/store/delivery/deliverySlice';
+import { useLoginMutation } from '@/services/auth';
 const steps = [
   {
     id: 'verify',
@@ -26,9 +35,87 @@ const steps = [
 ];
 
 const DeliveryGenerationPage: React.FC = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = React.useState(0);
+  const [createDelivery] = useCreateDeliveryMutation()
+  const dispatch=useDispatch<AppDispatch>()
+  const {firstName,lastName,email,phone,selectedQuarters,birthDate,nationality,idNumber,quarter,vehicleType,vehicleState,vehiclePlate,vehicleModel,password}=useSelector((state:RootState)=>state.registerDelivery)
+  
+  const identity_front = localStorage.getItem('identity_card_in_front') || null;
+  const driver_license = localStorage.getItem('drivers_license') || null;
+  const vehicle_image=localStorage.getItem("vehicleImage") || null;
+  const identity_with_person = localStorage.getItem('identity_card_with_the_person') || null;
+  
+   // Conversion des images en fichiers
+    const [login]=useLoginMutation()
+   const vehicleImage=vehicle_image ? convertBase64ToFile(vehicle_image,'vehicle.png') : null;
+   const identity_front_file=identity_front ? convertBase64ToFile(identity_front,'identity_front.png') : null;
+   const identity_with_person_file=identity_with_person ? convertBase64ToFile(identity_with_person,'identity_with_person.png') : null;
+   const driver_license_file=driver_license ? convertBase64ToFile(driver_license,'driver_license.png') : null;
+  
   useEffect(() => {
-    const timer = setInterval(() => {
+   
+
+   
+
+   const createDeliveryHandler=async()=>{
+
+     const formData = new FormData();
+     try {
+      const deliveryObject={
+        firstName,
+        lastName,
+        email,
+        card_number:idNumber,
+        phone_number:phone,
+        birthDate,
+        nationality,
+        residence:quarter,
+        vehicle_type:vehicleType,
+        vehicle_state:vehicleState,
+        vehicle_number:vehiclePlate,
+        vehicle_model:vehicleModel,
+        password,
+        identity_card_in_front:identity_front_file,
+        identity_card_with_the_person:identity_with_person_file,
+        drivers_license:driver_license_file,
+        vehicle_image:vehicleImage
+      }
+
+      Object.entries(deliveryObject).forEach(([key, value]) => {
+        if (value) formData.append(key, value);
+      });
+
+      const quarters=JSON.parse(selectedQuarters || '[]');
+      for(let i = 0; i < quarters.length; i++) {
+        formData.append('quarters[]', quarters[i]);
+      }
+
+      const response=await createDelivery(formData);
+      console.log(response)
+      const userObject={phone_number:phone,password:password}
+         const userData=await login(userObject)
+         
+            const userState={
+                'refreshToken':userData.data.refresh_token,
+                'accessToken':userData.data.access_token
+            }
+            
+            dispatch(authTokenChange(userState))
+            dispatch(clearData())
+
+
+       
+   
+
+    } catch (error) {
+      console.error('Erreur lors de la création du compte livreur:', error);
+      return;
+    }
+   }
+
+   createDeliveryHandler()
+         const timer = setInterval(() => {
       if (currentStep < steps.length - 1) {
         setCurrentStep(prev => prev + 1);
       } else {
@@ -38,8 +125,7 @@ const DeliveryGenerationPage: React.FC = () => {
           window.location.href = '/delivery/dashboard';
         }, 1500);
       }
-    }, 2000);
-
+    }, 3000);
     return () => clearInterval(timer);
   }, [currentStep]);
 
