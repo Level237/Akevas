@@ -25,12 +25,12 @@ export default function DetailDelivery({delivery,isLoading}:DetailDeliveryProps)
       };
  
       
-     const reponse=await confirmOrNotDelivery({
+    await confirmOrNotDelivery({
         delivery_id: 23,
         formData: data
       });
       
-      console.log(reponse)
+      
           navigate("/admin/delivery")
       
     }else{
@@ -38,7 +38,7 @@ export default function DetailDelivery({delivery,isLoading}:DetailDeliveryProps)
         isDelivery: 0,
       };
      await confirmOrNotDelivery({
-        deliveryId: delivery.id,
+        delivery_id: delivery.id,
         formData: data
       });
       
