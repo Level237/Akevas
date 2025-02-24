@@ -1,7 +1,7 @@
 
 
 import { motion, AnimatePresence } from "framer-motion"
-import { useState } from "react"
+import React, { useState } from "react"
 import { MessageCircle, Package, Heart, CreditCard, Ticket,ChevronRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
@@ -9,7 +9,7 @@ import AsyncLink from "./AsyncLink"
 
 
 
-export function DropdownAccount({children,currentUser}: {children: React.ReactNode,currentUser:any | null}) {
+const DropdownAccount = ({children,currentUser}: {children: React.ReactNode,currentUser:any | null}) => {
   const [isOpen, setIsOpen] = useState(false)
   console.log("currentUser")
   console.log(currentUser)
@@ -31,11 +31,20 @@ export function DropdownAccount({children,currentUser}: {children: React.ReactNo
     { text: "S'identifier" },
   ]
 
+  const handleMouseEnter = () => {
+    setIsOpen(true)
+  }
+
+  const handleMouseLeave = () => {
+    setIsOpen(false)
+  }
+  
+  
   return (
     <div className="relative z-[999999] ">
       <div 
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {children}
       
@@ -99,4 +108,5 @@ export function DropdownAccount({children,currentUser}: {children: React.ReactNo
     </div>
   )
 }
-
+DropdownAccount.displayName = 'DropdownAccount';
+export default React.memo(DropdownAccount);

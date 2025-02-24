@@ -6,7 +6,7 @@ import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
 import AsyncLink from './AsyncLink';
-import { DropdownAccount } from './dropdown-account';
+import DropdownAccount from './dropdown-account';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { Button } from './button';
@@ -14,7 +14,7 @@ import { useGetUserQuery } from '@/services/auth';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { CategoryNavigation, MemoizedCategories } from '../categories/CategoryNavigation';
+import { CategoryNavigation } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
     // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
@@ -262,7 +262,7 @@ const Header = () => {
 
           {/* Navigation avec menus déroulants */}
           <div className="flex justify-center w-full">
-            <MemoizedCategories />
+            <CategoryNavigation />
           </div>
         </div>
       </header>
