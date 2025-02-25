@@ -25,6 +25,11 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
     setShowCartButton(true);
   };
 
+  const handleOnClose=()=>{
+    setSelectedImage(null)
+            setQuantity(1)
+            onClose()
+  }
   return (
     <AnimatePresence>
       {isOpen && (
@@ -36,6 +41,7 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
           className="fixed inset-0 z-50 overflow-y-auto"
           onClick={()=>{
             setSelectedImage(null)
+            setQuantity(1)
             onClose()
           }}
         >
@@ -90,7 +96,7 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
 
                 {/* Colonne droite - Détails */}
                 <div className="p-8 flex flex-col h-full">
-                  <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                  <button onClick={handleOnClose} className="absolute top-6 right-6 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
                     <X className="w-5 h-5" />
                   </button>
 
