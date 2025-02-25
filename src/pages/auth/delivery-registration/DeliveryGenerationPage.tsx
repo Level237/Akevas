@@ -37,10 +37,10 @@ const DeliveryGenerationPage: React.FC = () => {
   const [currentStep, setCurrentStep] = React.useState(0);
   const [createDelivery] = useCreateDeliveryMutation()
   const dispatch=useDispatch<AppDispatch>()
-  const {firstName,lastName,email,phone,selectedQuarters,birthDate,nationality,idNumber,quarter,vehicleType,vehicleState,vehiclePlate,vehicleModel,password}=useSelector((state:RootState)=>state.registerDelivery)
+  const {firstName,lastName,email,phone,selectedQuarters,birthDate,nationality,quarter,vehicleType,vehicleState,vehiclePlate,vehicleModel,password}=useSelector((state:RootState)=>state.registerDelivery)
   
   const identity_front = localStorage.getItem('identity_card_in_front') || null;
-  const driver_license = localStorage.getItem('drivers_license') || null;
+  const driver_license = localStorage.getItem('drivers_license') || null || "";
   const vehicle_image=localStorage.getItem("vehicleImage") || null;
   const identity_with_person = localStorage.getItem('identity_card_with_the_person') || null;
   
@@ -49,22 +49,32 @@ const DeliveryGenerationPage: React.FC = () => {
    const vehicleImage=vehicle_image ? convertBase64ToFile(vehicle_image,'vehicle.png') : null;
    const identity_front_file=identity_front ? convertBase64ToFile(identity_front,'identity_front.png') : null;
    const identity_with_person_file=identity_with_person ? convertBase64ToFile(identity_with_person,'identity_with_person.png') : null;
-   const driver_license_file=driver_license ? convertBase64ToFile(driver_license,'driver_license.png') : null;
+   let driver_license_file :any | null;
   
+   if(driver_license==="null"){
+    driver_license_file=null
+    console.log("dd")
+   }else{
+    console.log("ddxq,")
+    console.log(driver_license)
+      console.log(driver_license_file)
+    driver_license_file=convertBase64ToFile(driver_license,'driver_license.png') ;
+   }
   useEffect(() => {
    
-
+    
+     //console.log(driver_license)
    
 
    const createDeliveryHandler=async()=>{
 
      const formData = new FormData();
      try {
+
       const deliveryObject={
         firstName,
         lastName,
         email,
-        card_number:idNumber,
         phone_number:phone,
         birthDate,
         nationality,
@@ -100,7 +110,8 @@ const DeliveryGenerationPage: React.FC = () => {
             }
             
             dispatch(authTokenChange(userState))
-            dispatch(clearData())
+            
+         
 
 
        
@@ -120,7 +131,9 @@ const DeliveryGenerationPage: React.FC = () => {
         clearInterval(timer);
         // Redirect to dashboard after a short delay
         setTimeout(() => {
+          
           window.location.href = '/delivery/dashboard';
+          dispatch(clearData())
         }, 1500);
       }
     }, 3000);

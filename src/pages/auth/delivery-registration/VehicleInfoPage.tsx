@@ -116,6 +116,11 @@ const VehicleInfoPage: React.FC = () => {
     e.preventDefault();
    
    await new Promise(resolve => setTimeout(resolve, 500));
+
+   if(formData.etat===""){
+    alert("selectionnez l'etat de votre véhicule")
+    return;
+   }
     // Implement form submission
     console.log({ vehicleType: selectedType, ...formData });
     const vehicleInfo = {
@@ -226,6 +231,7 @@ const VehicleInfoPage: React.FC = () => {
                         className="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                         required
                       > 
+                      <option>Selectionnez l'etat du véhicule</option>
                         <option value="1">Fonctionnel</option>
                         <option value="0">Problème de fonctionnement</option>
                       </select> 

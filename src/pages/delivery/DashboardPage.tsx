@@ -20,7 +20,8 @@ import { AccountPendingMessage } from '@/components/delivery/account-pending-mes
 export default function DeliveryDashboard() {
 
   const {data:userData}=useGetUserQuery('Auth')
-  console.log(userData?.isDelivery)
+  
+  
   return (
     <>
     {userData?.isDelivery===0 && <AccountPendingMessage/>}
