@@ -75,6 +75,7 @@ const genders = [
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchCategories[0])
   const {data:{data:seller}={},isLoading}=useCurrentSellerQuery('seller',{
@@ -104,10 +105,72 @@ const Header = () => {
     setIsSearchOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const totalQuantity=useSelector((state:RootState)=>state.cart.totalQuantity)
   return (
     <>
-      {/* Header Principal */}
+      {/* Sticky Header */}
+      <header className={`w-full bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 ${
+        isScrolled ? 'translate-y-0' : '-translate-y-full'
+      }`}>
+        <div className="container mx-auto px-4 py-2">
+          <div className="flex items-center justify-between">
+            <AsyncLink to="/" className="flex-shrink-0">
+              <img src={logo} alt="AKEVAS" className="h-16 w-auto" />
+            </AsyncLink>
+
+            <div className="flex-1 flex justify-center">
+              <CategoryNavigation />
+            </div>
+
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="text-gray-700 hover:text-[#ed7e0f]"
+              >
+                <Search className="w-6 h-6" />
+              </button>
+
+              <DropdownAccount currentUser={userData}>
+                {!userData && !isLoading && (
+                  <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
+                    <User className="h-6 w-6" />
+                  </div>
+                )}
+                {userData && userData.role_id === 2 && (
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={userData.shop.shop_profile} />
+                    <AvatarFallback>{userData.firstName.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                )}
+                {userData && (userData.role_id === 1 || userData.role_id === 3) && (
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={userData.profile} />
+                    <AvatarFallback>{userData?.userName.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                )}
+              </DropdownAccount>
+
+              <AsyncLink to="/cart" className="relative text-gray-700 hover:text-[#ed7e0f]">
+                <ShoppingCart className="w-6 h-6" />
+                <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalQuantity}
+                </span>
+              </AsyncLink>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Header */}
       <header className="w-full z-50 bg-white border-b max-sm:sticky top-0">
         <div className="container hidden max-sm:block mx-16 py-3 max-sm:mx-auto px-4">
           <div className="flex items-center justify-between h-16 lg:h-20">

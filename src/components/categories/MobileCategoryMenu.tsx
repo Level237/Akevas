@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { useGetCurrentHomeByGenderQuery } from "@/services/guardService";
 import { Category } from "@/types/products";
-import { useState, useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategories, setCurrentGenderId } from '@/store/features/categorySlice';
