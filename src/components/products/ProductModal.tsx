@@ -2,9 +2,7 @@ import { Product } from "@/types/products";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-
-
-import { ChevronRight, Minus, Plus,ShoppingCart, Star, X } from "lucide-react";
+import { ChevronRight, Minus, Plus, ShoppingCart, Star, X, Eye, CreditCard } from "lucide-react";
 
 import AsyncLink from "../ui/AsyncLink";
 import { useDispatch } from "react-redux";
@@ -31,16 +29,17 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
           className="fixed inset-0 z-50 overflow-y-auto"
           onClick={()=>{
             setSelectedImage(null)
             onClose()
           }}
         >
-          <div className="min-h-screen px-4 text-center">
+          <div className="min-h-screen px-4 max-sm:px-0 text-center">
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" />
             
             <div className="inline-block w-full max-w-5xl my-8 text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl overflow-hidden"
@@ -149,7 +148,7 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
                           month:"long",
                         })}</p>
                       </div>
-                      <AsyncLink to={`/shop/${product.shop_id}`} className="ml-auto text-[#ed7e0f] hover:underline text-sm font-medium">
+                      <AsyncLink to={`/shop/${product.shop_id}`} className="ml-auto  text-[#ed7e0f] hover:underline text-sm font-medium">
                         Voir la boutique
                       </AsyncLink>
                     </div>
@@ -170,50 +169,71 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
                   </div>
 
                   {/* Actions */}
-                  <div className="mt-auto flex items-center gap-4">
-                    <div className="flex items-center border rounded-lg bg-gray-50">
+                  <div className="mt-auto space-y-4">
+                    {/* Quantité et Ajouter au panier */}
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center  border rounded-lg bg-gray-50">
+                        <button
+                          onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                          className="p-3 text-gray-600 hover:text-gray-900 transition-colors"
+                          disabled={isLoading}
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="w-12 text-center font-medium">{quantity}</span>
+                        <button
+                          onClick={() => setQuantity(q => q + 1)}
+                          className="p-3 text-gray-600 hover:text-gray-900 transition-colors"
+                          disabled={isLoading}
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
                       <button
-                        onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                        className="p-3 text-gray-600 hover:text-gray-900"
-                        disabled={isLoading}
+                        onClick={() => {/* Logique de paiement */}}
+                        className="flex-1 bg-[#6e0a13] text-white px-6 py-3 rounded-xl font-medium transition-all transform active:scale-95 shadow-lg hover:shadow-purple-600/25 flex items-center justify-center gap-2"
                       >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="w-12 text-center font-medium">{quantity}</span>
-                      <button
-                        onClick={() => setQuantity(q => q + 1)}
-                        className="p-3 text-gray-600 hover:text-gray-900"
-                        disabled={isLoading}
-                      >
-                        <Plus className="w-4 h-4" />
+                        <CreditCard className="w-5 h-5" />
+                        Acheter
                       </button>
                     </div>
-                    {!showCartButton ? (
-                      <button
-                        onClick={handleAddToCart}
-                        disabled={isLoading}
-                        className="flex-1 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors flex items-center justify-center gap-2"
+
+                    {/* Boutons d'action */}
+                    <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-3">
+                      {!showCartButton ? (
+                        <button
+                          onClick={handleAddToCart}
+                          disabled={isLoading}
+                          className="bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-all transform active:scale-95 shadow-lg hover:shadow-[#ed7e0f]/25 flex items-center justify-center gap-2"
+                        >
+                          {isLoading ? (
+                            <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent text-white rounded-full">
+                              <span className="sr-only">Loading...</span>
+                            </div>
+                          ) : (
+                            <>
+                              <ShoppingCart className="w-5 h-5" />
+                              Ajouter au panier
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <AsyncLink 
+                          to="/cart"
+                          className="bg-green-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-700 transition-all transform active:scale-95 shadow-lg hover:shadow-green-600/25 flex items-center justify-center gap-2"
+                        >
+                          <ShoppingCart className="w-5 h-5" />
+                          Voir le panier
+                        </AsyncLink>
+                      )}
+                      <AsyncLink
+                        to={`/products/${product.id}`}
+                        className="bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 hover:bg-gray-50"
                       >
-                        {isLoading ? (
-                          <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent text-white rounded-full">
-                            <span className="sr-only">Loading...</span>
-                          </div>
-                        ) : (
-                          <>
-                            <ShoppingCart className="w-5 h-5" />
-                            Ajouter au panier
-                          </>
-                        )}
-                      </button>
-                    ) : (
-                      <AsyncLink 
-                        to="/cart"
-                        className="flex-1 bg-green-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
-                      >
-                        <ShoppingCart className="w-5 h-5" />
-                        Voir le panier
+                        <Eye className="w-5 h-5" />
+                        Voir le produit
                       </AsyncLink>
-                    )}
+                    </div>
                   </div>
                 </div>
               </div>

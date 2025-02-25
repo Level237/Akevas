@@ -118,7 +118,7 @@ const Header = () => {
   return (
     <>
       {/* Sticky Header */}
-      <header className={`w-full bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 ${
+      <header className={`w-full max-sm:hidden bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 ${
         isScrolled ? 'translate-y-0' : '-translate-y-full'
       }`}>
         <div className="container mx-auto px-4 py-2">
