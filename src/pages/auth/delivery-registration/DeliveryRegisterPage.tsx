@@ -12,7 +12,7 @@ import {
 import { ScrollRestoration,useNavigate } from 'react-router-dom';
 import { PageTransition } from '@/components/ui/page-transition';
 import TopLoader from '@/components/ui/top-loader';
-import { useGetQuartersQuery } from '@/services/guardService';
+import { useCheckIfEmailExistsMutation, useGetQuartersQuery } from '@/services/guardService';
 import { useGetTownsQuery } from '@/services/guardService';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
@@ -58,6 +58,7 @@ const steps = [
 
 const DeliveryRegisterPage: React.FC = () => {
   const dispatch = useDispatch();
+  const [checkIfEmailExists]=useCheckIfEmailExistsMutation()
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -65,7 +66,6 @@ const DeliveryRegisterPage: React.FC = () => {
     phone: '',
     birthDate: '',
     nationality: '',
-    idNumber: '',
     city: '',
     quarter: ''
   });
@@ -85,13 +85,25 @@ const DeliveryRegisterPage: React.FC = () => {
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_id: number }) => quarter.town_id === parseInt(townId));
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-     const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'birthDate', 'nationality', 'idNumber', 'city', 'quarter'];
+     const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'birthDate', 'nationality', 'city', 'quarter'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    setIsLoading(true);
+   
     if (missingFields.length > 0) {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
+    const form=new FormData()
+    form.append("email",formData.email)
+    form.append("phone",formData.phone)
+    const response=await checkIfEmailExists(form)
+    console.log(response)
+    if(response.error){
+      alert("ce mail ou ce numéro de téléphone existe déjà");
+     
+      return;
+    }
+
+    setIsLoading(true);
     // Implement form submission
     //console.log(formData);
     const deliveryData = {
@@ -231,6 +243,8 @@ const DeliveryRegisterPage: React.FC = () => {
                     <input
                       type="date"
                       name="birthDate"
+                      min="1950-01-01" 
+                      max="2008-01-01"
                       value={formData.birthDate}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
@@ -253,19 +267,6 @@ const DeliveryRegisterPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Numéro de pièce d'identité
-                  </label>
-                  <input
-                    type="text"
-                    name="idNumber"
-                    value={formData.idNumber}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                    
-                  />
-                </div>
 
 
                 <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">

@@ -100,6 +100,10 @@ const VehicleInfoPage: React.FC = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 1048576) { // 1 Mo = 1048576 octets
+        alert('Le fichier ne doit pas dépasser 1 Mo.');
+        e.target.value = ''; // Réinitialise l'input
+    }
       const reader = new FileReader();
       reader.onload = () => {
          setFormData(prev => ({ ...prev, vehicleImage: reader.result as string }));
@@ -110,7 +114,7 @@ const VehicleInfoPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+   
    await new Promise(resolve => setTimeout(resolve, 500));
     // Implement form submission
     console.log({ vehicleType: selectedType, ...formData });
@@ -121,6 +125,7 @@ const VehicleInfoPage: React.FC = () => {
       vehicleState: formData.etat,
       vehicleImage: formData.vehicleImage
     };
+    setIsLoading(true);
     dispatch(setVehicleInfoDelivery(vehicleInfo));
     navigate('/delivery/zone');
     setIsLoading(false);
@@ -289,6 +294,7 @@ const VehicleInfoPage: React.FC = () => {
                       <input
                         type="file"
                         className="hidden"
+
                         accept="image/*"
                         onChange={handleImageChange}
                       />

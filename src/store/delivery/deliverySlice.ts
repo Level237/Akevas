@@ -10,7 +10,6 @@ const deliverySlice=createSlice({
       phone: localStorage.getItem("phoneDelivery") || null,
       birthDate: localStorage.getItem("birthDateDelivery") || null,
       nationality: localStorage.getItem("nationalityDelivery") || null,
-      idNumber: localStorage.getItem("idNumberDelivery") || null,
       city: localStorage.getItem("cityDelivery") || null,
       quarter: localStorage.getItem("quarterDelivery") || null,
       vehicleType: localStorage.getItem("vehicleTypeDelivery") || null,
@@ -42,7 +41,6 @@ const deliverySlice=createSlice({
         state.phone = action.payload.phone;
         state.birthDate = action.payload.birthDate;
         state.nationality = action.payload.nationality;
-        state.idNumber = action.payload.idNumber;
         state.city = action.payload.city;
         state.quarter = action.payload.quarter;
        },
@@ -82,7 +80,6 @@ const deliverySlice=createSlice({
         localStorage.removeItem("phoneDelivery")
         localStorage.removeItem("birthDateDelivery")
         localStorage.removeItem("nationalityDelivery")
-        localStorage.removeItem("idNumberDelivery")
         localStorage.removeItem("cityDelivery")
         localStorage.removeItem("quarterDelivery")
         localStorage.removeItem("vehicleTypeDelivery")
@@ -101,7 +98,6 @@ const deliverySlice=createSlice({
         state.phone=null
         state.birthDate=null
         state.nationality=null
-        state.idNumber=null
         state.city=null
         state.quarter=null
         state.vehicleType=null

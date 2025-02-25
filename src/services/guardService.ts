@@ -47,7 +47,7 @@ export const guardService=createApi({
                 body:formData,
             }),
             invalidatesTags: ['guard'],
-            transformResponse: (response: { data: { message: string } }) => response.data.message,
+            //transformResponse: (response: { data: { message: string } }) => response.data.message,
         }),
         getCategoriesWithParentIdNull:builder.query({
             query:()=>({
