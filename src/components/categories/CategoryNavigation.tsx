@@ -144,7 +144,7 @@ export const CategoryNavigation = () => {
     data: { data: categoriesParent } = {}, 
     isLoading 
   } = useGetCategoriesWithParentIdNullQuery('guard', {
-    refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: false,
     refetchOnFocus: false,
     refetchOnReconnect: false
   });

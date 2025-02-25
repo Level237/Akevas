@@ -8,7 +8,8 @@ import { adminService } from "@/services/adminService";
 import { sellerService } from "@/services/sellerService";
 import cartSlice from "./cartSlice";
 import deliverySlice from "./delivery/deliverySlice";
-import categorySlice from "./catorySlice";
+import categorySlice from "./features/categorySlice";
+
 export const store=configureStore({
     reducer:{
         [authSlice.name]:authSlice.reducer,
@@ -20,7 +21,8 @@ export const store=configureStore({
         [adminService.reducerPath]:adminService.reducer,
         [sellerService.reducerPath]:sellerService.reducer,
         [deliverySlice.name]:deliverySlice.reducer,
-        [categorySlice.name]:categorySlice.reducer
+        [categorySlice.name]:categorySlice.reducer,
+        
     },
     middleware:(getDefaultMiddleware)=>getDefaultMiddleware({
         serializableCheck:false

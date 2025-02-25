@@ -77,9 +77,17 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchCategories[0])
-  const {data:{data:seller}={},isLoading}=useCurrentSellerQuery('seller')
+  const {data:{data:seller}={},isLoading}=useCurrentSellerQuery('seller',{
+
+    refetchOnFocus:true,
+    refetchOnMountOrArgChange:false
+  } )
   let userData=null;
-  const {data:userDataAuth}=useGetUserQuery('Auth')
+  const {data:userDataAuth}=useGetUserQuery('Auth',{
+
+    refetchOnFocus:true,
+    refetchOnMountOrArgChange:false
+  } )
   const [showCategories, setShowCategories] = useState(false)
  
   
