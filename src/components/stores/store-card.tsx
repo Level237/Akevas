@@ -4,17 +4,17 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Star, ShoppingBag} from 'lucide-react'
 import { motion } from "framer-motion"
-import { useState } from "react"
+import React, { useState } from "react"
 import { Shop } from "../../types/shop"
 interface StoreCardProps {
   shop: Shop
   openModal: () => void
 }
 
-export function StoreCard({
+const StoreCard = ({
   shop,
   openModal
-}: StoreCardProps) {
+}: StoreCardProps) => {
    
     const [showOverlay,setShowOverlay]=useState(false)
     
@@ -93,4 +93,5 @@ export function StoreCard({
    
   )
 }
-
+StoreCard.displayName = 'StoreCard';
+export default React.memo(StoreCard);

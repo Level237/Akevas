@@ -5,9 +5,9 @@ import { ChevronRight } from 'lucide-react'
 import AsyncLink from '../ui/AsyncLink'
 import SlideFeatureShop from './slide-feature-shop'
 import { Shop } from '@/types/shop'
-
+import React from 'react'
  
-  export default function StoreStories({title,description,shops,isLoading}:{title:string,description:string,shops:Shop[],isLoading:boolean}) {
+  const  StoreStories = ({title,description,shops,isLoading}:{title:string,description:string,shops:Shop[],isLoading:boolean}) => {
     
     
   
@@ -45,3 +45,5 @@ import { Shop } from '@/types/shop'
     )
   }
 
+  StoreStories.displayName = 'StoreStories';
+  export default React.memo(StoreStories);

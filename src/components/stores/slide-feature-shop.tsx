@@ -1,7 +1,7 @@
-import  { useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { StoreCard } from './store-card'    
+import StoreCard from './store-card'    
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/swiper-bundle.css'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -19,7 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
   
 
-export default function SlideFeatureShop({shops,isLoading}:{shops:Shop[],isLoading:boolean}) {
+const SlideFeatureShop = ({shops,isLoading}:{shops:Shop[],isLoading:boolean}) => {
     
     const scrollContainerRef = useRef<HTMLDivElement>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -43,6 +43,22 @@ export default function SlideFeatureShop({shops,isLoading}:{shops:Shop[],isLoadi
         ))
     )
 
+    const renderShops = useMemo(()=>{
+        return !isLoading && shops.map((shop:Shop,index:number)=>(
+            <SwiperSlide key={index}>
+                <motion.div
+                                    key={shop.shop_id}
+                                    className="snap-start"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <StoreCard shop={shop}  openModal={() => { setIsModalOpen(true);setShopId(shop.shop_id)}} />
+                                </motion.div>
+            </SwiperSlide>
+        ))
+    },[shops,!isLoading])
     return (
         <div className="relative mt-12">
             <div className="swiper-button-prev" style={{ left: '10px' }}><ArrowLeft/></div>  
@@ -69,20 +85,8 @@ export default function SlideFeatureShop({shops,isLoading}:{shops:Shop[],isLoadi
                     className="flex   overflow-x-hidden snap-x snap-mandatory scrollbar-hide pb-4"
                 >
                     <AnimatePresence>
-                        {isLoading ? renderSkeletons() : shops?.map((store:Shop,index:number) => (
-                            <SwiperSlide key={index}>
-                                <motion.div
-                                    key={store.shop_id}
-                                    className="snap-start"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.3 }}
-                                >
-                                    <StoreCard shop={store}  openModal={() => { setIsModalOpen(true);setShopId(store.shop_id)}} />
-                                </motion.div>
-                            </SwiperSlide>
-                        ))}
+                        {isLoading ? renderSkeletons() : renderShops}
+
                     </AnimatePresence>
                 </motion.div>
             </Swiper>
@@ -93,3 +97,6 @@ export default function SlideFeatureShop({shops,isLoading}:{shops:Shop[],isLoadi
         </div>
     )
 }
+
+SlideFeatureShop.displayName = 'SlideFeatureShop';
+export default React.memo(SlideFeatureShop);

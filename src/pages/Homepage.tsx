@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useTransition } from 'react';
 
 
 
@@ -13,12 +13,32 @@ import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
 import { useGetCategoriesWithParentIdNullQuery, useGetHomeShopsQuery } from '@/services/guardService';
 import CategoryGridList from '@/components/categories/CategoryGridList';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
+import { Shop } from '@/types/shop';
 const Homepage = () => {
   //t [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
+  const [localShops,setLocalShops]=useState<Shop[]>([])
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
-  const {data:{data:shops}={},isLoading}=useGetHomeShopsQuery("guard")
-  const {data:{data:categories}={},isLoading:isLoadingCategories}=useGetCategoriesWithParentIdNullQuery("guard")
+  const {data:{data:shops}={},isLoading}=useGetHomeShopsQuery("guard",{
+    pollingInterval:30000,
+    refetchOnFocus:true,
+    refetchOnMountOrArgChange:30
+  })
+  const {data:{data:categories}={},isLoading:isLoadingCategories}=useGetCategoriesWithParentIdNullQuery("guard",{
+    pollingInterval:30000,
+    refetchOnFocus:true,
+    refetchOnMountOrArgChange:30
+  } )
     console.log(shops)
+
+    useEffect(()=>{
+      if(shops){
+        startTransition(()=>{
+          setLocalShops(shops);
+
+        })
+      }
+    },[shops])
   useEffect(() => {
     // Simulate loading delay 
     //const timer = setTimeout(() => {
@@ -104,7 +124,7 @@ const Homepage = () => {
         <GenderNavigationMobile />
         <StoreHero />
 
-        <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={shops} isLoading={isLoading} />
+        <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={localShops} isLoading={isPending} />
         <PremiumProducts />
         <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
       
