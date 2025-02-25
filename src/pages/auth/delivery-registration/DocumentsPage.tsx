@@ -69,7 +69,7 @@ const requiredDocuments: Document[] = [
     {
     id: 'drivers_license',
     name: 'Permis de conduire',
-    description: 'Permis de conduire',
+    description: 'Permis de conduire (Facultatif)',
     required: false
   },
   {
@@ -88,6 +88,10 @@ const DocumentsPage: React.FC = () => {
   const [isLoading,setIsLoading]=useState<boolean>(false)
   console.log(documents[0].file)
   const handleFileChange = (documentId: string, file: File) => {
+    if (file.size > 1048576) { // 1 Mo = 1048576 octets
+      alert('Le fichier ne doit pas dépasser plus de 1 Mo.');
+      //file = ''; // Réinitialise l'input
+  }else{
     const reader = new FileReader();
     reader.onload = () => {
       setDocuments(documents.map(doc => 
@@ -95,6 +99,8 @@ const DocumentsPage: React.FC = () => {
     ));
     };
     reader.readAsDataURL(file);
+  }
+    
   };
 
   const removeFile = (documentId: string) => {
@@ -111,10 +117,18 @@ const DocumentsPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    
     setIsLoading(true)
     await new Promise(resolve => setTimeout(resolve, 500));
+    let docDriver:string | null;
+    if(!documents[1].file){
+      docDriver=null;
+    }else{
+     docDriver =documents[1].file;
+    }
     dispatch(setDocument({
-      drivers_license:documents[1].file,
+      drivers_license:docDriver,
       identity_card_in_front:documents[0].file,
       identity_card_with_the_person:documents[2].file
     }));
@@ -216,7 +230,7 @@ const DocumentsPage: React.FC = () => {
                         </div>
                         <input
                           type="file"
-                          required
+                          
                           className="hidden"
                           accept=".pdf,.jpg,.jpeg,.png"
                           onChange={(e) => {

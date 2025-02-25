@@ -101,7 +101,7 @@ const VehicleInfoPage: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 1048576) { // 1 Mo = 1048576 octets
-        alert('Le fichier ne doit pas dépasser 1 Mo.');
+        alert('Le fichier ne doit pas dépasser plus de  1 Mo.');
         e.target.value = ''; // Réinitialise l'input
     }
       const reader = new FileReader();
@@ -294,7 +294,7 @@ const VehicleInfoPage: React.FC = () => {
                       <input
                         type="file"
                         className="hidden"
-
+                        
                         accept="image/*"
                         onChange={handleImageChange}
                       />

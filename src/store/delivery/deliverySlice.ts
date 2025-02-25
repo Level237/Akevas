@@ -32,7 +32,6 @@ const deliverySlice=createSlice({
         localStorage.setItem("phoneDelivery", action.payload.phone);
         localStorage.setItem("birthDateDelivery", action.payload.birthDate);
         localStorage.setItem("nationalityDelivery", action.payload.nationality);
-        localStorage.setItem("idNumberDelivery", action.payload.idNumber);
         localStorage.setItem("cityDelivery", action.payload.city);
         localStorage.setItem("quarterDelivery", action.payload.quarter);
         state.firstName = action.payload.firstName;
