@@ -26,11 +26,7 @@ interface ProductAttribute {
 
 interface ProductVariant {
   id: string;
-  attributes: Array<{
-    attribute_id: number;
-    value_id: number;
-    value: string;
-  }>;
+  variant_name: string;
   price: number;
   stock: number;
   image: File | null;
@@ -150,30 +146,25 @@ const CreateProductPage: React.FC = () => {
   };
 
   const generateVariants = (attrs: ProductAttribute[]) => {
-    const generateCombinations = (attributes: ProductAttribute[]): ProductVariant['attributes'][] => {
-      if (attributes.length === 0) return [[]];
+    const generateCombinations = (attributes: ProductAttribute[]): string[] => {
+      if (attributes.length === 0) return [''];
 
       const [first, ...rest] = attributes;
-      const combinations = generateCombinations(rest);
+      const restCombinations = generateCombinations(rest);
 
       return first.values.flatMap(value =>
-        combinations.map(combo => [
-          {
-            attribute_id: first.id,
-            value_id: value.id, // Maintenant value.id contiendra soit l'ID de l'API, soit un ID négatif unique
-            value: value.value
-          },
-          ...combo
-        ])
+        restCombinations.map(combo =>
+          combo ? `${value.value}-${combo}` : value.value
+        )
       );
     };
 
     const activeAttrs = attrs.filter(attr => attr.values.length > 0);
     const combinations = generateCombinations(activeAttrs);
 
-    const newVariants = combinations.map((attrCombination, index) => ({
+    const newVariants = combinations.map((variantName, index) => ({
       id: `variant-${index}`,
-      attributes: attrCombination,
+      variant_name: variantName,
       price: Number(price) || 0,
       stock: Number(stock) || 0,
       image: null
@@ -265,7 +256,7 @@ const CreateProductPage: React.FC = () => {
       if (variants.length > 0) {
         // Convertir les variants en format JSON pour l'envoi
         const variantsData = variants.map(variant => ({
-          attributes: variant.attributes,
+          variant_name: variant.variant_name,
           price: variant.price,
           stock: variant.stock,
           image: null // L'image sera envoyée séparément
@@ -279,7 +270,7 @@ const CreateProductPage: React.FC = () => {
             formData.append(`variant_images[${index}]`, variant.image);
           }
         });
-        console.log(formData.get('variants'))
+        console.log(variants)
       }
 
       const response = await addProduct(formData);
@@ -796,12 +787,10 @@ const CreateProductPage: React.FC = () => {
                   <div className="space-y-3 max-h-[400px] overflow-y-auto">
                     {variants.map((variant) => (
                       <div key={variant.id} className="p-3 bg-gray-50 rounded-xl">
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {variant.attributes.map((attr) => (
-                            <span key={attr.value_id} className="text-sm text-gray-600">
-                              {attr.value}
-                            </span>
-                          ))}
+                        <div className="mb-3">
+                          <span className="text-sm text-gray-600">
+                            {variant.variant_name}
+                          </span>
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                           <div>
