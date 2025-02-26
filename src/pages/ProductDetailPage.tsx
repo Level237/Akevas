@@ -9,6 +9,8 @@ import {
   Shield,
   ArrowRight,
   Lock,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 
 import Header from '@/components/ui/header';
@@ -23,6 +25,18 @@ const ProductDetailPage: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   console.log(product)
+
+  // Helper function to get all images
+  const getAllImages = () => {
+    const mainImage = { path: product?.product_profile };
+    const productImages = product?.product_images || [];
+    const variantImages = product?.variants?.flatMap(variant => [
+      { path: variant.image },
+      ...(variant.images || [])
+    ]) || [];
+
+    return [mainImage, ...productImages, ...variantImages];
+  };
 
   // Helper function to get current price and images
   const getCurrentProductInfo = () => {
@@ -63,48 +77,76 @@ const ProductDetailPage: React.FC = () => {
             {/* Colonne gauche - Images */}
             <div className="lg:col-span-4">
               <div className="sticky top-8">
-                <div className="bg-white flex items-start gap-6 rounded-2xl shadow-sm p-4">
-                  <div className="flex flex-col w-56 gap-4 max-h-[500px] overflow-y-auto   pr-2">
+                <div className="bg-white flex items-start gap-4 rounded-2xl shadow-sm p-4">
+                  <div className="flex flex-col w-56 gap-4 relative">
+                    {/* Navigation buttons */}
                     <button
-                      className={`aspect-square rounded-lg overflow-hidden border-2 flex-shrink-0
-                        ${selectedImage === null ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20' : 'border-transparent'}`}
-                      onClick={() => setSelectedImage(null)}
-                      onMouseEnter={() => setSelectedImage(null)}
+                      onClick={() => {
+                        const container = document.getElementById('images-container');
+                        if (container) container.scrollBy({ top: -(6 * 80), behavior: 'smooth' });
+                      }}
+                      className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-50 transition-colors"
                     >
-                      <img
-                        src={currentInfo.mainImage}
-                        alt={product.product_name}
-                        className="w-full h-full object-cover"
-                      />
+                      <ChevronUp className="w-4 h-4 text-gray-600" />
                     </button>
-                    {[...currentInfo.images, ...(selectedVariant?.images || [])].map((image: { path: string }, idx: number) => (
-                      <button
-                        key={idx}
-                        onClick={() => setSelectedImage(idx)}
-                        onMouseEnter={() => setSelectedImage(idx)}
-                        className={`aspect-square rounded-lg overflow-hidden border-2 flex-shrink-0
-                          ${selectedImage === idx ? 'border-[#ed7e0f]' : 'border-transparent hover:border-gray-200'}`}
-                      >
-                        <img
-                          src={image.path}
-                          alt={`${product.product_name} ${idx + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
+
+                    <div
+                      id="images-container"
+                      className="flex flex-col h-[480px] overflow-hidden relative scroll-smooth"
+                      style={{
+                        scrollSnapType: 'y mandatory',
+                        scrollPadding: '0 1rem',
+                      }}
+                    >
+                      <div className="grid grid-cols-1 gap-3 px-1">
+                        {getAllImages().map((image, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setSelectedImage(idx)}
+                            onMouseEnter={() => setSelectedImage(idx)}
+                            className={`h-14 w-14 rounded-lg overflow-hidden border-2 transition-all duration-200
+                              ${selectedImage === idx
+                                ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20'
+                                : 'border-transparent hover:border-gray-200'
+                              }
+                              scroll-snap-align-start`}
+                            style={{ scrollSnapAlign: 'start' }}
+                          >
+                            <img
+                              src={image.path}
+                              alt={`${product.product_name} ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const container = document.getElementById('images-container');
+                        if (container) container.scrollBy({ top: 6 * 80, behavior: 'smooth' });
+                      }}
+                      className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <ChevronDown className="w-4 h-4 text-gray-600" />
+                    </button>
+
+
                   </div>
-                  <div className="aspect-square rounded-lg overflow-hidden mb-4">
+
+                  {/* Main image display */}
+                  <div className="w-[60rem] bg-black rounded-lg overflow-hidden mb-4">
                     <motion.img
                       key={selectedImage}
-                      src={selectedImage === null ? product.product_profile : product.product_images[selectedImage].path}
+                      src={getAllImages()[selectedImage]?.path || product.product_profile}
                       alt={product.product_name}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
-                      className="w-full h-full object-cover"
+                      className="w-96 h-96 object-cover"
                     />
                   </div>
-
                 </div>
               </div>
             </div>
