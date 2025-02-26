@@ -14,15 +14,36 @@ import {
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetProductByUrlQuery } from '@/services/guardService';
+import { Variant } from '@/types/products';
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedTab, setSelectedTab] = useState('description');
-  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   console.log(product)
 
+  // Helper function to get current price and images
+  const getCurrentProductInfo = () => {
+    if (selectedVariant) {
+      return {
+        price: selectedVariant.price,
+        mainImage: selectedVariant.image,
+        stock: selectedVariant.quantity,
+        images: selectedVariant.images || []  // Assuming variants have their own images
+      };
+    }
+    return {
+      price: product?.product_price,
+      mainImage: product?.product_profile,
+      stock: product?.stock,
+      images: product?.product_images || []
+    };
+  };
+
+  // Get current product information
+  const currentInfo = getCurrentProductInfo();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -43,23 +64,25 @@ const ProductDetailPage: React.FC = () => {
             <div className="lg:col-span-4">
               <div className="sticky top-8">
                 <div className="bg-white flex items-start gap-6 rounded-2xl shadow-sm p-4">
-                  <div className="flex flex-col w-56 gap-4">
+                  <div className="flex flex-col w-56 gap-4 max-h-[500px] overflow-y-auto   pr-2">
                     <button
-                      className={`aspect-square rounded-lg overflow-hidden border-2
+                      className={`aspect-square rounded-lg overflow-hidden border-2 flex-shrink-0
                         ${selectedImage === null ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20' : 'border-transparent'}`}
                       onClick={() => setSelectedImage(null)}
+                      onMouseEnter={() => setSelectedImage(null)}
                     >
                       <img
-                        src={product.product_profile}
+                        src={currentInfo.mainImage}
                         alt={product.product_name}
                         className="w-full h-full object-cover"
                       />
                     </button>
-                    {product.product_images.map((image: { path: string }, idx: number) => (
+                    {[...currentInfo.images, ...(selectedVariant?.images || [])].map((image: { path: string }, idx: number) => (
                       <button
                         key={idx}
                         onClick={() => setSelectedImage(idx)}
-                        className={`aspect-square rounded-lg overflow-hidden border-2
+                        onMouseEnter={() => setSelectedImage(idx)}
+                        className={`aspect-square rounded-lg overflow-hidden border-2 flex-shrink-0
                           ${selectedImage === idx ? 'border-[#ed7e0f]' : 'border-transparent hover:border-gray-200'}`}
                       >
                         <img
@@ -102,7 +125,7 @@ const ProductDetailPage: React.FC = () => {
 
                   <h1 className="text-2xl font-bold text-gray-900">{product.product_name}</h1>
                   <span className="text-4xl font-bold text-[#ed7e0f]">
-                    {product.product_price} FCFA
+                    {currentInfo.price} FCFA
                   </span>
                   {/* Description courte */}
                   <p className="text-gray-600 line-clamp-3">{product.product_description}</p>
@@ -136,51 +159,31 @@ const ProductDetailPage: React.FC = () => {
                   </div>
 
                   {/* Variants */}
-                  {product.variants && product.variants.length > 0 && (
-                    <div className="space-y-6">
-                      {Object.entries(product.variants).map(([type, options]) => (
-                        <div key={type} className="space-y-3">
-                          <div className="flex justify-between">
-                            <h3 className="text-sm font-medium text-gray-700">{type}</h3>
-                            {selectedVariant && (
-                              <span className="text-sm text-gray-500">
-                                Sélectionné: {options.find((opt: any) => opt.id === selectedVariant)?.name}
-                              </span>
-                            )}
-                          </div>
-                          <div className="grid grid-cols-3 gap-3">
-                            {options.map((option: any) => (
-                              <button
-                                key={option.id}
-                                onClick={() => setSelectedVariant(option.id)}
-                                className={`relative p-3 rounded-lg border-2 transition-all
-                                  ${selectedVariant === option.id
-                                    ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
-                                    : 'border-gray-200 hover:border-[#ed7e0f]/50'
-                                  }`}
-                              >
-                                {option.image && (
-                                  <img
-                                    src={option.image}
-                                    alt={option.name}
-                                    className="w-full aspect-square object-cover rounded mb-2"
-                                  />
-                                )}
-                                <span className={`text-sm ${selectedVariant === option.id ? 'text-[#ed7e0f]' : 'text-gray-700'}`}>
-                                  {option.name}
-                                </span>
-                                {selectedVariant === option.id && (
-                                  <div className="absolute -top-2 -right-2 w-5 h-5 bg-[#ed7e0f] rounded-full flex items-center justify-center">
-                                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                  </div>
-                                )}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
+                  {product?.variants && product.variants.length > 0 && (
+                    <div className="space-y-4">
+                      <h3 className="text-sm font-medium text-gray-700">Variantes</h3>
+                      <div className="flex flex-wrap gap-3">
+                        {product.variants.map((variant: Variant) => (
+                          <button
+                            key={variant.id}
+                            onClick={() => setSelectedVariant(variant)}
+                            className={`flex items-center gap-2 p-2 rounded-lg border transition-all
+                              ${selectedVariant?.id === variant.id
+                                ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20 bg-[#ed7e0f]/5'
+                                : 'border-gray-200 hover:border-gray-300'}`}
+                          >
+                            <img
+                              src={variant.image}
+                              alt={variant.variant_name}
+                              className="w-12 h-12 rounded-lg object-cover"
+                            />
+                            <div className="text-left">
+                              <p className="text-sm font-medium">{variant.variant_name}</p>
+                              <p className="text-sm text-gray-500">{variant.price} FCFA</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
 
@@ -211,7 +214,7 @@ const ProductDetailPage: React.FC = () => {
                     </div>
                     {product.stock && (
                       <span className="text-sm text-gray-500">
-                        Stock disponible: {product.stock} unités
+                        Stock disponible: {currentInfo.stock} unités
                       </span>
                     )}
                   </div>
@@ -277,7 +280,7 @@ const ProductDetailPage: React.FC = () => {
                     <div className="text-center">
                       <p className="text-sm text-gray-500">Prix total</p>
                       <p className="text-2xl font-bold text-[#ed7e0f] mt-1">
-                        {product.product_price} FCFA
+                        {currentInfo.price} FCFA
                       </p>
                     </div>
 
