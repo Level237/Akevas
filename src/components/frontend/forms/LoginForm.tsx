@@ -104,9 +104,9 @@ export default function LoginForm() {
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
-        Already have an account?{" "}
-        <a href="/login" className="text-primary hover:underline">
-          Log in
+        Don't have an account?{" "}
+        <a href="/register" className="text-primary hover:underline">
+          Register
         </a>
       </p>
     </div>
