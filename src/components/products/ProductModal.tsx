@@ -171,7 +171,7 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
       )}
 
       <AsyncLink
-        to={`/products/${product.id}`}
+        to={`/produit/${product.product_url}`}
         className="w-full bg-gray-50 text-gray-700 px-6 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 hover:bg-gray-100"
       >
         <Eye className="w-5 h-5" />
