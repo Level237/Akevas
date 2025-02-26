@@ -71,8 +71,8 @@ export const guardService=createApi({
             providesTags: ['guard'],
         }),
         getSubCategories:builder.query({
-            query:(id)=>({
-                url:`/api/get/sub-categories/${id}`,
+            query:({arrayId,id})=>({
+                url:`/api/get/sub-categories/${arrayId}/${id}`,
                 method:"GET",
             }),
             providesTags: ['guard'],

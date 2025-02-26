@@ -31,7 +31,7 @@ export default function ListDeliveries({deliveries,isLoading}:{deliveries:Delive
           {!isLoading && deliveries.map((delivery) => (
             <TableRow key={delivery.id}>
               <TableCell className="font-medium flex items-center gap-2"> <Avatar>
-                <AvatarImage src={delivery.vehicle.vehicle_image} />
+                <AvatarImage src={delivery.vehicle?.vehicle_image} />
                 <AvatarFallback>{delivery.firstName.charAt(0)}</AvatarFallback>
               </Avatar> </TableCell>
               <TableCell>{delivery.firstName} {delivery.lastName}</TableCell>

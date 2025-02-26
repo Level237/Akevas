@@ -66,7 +66,8 @@ const CreateProductPage: React.FC = () => {
   const [gender,setGender]=useState<number>(0)
   const [addProduct,{isLoading:isLoadingAddProduct}]=useAddProductMutation()
   const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
-  const {data:subCategoriesByGender,isLoading:isLoadingSubCategoriesByParentId}=useGetSubCategoriesQuery(selectedCategories)
+  const {data:subCategoriesByGender,isLoading:isLoadingSubCategoriesByParentId}=useGetSubCategoriesQuery({arrayId:selectedCategories,id:gender})
+  console.log(subCategoriesByGender)
   const navigate=useNavigate()
 
   console.log(selectedSubCategories)

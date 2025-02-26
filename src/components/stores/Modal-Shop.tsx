@@ -10,7 +10,7 @@ import AsyncLink from "../ui/AsyncLink";
 
 export default function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isModalOpen:boolean,setIsModalOpen:React.Dispatch<React.SetStateAction<boolean>>,shopId:string}) {
   const {data:{data:shop}={},isLoading}=useGetShopQuery(shopId)
-  console.log(shop)
+ 
   return (
              <>
              {isModalOpen && 
