@@ -33,7 +33,6 @@ interface ProductVariant {
   }>;
   price: number;
   stock: number;
-  sku: string;
   image: File | null;
 }
 
@@ -177,7 +176,6 @@ const CreateProductPage: React.FC = () => {
       attributes: attrCombination,
       price: Number(price) || 0,
       stock: Number(stock) || 0,
-      sku: `SKU-${index + 1}`,
       image: null
     }));
 
@@ -229,6 +227,22 @@ const CreateProductPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Validation des variants si des attributs sont sélectionnés
+    const hasSelectedAttributes = attributes.some(attr => attr.values.length > 0);
+    if (hasSelectedAttributes) {
+      // Vérifier que chaque variant a tous les champs requis
+      const invalidVariants = variants.some(variant =>
+        !variant.image ||
+        !variant.price ||
+        !variant.stock
+      );
+
+      if (invalidVariants) {
+        alert("Veuillez remplir tous les champs (image, prix, stock) pour chaque variante");
+        return;
+      }
+    }
+
     try {
       const formData = new FormData()
       formData.append('product_name', name);
@@ -238,6 +252,7 @@ const CreateProductPage: React.FC = () => {
       formData.append('product_gender', gender.toString());
       formData.append('whatsapp_number', whatsappNumber);
       formData.append('product_residence', city);
+
       if (featuredImage) {
         formData.append('product_profile', featuredImage);
       }
@@ -245,9 +260,31 @@ const CreateProductPage: React.FC = () => {
       images.forEach(image => formData.append('images[]', image));
       selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
       selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
-      await addProduct(formData);
 
-      navigate('/seller/products')
+      // Ajouter les variants au formData s'il y en a
+      if (variants.length > 0) {
+        // Convertir les variants en format JSON pour l'envoi
+        const variantsData = variants.map(variant => ({
+          attributes: variant.attributes,
+          price: variant.price,
+          stock: variant.stock,
+          image: null // L'image sera envoyée séparément
+        }));
+
+        formData.append('variants', JSON.stringify(variantsData));
+
+        // Ajouter les images des variants séparément
+        variants.forEach((variant, index) => {
+          if (variant.image) {
+            formData.append(`variant_images[${index}]`, variant.image);
+          }
+        });
+        console.log(formData.get('variants'))
+      }
+
+      const response = await addProduct(formData);
+      console.log(response)
+      //navigate('/seller/products')
     } catch (error) {
       console.log(error)
     }
@@ -807,7 +844,7 @@ const CreateProductPage: React.FC = () => {
                               <div className="relative group w-16 h-16">
                                 <img
                                   src={URL.createObjectURL(variant.image)}
-                                  alt={`Variante ${variant.sku}`}
+                                  alt={`Variante ${variant.id}`}
                                   className="w-full h-full object-cover rounded-lg"
                                 />
                                 <button
