@@ -27,6 +27,7 @@ interface ProductAttribute {
 interface ProductVariant {
   id: string;
   variant_name: string;
+  attribute_value_id: number[];
   price: number;
   stock: number;
   image: File | null;
@@ -131,7 +132,7 @@ const CreateProductPage: React.FC = () => {
       }
     }
   };
-  console.log(variants)
+  //console.log(variants)
   const removeAttributeValue = (attributeId: number, valueToRemove: string) => {
     const newAttributes = [...attributes];
     const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
@@ -146,25 +147,27 @@ const CreateProductPage: React.FC = () => {
   };
 
   const generateVariants = (attrs: ProductAttribute[]) => {
-    const generateCombinations = (attributes: ProductAttribute[]): string[] => {
-      if (attributes.length === 0) return [''];
+    const generateCombinations = (attributes: ProductAttribute[]): { name: string; ids: number[] }[] => {
+      if (attributes.length === 0) return [{ name: '', ids: [] }];
 
       const [first, ...rest] = attributes;
       const restCombinations = generateCombinations(rest);
 
       return first.values.flatMap(value =>
-        restCombinations.map(combo =>
-          combo ? `${value.value}-${combo}` : value.value
-        )
+        restCombinations.map(combo => ({
+          name: combo.name ? `${value.value}-${combo.name}` : value.value,
+          ids: [value.id, ...combo.ids]
+        }))
       );
     };
 
     const activeAttrs = attrs.filter(attr => attr.values.length > 0);
     const combinations = generateCombinations(activeAttrs);
 
-    const newVariants = combinations.map((variantName, index) => ({
+    const newVariants = combinations.map((combo, index) => ({
       id: `variant-${index}`,
-      variant_name: variantName,
+      variant_name: combo.name,
+      attribute_value_id: combo.ids,
       price: Number(price) || 0,
       stock: Number(stock) || 0,
       image: null
@@ -254,12 +257,12 @@ const CreateProductPage: React.FC = () => {
 
       // Ajouter les variants au formData s'il y en a
       if (variants.length > 0) {
-        // Convertir les variants en format JSON pour l'envoi
         const variantsData = variants.map(variant => ({
           variant_name: variant.variant_name,
+          attribute_value_id: variant.attribute_value_id,
           price: variant.price,
           stock: variant.stock,
-          image: null // L'image sera envoyée séparément
+          image: null
         }));
 
         formData.append('variants', JSON.stringify(variantsData));
@@ -270,12 +273,12 @@ const CreateProductPage: React.FC = () => {
             formData.append(`variant_images[${index}]`, variant.image);
           }
         });
-        console.log(variants)
+        console.log(variantsData)
       }
 
       const response = await addProduct(formData);
       console.log(response)
-      //navigate('/seller/products')
+      navigate('/seller/products')
     } catch (error) {
       console.log(error)
     }
