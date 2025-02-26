@@ -26,7 +26,11 @@ interface ProductAttribute {
 
 interface ProductVariant {
   id: string;
-  attributes: Record<string, string>;
+  attributes: Array<{
+    attribute_id: number;
+    value_id: number;
+    value: string;
+  }>;
   price: number;
   stock: number;
   sku: string;
@@ -54,7 +58,7 @@ const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
   const { data: { data: getAttributes } = {}, isLoading } = useGetAttributeValuesQuery("1");
 
-  console.log(getAttributes)
+  //console.log(getAttributes)
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
@@ -75,10 +79,10 @@ const CreateProductPage: React.FC = () => {
   const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender)
   const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender })
-  console.log(subCategoriesByGender)
+  //console.log(subCategoriesByGender)
   const navigate = useNavigate()
 
-  console.log(selectedSubCategories)
+  //console.log(selectedSubCategories)
   // Liste des catégories disponibles
 
   // Effet pour initialiser les attributs depuis l'API
@@ -129,8 +133,12 @@ const CreateProductPage: React.FC = () => {
     const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
 
     if (attrIndex !== -1) {
+      // Pour les valeurs qui ne viennent pas de l'API (taille et poids),
+      // on génère un ID unique négatif pour éviter les conflits avec les IDs de l'API
+      const newValueId = valueId || -(Date.now());
+
       const newValue = {
-        id: valueId || Date.now(),
+        id: newValueId,
         value: value,
         hex: hex
       };
@@ -142,7 +150,7 @@ const CreateProductPage: React.FC = () => {
       }
     }
   };
-
+  console.log(variants)
   const removeAttributeValue = (attributeId: number, valueToRemove: string) => {
     const newAttributes = [...attributes];
     const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
@@ -157,30 +165,30 @@ const CreateProductPage: React.FC = () => {
   };
 
   const generateVariants = (attrs: ProductAttribute[]) => {
-    // Fonction pour générer toutes les combinaisons possibles d'attributs
-    const generateCombinations = (arrays: string[][]): Record<string, string>[] => {
-      if (arrays.length === 0) return [{}];
+    const generateCombinations = (attributes: ProductAttribute[]): ProductVariant['attributes'][] => {
+      if (attributes.length === 0) return [[]];
 
-      const [first, ...rest] = arrays;
+      const [first, ...rest] = attributes;
       const combinations = generateCombinations(rest);
-      const attributeNames = attrs.map(attr => attr.name);
 
-      return first.flatMap(item =>
-        combinations.map(combo => ({
-          ...combo,
-          [attributeNames[arrays.length - 1]]: item
-        }))
+      return first.values.flatMap(value =>
+        combinations.map(combo => [
+          {
+            attribute_id: first.id,
+            value_id: value.id, // Maintenant value.id contiendra soit l'ID de l'API, soit un ID négatif unique
+            value: value.value
+          },
+          ...combo
+        ])
       );
     };
 
-    // Ne prendre que les attributs qui ont des valeurs
     const activeAttrs = attrs.filter(attr => attr.values.length > 0);
-    const combinations = generateCombinations(activeAttrs.map(attr => attr.values.map(v => [v.value])));
+    const combinations = generateCombinations(activeAttrs);
 
-    // Créer les variants avec les combinaisons
-    const newVariants = combinations.map((combo, index) => ({
+    const newVariants = combinations.map((attrCombination, index) => ({
       id: `variant-${index}`,
-      attributes: combo,
+      attributes: attrCombination,
       price: Number(price) || 0,
       stock: Number(stock) || 0,
       sku: `SKU-${index + 1}`,
@@ -216,16 +224,19 @@ const CreateProductPage: React.FC = () => {
   };
 
   const getFilteredSizes = () => {
-    return PREDEFINED_SIZES.filter(size =>
-      size.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
-      !attributes[1].values.some(v => v.value === size)
+    if (!getAttributes || !getAttributes[1]) return [];
+    return getAttributes[1].values.filter(size =>
+      size.value.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
+      !attributes.find(attr => attr.id === getAttributes[1].id)?.values.some(v => v.value === size.value)
     );
   };
 
+
   const getFilteredWeights = () => {
-    return PREDEFINED_WEIGHTS.filter(weight =>
-      weight.toLowerCase().includes(weightSearchTerm.toLowerCase()) &&
-      !attributes[2].values.some(v => v.value === weight)
+    if (!getAttributes || !getAttributes[2]) return [];
+    return getAttributes[2].values.filter(size =>
+      size.value.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
+      !attributes.find(attr => attr.id === getAttributes[2].id)?.values.some(v => v.value === size.value)
     );
   };
 
@@ -560,7 +571,7 @@ const CreateProductPage: React.FC = () => {
                             } else if (attribute.name === 'Taille') {
                               setSizeSearchTerm(e.target.value);
                               setShowSizeSuggestions(true);
-                            } else if (attribute.name === 'Poids') {
+                            } else if (attribute.name === 'Poids' && weightSearchTerm) {
                               setWeightSearchTerm(e.target.value);
                               setShowWeightSuggestions(true);
                             }
@@ -612,15 +623,15 @@ const CreateProductPage: React.FC = () => {
                           <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
                             {getFilteredSizes().map((size) => (
                               <button
-                                key={size}
+                                key={size.id}
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50"
                                 onClick={() => {
-                                  addAttributeValue(attribute.id, size, undefined, undefined);
+                                  addAttributeValue(attribute.id, size.value, size.id, undefined);
                                   setSizeSearchTerm('');
                                   setShowSizeSuggestions(false);
                                 }}
                               >
-                                {size}
+                                {size.value}
                               </button>
                             ))}
                             {sizeSearchTerm && !getFilteredSizes().some(s => s.toLowerCase() === sizeSearchTerm.toLowerCase()) && (
@@ -646,12 +657,12 @@ const CreateProductPage: React.FC = () => {
                                 key={weight}
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50"
                                 onClick={() => {
-                                  addAttributeValue(attribute.id, weight, undefined, undefined);
+                                  addAttributeValue(attribute.id, weight.value, weight.id, undefined);
                                   setWeightSearchTerm('');
                                   setShowWeightSuggestions(false);
                                 }}
                               >
-                                {weight}
+                                {weight.value}
                               </button>
                             ))}
                             {weightSearchTerm && !getFilteredWeights().some(w => w.toLowerCase() === weightSearchTerm.toLowerCase()) && (
@@ -701,9 +712,9 @@ const CreateProductPage: React.FC = () => {
                     {variants.map((variant) => (
                       <div key={variant.id} className="p-3 bg-gray-50 rounded-xl">
                         <div className="flex flex-wrap gap-2 mb-3">
-                          {Object.entries(variant.attributes).map(([key, value]) => (
-                            <span key={key} className="text-sm text-gray-600">
-                              {key}: <strong>{value}</strong>
+                          {variant.attributes.map((attr) => (
+                            <span key={attr.value_id} className="text-sm text-gray-600">
+                              {attr.value}
                             </span>
                           ))}
                         </div>
