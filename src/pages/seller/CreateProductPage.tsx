@@ -9,7 +9,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { useAddProductMutation } from '@/services/sellerService';
-import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery } from '@/services/guardService';
+import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
@@ -37,22 +37,6 @@ interface ProductVariant {
   image: File | null;
 }
 
-const PREDEFINED_COLORS = [
-  { name: 'Rouge', hex: '#FF0000' },
-  { name: 'Bleu', hex: '#0000FF' },
-  { name: 'Vert', hex: '#008000' },
-  { name: 'Jaune', hex: '#FFFF00' },
-  { name: 'Noir', hex: '#000000' },
-  { name: 'Blanc', hex: '#FFFFFF' },
-  { name: 'Gris', hex: '#808080' },
-  { name: 'Orange', hex: '#FFA500' },
-  { name: 'Violet', hex: '#800080' },
-  { name: 'Rose', hex: '#FFC0CB' },
-];
-
-const PREDEFINED_SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
-
-const PREDEFINED_WEIGHTS = ['100g', '250g', '500g', '1kg', '2kg', '5kg', '10kg'];
 
 const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -81,7 +65,7 @@ const CreateProductPage: React.FC = () => {
   const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender)
   const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender })
-  //console.log(subCategoriesByGender)
+  const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const navigate = useNavigate()
 
   //console.log(selectedSubCategories)
@@ -253,7 +237,7 @@ const CreateProductPage: React.FC = () => {
       formData.append('product_description', description);
       formData.append('product_gender', gender.toString());
       formData.append('whatsapp_number', whatsappNumber);
-      formData.append('city', city);
+      formData.append('product_residence', city);
       if (featuredImage) {
         formData.append('product_profile', featuredImage);
       }
@@ -450,7 +434,7 @@ const CreateProductPage: React.FC = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Numéro WhatsApp pour les commandes
+                      Numéro WhatsApp
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -480,13 +464,15 @@ const CreateProductPage: React.FC = () => {
                         <SelectValue placeholder="Sélectionnez votre ville de livraison" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="abidjan">Abidjan</SelectItem>
-                        <SelectItem value="bouake">Bouaké</SelectItem>
-                        <SelectItem value="daloa">Daloa</SelectItem>
-                        <SelectItem value="yamoussoukro">Yamoussoukro</SelectItem>
-                        <SelectItem value="korhogo">Korhogo</SelectItem>
-                        <SelectItem value="san_pedro">San-Pédro</SelectItem>
-                        <SelectItem value="divo">Divo</SelectItem>
+                        {townsLoading ? (
+                          <SelectItem value="loading">Chargement des villes...</SelectItem>
+                        ) : (
+                          towns?.towns.map((town: { id: string, town_name: string }) => (
+                            <SelectItem key={town.id} value={String(town.id)}>
+                              {town.town_name}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                     <p className="mt-1 text-sm text-gray-500">
