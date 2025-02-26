@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Upload,
   Plus,
@@ -9,14 +9,19 @@ import {
   Loader2
 } from 'lucide-react';
 import { useAddProductMutation } from '@/services/sellerService';
-import { useGetCategoryByGenderQuery, useGetSubCategoriesQuery } from '@/services/guardService';
+import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 
 interface ProductAttribute {
+  id: number;
   name: string;
-  values: string[];
+  values: Array<{
+    id: number;
+    value: string;
+    hex?: string;
+  }>;
 }
 
 interface ProductVariant {
@@ -43,45 +48,60 @@ const PREDEFINED_COLORS = [
 
 const PREDEFINED_SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
 
+const PREDEFINED_WEIGHTS = ['100g', '250g', '500g', '1kg', '2kg', '5kg', '10kg'];
+
 const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
+  const { data: { data: getAttributes } = {}, isLoading } = useGetAttributeValuesQuery("1");
+
+  console.log(getAttributes)
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
-  const [attributes, setAttributes] = useState<ProductAttribute[]>([
-    { name: 'Couleur', values: [] },
-    { name: 'Taille', values: [] },
-    { name: 'Poids', values: [] }
-  ]);
+  const [attributes, setAttributes] = useState<ProductAttribute[]>([]);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
   const [colorSearchTerm, setColorSearchTerm] = useState('');
   const [sizeSearchTerm, setSizeSearchTerm] = useState('');
+  const [weightSearchTerm, setWeightSearchTerm] = useState('');
   const [showColorSuggestions, setShowColorSuggestions] = useState(false);
   const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
+  const [showWeightSuggestions, setShowWeightSuggestions] = useState(false);
   const [activeTab, setActiveTab] = useState<'product' | 'attributes'>('product');
-  const [gender,setGender]=useState<number>(0)
-  const [addProduct,{isLoading:isLoadingAddProduct}]=useAddProductMutation()
-  const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
-  const {data:subCategoriesByGender,isLoading:isLoadingSubCategoriesByParentId}=useGetSubCategoriesQuery({arrayId:selectedCategories,id:gender})
+  const [gender, setGender] = useState<number>(0)
+  const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
+  const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender)
+  const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender })
   console.log(subCategoriesByGender)
-  const navigate=useNavigate()
+  const navigate = useNavigate()
 
   console.log(selectedSubCategories)
   // Liste des catégories disponibles
 
+  // Effet pour initialiser les attributs depuis l'API
+  useEffect(() => {
+    if (getAttributes) {
+      setAttributes(
+        getAttributes.map((attr: any) => ({
+          id: attr.id,
+          name: attr.name,
+          values: []
+        }))
+      );
+    }
+  }, [getAttributes]);
 
   // Nouvelle fonction pour gérer la sélection/déselection des catégories
-    const handleChangeCategories = (selected: number[]) => {
-        setSelectedCategories(selected);
-      };
+  const handleChangeCategories = (selected: number[]) => {
+    setSelectedCategories(selected);
+  };
 
-      const handleChangeSubCategories = (selected: number[]) => {
-        setSelectedSubCategories(selected);
-      };
+  const handleChangeSubCategories = (selected: number[]) => {
+    setSelectedSubCategories(selected);
+  };
 
   const handleFeaturedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -104,34 +124,48 @@ const CreateProductPage: React.FC = () => {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const addAttributeValue = (attributeIndex: number, value: string) => {
+  const addAttributeValue = (attributeId: number, value: string, valueId?: number, hex?: string) => {
     const newAttributes = [...attributes];
-    if (!newAttributes[attributeIndex].values.includes(value)) {
-      newAttributes[attributeIndex].values.push(value);
-      setAttributes(newAttributes);
-      generateVariants(newAttributes);
+    const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
+
+    if (attrIndex !== -1) {
+      const newValue = {
+        id: valueId || Date.now(),
+        value: value,
+        hex: hex
+      };
+
+      if (!newAttributes[attrIndex].values.some(v => v.value === value)) {
+        newAttributes[attrIndex].values.push(newValue);
+        setAttributes(newAttributes);
+        generateVariants(newAttributes);
+      }
     }
   };
 
-  const removeAttributeValue = (attributeIndex: number, value: string) => {
+  const removeAttributeValue = (attributeId: number, valueToRemove: string) => {
     const newAttributes = [...attributes];
-    newAttributes[attributeIndex].values = newAttributes[attributeIndex].values.filter(
-      v => v !== value
-    );
-    setAttributes(newAttributes);
-    generateVariants(newAttributes);
+    const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
+
+    if (attrIndex !== -1) {
+      newAttributes[attrIndex].values = newAttributes[attrIndex].values.filter(
+        v => v.value !== valueToRemove
+      );
+      setAttributes(newAttributes);
+      generateVariants(newAttributes);
+    }
   };
 
   const generateVariants = (attrs: ProductAttribute[]) => {
     // Fonction pour générer toutes les combinaisons possibles d'attributs
     const generateCombinations = (arrays: string[][]): Record<string, string>[] => {
       if (arrays.length === 0) return [{}];
-      
+
       const [first, ...rest] = arrays;
       const combinations = generateCombinations(rest);
       const attributeNames = attrs.map(attr => attr.name);
-      
-      return first.flatMap(item => 
+
+      return first.flatMap(item =>
         combinations.map(combo => ({
           ...combo,
           [attributeNames[arrays.length - 1]]: item
@@ -141,7 +175,7 @@ const CreateProductPage: React.FC = () => {
 
     // Ne prendre que les attributs qui ont des valeurs
     const activeAttrs = attrs.filter(attr => attr.values.length > 0);
-    const combinations = generateCombinations(activeAttrs.map(attr => attr.values));
+    const combinations = generateCombinations(activeAttrs.map(attr => attr.values.map(v => [v.value])));
 
     // Créer les variants avec les combinaisons
     const newVariants = combinations.map((combo, index) => ({
@@ -157,8 +191,8 @@ const CreateProductPage: React.FC = () => {
   };
 
   const handleVariantImageUpload = (variantId: string, file: File) => {
-    setVariants(variants.map(variant => 
-      variant.id === variantId 
+    setVariants(variants.map(variant =>
+      variant.id === variantId
         ? { ...variant, image: file }
         : variant
     ));
@@ -173,41 +207,51 @@ const CreateProductPage: React.FC = () => {
   };
 
   const getFilteredColors = () => {
-    return PREDEFINED_COLORS.filter(color =>
-      color.name.toLowerCase().includes(colorSearchTerm.toLowerCase()) &&
-      !attributes[0].values.includes(color.name)
+    if (!getAttributes || !getAttributes[0]) return [];
+    return getAttributes[0].values.filter(color =>
+      color.value.toLowerCase().includes(colorSearchTerm.toLowerCase()) &&
+      !attributes.find(attr => attr.id === getAttributes[0].id)?.values
+        .some(v => v.value === color.value)
     );
   };
 
   const getFilteredSizes = () => {
     return PREDEFINED_SIZES.filter(size =>
       size.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
-      !attributes[1].values.includes(size)
+      !attributes[1].values.some(v => v.value === size)
     );
   };
-  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-   try {
-    const formData = new FormData()
-    formData.append('product_name', name);
-    formData.append('product_price', price);
-    formData.append('product_quantity', stock);
-    formData.append('product_description', description);
-    formData.append('product_gender', gender.toString());
-    if (featuredImage) {
-      formData.append('product_profile', featuredImage);
-    }
-    
-    images.forEach(image => formData.append('images[]', image));
-    selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
-    selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
-    await addProduct(formData);
 
-    navigate('/seller/products')
-   }catch(error){
-    console.log(error)
-   }
+  const getFilteredWeights = () => {
+    return PREDEFINED_WEIGHTS.filter(weight =>
+      weight.toLowerCase().includes(weightSearchTerm.toLowerCase()) &&
+      !attributes[2].values.some(v => v.value === weight)
+    );
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData()
+      formData.append('product_name', name);
+      formData.append('product_price', price);
+      formData.append('product_quantity', stock);
+      formData.append('product_description', description);
+      formData.append('product_gender', gender.toString());
+      if (featuredImage) {
+        formData.append('product_profile', featuredImage);
+      }
+
+      images.forEach(image => formData.append('images[]', image));
+      selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
+      selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
+      await addProduct(formData);
+
+      navigate('/seller/products')
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const handleChangeGender = (value: string) => {
@@ -262,28 +306,26 @@ const CreateProductPage: React.FC = () => {
             <div className="flex rounded-xl bg-gray-100 p-1">
               <button
                 onClick={() => setActiveTab('product')}
-                className={`flex-1 py-2 text-sm font-medium rounded-lg ${
-                  activeTab === 'product'
+                className={`flex-1 py-2 text-sm font-medium rounded-lg ${activeTab === 'product'
                   ? 'bg-white shadow-sm text-[#ed7e0f]'
                   : 'text-gray-600'
-                }`}
+                  }`}
               >
                 Produit
               </button>
               <button
                 onClick={() => setActiveTab('attributes')}
-                className={`flex-1 py-2 text-sm font-medium rounded-lg ${
-                  activeTab === 'attributes'
+                className={`flex-1 py-2 text-sm font-medium rounded-lg ${activeTab === 'attributes'
                   ? 'bg-white shadow-sm text-[#ed7e0f]'
                   : 'text-gray-600'
-                }`}
+                  }`}
               >
                 Attributs
               </button>
             </div>
           </div>
 
-          <div  className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Colonne principale */}
             <div className={`md:col-span-2 space-y-6 ${activeTab === 'attributes' ? 'hidden md:block' : ''}`}>
               {/* Informations de base */}
@@ -295,18 +337,18 @@ const CreateProductPage: React.FC = () => {
                   className="w-full px-4 py-3 text-2xl font-medium border-[1px] rounded-lg border-[#0000007a] focus:ring-0"
                   placeholder="Nom du produit"
                 />
-                
+
                 <div className="flex max-sm:flex-col gap-4">
                   <input
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     className="px-4 py-2 max-sm:py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                    placeholder="Prix (€)"
+                    placeholder="Prix (Fcfa)"
                   />
 
                   <input
-                    type="number" 
+                    type="number"
                     value={stock}
                     onChange={(e) => setStock(e.target.value)}
                     className="px-4 py-2  max-sm:py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
@@ -322,64 +364,64 @@ const CreateProductPage: React.FC = () => {
                   placeholder="Description détaillée du produit..."
                 />
               </div>
-                            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+              <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
                 <div className="relative">
                   <label className="block text-lg font-semibold mb-4">Genre produit</label>
 
-              <Select name='gender' onValueChange={handleChangeGender}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choisir un genre" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="1">Homme</SelectItem>
-                    <SelectItem value="2">Femme</SelectItem>
-                    <SelectItem value="3">Enfant</SelectItem>
-                    <SelectItem value="4">Mixte</SelectItem>
-                </SelectContent>
-              </Select>
+                  <Select name='gender' onValueChange={handleChangeGender}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un genre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">Homme</SelectItem>
+                      <SelectItem value="2">Femme</SelectItem>
+                      <SelectItem value="3">Enfant</SelectItem>
+                      <SelectItem value="4">Mixte</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-                { gender !==0 && (
-                                <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-                <div className="relative">
-                  <label className="block text-lg font-semibold mb-4">Catégories</label>
-                  <div className="flex flex-row flex-wrap gap-2 mb-4">
-                 
+              {gender !== 0 && (
+                <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+                  <div className="relative">
+                    <label className="block text-lg font-semibold mb-4">Catégories</label>
+                    <div className="flex flex-row flex-wrap gap-2 mb-4">
+
+                    </div>
+                    {isLoadingCategoriesByGender ? <div>Loading...</div> : (
+                      <MultiSelect
+
+                        options={categoriesByGender?.categories}
+                        selected={selectedCategories}
+                        onChange={handleChangeCategories}
+                        placeholder="Select categories..."
+                      />
+                    )}
                   </div>
-              {isLoadingCategoriesByGender ? <div>Loading...</div> : (
-              <MultiSelect
-              
-        options={categoriesByGender?.categories}
-        selected={selectedCategories}
-        onChange={handleChangeCategories}
-        placeholder="Select categories..."
-      />
-            )}
                 </div>
-              </div>
-                )}
-                            {selectedCategories.length > 0 && (
-                              <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-                <div className="relative">
-                  <label className="block text-lg font-semibold mb-4">Sous catégories</label>
-                  <div className="flex flex-row flex-wrap gap-2 mb-4">
-                 
+              )}
+              {selectedCategories.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+                  <div className="relative">
+                    <label className="block text-lg font-semibold mb-4">Sous catégories</label>
+                    <div className="flex flex-row flex-wrap gap-2 mb-4">
+
+                    </div>
+                    {selectedCategories.length > 0 && (
+                      !isLoadingSubCategoriesByParentId && (
+                        <MultiSelect
+
+                          options={subCategoriesByGender?.categories}
+                          selected={selectedSubCategories}
+                          onChange={handleChangeSubCategories}
+                          placeholder="Select sub categories..."
+                        />
+                      )
+                    )}
                   </div>
-                  {selectedCategories.length > 0 && (
-              !isLoadingSubCategoriesByParentId && (
-              <MultiSelect
-              
-        options={subCategoriesByGender?.categories}
-        selected={selectedSubCategories}
-        onChange={handleChangeSubCategories}
-        placeholder="Select sub categories..."
-      />
-            )
-            )}
                 </div>
-              </div>
-                            )}
-                            
+              )}
+
               {/* Photo mise en avant */}
               <div className="bg-white rounded-2xl shadow-sm p-4">
                 <div className="flex items-center justify-between mb-3">
@@ -449,7 +491,7 @@ const CreateProductPage: React.FC = () => {
                       className="hidden "
                       accept="image/*"
                       multiple
-                      
+
                       onChange={handleImageUpload}
                     />
                   </label>
@@ -463,8 +505,8 @@ const CreateProductPage: React.FC = () => {
               <div className="bg-white rounded-2xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Attributs</h2>
                 <div className="space-y-4">
-                  {attributes.map((attribute, attrIndex) => (
-                    <div key={attribute.name}>
+                  {attributes.map((attribute) => (
+                    <div key={attribute.id}>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-medium text-sm text-gray-700">{attribute.name}</h3>
                         <button
@@ -478,19 +520,17 @@ const CreateProductPage: React.FC = () => {
 
                       <div className="flex flex-wrap gap-2 mb-3">
                         {attribute.values.map((value) => (
-                          <span key={value} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100">
-                            {attribute.name === 'Couleur' && (
-                              <span 
+                          <span key={value.id} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100">
+                            {attribute.name === 'Couleur' && value.hex && (
+                              <span
                                 className="w-3 h-3 rounded-full mr-1.5"
-                                style={{ 
-                                  backgroundColor: PREDEFINED_COLORS.find(c => c.name === value)?.hex || value 
-                                }}
+                                style={{ backgroundColor: value.hex }}
                               />
                             )}
-                            {value}
+                            {value.value}
                             <button
                               type="button"
-                              onClick={() => removeAttributeValue(attrIndex, value)}
+                              onClick={() => removeAttributeValue(attribute.id, value.value)}
                               className="ml-1.5 text-gray-400 hover:text-gray-600"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -504,7 +544,15 @@ const CreateProductPage: React.FC = () => {
                           type="text"
                           placeholder={`Ajouter ${attribute.name.toLowerCase()}`}
                           className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                          value={attribute.name === 'Couleur' ? colorSearchTerm : attribute.name === 'Taille' ? sizeSearchTerm : ''}
+                          value={
+                            attribute.name === 'Couleur'
+                              ? colorSearchTerm
+                              : attribute.name === 'Taille'
+                                ? sizeSearchTerm
+                                : attribute.name === 'Poids'
+                                  ? weightSearchTerm
+                                  : ''
+                          }
                           onChange={(e) => {
                             if (attribute.name === 'Couleur') {
                               setColorSearchTerm(e.target.value);
@@ -512,39 +560,43 @@ const CreateProductPage: React.FC = () => {
                             } else if (attribute.name === 'Taille') {
                               setSizeSearchTerm(e.target.value);
                               setShowSizeSuggestions(true);
+                            } else if (attribute.name === 'Poids') {
+                              setWeightSearchTerm(e.target.value);
+                              setShowWeightSuggestions(true);
                             }
                           }}
                           onFocus={() => {
                             if (attribute.name === 'Couleur') setShowColorSuggestions(true);
                             if (attribute.name === 'Taille') setShowSizeSuggestions(true);
+                            if (attribute.name === 'Poids') setShowWeightSuggestions(true);
                           }}
                         />
-                        
+
                         {/* Suggestions pour les couleurs */}
                         {attribute.name === 'Couleur' && showColorSuggestions && (
                           <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
                             {getFilteredColors().map((color) => (
                               <button
-                                key={color.name}
+                                key={color.id}
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center"
                                 onClick={() => {
-                                  addAttributeValue(attrIndex, color.name);
+                                  addAttributeValue(attribute.id, color.value, color.id, color.hex);
                                   setColorSearchTerm('');
                                   setShowColorSuggestions(false);
                                 }}
                               >
-                                <span 
+                                <span
                                   className="w-4 h-4 rounded-full mr-2"
                                   style={{ backgroundColor: color.hex }}
                                 />
-                                {color.name}
+                                {color.value}
                               </button>
                             ))}
-                            {colorSearchTerm && !getFilteredColors().some(c => c.name.toLowerCase() === colorSearchTerm.toLowerCase()) && (
+                            {colorSearchTerm && !getFilteredColors().some(c => c.value.toLowerCase() === colorSearchTerm.toLowerCase()) && (
                               <button
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
                                 onClick={() => {
-                                  addAttributeValue(attrIndex, colorSearchTerm);
+                                  addAttributeValue(attribute.id, colorSearchTerm, undefined, colorSearchTerm);
                                   setColorSearchTerm('');
                                   setShowColorSuggestions(false);
                                 }}
@@ -563,7 +615,7 @@ const CreateProductPage: React.FC = () => {
                                 key={size}
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50"
                                 onClick={() => {
-                                  addAttributeValue(attrIndex, size);
+                                  addAttributeValue(attribute.id, size, undefined, undefined);
                                   setSizeSearchTerm('');
                                   setShowSizeSuggestions(false);
                                 }}
@@ -575,7 +627,7 @@ const CreateProductPage: React.FC = () => {
                               <button
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
                                 onClick={() => {
-                                  addAttributeValue(attrIndex, sizeSearchTerm.toUpperCase());
+                                  addAttributeValue(attribute.id, sizeSearchTerm.toUpperCase(), undefined, undefined);
                                   setSizeSearchTerm('');
                                   setShowSizeSuggestions(false);
                                 }}
@@ -586,16 +638,50 @@ const CreateProductPage: React.FC = () => {
                           </div>
                         )}
 
+                        {/* Suggestions pour les poids */}
+                        {attribute.name === 'Poids' && showWeightSuggestions && (
+                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                            {getFilteredWeights().map((weight) => (
+                              <button
+                                key={weight}
+                                className="w-full px-3 py-2 text-left hover:bg-gray-50"
+                                onClick={() => {
+                                  addAttributeValue(attribute.id, weight, undefined, undefined);
+                                  setWeightSearchTerm('');
+                                  setShowWeightSuggestions(false);
+                                }}
+                              >
+                                {weight}
+                              </button>
+                            ))}
+                            {weightSearchTerm && !getFilteredWeights().some(w => w.toLowerCase() === weightSearchTerm.toLowerCase()) && (
+                              <button
+                                className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
+                                onClick={() => {
+                                  addAttributeValue(attribute.id, weightSearchTerm, undefined, undefined);
+                                  setWeightSearchTerm('');
+                                  setShowWeightSuggestions(false);
+                                }}
+                              >
+                                + Créer "{weightSearchTerm}"
+                              </button>
+                            )}
+                          </div>
+                        )}
+
                         <button
                           type="button"
                           className="px-3 py-1.5 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm"
                           onClick={() => {
                             if (attribute.name === 'Couleur' && colorSearchTerm) {
-                              addAttributeValue(attrIndex, colorSearchTerm);
+                              addAttributeValue(attribute.id, colorSearchTerm, undefined, colorSearchTerm);
                               setColorSearchTerm('');
                             } else if (attribute.name === 'Taille' && sizeSearchTerm) {
-                              addAttributeValue(attrIndex, sizeSearchTerm.toUpperCase());
+                              addAttributeValue(attribute.id, sizeSearchTerm.toUpperCase(), undefined, undefined);
                               setSizeSearchTerm('');
+                            } else if (attribute.name === 'Poids' && weightSearchTerm) {
+                              addAttributeValue(attribute.id, weightSearchTerm, undefined, undefined);
+                              setWeightSearchTerm('');
                             }
                           }}
                         >
@@ -650,21 +736,6 @@ const CreateProductPage: React.FC = () => {
                               }}
                               className="w-full px-3 py-1.5 text-sm border rounded-lg"
                               placeholder="0"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs text-gray-500 mb-1">Référence SKU</label>
-                            <input
-                              type="text"
-                              value={variant.sku}
-                              onChange={(e) => {
-                                const newVariants = variants.map((v) =>
-                                  v.id === variant.id ? { ...v, sku: e.target.value } : v
-                                );
-                                setVariants(newVariants);
-                              }}
-                              className="w-full px-3 py-1.5 text-sm border rounded-lg"
-                              placeholder="REF-001"
                             />
                           </div>
                         </div>
