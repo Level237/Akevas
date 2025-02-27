@@ -11,18 +11,23 @@ import {
   Lock,
   ChevronUp,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetProductByUrlQuery } from '@/services/guardService';
 import { Variant } from '@/types/products';
+
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedTab, setSelectedTab] = useState('description');
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   console.log(product)
 
@@ -58,6 +63,53 @@ const ProductDetailPage: React.FC = () => {
 
   // Get current product information
   const currentInfo = getCurrentProductInfo();
+
+  // Modifier le gestionnaire de sélection de variant
+  const handleVariantSelect = (variant: Variant) => {
+    setSelectedVariant(variant);
+    // Trouver l'index de l'image du variant dans la liste complète des images
+    const allImages = getAllImages();
+    const variantImageIndex = allImages.findIndex(img => img.path === variant.image);
+    if (variantImageIndex !== -1) {
+      setSelectedImage(variantImageIndex);
+    }
+  };
+
+  // Modifier le gestionnaire de clic sur l'image principale
+  const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Gestion du zoom
+    if (isZoomed) {
+      e.stopPropagation();
+      setIsZoomed(false);
+      return;
+    }
+
+    // Si on est sur l'image principale, réinitialiser les informations du produit
+    const allImages = getAllImages();
+    if (allImages[selectedImage]?.path === product?.product_profile) {
+      setSelectedVariant(null);
+      setSelectedImage(0); // Retour à la première image
+    }
+  };
+
+  // Fonction pour gérer la navigation des images
+  const navigateImage = (direction: 'next' | 'prev') => {
+    const allImages = getAllImages();
+    if (direction === 'next') {
+      setSelectedImage((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+    } else {
+      setSelectedImage((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+    }
+  };
+
+  // Fonction pour gérer le zoom
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isZoomed) return;
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setMousePosition({ x, y });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,7 +154,7 @@ const ProductDetailPage: React.FC = () => {
                         {getAllImages().map((image, idx) => (
                           <button
                             key={idx}
-                            onClick={() => setSelectedImage(idx)}
+                            onClick={() => handleImageClick(idx)}
                             onMouseEnter={() => setSelectedImage(idx)}
                             className={`h-14 w-14 rounded-lg overflow-hidden border-2 transition-all duration-200
                               ${selectedImage === idx
@@ -116,6 +168,7 @@ const ProductDetailPage: React.FC = () => {
                               src={image.path}
                               alt={`${product.product_name} ${idx + 1}`}
                               className="w-full h-full object-cover"
+                              title={image.path === product?.product_profile ? "Image principale du produit" : ""}
                             />
                           </button>
                         ))}
@@ -135,17 +188,62 @@ const ProductDetailPage: React.FC = () => {
 
                   </div>
 
-                  {/* Main image display */}
-                  <div className="w-[60rem] bg-black rounded-lg overflow-hidden mb-4">
-                    <motion.img
-                      key={selectedImage}
-                      src={getAllImages()[selectedImage]?.path || product.product_profile}
-                      alt={product.product_name}
+                  {/* Main image display avec zoom et navigation */}
+                  <div 
+                    className="relative w-[60rem] bg-black rounded-lg overflow-hidden mb-4 group"
+                    onMouseEnter={() => setIsZoomed(true)}
+                    onMouseLeave={() => setIsZoomed(false)}
+                    onMouseMove={handleMouseMove}
+                    onClick={handleImageClick}
+                  >
+                    <motion.div
+                      className="relative w-full h-96"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
-                      className="w-96 h-96 object-cover"
-                    />
+                    >
+                      <img
+                        src={getAllImages()[selectedImage]?.path || product.product_profile}
+                        alt={product.product_name}
+                        className={`w-full h-full object-cover transition-transform duration-200 ${
+                          isZoomed ? 'scale-150' : 'scale-100'
+                        }`}
+                        style={
+                          isZoomed
+                            ? {
+                                transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
+                              }
+                            : undefined
+                        }
+                      />
+                    </motion.div>
+
+                    {/* Navigation buttons */}
+                    <div className="absolute inset-0 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateImage('prev');
+                        }}
+                        className="p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-colors"
+                      >
+                        <ChevronLeft className="w-6 h-6 text-gray-800" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateImage('next');
+                        }}
+                        className="p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-colors"
+                      >
+                        <ChevronRight className="w-6 h-6 text-gray-800" />
+                      </button>
+                    </div>
+
+                    {/* Indicateur de zoom */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      {isZoomed ? 'Cliquez pour dézoomer' : 'Survolez pour zoomer'}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -170,7 +268,7 @@ const ProductDetailPage: React.FC = () => {
                     {currentInfo.price} FCFA
                   </span>
                   {/* Description courte */}
-                  <p className="text-gray-600 line-clamp-3">{product.product_description}</p>
+                  <p className="text-gray-800 font-bold line-clamp-3">{product.product_description}</p>
 
                   {/* Prix et réduction avec design modernisé */}
                   <div className=" p-4 rounded-xl">
@@ -208,7 +306,7 @@ const ProductDetailPage: React.FC = () => {
                         {product.variants.map((variant: Variant) => (
                           <button
                             key={variant.id}
-                            onClick={() => setSelectedVariant(variant)}
+                            onClick={() => handleVariantSelect(variant)}
                             className={`flex items-center gap-2 p-2 rounded-lg border transition-all
                               ${selectedVariant?.id === variant.id
                                 ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20 bg-[#ed7e0f]/5'
@@ -263,23 +361,7 @@ const ProductDetailPage: React.FC = () => {
                 </div>
 
 
-                {/* Livraison et garantie */}
-                <div className="grid grid-cols-2 gap-6 pt-6 border-t">
-                  <div className="flex items-start gap-3">
-                    <Truck className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-gray-900">Livraison gratuite</p>
-                      <p className="text-sm text-gray-500">Livraison estimée : 3-5 jours ouvrés</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 text-[#ed7e0f] flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-gray-900">Garantie premium</p>
-                      <p className="text-sm text-gray-500">30 jours satisfait ou remboursé</p>
-                    </div>
-                  </div>
-                </div>
+ 
               </div>
             </div>
 
@@ -392,7 +474,7 @@ const ProductDetailPage: React.FC = () => {
               <div className="p-8">
                 {selectedTab === 'description' && (
                   <div className="prose max-w-none">
-                    <p className="whitespace-pre-line">
+                    <p className="whitespace-pre-line font-bold">
                       {product.product_description}
                     </p>
                   </div>
