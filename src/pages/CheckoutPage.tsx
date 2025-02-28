@@ -11,6 +11,7 @@ import shoes from "../assets/shoes1.webp";
 import { ScrollRestoration } from 'react-router-dom';
 
 type PaymentMethod = 'card' | 'orange' | 'momo';
+type DeliveryOption = 'pickup' | 'localDelivery' | 'remotePickup' | 'remoteDelivery';
 
 interface DeliveryAddress {
   fullName: string;
@@ -18,6 +19,7 @@ interface DeliveryAddress {
   address: string;
   city: string;
   country: string;
+  deliveryOption: DeliveryOption;
 }
 
 const CheckoutPage: React.FC = () => {
@@ -27,7 +29,8 @@ const CheckoutPage: React.FC = () => {
     phone: '',
     address: '',
     city: '',
-    country: ''
+    country: '',
+    deliveryOption: 'pickup'
   });
 
   // Mock cart items
@@ -42,8 +45,23 @@ const CheckoutPage: React.FC = () => {
     }
   ];
 
+  // Mock data pour la démonstration
+  const productLocation = "Abidjan";
+  const deliveryFees = {
+    pickup: 0,
+    localDelivery: 1500,
+    remotePickup: 2500,
+    remoteDelivery: 3500
+  };
+
+  const isLocalOrder = address.city.toLowerCase() === productLocation.toLowerCase();
+
+  const getDeliveryFee = () => {
+    return deliveryFees[address.deliveryOption];
+  };
+
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = 0;
+  const shipping = getDeliveryFee();
   const total = subtotal + shipping;
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,28 +86,89 @@ const CheckoutPage: React.FC = () => {
           <div className="lg:col-span-8">
             {/* Adresse de livraison */}
             <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-              <h2 className="text-xl font-semibold mb-6">Adresse de livraison</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
+              <h2 className="text-xl font-semibold mb-6">Options de livraison</h2>
+
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 mb-2">
+                  Localisation du produit: <span className="font-semibold">{productLocation}</span>
+                </p>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="pickup"
+                    name="deliveryOption"
+                    value="pickup"
+                    checked={address.deliveryOption === 'pickup'}
+                    onChange={(e) => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
+                    className="mr-2"
+                    disabled={!isLocalOrder}
+                  />
+                  <label htmlFor="pickup" className={`${!isLocalOrder ? 'text-gray-400' : ''}`}>
+                    Récupérer en magasin (0 XAF)
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="localDelivery"
+                    name="deliveryOption"
+                    value="localDelivery"
+                    checked={address.deliveryOption === 'localDelivery'}
+                    onChange={(e) => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
+                    className="mr-2"
+                    disabled={!isLocalOrder}
+                  />
+                  <label htmlFor="localDelivery" className={`${!isLocalOrder ? 'text-gray-400' : ''}`}>
+                    Livraison en ville (1 500 XAF)
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="remotePickup"
+                    name="deliveryOption"
+                    value="remotePickup"
+                    checked={address.deliveryOption === 'remotePickup'}
+                    onChange={(e) => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
+                    className="mr-2"
+                    disabled={isLocalOrder}
+                  />
+                  <label htmlFor="remotePickup" className={`${isLocalOrder ? 'text-gray-400' : ''}`}>
+                    Expédition au magasin de votre ville (2 500 XAF)
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="remoteDelivery"
+                    name="deliveryOption"
+                    value="remoteDelivery"
+                    checked={address.deliveryOption === 'remoteDelivery'}
+                    onChange={(e) => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
+                    className="mr-2"
+                    disabled={isLocalOrder}
+                  />
+                  <label htmlFor="remoteDelivery" className={`${isLocalOrder ? 'text-gray-400' : ''}`}>
+                    Expédition et livraison à domicile (3 500 XAF)
+                  </label>
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div className="col-span-2 sm:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nom complet
+                    Nom et prénom
                   </label>
                   <input
                     type="text"
                     name="fullName"
                     value={address.fullName}
-                    onChange={handleAddressChange}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                  />
-                </div>
-                <div className="col-span-2 sm:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Téléphone
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={address.phone}
                     onChange={handleAddressChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                   />
@@ -124,16 +203,15 @@ const CheckoutPage: React.FC = () => {
             {/* Méthodes de paiement */}
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h2 className="text-xl font-semibold mb-6">Méthode de paiement</h2>
-              
+
               <div className="space-y-4">
                 {/* Carte bancaire */}
                 <div
                   onClick={() => setSelectedPayment('card')}
-                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${
-                    selectedPayment === 'card'
-                      ? 'border-[#ed7e0f] bg-orange-50'
-                      : 'hover:border-gray-300'
-                  }`}
+                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${selectedPayment === 'card'
+                    ? 'border-[#ed7e0f] bg-orange-50'
+                    : 'hover:border-gray-300'
+                    }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -152,11 +230,10 @@ const CheckoutPage: React.FC = () => {
                 {/* Orange Money */}
                 <div
                   onClick={() => setSelectedPayment('orange')}
-                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${
-                    selectedPayment === 'orange'
-                      ? 'border-[#ed7e0f] bg-orange-50'
-                      : 'hover:border-gray-300'
-                  }`}
+                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${selectedPayment === 'orange'
+                    ? 'border-[#ed7e0f] bg-orange-50'
+                    : 'hover:border-gray-300'
+                    }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -175,11 +252,10 @@ const CheckoutPage: React.FC = () => {
                 {/* Mobile Money */}
                 <div
                   onClick={() => setSelectedPayment('momo')}
-                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${
-                    selectedPayment === 'momo'
-                      ? 'border-[#ed7e0f] bg-orange-50'
-                      : 'hover:border-gray-300'
-                  }`}
+                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${selectedPayment === 'momo'
+                    ? 'border-[#ed7e0f] bg-orange-50'
+                    : 'hover:border-gray-300'
+                    }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">

@@ -1,13 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Minus, X, ArrowLeft, Truck, Shield, CreditCard,ShoppingCart } from 'lucide-react';
+import { Plus, Minus, X, ArrowLeft, Truck, Shield, CreditCard, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';
-import { useSelector,useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '@/store';  
-import { removeItem,updateQuantity } from '@/store/cartSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppDispatch, RootState } from '@/store';
+import { removeItem, updateQuantity } from '@/store/cartSlice';
 import { Product } from '@/types/products';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
@@ -19,20 +19,20 @@ const CartPage: React.FC = () => {
 
 
 
-  const totalPrice=useSelector((state:RootState)=>state.cart.totalPrice)
-  const dispatch=useDispatch<AppDispatch>()
+  const totalPrice = useSelector((state: RootState) => state.cart.totalPrice)
+  const dispatch = useDispatch<AppDispatch>()
 
-  const handleRemoveItem=(product:Product)=>{
-    dispatch(removeItem({product}))
+  const handleRemoveItem = (product: Product) => {
+    dispatch(removeItem({ product }))
   }
-  const handleUpdateQuantity=(product:Product,quantity:number)=>{
-    dispatch(updateQuantity({product,quantity}))
+  const handleUpdateQuantity = (product: Product, quantity: number) => {
+    dispatch(updateQuantity({ product, quantity }))
   }
-  const cartItems=useSelector((state:RootState)=>state.cart.cartItems)
+  const cartItems = useSelector((state: RootState) => state.cart.cartItems)
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       <Header />
-      <MobileNav/>
+      <MobileNav />
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <Link
@@ -103,7 +103,7 @@ const CartPage: React.FC = () => {
                           </button>
                         </div>
 
-                       
+
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center border rounded-lg max-sm:w-20">
@@ -189,10 +189,7 @@ const CartPage: React.FC = () => {
                     <span className="text-gray-500">Sous-total</span>
                     <span className="font-medium">{totalPrice.toFixed(2)} FCFA</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Livraison</span>
-                    <span className="font-medium text-green-600">Gratuite</span>
-                  </div>
+
                   <div className="border-t pt-4">
                     <div className="flex justify-between">
                       <span className="text-lg font-medium">Total</span>
@@ -200,11 +197,11 @@ const CartPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                 <AsyncLink to="/checkout" >
-                <button   className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
-                  Procéder au paiement
-                </button>
-               </AsyncLink>
+                <AsyncLink to="/checkout" >
+                  <button className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
+                    Procéder au paiement
+                  </button>
+                </AsyncLink>
                 <p className="mt-4 text-sm text-gray-500 text-center">
                   Paiement 100% sécurisé
                 </p>
