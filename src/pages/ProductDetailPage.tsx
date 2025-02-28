@@ -16,7 +16,6 @@ import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetProductByUrlQuery, useGetSimilarProductsQuery } from '@/services/guardService';
 import { Variant } from '@/types/products';
-import AsyncLink from '@/components/ui/AsyncLink';
 import SimilarProducts from '@/components/products/SimilarProducts';
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
@@ -28,7 +27,7 @@ const ProductDetailPage: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const { data: { data: similarProducts } = {}, isLoading: isLoadingSimilarProducts } = useGetSimilarProductsQuery(product?.id);
-  console.log(similarProducts)
+
 
   // Helper function to get all images
   const getAllImages = () => {
@@ -123,45 +122,45 @@ const ProductDetailPage: React.FC = () => {
         </nav>
 
         {!isLoading && product && (
-          <div className="grid grid-cols-1 sticky lg:grid-cols-12 gap-2">
+          <div className="grid grid-cols-1  sticky lg:grid-cols-12 gap-2">
 
             {/* Colonne gauche - Images */}
             <div className="lg:col-span-4">
               <div className="sticky top-8">
-                <div className="bg-white flex items-start gap-4 rounded-2xl shadow-sm p-4">
-                  <div className="flex flex-col w-56 gap-4 relative">
-                    {/* Navigation buttons */}
+                <div className="bg-white flex flex-col-reverse lg:flex-row items-start gap-4 rounded-2xl shadow-sm p-4">
+                  {/* Barre d'images miniatures */}
+                  <div className="flex flex-col w-full lg:w-56 gap-4 relative">
+                    {/* Navigation buttons - Masqués sur mobile */}
                     <button
                       onClick={() => {
                         const container = document.getElementById('images-container');
-                        if (container) container.scrollBy({ top: -(6 * 80), behavior: 'smooth' });
+                        if (container) container.scrollBy({ left: -80, behavior: 'smooth' });
                       }}
-                      className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-50 transition-colors"
+                      className="hidden lg:block absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-50 transition-colors"
                     >
                       <ChevronUp className="w-4 h-4 text-gray-600" />
                     </button>
 
                     <div
                       id="images-container"
-                      className="flex flex-col h-[480px] overflow-hidden relative scroll-smooth"
+                      className="flex lg:flex-col overflow-x-auto lg:overflow-y-auto lg:h-[480px] relative scroll-smooth"
                       style={{
-                        scrollSnapType: 'y mandatory',
+                        scrollSnapType: 'x mandatory lg:y mandatory',
                         scrollPadding: '0 1rem',
                       }}
                     >
-                      <div className="grid grid-cols-1 gap-3 px-1">
+                      <div className="flex lg:flex-col gap-2 px-1">
                         {getAllImages().map((image, idx) => (
                           <button
                             key={idx}
                             onClick={() => handleImageClick(idx)}
                             onMouseEnter={() => setSelectedImage(idx)}
-                            className={`h-14 w-14 rounded-lg overflow-hidden border-2 transition-all duration-200
+                            className={`flex-shrink-0 h-14 w-14 rounded-lg overflow-hidden border-2 transition-all duration-200
                               ${selectedImage === idx
                                 ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20'
                                 : 'border-transparent hover:border-gray-200'
                               }
                               scroll-snap-align-start`}
-                            style={{ scrollSnapAlign: 'start' }}
                           >
                             <img
                               src={image.path}
@@ -177,26 +176,24 @@ const ProductDetailPage: React.FC = () => {
                     <button
                       onClick={() => {
                         const container = document.getElementById('images-container');
-                        if (container) container.scrollBy({ top: 6 * 80, behavior: 'smooth' });
+                        if (container) container.scrollBy({ left: 80, behavior: 'smooth' });
                       }}
-                      className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-50 transition-colors"
+                      className="hidden lg:block absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-50 transition-colors"
                     >
                       <ChevronDown className="w-4 h-4 text-gray-600" />
                     </button>
-
-
                   </div>
 
-                  {/* Main image display avec zoom et navigation */}
+                  {/* Image principale */}
                   <div
-                    className="relative w-[60rem] bg-black rounded-lg overflow-hidden mb-4 group"
+                    className="relative w-full lg:w-[60rem] bg-black rounded-lg overflow-hidden mb-4 group"
                     onMouseEnter={() => setIsZoomed(true)}
                     onMouseLeave={() => setIsZoomed(false)}
                     onMouseMove={handleMouseMove}
                     onClick={handleImageClick}
                   >
                     <motion.div
-                      className="relative w-full h-96"
+                      className="relative w-full h-[300px] lg:h-96"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
@@ -204,8 +201,7 @@ const ProductDetailPage: React.FC = () => {
                       <img
                         src={getAllImages()[selectedImage]?.path || product.product_profile}
                         alt={product.product_name}
-                        className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-100'
-                          }`}
+                        className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-100'}`}
                         style={
                           isZoomed
                             ? {
@@ -267,35 +263,6 @@ const ProductDetailPage: React.FC = () => {
                   </span>
                   {/* Description courte */}
                   <p className="text-gray-800 font-bold line-clamp-3">{product.product_description}</p>
-
-                  {/* Prix et réduction avec design modernisé */}
-                  <div className=" p-4 rounded-xl">
-                    <div className="flex items-baseline gap-2">
-
-                      {product.original_price && (
-                        <>
-                          <span className="text-lg text-gray-500 line-through">
-                            {product.original_price} FCFA
-                          </span>
-                          <span className="px-2 py-1 text-sm font-bold text-white bg-red-500 rounded">
-                            -{Math.round((1 - product.product_price / product.original_price) * 100)}%
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Statistiques */}
-                  <div className="flex items-center gap-6 py-4 border-b">
-                    <div className="flex items-center">
-                      <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                      <span className="ml-1 font-medium">4.8</span>
-                      <span className="ml-1 text-gray-500">(128 avis)</span>
-                    </div>
-                    <div className="text-gray-500">1250+ vendus</div>
-                    <div className="text-gray-500">Code: {product.shop_key}</div>
-                  </div>
-
                   {/* Variants */}
                   {product?.variants && product.variants.length > 0 && (
                     <div className="space-y-4">
@@ -324,6 +291,35 @@ const ProductDetailPage: React.FC = () => {
                       </div>
                     </div>
                   )}
+                  {/* Prix et réduction avec design modernisé */}
+                  <div className=" p-4 rounded-xl">
+                    <div className="flex items-baseline gap-2">
+
+                      {product.original_price && (
+                        <>
+                          <span className="text-lg text-gray-500 line-through">
+                            {product.original_price} FCFA
+                          </span>
+                          <span className="px-2 py-1 text-sm font-bold text-white bg-red-500 rounded">
+                            -{Math.round((1 - product.product_price / product.original_price) * 100)}%
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Statistiques */}
+                  <div className="flex items-center gap-6 py-4 border-b">
+                    <div className="flex items-center">
+                      <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                      <span className="ml-1 font-medium">4.8</span>
+                      <span className="ml-1 text-gray-500">(128 avis)</span>
+                    </div>
+                    <div className="text-gray-500">1250+ vendus</div>
+                    <div className="text-gray-500">Code: {product.shop_key}</div>
+                  </div>
+
+
 
                   {/* Quantité et Stock */}
                   <div className="flex items-center justify-between py-4 border-t border-b">
