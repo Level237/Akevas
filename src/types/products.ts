@@ -14,6 +14,7 @@ export interface Product {
     shop_id: string,
     product_images: Image[],
     product_categories: Category[],
+    residence: string,
     product_attributes: string[] | null,
     product_variants: string[] | null,
     variants: Variant[] | null,

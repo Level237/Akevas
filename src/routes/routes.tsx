@@ -36,7 +36,7 @@ import AdminProductListPage from "@/pages/admin/products/ProductPage";
 import AdminShopDetailPage from "@/pages/admin/shops/ShopDetailPage";
 import AdminShopPage from "@/pages/admin/shops/ShopPage";
 import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
-import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage"; 
+import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage";
 import { GuardRoute } from "@/pages/auth/guard-route";
 import SellerRootDashboard from "@/components/Layouts/SellerRootDashboard";
 import StoreEditorPage from "@/pages/seller/StoreEditorPage";
@@ -58,7 +58,7 @@ export const routes = createBrowserRouter([
   },
   {
     path: '/register',
-    element:<GuardRoute><RegisterPage /></GuardRoute>
+    element: <GuardRoute><RegisterPage /></GuardRoute>
   },
   {
     path: '/delivery/register',
@@ -109,33 +109,33 @@ export const routes = createBrowserRouter([
     element: <StoreGenerationPage />
   },
   {
-    path:'/seller-registration/identity-info',
+    path: '/seller-registration/identity-info',
     element: <IdentityInfoPage />
   },
   {
-    element:<SellerRootDashboard><PrivateRoute/></SellerRootDashboard>,
-    children:[
-{
-    path: '/seller/dashboard',
-    element: <DashboardPage />
-  },
-  {
-    path: '/seller/create-product',
-    element: <CreateProductPage />
-  },
-  {
-    path: '/seller/pro',
-    element: <StoreBoostPage />
-  },
-  {
+    element: <SellerRootDashboard><PrivateRoute /></SellerRootDashboard>,
+    children: [
+      {
+        path: '/seller/dashboard',
+        element: <DashboardPage />
+      },
+      {
+        path: '/seller/create-product',
+        element: <CreateProductPage />
+      },
+      {
+        path: '/seller/pro',
+        element: <StoreBoostPage />
+      },
+      {
 
-    path: '/shop/editor',
-    element: <StoreEditorPage />
-  },
-  {
-    path: '/seller/products',
-    element: <DashboardProductListPage  />
-  }
+        path: '/shop/editor',
+        element: <StoreEditorPage />
+      },
+      {
+        path: '/seller/products',
+        element: <DashboardProductListPage />
+      }
     ]
   },
   {
@@ -143,8 +143,8 @@ export const routes = createBrowserRouter([
     element: <SellerGuidePage />
   },
   {
-    path:'/delivery/guide',
-    element:<DeliveryGuidePage/>
+    path: '/delivery/guide',
+    element: <DeliveryGuidePage />
   },
   {
     path: '/products',
@@ -160,47 +160,47 @@ export const routes = createBrowserRouter([
   },
   {
     path: '/checkout',
-    element: <CheckoutPage />
+    element: <><CheckoutPage /><PrivateRoute /></>
   },
   {
     path: '/shop/:id',
     element: <StorePage />
   },
   {
-    path:"/",
-    element:<AdminRootDashboard><PrivateRoute/></AdminRootDashboard>,
-    children:[
+    path: "/",
+    element: <AdminRootDashboard><PrivateRoute /></AdminRootDashboard>,
+    children: [
       {
-        path:"admin/dashboard",
-        element:<DashboardAdminPage/>
-      },{
-        path:"admin/products",
-        element:<AdminProductListPage/>
-      },{
-        path:"admin/shops/:id",
-        element:<AdminShopDetailPage/>
-      },{
-        path:"admin/shops",
-        element:<AdminShopPage/>
-      },{
-        path:"admin/delivery",
-        element:<ListDeveryPage/>
+        path: "admin/dashboard",
+        element: <DashboardAdminPage />
+      }, {
+        path: "admin/products",
+        element: <AdminProductListPage />
+      }, {
+        path: "admin/shops/:id",
+        element: <AdminShopDetailPage />
+      }, {
+        path: "admin/shops",
+        element: <AdminShopPage />
+      }, {
+        path: "admin/delivery",
+        element: <ListDeveryPage />
       },
       {
-        path:"admin/delivery/:id",
-        element:<DeliveryDetailPage/>
+        path: "admin/delivery/:id",
+        element: <DeliveryDetailPage />
       }
     ]
   },
   {
     path: '/',
-    element: <DeliveryRootDashboard><PrivateRoute/></DeliveryRootDashboard>,
-    children:[
+    element: <DeliveryRootDashboard><PrivateRoute /></DeliveryRootDashboard>,
+    children: [
       {
         path: 'delivery/dashboard',
         element: <DeliveryDashboard />
-      },{
-        path:'delivery/orders',
+      }, {
+        path: 'delivery/orders',
         element: <DeliveriesPage />
       },
     ]
@@ -208,8 +208,8 @@ export const routes = createBrowserRouter([
   {
     path: '/',
     element: <Homepage />,
-    
-  },{
+
+  }, {
     path: 'shops',
     element: <ShopsPage />
   },
@@ -218,20 +218,20 @@ export const routes = createBrowserRouter([
     element: <NotificationsPage />
   },
   {
-    path:'/authenticate',
-    element:<AuthenticatePage/>
+    path: '/authenticate',
+    element: <AuthenticatePage />
   },
   {
-    path:'/home',
-    element:<CurrentHomeByGenderPage/>
+    path: '/home',
+    element: <CurrentHomeByGenderPage />
   },
   {
-    path:'/user/dashboard',
-    element:<UserRootDashboard><PrivateRoute/></UserRootDashboard>,
-    children:[
+    path: '/user/dashboard',
+    element: <UserRootDashboard><PrivateRoute /></UserRootDashboard>,
+    children: [
       {
-        path:'/user/dashboard',
-        element:<UserDashboardPage/>
+        path: '/user/dashboard',
+        element: <UserDashboardPage />
       }
     ]
   }

@@ -139,7 +139,7 @@ const Header = () => {
     });
   }, [userDataAuth?.role_id, seller?.id, userDataAuth?.id]);
 
-  //console.log(userData)
+  console.log(userData)
   // Optimiser les effets
   useEffect(() => {
     setUiState(prev => ({ ...prev, isMenuOpen: false, isSearchOpen: false }));

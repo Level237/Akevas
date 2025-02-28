@@ -25,7 +25,7 @@ interface ActionButtonsProps {
   product: Product;
 }
 
-export default function ProductModal({product,isOpen,onClose}:{product:Product,isOpen:boolean,onClose:()=>void}) {
+export default function ProductModal({ product, isOpen, onClose }: { product: Product, isOpen: boolean, onClose: () => void }) {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,9 +44,9 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
   const handleAddToCart = useCallback(async () => {
     setIsLoading(true);
     dispatch(addItem({ product, quantity }));
-    
+
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     setIsLoading(false);
     setShowCartButton(true);
   }, [dispatch, product, quantity]);
@@ -66,11 +66,11 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
           alt={product.product_name}
           className="w-full h-full object-cover"
         />
-        
-          <span className="absolute top-4 left-4 px-3 py-1 bg-green-500 text-white text-sm font-medium rounded-full">
-            Nouveau
-          </span>
-        
+
+        <span className="absolute top-4 left-4 px-3 py-1 bg-green-500 text-white text-sm font-medium rounded-full">
+          Nouveau
+        </span>
+
       </div>
       <div className="grid grid-cols-4 gap-3">
         <button
@@ -102,84 +102,84 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
     </div>
   ));
 
-  const ActionButtons = memo(({ 
-    quantity, 
-    isLoading, 
+  const ActionButtons = memo(({
+    quantity,
+    isLoading,
     showCartButton,
     onQuantityDecrease,
     onQuantityIncrease,
     onAddToCart,
-    product 
+    product
   }: ActionButtonsProps) => (
-  <div className="space-y-4">
-    {/* Quantité et Acheter maintenant */}
-    <div className="flex items-center gap-3">
-      <div className="flex items-center border rounded-lg bg-gray-50">
-        <button
-          onClick={onQuantityDecrease}
-          className="p-3 text-gray-600 hover:text-gray-900 transition-colors"
-          disabled={isLoading}
-        >
-          <Minus className="w-4 h-4" />
-        </button>
-        <span className="w-12 text-center font-medium">{quantity}</span>
-        <button
-          onClick={onQuantityIncrease}
-          className="p-3 text-gray-600 hover:text-gray-900 transition-colors"
-          disabled={isLoading}
-        >
-          <Plus className="w-4 h-4" />
-        </button>
+    <div className="space-y-4">
+      {/* Quantité et Acheter maintenant */}
+      <div className="flex items-center gap-3">
+        <div className="flex items-center border rounded-lg bg-gray-50">
+          <button
+            onClick={onQuantityDecrease}
+            className="p-3 text-gray-600 hover:text-gray-900 transition-colors"
+            disabled={isLoading}
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+          <span className="w-12 text-center font-medium">{quantity}</span>
+          <button
+            onClick={onQuantityIncrease}
+            className="p-3 text-gray-600 hover:text-gray-900 transition-colors"
+            disabled={isLoading}
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
       </div>
-    </div>
 
-    {/* Boutons d'action modernisés */}
-    <div className="flex flex-col gap-3">
-      <button
-        onClick={onAddToCart}
-        className="w-full bg-[#6e0a13] text-white px-6 py-3.5 rounded-xl font-medium transition-all transform active:scale-95 hover:bg-[#5d0810] flex items-center justify-center gap-2"
-      >
-        <CreditCard className="w-5 h-5" />
-        Acheter maintenant
-      </button>
-
-      {!showCartButton ? (
+      {/* Boutons d'action modernisés */}
+      <div className="flex flex-col gap-3">
         <button
           onClick={onAddToCart}
-          disabled={isLoading}
-          className="w-full bg-white border-2 border-[#ed7e0f] text-[#ed7e0f] px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f] hover:text-white transition-all flex items-center justify-center gap-2"
+          className="w-full bg-[#6e0a13] text-white px-6 py-3.5 rounded-xl font-medium transition-all transform active:scale-95 hover:bg-[#5d0810] flex items-center justify-center gap-2"
         >
-          {isLoading ? (
-            <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent rounded-full">
-              <span className="sr-only">Loading...</span>
-            </div>
-          ) : (
-            <>
-              <ShoppingCart className="w-5 h-5" />
-              Ajouter au panier
-            </>
-          )}
+          <CreditCard className="w-5 h-5" />
+          Acheter maintenant
         </button>
-      ) : (
-        <AsyncLink 
-          to="/cart"
-          className="w-full bg-green-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-700 transition-all flex items-center justify-center gap-2"
-        >
-          <ShoppingCart className="w-5 h-5" />
-          Voir le panier
-        </AsyncLink>
-      )}
 
-      <AsyncLink
-        to={`/produit/${product.product_url}`}
-        className="w-full bg-gray-50 text-gray-700 px-6 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 hover:bg-gray-100"
-      >
-        <Eye className="w-5 h-5" />
-        Voir le détail
-      </AsyncLink>
+        {!showCartButton ? (
+          <button
+            onClick={onAddToCart}
+            disabled={isLoading}
+            className="w-full bg-white border-2 border-[#ed7e0f] text-[#ed7e0f] px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f] hover:text-white transition-all flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent rounded-full">
+                <span className="sr-only">Loading...</span>
+              </div>
+            ) : (
+              <>
+                <ShoppingCart className="w-5 h-5" />
+                Ajouter au panier
+              </>
+            )}
+          </button>
+        ) : (
+          <AsyncLink
+            to="/cart"
+            className="w-full bg-green-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-700 transition-all flex items-center justify-center gap-2"
+          >
+            <ShoppingCart className="w-5 h-5" />
+            Voir le panier
+          </AsyncLink>
+        )}
+
+        <AsyncLink
+          to={`/produit/${product.product_url}`}
+          className="w-full bg-gray-50 text-gray-700 px-6 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 hover:bg-gray-100"
+        >
+          <Eye className="w-5 h-5" />
+          Voir le détail
+        </AsyncLink>
+      </div>
     </div>
-  </div>
-));
+  ));
 
   return (
     <AnimatePresence>
@@ -194,12 +194,12 @@ export default function ProductModal({product,isOpen,onClose}:{product:Product,i
         >
           <div className="min-h-screen px-4 max-sm:px-0 text-center">
             <div className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" />
-            
+
             <div className="inline-block w-full max-w-5xl my-8 text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl overflow-hidden"
-                 onClick={e => e.stopPropagation()}>
+              onClick={e => e.stopPropagation()}>
               <div className="relative grid max-sm:grid-cols-1 grid-cols-[1fr,1.2fr] gap-0">
                 {/* Colonne gauche - Images */}
-                <ImageGallery 
+                <ImageGallery
                   product={product}
                   selectedImage={selectedImage}
                   onImageSelect={setSelectedImage}

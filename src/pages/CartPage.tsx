@@ -9,10 +9,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import { removeItem, updateQuantity } from '@/store/cartSlice';
 import { Product } from '@/types/products';
+import { redirectToLogin } from '@/lib/redirectToLogin';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
-
-
+  const token = useSelector((state: RootState) => state.auth.usedToken)
 
 
 
@@ -92,7 +92,7 @@ const CartPage: React.FC = () => {
                               {item.product.product_name}
                             </h3>
                             <p className="text-sm text-gray-500">
-                              Code: 12
+                              Ville: {item.product.residence}
                             </p>
                           </div>
                           <button
@@ -197,11 +197,15 @@ const CartPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <AsyncLink to="/checkout" >
+                {token ? <AsyncLink to="/checkout" >
                   <button className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Procéder au paiement
                   </button>
-                </AsyncLink>
+                </AsyncLink> :
+                  <button onClick={() => redirectToLogin({ redirectUrl: '/checkout', productIds: cartItems.map(item => item.product.id), provideIsCard: "1" })} className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
+                    Procéder au paiement
+                  </button>
+                }
                 <p className="mt-4 text-sm text-gray-500 text-center">
                   Paiement 100% sécurisé
                 </p>

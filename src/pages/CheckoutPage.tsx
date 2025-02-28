@@ -7,8 +7,11 @@ import {
   Shield,
 } from 'lucide-react';
 import Header from '@/components/ui/header';
-import shoes from "../assets/shoes1.webp";
 import { ScrollRestoration } from 'react-router-dom';
+import { getProductIdsFromUrl } from '@/lib/getProductIdFromUrl';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { useGetUserQuery } from '@/services/auth';
 
 type PaymentMethod = 'card' | 'orange' | 'momo';
 type DeliveryOption = 'pickup' | 'localDelivery' | 'remotePickup' | 'remoteDelivery';
@@ -24,6 +27,10 @@ interface DeliveryAddress {
 
 const CheckoutPage: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('card');
+  const cartItems = useSelector((state: RootState) => state.cart.cartItems)
+  const { data: userDataAuth } = useGetUserQuery('Auth');
+  const productIds = getProductIdsFromUrl();
+  console.log(productIds);
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
     phone: '',
@@ -34,33 +41,24 @@ const CheckoutPage: React.FC = () => {
   });
 
   // Mock cart items
-  const cartItems = [
-    {
-      id: '1',
-      name: 'Figurine Collector Demon Slayer',
-      price: 129.99,
-      quantity: 2,
-      image: shoes,
-      variants: { size: '24cm' }
-    }
-  ];
+
 
   // Mock data pour la démonstration
-  const productLocation = "Abidjan";
+  const productLocation = cartItems[0].product.residence;
   const deliveryFees = {
     pickup: 0,
     localDelivery: 1500,
     remotePickup: 2500,
     remoteDelivery: 3500
   };
-
-  const isLocalOrder = address.city.toLowerCase() === productLocation.toLowerCase();
+  console.log(userDataAuth)
+  const isLocalOrder = userDataAuth?.residence?.toLowerCase() === productLocation.toLowerCase();
 
   const getDeliveryFee = () => {
     return deliveryFees[address.deliveryOption];
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + parseInt(item.product.product_price) * item.quantity, 0);
   const shipping = getDeliveryFee();
   const total = subtotal + shipping;
 
@@ -337,19 +335,19 @@ const CheckoutPage: React.FC = () => {
               {/* Articles */}
               <div className="space-y-4 mb-6">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="flex gap-4">
+                  <div key={item.product.id} className="flex gap-4">
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.product.product_profile}
+                      alt={item.product.product_name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <h3 className="text-sm font-medium">{item.name}</h3>
+                      <h3 className="text-sm font-medium">{item.product.product_name}</h3>
                       <p className="text-sm text-gray-500">
                         Quantité: {item.quantity}
                       </p>
                       <p className="text-sm font-medium">
-                        {(item.price * item.quantity).toFixed(2)} €
+                        {(parseInt(item.product.product_price) * item.quantity).toFixed(2)} Fcfa
                       </p>
                     </div>
                   </div>
@@ -360,16 +358,16 @@ const CheckoutPage: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Sous-total</span>
-                  <span className="font-medium">{subtotal.toFixed(2)} €</span>
+                  <span className="font-medium">{subtotal.toFixed(2)} Fcfa</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Livraison</span>
-                  <span className="font-medium text-green-600">Gratuite</span>
+                  <span className="font-medium text-green-600">{shipping.toFixed(2)} Fcfa</span>
                 </div>
                 <div className="border-t pt-4">
                   <div className="flex justify-between">
                     <span className="text-lg font-medium">Total</span>
-                    <span className="text-lg font-bold">{total.toFixed(2)} €</span>
+                    <span className="text-lg font-bold">{total.toFixed(2)} Fcfa</span>
                   </div>
                 </div>
               </div>
