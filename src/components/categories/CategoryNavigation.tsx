@@ -25,11 +25,11 @@ const LoadingSkeleton = () => (
 );
 
 // Composant pour le menu déroulant des catégories
-const CategoryDropdown = React.memo(({ 
-  category, 
-  isActive, 
-  categoriesChildren, 
-  isLoadingChildren 
+const CategoryDropdown = React.memo(({
+  category,
+  isActive,
+  categoriesChildren,
+  isLoadingChildren
 }: {
   category: Category;
   isActive: boolean;
@@ -54,14 +54,14 @@ const CategoryDropdown = React.memo(({
               if (key === 'sans_genre') {
                 // Grouper les catégories par parent_id
                 const parentCategories = categories.filter(cat => cat.children && cat.children.length > 0);
-                
+
                 return parentCategories.map(parentCat => (
                   <div key={parentCat.id} className="space-y-4">
                     <h3 className="font-medium text-lg">{parentCat.category_name}</h3>
                     <ul className="space-y-2">
                       {parentCat.children.map((childCat: any) => (
                         <li key={childCat.id}>
-                          <AsyncLink 
+                          <AsyncLink
                             to={`/category/${childCat.category_url}`}
                             className="text-sm text-gray-600 hover:text-orange-500"
                           >
@@ -73,7 +73,7 @@ const CategoryDropdown = React.memo(({
                   </div>
                 ));
               }
-              
+
               // Comportement existant pour les autres cas
               return (
                 <div key={key} className="space-y-4">
@@ -81,7 +81,7 @@ const CategoryDropdown = React.memo(({
                   <ul className="space-y-2">
                     {categories.map((item: any) => (
                       <li key={item.id}>
-                        <AsyncLink 
+                        <AsyncLink
                           to={`/category/${item.category_url}`}
                           className="text-sm text-gray-600 hover:text-orange-500"
                         >
@@ -98,15 +98,15 @@ const CategoryDropdown = React.memo(({
           {/* Nouvelle section promotionnelle */}
           <div className="col-span-1 space-y-6">
             <div className="relative group overflow-hidden rounded-lg">
-              <img 
+              <img
                 src={category.category_profile}
-                alt={category.category_name} 
+                alt={category.category_name}
                 className="w-full h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white">
                 <h3 className="text-xl font-bold mb-2">Collection {category.category_name}</h3>
                 <p className="text-sm mb-4">Découvrez nos nouveautés</p>
-                <AsyncLink 
+                <AsyncLink
                   to={`/category/${category.category_name}`}
                   className="inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-orange-500 hover:text-white transition-colors"
                 >
@@ -119,7 +119,7 @@ const CategoryDropdown = React.memo(({
             <div className="bg-orange-50 p-4 rounded-lg">
               <h4 className="font-medium text-orange-800 mb-2">Offre Spéciale</h4>
               <p className="text-sm text-orange-700 mb-3">Jusqu'à -50% sur la nouvelle collection</p>
-              <AsyncLink 
+              <AsyncLink
                 to="/promotions"
                 className="text-sm text-orange-500 hover:text-orange-600 font-medium inline-flex items-center gap-1"
               >
@@ -139,19 +139,19 @@ CategoryDropdown.displayName = 'CategoryDropdown';
 // Composant principal optimisé
 export const CategoryNavigation = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(0);
-  
-  const { 
-    data: { data: categoriesParent } = {}, 
-    isLoading 
+
+  const {
+    data: { data: categoriesParent } = {},
+    isLoading
   } = useGetCategoriesWithParentIdNullQuery('guard', {
     refetchOnMountOrArgChange: false,
     refetchOnFocus: false,
     refetchOnReconnect: false
   });
 
-  const { 
-    data: categoriesChildren, 
-    isLoading: isLoadingChildren 
+  const {
+    data: categoriesChildren,
+    isLoading: isLoadingChildren
   } = useGetCategoriesWithParentIdQuery(activeCategory, {
     skip: !activeCategory,
     refetchOnMountOrArgChange: true,
@@ -171,7 +171,7 @@ export const CategoryNavigation = () => {
     if (!categoriesParent) return null;
     console.log(categoriesChildren);
     return Object.entries(categoriesParent).map(([key, category]) => (
-      <li 
+      <li
         key={key}
         className="relative py-4"
         onMouseEnter={() => handleMouseEnter(category.id)}
@@ -179,14 +179,13 @@ export const CategoryNavigation = () => {
       >
         <button className="flex text-sm items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
           <span>{category.category_name}</span>
-          <ChevronDown 
-            className={`h-4 w-4 transition-transform duration-200 ${
-              activeCategory === category.id ? 'rotate-180' : ''
-            }`} 
+          <ChevronDown
+            className={`h-4 w-4 transition-transform duration-200 ${activeCategory === category.id ? 'rotate-180' : ''
+              }`}
           />
         </button>
 
-        <CategoryDropdown 
+        <CategoryDropdown
           category={category}
           isActive={activeCategory === category.id}
           categoriesChildren={categoriesChildren}

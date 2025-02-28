@@ -1,4 +1,4 @@
-import { useState, useEffect,useTransition } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 
 
 
@@ -17,28 +17,27 @@ import { Shop } from '@/types/shop';
 const Homepage = () => {
   //t [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
-  const [localShops,setLocalShops]=useState<Shop[]>([])
+  const [localShops, setLocalShops] = useState<Shop[]>([])
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
-  const {data:{data:shops}={},isLoading}=useGetHomeShopsQuery("guard",{
-    pollingInterval:30000,
-    refetchOnFocus:true,
-    refetchOnMountOrArgChange:30
+  const { data: { data: shops } = {}, isLoading } = useGetHomeShopsQuery("guard", {
+
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: 30
   })
-  const {data:{data:categories}={},isLoading:isLoadingCategories}=useGetCategoriesWithParentIdNullQuery("guard",{
-    pollingInterval:30000,
-    refetchOnFocus:true,
-    refetchOnMountOrArgChange:30
-  } )
-    console.log(shops)
+  const { data: { data: categories } = {}, isLoading: isLoadingCategories } = useGetCategoriesWithParentIdNullQuery("guard", {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: 30
+  })
+  console.log(shops)
 
-    useEffect(()=>{
-      if(shops){
-        startTransition(()=>{
-          setLocalShops(shops);
+  useEffect(() => {
+    if (shops) {
+      startTransition(() => {
+        setLocalShops(shops);
 
-        })
-      }
-    },[shops])
+      })
+    }
+  }, [shops])
   useEffect(() => {
     // Simulate loading delay 
     //const timer = setTimeout(() => {
@@ -118,8 +117,8 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
       <section className='overflow-hidden'>
-         <TopBar />
-        
+        <TopBar />
+
         <Header />
         <GenderNavigationMobile />
         <StoreHero />
@@ -127,7 +126,7 @@ const Homepage = () => {
         <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={localShops} isLoading={isPending} />
         <PremiumProducts />
         <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
-      
+
       </section>
       <MobileNav />
       <FeaturedShopModal

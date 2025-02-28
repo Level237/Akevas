@@ -138,6 +138,12 @@ export const guardService = createApi({
                 url: `/api/attributes/value/${id}`,
                 method: 'GET'
             })
+        }),
+        getSimilarProducts: builder.query({
+            query: (id) => ({
+                url: `/api/similar/products/${id}`,
+                method: 'GET'
+            })
         })
     }),
 })
@@ -158,5 +164,6 @@ export const {
     useGetProductByUrlQuery,
     useGetAllProductsQuery,
     useCreateDeliveryMutation,
-    useGetAttributeValuesQuery
+    useGetAttributeValuesQuery,
+    useGetSimilarProductsQuery
 } = guardService

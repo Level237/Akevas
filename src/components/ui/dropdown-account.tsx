@@ -11,11 +11,8 @@ import AsyncLink from "./AsyncLink"
 
 const DropdownAccount = ({children,currentUser}: {children: React.ReactNode,currentUser:any | null}) => {
   const [isOpen, setIsOpen] = useState(false)
-  console.log("currentUser")
-  console.log(currentUser)
-  if(currentUser){
-    console.log(currentUser.role_id)
-  }
+ 
+  
   const menuItems = [
     { icon: Package, text: "Mes Commandes" },
     { icon: Package, text: "Mes pièces" },

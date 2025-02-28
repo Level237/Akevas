@@ -3,12 +3,9 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Star,
-  Heart,
-  Share2,
   Truck,
   Shield,
   ArrowRight,
-  Lock,
   ChevronUp,
   ChevronDown,
   ChevronLeft,
@@ -17,9 +14,10 @@ import {
 
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
-import { useGetProductByUrlQuery } from '@/services/guardService';
+import { useGetProductByUrlQuery, useGetSimilarProductsQuery } from '@/services/guardService';
 import { Variant } from '@/types/products';
-
+import AsyncLink from '@/components/ui/AsyncLink';
+import SimilarProducts from '@/components/products/SimilarProducts';
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -29,7 +27,8 @@ const ProductDetailPage: React.FC = () => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
-  console.log(product)
+  const { data: { data: similarProducts } = {}, isLoading: isLoadingSimilarProducts } = useGetSimilarProductsQuery(product?.id);
+  console.log(similarProducts)
 
   // Helper function to get all images
   const getAllImages = () => {
@@ -189,7 +188,7 @@ const ProductDetailPage: React.FC = () => {
                   </div>
 
                   {/* Main image display avec zoom et navigation */}
-                  <div 
+                  <div
                     className="relative w-[60rem] bg-black rounded-lg overflow-hidden mb-4 group"
                     onMouseEnter={() => setIsZoomed(true)}
                     onMouseLeave={() => setIsZoomed(false)}
@@ -205,14 +204,13 @@ const ProductDetailPage: React.FC = () => {
                       <img
                         src={getAllImages()[selectedImage]?.path || product.product_profile}
                         alt={product.product_name}
-                        className={`w-full h-full object-cover transition-transform duration-200 ${
-                          isZoomed ? 'scale-150' : 'scale-100'
-                        }`}
+                        className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-100'
+                          }`}
                         style={
                           isZoomed
                             ? {
-                                transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
-                              }
+                              transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
+                            }
                             : undefined
                         }
                       />
@@ -361,7 +359,7 @@ const ProductDetailPage: React.FC = () => {
                 </div>
 
 
- 
+
               </div>
             </div>
 
@@ -423,156 +421,160 @@ const ProductDetailPage: React.FC = () => {
             </div>
           </div>
         )}
-
+        <SimilarProducts similarProducts={similarProducts} isLoadingSimilarProducts={isLoadingSimilarProducts} />
         {/* Description et avis */}
         {!isLoading && product && (
-          <div className="mt-8 bg-white rounded-2xl shadow-sm">
-            {/* Onglets d'information */}
-            <div className="border-t">
-              <div className="flex border-b">
-                <button
-                  onClick={() => setSelectedTab('description')}
-                  className={`px-8 py-4 font-medium text-sm transition-colors relative
-                  ${selectedTab === 'description' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
-                >
-                  Description
+          <>
+            <div className="mt-8 bg-white rounded-2xl shadow-sm">
+              {/* Onglets d'information */}
+              <div className="border-t">
+                <div className="flex border-b">
+                  <button
+                    onClick={() => setSelectedTab('description')}
+                    className={`px-8 py-4 font-medium text-sm transition-colors relative
+                    ${selectedTab === 'description' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
+                  >
+                    Description
+                    {selectedTab === 'description' && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
+                      />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setSelectedTab('specifications')}
+                    className={`px-8 py-4 font-medium text-sm transition-colors relative
+                    ${selectedTab === 'specifications' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
+                  >
+                    Spécifications
+                    {selectedTab === 'specifications' && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
+                      />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setSelectedTab('reviews')}
+                    className={`px-8 py-4 font-medium text-sm transition-colors relative
+                    ${selectedTab === 'reviews' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
+                  >
+                    Avis ({product.reviewCount})
+                    {selectedTab === 'reviews' && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
+                      />
+                    )}
+                  </button>
+                </div>
+
+                <div className="p-8">
                   {selectedTab === 'description' && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
-                    />
+                    <div className="prose max-w-none">
+                      <p className="whitespace-pre-line font-bold">
+                        {product.product_description}
+                      </p>
+                    </div>
                   )}
-                </button>
-                <button
-                  onClick={() => setSelectedTab('specifications')}
-                  className={`px-8 py-4 font-medium text-sm transition-colors relative
-                  ${selectedTab === 'specifications' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
-                >
-                  Spécifications
+
                   {selectedTab === 'specifications' && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
-                    />
+                    <div className="grid grid-cols-2 gap-6">
+
+                      <div
+
+                        className="flex items-center justify-between py-3 border-b"
+                      >
+                        <span className="text-gray-600">12</span>
+                        <span className="font-medium text-gray-900">
+                          12
+                        </span>
+                      </div>
+
+                    </div>
                   )}
-                </button>
-                <button
-                  onClick={() => setSelectedTab('reviews')}
-                  className={`px-8 py-4 font-medium text-sm transition-colors relative
-                  ${selectedTab === 'reviews' ? 'text-[#ed7e0f]' : 'text-gray-500 hover:text-gray-900'}`}
-                >
-                  Avis ({product.reviewCount})
+
                   {selectedTab === 'reviews' && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
-                    />
-                  )}
-                </button>
-              </div>
-
-              <div className="p-8">
-                {selectedTab === 'description' && (
-                  <div className="prose max-w-none">
-                    <p className="whitespace-pre-line font-bold">
-                      {product.product_description}
-                    </p>
-                  </div>
-                )}
-
-                {selectedTab === 'specifications' && (
-                  <div className="grid grid-cols-2 gap-6">
-
-                    <div
-
-                      className="flex items-center justify-between py-3 border-b"
-                    >
-                      <span className="text-gray-600">12</span>
-                      <span className="font-medium text-gray-900">
-                        12
-                      </span>
-                    </div>
-
-                  </div>
-                )}
-
-                {selectedTab === 'reviews' && (
-                  <div className="space-y-8">
-                    {/* Résumé des avis */}
-                    <div className="flex gap-8 p-6 bg-gray-50 rounded-xl">
-                      <div className="text-center">
-                        <div className="text-4xl font-bold text-gray-900">4.8</div>
-                        <div className="flex items-center justify-center text-yellow-400 my-2">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} className="w-5 h-5 fill-current" />
-                          ))}
-                        </div>
-                        <div className="text-sm text-gray-500">Basé sur 128 avis</div>
-                      </div>
-                      <div className="flex-1">
-                        {[5, 4, 3, 2, 1].map((stars) => (
-                          <div key={stars} className="flex items-center gap-2 mb-2">
-                            <span className="w-8 text-sm text-gray-600">{stars}★</span>
-                            <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-yellow-400 rounded-full"
-                                style={{ width: `${stars === 5 ? '70%' : stars === 4 ? '20%' : '10%'}` }}
-                              />
-                            </div>
-                            <span className="w-8 text-sm text-gray-600">
-                              {stars === 5 ? '70%' : stars === 4 ? '20%' : '10%'}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Liste des avis */}
-                    <div className="space-y-6">
-                      {/* ... existing reviews ... */}
-                    </div>
-
-                    {/* Formulaire d'avis */}
-                    <div className="border-t pt-8 mt-8">
-                      <h3 className="text-lg font-semibold mb-4">Donnez votre avis</h3>
-                      <form className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
-                          <div className="flex gap-2">
+                    <div className="space-y-8">
+                      {/* Résumé des avis */}
+                      <div className="flex gap-8 p-6 bg-gray-50 rounded-xl">
+                        <div className="text-center">
+                          <div className="text-4xl font-bold text-gray-900">4.8</div>
+                          <div className="flex items-center justify-center text-yellow-400 my-2">
                             {Array.from({ length: 5 }).map((_, i) => (
-                              <button
-                                key={i}
-                                type="button"
-                                className="text-gray-300 hover:text-yellow-400"
-                              >
-                                <Star className="w-8 h-8 fill-current" />
-                              </button>
+                              <Star key={i} className="w-5 h-5 fill-current" />
                             ))}
                           </div>
+                          <div className="text-sm text-gray-500">Basé sur 128 avis</div>
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Votre commentaire
-                          </label>
-                          <textarea
-                            rows={4}
-                            className="w-full rounded-lg border-gray-200 resize-none focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
-                            placeholder="Partagez votre expérience avec ce produit..."
-                          />
+                        <div className="flex-1">
+                          {[5, 4, 3, 2, 1].map((stars) => (
+                            <div key={stars} className="flex items-center gap-2 mb-2">
+                              <span className="w-8 text-sm text-gray-600">{stars}★</span>
+                              <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-yellow-400 rounded-full"
+                                  style={{ width: `${stars === 5 ? '70%' : stars === 4 ? '20%' : '10%'}` }}
+                                />
+                              </div>
+                              <span className="w-8 text-sm text-gray-600">
+                                {stars === 5 ? '70%' : stars === 4 ? '20%' : '10%'}
+                              </span>
+                            </div>
+                          ))}
                         </div>
-                        <button
-                          type="submit"
-                          className="w-full bg-[#ed7e0f] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
-                        >
-                          Publier mon avis
-                        </button>
-                      </form>
+                      </div>
+
+                      {/* Liste des avis */}
+                      <div className="space-y-6">
+                        {/* ... existing reviews ... */}
+                      </div>
+
+                      {/* Formulaire d'avis */}
+                      <div className="border-t pt-8 mt-8">
+                        <h3 className="text-lg font-semibold mb-4">Donnez votre avis</h3>
+                        <form className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
+                            <div className="flex gap-2">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  className="text-gray-300 hover:text-yellow-400"
+                                >
+                                  <Star className="w-8 h-8 fill-current" />
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Votre commentaire
+                            </label>
+                            <textarea
+                              rows={4}
+                              className="w-full rounded-lg border-gray-200 resize-none focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
+                              placeholder="Partagez votre expérience avec ce produit..."
+                            />
+                          </div>
+                          <button
+                            type="submit"
+                            className="w-full bg-[#ed7e0f] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
+                          >
+                            Publier mon avis
+                          </button>
+                        </form>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+
+
+          </>
         )}
       </main>
       <MobileNav />
@@ -581,4 +583,3 @@ const ProductDetailPage: React.FC = () => {
 };
 
 export default ProductDetailPage;
-

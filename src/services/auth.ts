@@ -1,76 +1,77 @@
 
-import {createApi} from "@reduxjs/toolkit/query/react"
+import { createApi } from "@reduxjs/toolkit/query/react"
 import { baseQueryWithReauth } from "./baseQueryWithReauth";
 
 
 
 
-export const authService=createApi({
-    baseQuery:baseQueryWithReauth,
-    reducerPath:"authService",
-    tagTypes:['Auth'],
-    endpoints:builder=>({
-        login:builder.mutation({
-            query:(credentials)=>(
+export const authService = createApi({
+    baseQuery: baseQueryWithReauth,
+    reducerPath: "authService",
+    tagTypes: ['Auth'],
+    endpoints: builder => ({
+        login: builder.mutation({
+            query: (credentials) => (
                 {
-                url:'/api/login',
-                method:'POST',
-                body:credentials
-            }),
-            
+                    url: '/api/login',
+                    method: 'POST',
+                    body: credentials
+                }),
+
             transformErrorResponse: (baseQueryResult) => {
                 // Ici, vous pouvez personnaliser la réponse d'erreur
-               
-                 if(baseQueryResult.status===400){
+
+                if (baseQueryResult.status === 400) {
                     return { error: "l'email et le mot de passe ne peut pas etre vide" };
-                }else if(baseQueryResult.status===500){
+                } else if (baseQueryResult.status === 500) {
                     return { error: "l'email out le mot de passe sont incorrect" };
                 }
                 else {
-                    
-                  return { error: baseQueryResult.data };
+
+                    return { error: baseQueryResult.data };
                 }
-              },
+            },
         },
-        
+
         ),
-        register:builder.mutation({
-            query:(formData)=>({
-                url:"/api/register",
-                method:"POST",
-                body:formData,
+        register: builder.mutation({
+            query: (formData) => ({
+                url: "/api/register",
+                method: "POST",
+                body: formData,
             }),
             invalidatesTags: ['Auth'],
         }),
-        newStore:builder.mutation({
-            query:(formData)=>({
-                url:"/api/create/seller",
-                method:"POST",
-                body:formData,
-                
+        newStore: builder.mutation({
+            query: (formData) => ({
+                url: "/api/create/seller",
+                method: "POST",
+                body: formData,
+
             }),
             invalidatesTags: ['Auth'],
         }),
-        logout:builder.mutation({
-            query:()=>({
-                url:"/api/v1/logout",
-                method:"POST",
+        logout: builder.mutation({
+            query: () => ({
+                url: "/api/v1/logout",
+                method: "POST",
             }),
-            invalidatesTags:['Auth']
+            invalidatesTags: ['Auth']
         }),
-        getUser:builder.query({
-           
-                query:()=>'/api/v1/current/user',
-                providesTags: ['Auth'],
-                transformErrorResponse: (baseQueryResult) => {
-                    // Ici, vous pouvez personnaliser la réponse d'erreur
-                    console.log(baseQueryResult.status)
-                    console.log("dd")
-                     if(baseQueryResult.status===400){
-                        return { error: "le numero de telephone est incorrect" };
-                    }
-                   
-                  },
+        getUser: builder.query({
+
+            query: () => '/api/v1/current/user',
+            providesTags: ['Auth'],
+            transformErrorResponse: (baseQueryResult) => {
+                // Ici, vous pouvez personnaliser la réponse d'erreur
+                console.log(baseQueryResult.status)
+                console.log("dd")
+                if (baseQueryResult.status === 400) {
+                    return { error: "le numero de telephone est incorrect" };
+                }
+
+            },
+            keepUnusedDataFor: 300,
         }),
     })
 })
@@ -81,4 +82,4 @@ export const {
     useLogoutMutation,
     useNewStoreMutation,
     useRegisterMutation
-}=authService
+} = authService

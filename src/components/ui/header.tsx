@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search,X,ChevronDown, Menu,Clock, TrendingUp, Lock } from 'lucide-react'
+import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
-    // Données de démonstration pour l'historique et les suggestions
+// Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
   'Nike Air Max',
@@ -67,60 +67,138 @@ const searchCategories = [
 
 // Ajouter cette constante pour les genres
 const genders = [
-  { id: 'femme', label: 'FEMME',"url":"femme" },
-  { id: 'homme', label: 'HOMME',"url":"homme" },
-  { id: 'enfant', label: 'ENFANT',"url":"enfant" },
+  { id: 'femme', label: 'FEMME', "url": "femme" },
+  { id: 'homme', label: 'HOMME', "url": "homme" },
+  { id: 'enfant', label: 'ENFANT', "url": "enfant" },
 ];
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(searchCategories[0])
-  const {data:{data:seller}={},isLoading}=useCurrentSellerQuery('seller',{
+  // Regrouper les états liés dans un seul objet pour réduire les re-renderings
+  const [uiState, setUiState] = useState({
+    isMenuOpen: false,
+    isSearchOpen: false,
+    isScrolled: false,
+    showCategories: false
+  });
 
-    refetchOnFocus:true,
-    refetchOnMountOrArgChange:false
-  } )
-  let userData=null;
-  const {data:userDataAuth}=useGetUserQuery('Auth',{
+  const [searchState, setSearchState] = useState({
+    query: '',
+    selectedCategory: searchCategories[0]
+  });
 
-    refetchOnFocus:true,
-    refetchOnMountOrArgChange:false
-  } )
-  const [showCategories, setShowCategories] = useState(false)
- 
-  
+  // Memoize les callbacks
+  const handleMenuToggle = useCallback(() => {
+    setUiState(prev => ({ ...prev, isMenuOpen: !prev.isMenuOpen }));
+  }, []);
 
-  if(userDataAuth?.role_id===2){
-      userData=seller;
-  }else if(userDataAuth?.role_id===1 || userDataAuth?.role_id===3){
-    userData=userDataAuth;
-  }
+  const handleSearchToggle = useCallback(() => {
+    setUiState(prev => ({ ...prev, isSearchOpen: !prev.isSearchOpen }));
+  }, []);
 
-  // Fermer le menu et la recherche lors du changement de route
+  const handleCategorySelect = useCallback((category: typeof searchCategories[0]) => {
+    setSearchState(prev => ({ ...prev, selectedCategory: category }));
+    setUiState(prev => ({ ...prev, showCategories: false }));
+  }, []);
+
+  // Optimiser les queries avec les options RTK Query
+  const { data: { data: seller } = {}, isLoading } = useCurrentSellerQuery('seller', {
+    refetchOnFocus: false,
+    refetchOnMountOrArgChange: false,
+    refetchOnReconnect: false,
+    pollingInterval: 0,
+  });
+
+  const { data: userDataAuth } = useGetUserQuery('Auth', {
+    refetchOnFocus: false,
+    refetchOnMountOrArgChange: false,
+    refetchOnReconnect: false,
+    pollingInterval: 0,
+  });
+
+  // Memoize userData avec des dépendances plus précises
+  const userData = useMemo(() => {
+    const roleId = userDataAuth?.role_id;
+
+    if (!userDataAuth || !roleId) return null;
+
+    if (roleId === 2 && seller) {
+      return seller;
+    }
+    if (roleId === 1 || roleId === 3) {
+      return userDataAuth;
+    }
+    return null;
+  }, [userDataAuth?.role_id, seller?.id, userDataAuth?.id]);
+
+  // Pour déboguer, ajoutez un useEffect temporaire pour tracer les changements
   useEffect(() => {
-    setIsMenuOpen(false);
-    setIsSearchOpen(false);
+    console.log('userData changed because:', {
+      roleId: userDataAuth?.role_id,
+      sellerId: seller?.id,
+      userId: userDataAuth?.id
+    });
+  }, [userDataAuth?.role_id, seller?.id, userDataAuth?.id]);
+
+  //console.log(userData)
+  // Optimiser les effets
+  useEffect(() => {
+    setUiState(prev => ({ ...prev, isMenuOpen: false, isSearchOpen: false }));
   }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 300);
+      setUiState(prev => ({ ...prev, isScrolled: window.scrollY > 300 }));
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const totalQuantity=useSelector((state:RootState)=>state.cart.totalQuantity)
+  const totalQuantity = useSelector((state: RootState) => state.cart.totalQuantity)
+
+  // Memoize les composants qui peuvent être réutilisés
+  const headerActions = useMemo(() => (
+    <div className="flex items-center gap-4">
+      <button
+        onClick={handleSearchToggle}
+        className="text-gray-700 hover:text-[#ed7e0f]"
+      >
+        <Search className="w-6 h-6" />
+      </button>
+      <DropdownAccount currentUser={userData}>
+        {!userData && !isLoading && (
+          <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
+            <User className="h-6 w-6" />
+          </div>
+        )}
+        {userData && userData.role_id === 2 && (
+          <Avatar className="h-6 w-6">
+            <AvatarImage src={userData.shop.shop_profile} />
+            <AvatarFallback>{userData.firstName.charAt(0)}</AvatarFallback>
+          </Avatar>
+        )}
+        {userData && (userData.role_id === 1 || userData.role_id === 3) && (
+          <Avatar className="h-6 w-6">
+            <AvatarImage src={userData.profile} />
+            <AvatarFallback>{userData?.userName.charAt(0)}</AvatarFallback>
+          </Avatar>
+        )}
+      </DropdownAccount>
+
+      <AsyncLink to="/cart" className="relative text-gray-700 hover:text-[#ed7e0f]">
+        <ShoppingCart className="w-6 h-6" />
+        <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          {totalQuantity}
+        </span>
+      </AsyncLink>
+    </div>
+  ), [userData, handleSearchToggle, totalQuantity]);
+
   return (
     <>
       {/* Sticky Header */}
-      <header className={`w-full max-sm:hidden bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 ${
-        isScrolled ? 'translate-y-0' : '-translate-y-full'
-      }`}>
+      <header className={`w-full max-sm:hidden bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 ${uiState.isScrolled ? 'translate-y-0' : '-translate-y-full'
+        }`}>
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <AsyncLink to="/" className="flex-shrink-0">
@@ -131,41 +209,7 @@ const Header = () => {
               <CategoryNavigation />
             </div>
 
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setIsSearchOpen(true)}
-                className="text-gray-700 hover:text-[#ed7e0f]"
-              >
-                <Search className="w-6 h-6" />
-              </button>
-
-              <DropdownAccount currentUser={userData}>
-                {!userData && !isLoading && (
-                  <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
-                    <User className="h-6 w-6" />
-                  </div>
-                )}
-                {userData && userData.role_id === 2 && (
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={userData.shop.shop_profile} />
-                    <AvatarFallback>{userData.firstName.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                )}
-                {userData && (userData.role_id === 1 || userData.role_id === 3) && (
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={userData.profile} />
-                    <AvatarFallback>{userData?.userName.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                )}
-              </DropdownAccount>
-
-              <AsyncLink to="/cart" className="relative text-gray-700 hover:text-[#ed7e0f]">
-                <ShoppingCart className="w-6 h-6" />
-                <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {totalQuantity}
-                </span>
-              </AsyncLink>
-            </div>
+            {headerActions}
           </div>
         </div>
       </header>
@@ -176,7 +220,7 @@ const Header = () => {
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Menu Burger (Mobile) */}
             <button
-              onClick={() => setIsMenuOpen(true)}
+              onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: true }))}
               className="lg:hidden p-2 -ml-2"
             >
               <Menu className="w-6 h-6" />
@@ -188,20 +232,11 @@ const Header = () => {
             </Link>
 
             {/* Navigation Desktop */}
-           
+
 
             {/* Actions */}
             <div className="flex items-center gap-2 lg:gap-4">
-              <button
-                onClick={() => setIsSearchOpen(true)}
-                className="p-2 text-gray-700 hover:text-[#ed7e0f]"
-              >
-                <Search className="w-6 h-6" />
-              </button>
-              
-              <Link to="/account" className="hidden lg:block p-2 text-gray-700 hover:text-[#ed7e0f]">
-                <User className="w-6 h-6" />
-              </Link>
+              {headerActions}
             </div>
           </div>
         </div>
@@ -223,17 +258,17 @@ const Header = () => {
               `}>
                 <div className="relative w-full">
                   <button
-                    onClick={() => setShowCategories(!showCategories)}
+                    onClick={() => setUiState(prev => ({ ...prev, showCategories: !prev.showCategories }))}
                     className="absolute left-0 top-0 h-full px-2 flex items-center gap-1 text-gray-500 hover:text-gray-700 border-r"
                   >
-                    {selectedCategory.label}
+                    {searchState.selectedCategory.label}
                     <ChevronDown className="w-3 h-3" />
                   </button>
                   <input
                     type="text"
                     placeholder="Rechercher..."
                     className="w-full pl-24 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent text-sm"
-                   
+
                   />
                   <button className="absolute right-0 top-0 h-full px-3 text-gray-500 hover:text-gray-700">
                     <Search className="w-4 h-4" />
@@ -241,15 +276,12 @@ const Header = () => {
                 </div>
 
                 {/* Categories Dropdown */}
-                {showCategories && (
+                {uiState.showCategories && (
                   <div className="absolute top-full z-[999999] left-0 w-48 mt-1 bg-white rounded-lg shadow-lg border">
                     {searchCategories.map((category) => (
                       <button
                         key={category.id}
-                        onClick={() => {
-                          setSelectedCategory(category)
-                          setShowCategories(false)
-                        }}
+                        onClick={() => handleCategorySelect(category)}
                         className="w-full px-4 py-2 text-left hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
                       >
                         {category.label}
@@ -276,57 +308,57 @@ const Header = () => {
               <div className="flex items-center gap-4">
                 <DropdownAccount currentUser={userData}>
                   {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                  <User className="h-7 w-7" />
-                  
+                    <User className="h-7 w-7" />
+
                   </div>}
-                    {userData && userData.role_id===2 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                  
-                  <Avatar>
-                    <AvatarImage src={userData.shop.shop_profile} />
-                    <AvatarFallback>
-                      {userData.firstName.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+                  {userData && userData.role_id === 2 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+
+                    <Avatar>
+                      <AvatarImage src={userData.shop.shop_profile} />
+                      <AvatarFallback>
+                        {userData.firstName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>}
-                   {userData && (userData.role_id===1 || userData.role_id===3) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                  <Avatar>
-                    <AvatarImage src={userData.profile} />
-                    <AvatarFallback>
-                      {userData?.userName.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+                  {userData && (userData.role_id === 1 || userData.role_id === 3) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                    <Avatar>
+                      <AvatarImage src={userData.profile} />
+                      <AvatarFallback>
+                        {userData?.userName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>}
                 </DropdownAccount>
 
-                    {userData && userData.role_id===2 && <AsyncLink to="/seller/pro">
-                      <Button  className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
-                    </AsyncLink>}
+                {userData && userData.role_id === 2 && <AsyncLink to="/seller/pro">
+                  <Button className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
+                </AsyncLink>}
 
-                    {!userData && <AsyncLink to="/cart">
+                {!userData && <AsyncLink to="/cart">
 
-                       <div
-                 
-                 className="relative text-gray-700 hover:text-[#ed7e0f]"
-               >
-                 <ShoppingCart className="w-6 h-6" />
-                 <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                   {totalQuantity}
-                 </span>
-               </div>
-                    </AsyncLink>}
-                    
-                    {userData && (userData.role_id===1 || userData.role_id===3) &&  <AsyncLink to="/cart">
+                  <div
 
-                       <div
-                 
-                 className="relative text-gray-700 hover:text-[#ed7e0f]"
-               >
-                 <ShoppingCart className="w-6 h-6" />
-                 <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                   0
-                 </span>
-               </div>
-                    </AsyncLink>}
+                    className="relative text-gray-700 hover:text-[#ed7e0f]"
+                  >
+                    <ShoppingCart className="w-6 h-6" />
+                    <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {totalQuantity}
+                    </span>
+                  </div>
+                </AsyncLink>}
+
+                {userData && (userData.role_id === 1 || userData.role_id === 3) && <AsyncLink to="/cart">
+
+                  <div
+
+                    className="relative text-gray-700 hover:text-[#ed7e0f]"
+                  >
+                    <ShoppingCart className="w-6 h-6" />
+                    <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      0
+                    </span>
+                  </div>
+                </AsyncLink>}
               </div>
             </div>
           </div>
@@ -340,13 +372,13 @@ const Header = () => {
 
       {/* Menu Mobile Overlay */}
       <AnimatePresence>
-        {isMenuOpen && (
+        {uiState.isMenuOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 z-50 lg:hidden"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: false }))}
           >
             <motion.div
               initial={{ x: '-100%' }}
@@ -359,13 +391,13 @@ const Header = () => {
               {/* Menu Header */}
               <div className="flex items-center justify-between p-4 border-b">
                 <h2 className="text-lg font-semibold">Menu</h2>
-                <button onClick={() => setIsMenuOpen(false)}>
+                <button onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: false }))}>
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
               {/* Menu Content */}
-                <MobileCategoryMenu />
+              <MobileCategoryMenu />
             </motion.div>
           </motion.div>
         )}
@@ -373,7 +405,7 @@ const Header = () => {
 
       {/* Search Overlay */}
       <AnimatePresence>
-        {isSearchOpen && (
+        {uiState.isSearchOpen && (
           <motion.div
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -383,15 +415,15 @@ const Header = () => {
             <div className="container mx-auto px-4">
               {/* Search Header */}
               <div className="flex items-center gap-4 py-4 border-b">
-                <button onClick={() => setIsSearchOpen(false)}>
+                <button onClick={() => setUiState(prev => ({ ...prev, isSearchOpen: false }))}>
                   <X className="w-6 h-6" />
                 </button>
-                
+
                 <div className="flex-1 relative">
                   <input
                     type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={searchState.query}
+                    onChange={(e) => setSearchState(prev => ({ ...prev, query: e.target.value }))}
                     placeholder="Rechercher un produit..."
                     className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ed7e0f]"
                     autoFocus
@@ -402,7 +434,7 @@ const Header = () => {
 
               {/* Search Content */}
               <div className="py-6">
-                {searchQuery ? (
+                {searchState.query ? (
                   <div>
                     {/* Résultats de recherche en direct ici */}
                   </div>
@@ -418,7 +450,7 @@ const Header = () => {
                         {searchHistory.map((search, index) => (
                           <button
                             key={index}
-                            onClick={() => setSearchQuery(search)}
+                            onClick={() => setSearchState(prev => ({ ...prev, query: search }))}
                             className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
                           >
                             {search}
@@ -437,7 +469,7 @@ const Header = () => {
                         {trendingSearches.map((search, index) => (
                           <button
                             key={index}
-                            onClick={() => setSearchQuery(search)}
+                            onClick={() => setSearchState(prev => ({ ...prev, query: search }))}
                             className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
                           >
                             {search}
@@ -456,6 +488,21 @@ const Header = () => {
   );
 };
 
+// Hook personnalisé pour tracer les re-renderings (optionnel)
+const useTraceUpdate = (props: any) => {
+  const prev = useRef(props);
+  useEffect(() => {
+    const changedProps = Object.entries(props).reduce((ps: any, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }
+      return ps;
+    }, {});
+    if (Object.keys(changedProps).length > 0) {
+      console.log('Changed props:', changedProps);
+    }
+    prev.current = props;
+  });
+};
 
-
-export default Header;
+export default React.memo(Header);
