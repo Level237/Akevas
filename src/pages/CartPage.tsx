@@ -10,9 +10,11 @@ import { AppDispatch, RootState } from '@/store';
 import { removeItem, updateQuantity } from '@/store/cartSlice';
 import { Product } from '@/types/products';
 import { redirectToLogin } from '@/lib/redirectToLogin';
+import { useCheckAuthQuery } from '@/services/auth';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
-  const token = useSelector((state: RootState) => state.auth.usedToken)
+  const { data } = useCheckAuthQuery()
+  const hasToken = data?.isAuthenticated
 
 
 
@@ -197,7 +199,7 @@ const CartPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {token ? <AsyncLink to="/checkout" >
+                {hasToken ? <AsyncLink to="/checkout" >
                   <button className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Procéder au paiement
                   </button>

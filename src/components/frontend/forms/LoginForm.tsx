@@ -5,11 +5,11 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
 import { useState } from "react";
 import { authTokenChange } from "@/store/authSlice";
+import Cookies from "universal-cookie";
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
   const productIds = params.getAll('productId');
   const redirectUrl = params.get('redirect');
-  const provideIsCard = params.get('provideIsCard');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [login, { isLoading, isError, error }] = useLoginMutation()
@@ -21,19 +21,18 @@ export default function LoginForm() {
     e.preventDefault()
     const userObject = { phone_number: phone, password: password }
     const userData = await login(userObject)
-    const userState = {
-      'refreshToken': userData.data.refresh_token,
-      'accessToken': userData.data.access_token
-    }
+    console.log(userData)
+    const cookies = new Cookies();
+    cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
+    cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
 
-    dispatch(authTokenChange(userState))
-    if (redirectUrl && productIds) {
-      window.location.href = redirectUrl + (productIds.length > 0 && provideIsCard === "0" ? `?productId=${productIds.join(',')}` : '')
+
+    if (redirectUrl) {
+      window.location.href = redirectUrl
     } else {
       setPhone('')
       setPassword('')
-      window.location.href = `/ authenticate ? token = ${encodeURIComponent(userData.data.access_token)}
-              & refresh_token=${encodeURIComponent(userData.data.refresh_token)} `
+      window.location.href = `/authenticate`
     }
   }
   return (

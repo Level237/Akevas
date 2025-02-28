@@ -1,16 +1,15 @@
-import { useSelector } from 'react-redux'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { RootState } from '@/store'
-//import { useCheckTokenQuery } from '@/services/checkService'
+import { useCheckAuthQuery } from '@/services/auth'
+
 export const PrivateRoute = () => {
-
-    const token = useSelector((state: RootState) => state.auth.usedToken)
-    //const {data,isLoading}=useCheckTokenQuery()
     const location = useLocation()
+    const { data, isLoading, isError } = useCheckAuthQuery()
 
-
+    if (isLoading) {
+        return <div>Loading...</div>
+    }
 
     return (
-        token ? <Outlet /> : <Navigate to="/login" state={{ from: location }} replace />
+        data?.isAuthenticated === true ? <Outlet /> : <Navigate to="/login" state={{ from: location }} replace />
     )
 }

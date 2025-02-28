@@ -34,6 +34,13 @@ export const authService = createApi({
         },
 
         ),
+        checkAuth: builder.query<{ isAuthenticated: boolean }, void>({
+            query: () => ({
+                url: '/api/v1/check-auth',
+                method: 'GET',
+            }),
+            providesTags: ['Auth'],
+        }),
         register: builder.mutation({
             query: (formData) => ({
                 url: "/api/register",
@@ -71,7 +78,7 @@ export const authService = createApi({
                 }
 
             },
-            keepUnusedDataFor: 300,
+
         }),
     })
 })
@@ -81,5 +88,6 @@ export const {
     useGetUserQuery,
     useLogoutMutation,
     useNewStoreMutation,
-    useRegisterMutation
+    useRegisterMutation,
+    useCheckAuthQuery
 } = authService

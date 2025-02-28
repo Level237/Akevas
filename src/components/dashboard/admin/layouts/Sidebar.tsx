@@ -20,7 +20,7 @@ import {
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
 import { useDispatch } from "react-redux"
-import { logoutUser } from "@/store/authSlice"
+import { logoutUser } from "@/lib/logout"
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
@@ -35,13 +35,13 @@ const navItems = [
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
-  const [logout]=useLogoutMutation()
-  const dispatch=useDispatch();
+  const [logout] = useLogoutMutation()
+  const dispatch = useDispatch();
   const { pathname } = useLocation()
 
-  const handleLogout=async()=>{
+  const handleLogout = async () => {
     await logout('Auth');
-    dispatch(logoutUser())
+    logoutUser()
   }
   return (
     <>

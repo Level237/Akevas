@@ -185,12 +185,7 @@ const Header = () => {
         )}
       </DropdownAccount>
 
-      <AsyncLink to="/cart" className="relative text-gray-700 hover:text-[#ed7e0f]">
-        <ShoppingCart className="w-6 h-6" />
-        <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-          {totalQuantity}
-        </span>
-      </AsyncLink>
+
     </div>
   ), [userData, handleSearchToggle, totalQuantity]);
 
@@ -355,7 +350,7 @@ const Header = () => {
                   >
                     <ShoppingCart className="w-6 h-6" />
                     <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      0
+                      {totalQuantity}
                     </span>
                   </div>
                 </AsyncLink>}

@@ -12,22 +12,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MobileNav } from '@/components/dashboard/delivery/mobile-nav'
-import { Truck,Bell } from 'lucide-react'
+import { Truck, Bell } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { User } from '@/types/user'
 import { useLogoutMutation } from '@/services/auth'
-import { useDispatch } from 'react-redux'
-import { logoutUser } from '@/store/authSlice'
-export default function Header({userData}:{userData:User}) {
-    const [logout] = useLogoutMutation()
-    const dispatch = useDispatch()
-    const handleLogout = async () => {
-        await logout('Auth')
-        dispatch(logoutUser())
-    }
+import { logoutUser } from '@/lib/logout'
+export default function Header({ userData }: { userData: User }) {
+  const [logout] = useLogoutMutation()
+  const handleLogout = async () => {
+    await logout('Auth')
+    logoutUser()
+  }
   return (
     <div>
-            <header className="sticky top-0 z-40 border-b bg-background">
+      <header className="sticky top-0 z-40 border-b bg-background">
         <div className="flex h-16 items-center px-4 md:px-6">
           <MobileNav />
           <div className="flex items-center gap-2 font-semibold ml-4 lg:ml-0">
@@ -56,10 +54,10 @@ export default function Header({userData}:{userData:User}) {
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-              <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
