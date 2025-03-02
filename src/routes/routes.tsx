@@ -47,6 +47,7 @@ import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
 import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
 import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
 import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
+import PaymentPage from "@/pages/payment/PaymentPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -161,6 +162,10 @@ export const routes = createBrowserRouter([
   {
     path: '/checkout',
     element: <><CheckoutPage /><PrivateRoute /></>
+  },
+  {
+    path: '/payment',
+    element: <PaymentPage />
   },
   {
     path: '/shop/:id',
