@@ -6,6 +6,7 @@ import {
   Truck,
   Shield,
 } from 'lucide-react';
+import card from '@/assets/visa.png';
 import Header from '@/components/ui/header';
 import { ScrollRestoration } from 'react-router-dom';
 import { getProductIdsFromUrl } from '@/lib/getProductIdFromUrl';
@@ -202,71 +203,65 @@ const CheckoutPage: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h2 className="text-xl font-semibold mb-6">Méthode de paiement</h2>
 
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Carte bancaire */}
                 <div
                   onClick={() => setSelectedPayment('card')}
-                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${selectedPayment === 'card'
-                    ? 'border-[#ed7e0f] bg-orange-50'
-                    : 'hover:border-gray-300'
+                  className={`relative flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'card'
+                    ? 'border-[#ed7e0f] bg-orange-50 scale-105'
+                    : 'hover:border-gray-300 hover:shadow-md'
                     }`}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <CreditCard className="w-6 h-6 text-[#ed7e0f]" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Carte bancaire</h3>
-                      <p className="text-sm text-gray-500">
-                        Visa, Mastercard, etc.
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <img
+                    src={card}
+                    alt="Carte bancaire"
+                    className="h-12 object-contain mb-4"
+                  />
+                  <h3 className="font-medium text-center">Carte bancaire</h3>
+                  <p className="text-sm text-gray-500 text-center">Visa, Mastercard</p>
+                  {selectedPayment === 'card' && (
+                    <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
+                  )}
                 </div>
 
                 {/* Orange Money */}
                 <div
                   onClick={() => setSelectedPayment('orange')}
-                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${selectedPayment === 'orange'
-                    ? 'border-[#ed7e0f] bg-orange-50'
-                    : 'hover:border-gray-300'
+                  className={`relative flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'orange'
+                    ? 'border-[#ed7e0f] bg-orange-50 scale-105'
+                    : 'hover:border-gray-300 hover:shadow-md'
                     }`}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-[#ed7e0f]" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Orange Money</h3>
-                      <p className="text-sm text-gray-500">
-                        Paiement mobile Orange
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <img
+                    src="/images/orange-money.png"
+                    alt="Orange Money"
+                    className="h-12 object-contain mb-4"
+                  />
+                  <h3 className="font-medium text-center">Orange Money</h3>
+                  <p className="text-sm text-gray-500 text-center">Paiement mobile</p>
+                  {selectedPayment === 'orange' && (
+                    <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
+                  )}
                 </div>
 
                 {/* Mobile Money */}
                 <div
                   onClick={() => setSelectedPayment('momo')}
-                  className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-colors ${selectedPayment === 'momo'
-                    ? 'border-[#ed7e0f] bg-orange-50'
-                    : 'hover:border-gray-300'
+                  className={`relative flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'momo'
+                    ? 'border-[#ed7e0f] bg-orange-50 scale-105'
+                    : 'hover:border-gray-300 hover:shadow-md'
                     }`}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-[#ed7e0f]" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Mobile Money</h3>
-                      <p className="text-sm text-gray-500">
-                        MTN, Moov, etc.
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <img
+                    src="/images/mtn-momo.png"
+                    alt="Mobile Money"
+                    className="h-12 object-contain mb-4"
+                  />
+                  <h3 className="font-medium text-center">Mobile Money</h3>
+                  <p className="text-sm text-gray-500 text-center">MTN, Moov</p>
+                  {selectedPayment === 'momo' && (
+                    <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
+                  )}
                 </div>
               </div>
 
