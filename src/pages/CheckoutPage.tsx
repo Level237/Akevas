@@ -81,7 +81,8 @@ const CheckoutPage: React.FC = () => {
         return {
           product_id: item.product.id,
           quantity: item.quantity,
-          price: item.product.product_price
+          price: item.product.product_price,
+          name: item.product.product_name
         }
 
 

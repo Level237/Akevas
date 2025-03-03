@@ -176,6 +176,14 @@ const CheckoutForm = () => {
     }
     const response = await payStripe(formData);
     if (response.data.success) {
+      // Stocker les informations de la commande pour la page de succès
+      sessionStorage.setItem('orderDetails', JSON.stringify({
+        orderId: response.data.order.id,
+        orderDate: new Date().toISOString(),
+        amount: formData.amount,
+        shipping: formData.shipping,
+        products: formData.productsPayments
+      }));
       window.location.href = "/checkout/success";
     }
 

@@ -48,6 +48,7 @@ import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
 import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
 import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
 import PaymentPage from "@/pages/payment/PaymentPage";
+import SuccessPage from "@/pages/payment/SuccessPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -166,6 +167,10 @@ export const routes = createBrowserRouter([
   {
     path: '/payment',
     element: <PaymentPage />
+  },
+  {
+    path: '/checkout/success',
+    element: <SuccessPage />
   },
   {
     path: '/shop/:id',
