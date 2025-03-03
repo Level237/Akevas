@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import visa from '@/assets/visa.png';
+import { usePayStripeMutation } from '@/services/auth';
 // Initialize Stripe
 const stripePromise = loadStripe('pk_test_oKhSR5nslBRnBZpjO6KuzZeX');
 
@@ -100,16 +101,6 @@ const Card = styled.div`
   overflow: hidden;
 `;
 
-const PaymentContainer = styled.div`
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-
-  @media (max-width: 768px) {
-    margin: 1rem auto;
-    padding: 1rem;
-  }
-`;
 
 const PaymentForm = styled.form`
   display: flex;
@@ -156,6 +147,8 @@ const CheckoutForm = () => {
   const elements = useElements();
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [payStripe, { isLoading }] = usePayStripeMutation();
+
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -177,8 +170,12 @@ const CheckoutForm = () => {
       return;
     }
 
-    // Ici, vous pouvez envoyer paymentMethod.id à votre backend
-    console.log('Payment Method:', paymentMethod);
+    const formData = {
+      productsPayments: JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
+      total: sessionStorage.getItem('total'),
+      shipping: sessionStorage.getItem('shipping'),
+    }
+    payStripe(formData);
     setProcessing(false);
   };
 
@@ -272,9 +269,9 @@ const PaymentPage = () => {
         </HeaderRight>
       </Header>
       <div className="max-w-[1500px] mx-12 p-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Formulaire de paiement */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-3">
             <Card>
               <Elements stripe={stripePromise}>
                 <CheckoutForm />
@@ -283,7 +280,7 @@ const PaymentPage = () => {
           </div>
 
           {/* Résumé du paiement */}
-          <div className="md:col-span-1">
+          <div className="md:col-span-2">
             <Card>
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold">Résumé du paiement</h2>

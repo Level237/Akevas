@@ -80,6 +80,14 @@ export const authService = createApi({
             },
 
         }),
+        payStripe: builder.mutation({
+            query: (formData) => ({
+                url: "/api/v1/payment/stripe",
+                method: 'POST',
+                body: formData
+            }),
+            invalidatesTags: ['Auth']
+        })
     })
 })
 
@@ -89,5 +97,6 @@ export const {
     useLogoutMutation,
     useNewStoreMutation,
     useRegisterMutation,
-    useCheckAuthQuery
+    useCheckAuthQuery,
+    usePayStripeMutation
 } = authService
