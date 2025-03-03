@@ -1,4 +1,4 @@
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, StripeCardElement } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { FormEvent, useState } from 'react';
 import styled from 'styled-components';
@@ -159,24 +159,27 @@ const CheckoutForm = () => {
 
     setProcessing(true);
 
-    const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card',
-      card: elements.getElement(CardElement)!,
-    });
+    const cardElement = elements.getElement(CardElement);
+    const { token, error } = await stripe.createToken(cardElement as StripeCardElement);
 
-    if (stripeError) {
-      setError(stripeError.message || 'Une erreur est survenue');
+    if (error) {
+      setError(error.message || 'Une erreur est survenue');
       setProcessing(false);
       return;
     }
 
     const formData = {
       productsPayments: JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
-      total: sessionStorage.getItem('total'),
+      amount: sessionStorage.getItem('total'),
       shipping: sessionStorage.getItem('shipping'),
+      stripeToken: token.id
     }
-    payStripe(formData);
-    setProcessing(false);
+    const response = await payStripe(formData);
+    if (response.data.success) {
+      window.location.href = "/checkout/success";
+    }
+
+    //setProcessing(false);
   };
 
   return (
