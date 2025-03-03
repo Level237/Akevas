@@ -47,7 +47,7 @@ const SecureLabel = styled.div`
   border-radius: 8px;
   color: #2d3748;
   font-size: 0.875rem;
-  
+  font-weight: 500;
   svg {
     color: #ed7e0f;
   }
@@ -221,6 +221,23 @@ const CheckoutForm = () => {
 
 const PaymentPage = () => {
   const navigate = useNavigate();
+  const params = new URLSearchParams(window.location.search);
+  const method = params.get('method');
+  const total = params.get('total');
+  const shipping = params.get('shipping');
+
+  const getPaymentMethodLabel = (method: string | null) => {
+    switch (method) {
+      case 'card':
+        return 'Carte bancaire';
+      case 'orange':
+        return 'Orange Money';
+      case 'momo':
+        return 'Mobile Money';
+      default:
+        return 'Non spécifié';
+    }
+  };
 
   return (
     <>
@@ -254,12 +271,45 @@ const PaymentPage = () => {
           </SecureLabel>
         </HeaderRight>
       </Header>
-      <div className="max-w-[800px] mx-auto p-8">
-        <Card>
-          <Elements stripe={stripePromise}>
-            <CheckoutForm />
-          </Elements>
-        </Card>
+      <div className="max-w-[1500px] mx-12 p-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Formulaire de paiement */}
+          <div className="md:col-span-2">
+            <Card>
+              <Elements stripe={stripePromise}>
+                <CheckoutForm />
+              </Elements>
+            </Card>
+          </div>
+
+          {/* Résumé du paiement */}
+          <div className="md:col-span-1">
+            <Card>
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold">Résumé du paiement</h2>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-gray-600">Méthode de paiement</span>
+                    <span className="font-medium">{getPaymentMethodLabel(method)}</span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-gray-600">Frais de livraison</span>
+                    <span className="font-medium">{shipping} XAF</span>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">Total à payer</span>
+                    <span className="text-xl font-bold text-[#ed7e0f]">{total} XAF</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
       </div>
     </>
   );

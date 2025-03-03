@@ -95,7 +95,7 @@ const CheckoutPage: React.FC = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      navigate(`/payment?paymentMethod=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}`)
+      navigate(`/payment?method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}`)
     }, 1000);
   };
 
