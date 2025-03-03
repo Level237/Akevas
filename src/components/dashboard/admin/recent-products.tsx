@@ -11,21 +11,21 @@ interface RecentProductsProps {
   isLoading: boolean
 }
 
-export function RecentProducts({ products,isLoading }: RecentProductsProps) {
-  if(isLoading){
-    return <IsLoadingComponents isLoading={isLoading}/>
+export function RecentProducts({ products, isLoading }: RecentProductsProps) {
+  if (isLoading) {
+    return <IsLoadingComponents isLoading={isLoading} />
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl flex items-center justify-between font-bold">Produits récents 
-         <AsyncLink to="/admin/products"> <Button className=" bg-transparent border-[1px] hover:bg-[#ed7e0f]/20 text-[#ed7e0f] border-[#ed7e0f]/90">Voir plus</Button></AsyncLink>
-          </CardTitle>
+        <CardTitle className="text-xl flex items-center justify-between font-bold">Produits récents
+          <AsyncLink to="/admin/products"> <Button className=" bg-transparent border-[1px] hover:bg-[#ed7e0f]/20 text-[#ed7e0f] border-[#ed7e0f]/90">Voir plus</Button></AsyncLink>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map((product) => (
+          {!isLoading && products.map((product) => (
             <div key={product.id} className="flex items-center space-x-4">
               <div className="relative w-16 h-16">
                 <img

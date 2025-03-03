@@ -8,9 +8,11 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 export const AuthenticatePage = () => {
 
 
-    const { data: userData, isLoading, isSuccess } = useGetUserQuery('Auth')
+    //const { data: userData, isLoading, isSuccess } = useGetUserQuery('Auth')
+    const { data: userData, isLoading, isSuccess } = useGetUserQuery('Auth');
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>();
+    console.log('me')
     console.log(userData)
 
     useEffect(() => {
