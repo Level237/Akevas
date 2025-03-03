@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Check, Download, ShoppingBag } from 'lucide-react';
 import logo from '@/assets/logo.png';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useGetUserQuery } from '@/services/auth';
@@ -84,13 +82,18 @@ interface OrderDetails {
         name: string;
         quantity: number;
         price: number;
-    }>;
+    }> | null;
+    productId: string | null;
+    quantity: number | null;
+    name: string | null;
+    price: number | null;
 }
 
 const SuccessPage = () => {
     const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
     const [isDownloading, setIsDownloading] = useState(false);
     const { data: user } = useGetUserQuery('Auth');
+
 
     useEffect(() => {
         const details = sessionStorage.getItem('orderDetails');
@@ -186,13 +189,20 @@ const SuccessPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {orderDetails.products.map((product, index) => (
+                        {orderDetails.products && orderDetails.products.map((product, index) => (
                             <tr key={index} className="border-b">
                                 <td className="py-2">{product.name}</td>
                                 <td className="text-center py-2">{product.quantity}</td>
                                 <td className="text-right py-2">{product.price} XAF</td>
                             </tr>
                         ))}
+                        {orderDetails.productId && orderDetails.quantity && orderDetails.name && (
+                            <tr className="border-b">
+                                <td className="py-2">{orderDetails.name}</td>
+                                <td className="text-center py-2">{orderDetails.quantity}</td>
+                                <td className="text-right py-2">{orderDetails.amount} XAF</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
 
@@ -207,7 +217,7 @@ const SuccessPage = () => {
                     </div>
                     <div className="flex justify-between font-bold text-lg">
                         <span>Total</span>
-                        <span>{orderDetails.amount} XAF</span>
+                        <span>{orderDetails.price} XAF</span>
                     </div>
                 </div>
             </Receipt>

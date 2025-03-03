@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 import {
-  CreditCard,
-  Phone,
-  ChevronRight,
   Truck,
   Shield,
 } from 'lucide-react';
@@ -32,11 +29,15 @@ const CheckoutPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const params = new URLSearchParams(window.location.search);
   const s = params.get('s');
+  const residence = params.get('residence');
+  const totalPrice = params.get('price');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
   const { data: userDataAuth } = useGetUserQuery('Auth');
   const productIds = getProductIdsFromUrl();
-  console.log('level')
-  console.log(productIds);
+  const productId = params.get('productId');
+  const quantity = params.get('quantity');
+  const price = params.get('price');
+  const name = params.get('name');
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
     phone: '',
@@ -50,7 +51,7 @@ const CheckoutPage: React.FC = () => {
 
 
   // Mock data pour la démonstration
-  const productLocation = cartItems[0].product.residence;
+  const productLocation = s == "1" ? cartItems[0].product.residence : residence;
   const deliveryFees = {
     pickup: 0,
     localDelivery: 1500,
@@ -58,7 +59,7 @@ const CheckoutPage: React.FC = () => {
     remoteDelivery: 3500
   };
   console.log(userDataAuth)
-  const isLocalOrder = userDataAuth?.residence?.toLowerCase() === productLocation.toLowerCase();
+  const isLocalOrder = userDataAuth?.residence?.toLowerCase() === productLocation?.toLowerCase();
 
   const getDeliveryFee = () => {
     return deliveryFees[address.deliveryOption];
@@ -66,7 +67,7 @@ const CheckoutPage: React.FC = () => {
 
   const subtotal = cartItems.reduce((sum, item) => sum + parseInt(item.product.product_price) * item.quantity, 0);
   const shipping = getDeliveryFee();
-  const total = subtotal + shipping;
+  const total = s == "1" ? subtotal + shipping : parseInt(totalPrice || '0') + shipping;
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -91,13 +92,20 @@ const CheckoutPage: React.FC = () => {
       sessionStorage.setItem('total', total.toString());
       sessionStorage.setItem('shipping', shipping.toString());
       sessionStorage.setItem('paymentMethod', selectedPayment);
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate(`/payment?s=1&method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}`)
+      }, 1000);
+    } else if (s === "0") {
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate(`/payment?s=0&method=${selectedPayment}&total=${total}&shipping=${shipping}&productId=${productId}&quantity=${quantity}&name=${name}&price=${price}`)
+      }, 1000);
     }
 
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate(`/payment?method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}`)
-    }, 1000);
+
   };
 
   return (
@@ -332,7 +340,7 @@ const CheckoutPage: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Sous-total</span>
-                  <span className="font-medium">{subtotal.toFixed(2)} Fcfa</span>
+                  <span className="font-medium">{s == "1" ? subtotal.toFixed(2) : parseInt(totalPrice || '0').toFixed(2)} Fcfa</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Livraison</span>

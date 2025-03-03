@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Star,
   Truck,
@@ -21,6 +21,7 @@ import SimilarProducts from '@/components/products/SimilarProducts';
 import { addItem } from '@/store/cartSlice';
 import { useDispatch } from 'react-redux';
 import AsyncLink from '@/components/ui/AsyncLink';
+import CheckoutDrawer from '@/components/ui/CheckoutDrawer';
 
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
@@ -35,6 +36,7 @@ const ProductDetailPage: React.FC = () => {
   const [showCartButton, setShowCartButton] = useState(false);
   const dispatch = useDispatch();
   const [isLoadingCart, setIsLoadingCart] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleAddToCart = useCallback(async () => {
     setIsLoadingCart(true);
@@ -418,7 +420,10 @@ const ProductDetailPage: React.FC = () => {
 
                     {/* CTA Buttons */}
                     <div className="space-y-3 mt-6">
-                      <button className="w-full bg-[#ed7e0f] text-white px-6 py-3.5 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
+                      <button
+                        onClick={() => setIsDrawerOpen(true)}
+                        className="w-full bg-[#ed7e0f] text-white px-6 py-3.5 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors"
+                      >
                         Acheter maintenant
                       </button>
                       {!showCartButton ? (
@@ -610,6 +615,22 @@ const ProductDetailPage: React.FC = () => {
         )}
       </main>
       <MobileNav />
+
+      {/* Ajouter le drawer */}
+      <AnimatePresence>
+        {isDrawerOpen && (
+          <CheckoutDrawer
+            isOpen={isDrawerOpen}
+            onClose={() => setIsDrawerOpen(false)}
+            product={product}
+            selectedImage={selectedImage}
+            quantity={quantity}
+            setQuantity={setQuantity}
+            currentInfo={getCurrentProductInfo()}
+            getAllImages={getAllImages}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

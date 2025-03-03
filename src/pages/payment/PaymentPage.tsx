@@ -151,7 +151,14 @@ const CheckoutForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [payStripe, { isLoading }] = usePayStripeMutation();
-
+  const params = new URLSearchParams(window.location.search)
+  const s = params.get('s');
+  const productId = params.get('productId');
+  const quantity = params.get('quantity');
+  const name = params.get('name');
+  const total = params.get('total');
+  const price = params.get('price');
+  const shipping = params.get('shipping');
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -170,23 +177,48 @@ const CheckoutForm = () => {
       setProcessing(false);
       return;
     }
+    let formData;
 
-    const formData = {
-      productsPayments: JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
-      amount: sessionStorage.getItem('total'),
-      shipping: sessionStorage.getItem('shipping'),
-      stripeToken: token.id
+    if (s == "1") {
+      formData = {
+        productsPayments: JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
+        amount: sessionStorage.getItem('total'),
+        shipping: sessionStorage.getItem('shipping'),
+        stripeToken: token.id
+      }
+    } else {
+      formData = {
+        productId: productId,
+        quantity: quantity,
+        amount: total,
+        shipping: shipping,
+        stripeToken: token.id
+      }
     }
     const response = await payStripe(formData);
+    console.log(response)
     if (response.data.success) {
-      // Stocker les informations de la commande pour la page de succès
-      sessionStorage.setItem('orderDetails', JSON.stringify({
-        orderId: response.data.order.id,
-        orderDate: new Date().toISOString(),
-        amount: formData.amount,
-        shipping: formData.shipping,
-        products: formData.productsPayments
-      }));
+
+      if (s == "1") {
+        sessionStorage.setItem('orderDetails', JSON.stringify({
+          orderId: response.data.order.id,
+          orderDate: new Date().toISOString(),
+          amount: formData.amount,
+          shipping: formData.shipping,
+          products: formData.productsPayments
+        }));
+      } else {
+        sessionStorage.setItem('orderDetails', JSON.stringify({
+          orderId: response.data.order.id,
+          orderDate: new Date().toISOString(),
+          price: total,
+          amount: price,
+          shipping: shipping,
+          productId: productId,
+          quantity: quantity,
+          name: name
+        }));
+      }
       dispatch(clearCart());
       window.location.href = "/checkout/success";
     }
