@@ -10,6 +10,7 @@ export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
   const productIds = params.getAll('productId');
   const redirectUrl = params.get('redirect');
+  const s = params.get('s');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [login, { isLoading, isError, error }] = useLoginMutation()
@@ -28,7 +29,11 @@ export default function LoginForm() {
 
 
     if (redirectUrl) {
-      window.location.href = redirectUrl
+      if (s === '1') {
+        window.location.href = redirectUrl + `?s=${s}`
+      } else {
+        window.location.href = redirectUrl + `?s=${s}&productIds=${productIds}`
+      }
     } else {
       setPhone('')
       setPassword('')

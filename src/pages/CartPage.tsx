@@ -199,12 +199,12 @@ const CartPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {hasToken ? <AsyncLink to="/checkout" >
+                {hasToken ? <AsyncLink to="/checkout?s=1" >
                   <button className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Procéder au paiement
                   </button>
                 </AsyncLink> :
-                  <button onClick={() => redirectToLogin({ redirectUrl: '/checkout', productIds: cartItems.map(item => item.product.id), provideIsCard: "1" })} className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
+                  <button onClick={() => redirectToLogin({ redirectUrl: '/checkout', productIds: cartItems.map(item => item.product.id), s: "1" })} className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Procéder au paiement
                   </button>
                 }

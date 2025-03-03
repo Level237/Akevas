@@ -7,7 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import visa from '@/assets/visa.png';
 // Initialize Stripe
-const stripePromise = loadStripe('pk_test_D2szNi6C6hgQ0KR4dkgKl2j0');
+const stripePromise = loadStripe('pk_test_oKhSR5nslBRnBZpjO6KuzZeX');
 
 const Header = styled.header`
   position: sticky;
@@ -95,6 +95,8 @@ const Card = styled.div`
   background: white;
   border-radius: 16px;
   box-shadow: 0px 0px 6px rgba(0.1, 0.1, 0.1, 0.1);
+  border: 1px solid rgba(61, 53, 53, 0.2);
+  padding: 2rem;
   overflow: hidden;
 `;
 
@@ -122,7 +124,7 @@ const PaymentForm = styled.form`
 
 const CardContainer = styled.div`
   padding: 1.5rem;
-  
+  border: 1px solid rgba(61, 53, 53, 0.2);
   @media (max-width: 768px) {
     padding: 1rem;
   }
@@ -150,117 +152,117 @@ const Button = styled.button`
 `;
 
 const CheckoutForm = () => {
-    const stripe = useStripe();
-    const elements = useElements();
-    const [error, setError] = useState<string | null>(null);
-    const [processing, setProcessing] = useState(false);
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
 
-    const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault();
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
 
-        if (!stripe || !elements) {
-            return;
-        }
+    if (!stripe || !elements) {
+      return;
+    }
 
-        setProcessing(true);
+    setProcessing(true);
 
-        const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: elements.getElement(CardElement)!,
-        });
+    const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: elements.getElement(CardElement)!,
+    });
 
-        if (stripeError) {
-            setError(stripeError.message || 'Une erreur est survenue');
-            setProcessing(false);
-            return;
-        }
+    if (stripeError) {
+      setError(stripeError.message || 'Une erreur est survenue');
+      setProcessing(false);
+      return;
+    }
 
-        // Ici, vous pouvez envoyer paymentMethod.id à votre backend
-        console.log('Payment Method:', paymentMethod);
-        setProcessing(false);
-    };
+    // Ici, vous pouvez envoyer paymentMethod.id à votre backend
+    console.log('Payment Method:', paymentMethod);
+    setProcessing(false);
+  };
 
-    return (
+  return (
 
-        <PaymentForm onSubmit={handleSubmit}>
-            <div className='flex justify-center items-center gap-2'>
+    <PaymentForm onSubmit={handleSubmit}>
+      <div className='flex justify-center items-center gap-2'>
 
-                <img className='w-24 h-24' src={visa} alt="Visa" />
-            </div>
+        <img className='w-24 h-24' src={visa} alt="Visa" />
+      </div>
 
-            <CardContainer>
-                <CardElement
-                    options={{
-                        style: {
-                            base: {
-                                fontSize: '16px',
-                                color: '#424770',
-                                '::placeholder': {
-                                    color: '#aab7c4',
-                                },
-                                iconColor: '#ed7e0f',
-                            },
-                            invalid: {
-                                color: '#9e2146',
-                                iconColor: '#9e2146'
-                            },
-                        },
-                        hidePostalCode: true,
-                    }}
-                />
-            </CardContainer>
-            {error && <div style={{ color: '#9e2146' }}>{error}</div>}
-            <Button type="submit" disabled={!stripe || processing}>
-                {processing ? 'Traitement...' : 'Payer maintenant'}
-            </Button>
-        </PaymentForm>
-    );
+      <CardContainer>
+        <CardElement
+          options={{
+            style: {
+              base: {
+                fontSize: '16px',
+                color: '#424770',
+                '::placeholder': {
+                  color: '#aab7c4',
+                },
+                iconColor: '#ed7e0f',
+              },
+              invalid: {
+                color: '#9e2146',
+                iconColor: '#9e2146'
+              },
+            },
+            hidePostalCode: true,
+          }}
+        />
+      </CardContainer>
+      {error && <div style={{ color: '#9e2146' }}>{error}</div>}
+      <Button type="submit" disabled={!stripe || processing}>
+        {processing ? 'Traitement...' : 'Payer maintenant'}
+      </Button>
+    </PaymentForm>
+  );
 };
 
 const PaymentPage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    return (
-        <>
-            <Header>
-                <HeaderLeft>
-                    <BackButton onClick={() => navigate('/checkout')}>
-                        <ArrowLeft size={20} />
-                        Retour
-                    </BackButton>
-                    <Logo src={logo} alt="Logo" />
-                </HeaderLeft>
-                <HeaderRight>
-                    <StepIndicator>
-                        Étape 2/2 : Paiement
-                    </StepIndicator>
-                    <SecureLabel>
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        Paiement sécurisé
-                    </SecureLabel>
-                </HeaderRight>
-            </Header>
-            <div className="max-w-[800px] mx-auto p-8">
-                <Card>
-                    <Elements stripe={stripePromise}>
-                        <CheckoutForm />
-                    </Elements>
-                </Card>
-            </div>
-        </>
-    );
+  return (
+    <>
+      <Header>
+        <HeaderLeft>
+          <BackButton onClick={() => navigate('/checkout')}>
+            <ArrowLeft size={20} />
+            Retour
+          </BackButton>
+          <Logo src={logo} alt="Logo" />
+        </HeaderLeft>
+        <HeaderRight>
+          <StepIndicator>
+            Étape 2/2 : Paiement
+          </StepIndicator>
+          <SecureLabel>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Paiement sécurisé
+          </SecureLabel>
+        </HeaderRight>
+      </Header>
+      <div className="max-w-[800px] mx-auto p-8">
+        <Card>
+          <Elements stripe={stripePromise}>
+            <CheckoutForm />
+          </Elements>
+        </Card>
+      </div>
+    </>
+  );
 };
 
 export default PaymentPage;

@@ -13,7 +13,7 @@ import { getProductIdsFromUrl } from '@/lib/getProductIdFromUrl';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useGetUserQuery } from '@/services/auth';
-
+import { useNavigate } from 'react-router-dom';
 type PaymentMethod = 'card' | 'orange' | 'momo';
 type DeliveryOption = 'pickup' | 'localDelivery' | 'remotePickup' | 'remoteDelivery';
 
@@ -27,10 +27,15 @@ interface DeliveryAddress {
 }
 
 const CheckoutPage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('card');
+  const [isLoading, setIsLoading] = useState(false);
+  const params = new URLSearchParams(window.location.search);
+  const s = params.get('s');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
   const { data: userDataAuth } = useGetUserQuery('Auth');
   const productIds = getProductIdsFromUrl();
+  console.log('level')
   console.log(productIds);
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
@@ -70,7 +75,28 @@ const CheckoutPage: React.FC = () => {
 
   const handlePayment = () => {
     // Implémenter la logique de paiement ici
-    console.log('Processing payment with', selectedPayment);
+    let productsPayments;
+    if (s === '1') {
+      productsPayments = cartItems.map(item => {
+        return {
+          product_id: item.product.id,
+          quantity: item.quantity,
+          price: item.product.product_price
+        }
+
+
+      });
+      sessionStorage.setItem('productsPayments', JSON.stringify(productsPayments));
+      sessionStorage.setItem('total', total.toString());
+      sessionStorage.setItem('shipping', shipping.toString());
+      sessionStorage.setItem('paymentMethod', selectedPayment);
+    }
+
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      navigate(`/payment?paymentMethod=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}`)
+    }, 1000);
   };
 
   return (
@@ -167,7 +193,8 @@ const CheckoutPage: React.FC = () => {
                   <input
                     type="text"
                     name="fullName"
-                    value={address.fullName}
+                    value={userDataAuth?.userName || address.fullName}
+                    disabled={!!userDataAuth?.userName}
                     onChange={handleAddressChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                   />
@@ -179,19 +206,21 @@ const CheckoutPage: React.FC = () => {
                   <input
                     type="text"
                     name="city"
-                    value={address.city}
+                    value={userDataAuth?.residence}
+                    disabled={!!userDataAuth?.residence}
                     onChange={handleAddressChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                   />
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Adresse complète
+                    Numéro de téléphone
                   </label>
                   <input
                     type="text"
-                    name="address"
-                    value={address.address}
+                    name="phone"
+                    value={userDataAuth?.phone_number}
+                    disabled={!!userDataAuth?.phone_number}
                     onChange={handleAddressChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                   />
@@ -265,58 +294,7 @@ const CheckoutPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Formulaire spécifique selon la méthode */}
-              {selectedPayment === 'card' && (
-                <div className="mt-6 p-4 border rounded-xl space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Numéro de carte
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="4242 4242 4242 4242"
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Date d'expiration
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="MM/AA"
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        CVC
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="123"
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
 
-              {(selectedPayment === 'orange' || selectedPayment === 'momo') && (
-                <div className="mt-6 p-4 border rounded-xl space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Numéro de téléphone
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="+225 XX XX XX XX XX"
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -372,7 +350,7 @@ const CheckoutPage: React.FC = () => {
                 onClick={handlePayment}
                 className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
               >
-                Payer maintenant
+                {isLoading ? 'Traitement...' : 'Payer maintenant'}
               </button>
 
               {/* Informations supplémentaires */}
