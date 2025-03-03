@@ -79,12 +79,12 @@ const CreateProductPage: React.FC = () => {
     // Fonction pour générer toutes les combinaisons possibles d'attributs
     const generateCombinations = (arrays: string[][]): Record<string, string>[] => {
       if (arrays.length === 0) return [{}];
-      
+
       const [first, ...rest] = arrays;
       const combinations = generateCombinations(rest);
       const attributeNames = attrs.map(attr => attr.name);
-      
-      return first.flatMap(item => 
+
+      return first.flatMap(item =>
         combinations.map(combo => ({
           ...combo,
           [attributeNames[arrays.length - 1]]: item
@@ -123,7 +123,7 @@ const CreateProductPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
+
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8 flex justify-between items-center">
@@ -159,7 +159,7 @@ const CreateProductPage: React.FC = () => {
                 className="w-full px-4 py-3 text-2xl font-medium border-0 focus:ring-0"
                 placeholder="Nom du produit"
               />
-              
+
               <div className="flex gap-4">
                 <select
                   value={category}
@@ -181,7 +181,7 @@ const CreateProductPage: React.FC = () => {
                 />
 
                 <input
-                  type="number" 
+                  type="number"
                   value={stock}
                   onChange={(e) => setStock(e.target.value)}
                   className="px-4 py-2 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"

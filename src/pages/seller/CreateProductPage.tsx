@@ -221,6 +221,52 @@ const CreateProductPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Validation des champs requis
+    if (!name.trim()) {
+      alert("Le nom du produit est requis");
+      return;
+    }
+
+    if (!price || Number(price) <= 0) {
+      alert("Le prix doit être supérieur à 0");
+      return;
+    }
+
+    if (!stock || Number(stock) <= 0) {
+      alert("Le stock doit être supérieur à 0");
+      return;
+    }
+
+    if (gender === 0) {
+      alert("Le genre du produit est requis");
+      return;
+    }
+
+    if (selectedCategories.length === 0) {
+      alert("Veuillez sélectionner au moins une catégorie");
+      return;
+    }
+
+    if (selectedSubCategories.length === 0) {
+      alert("Veuillez sélectionner au moins une sous-catégorie");
+      return;
+    }
+
+    if (!city) {
+      alert("La ville cible est requise");
+      return;
+    }
+
+    if (!whatsappNumber.trim()) {
+      alert("Le numéro WhatsApp est requis");
+      return;
+    }
+
+    if (!featuredImage) {
+      alert("Une photo mise en avant est requise");
+      return;
+    }
+
     // Validation des variants si des attributs sont sélectionnés
     const hasSelectedAttributes = attributes.some(attr => attr.values.length > 0);
     if (hasSelectedAttributes) {
@@ -370,6 +416,7 @@ const CreateProductPage: React.FC = () => {
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-4 py-3 text-2xl font-medium border-[1px] rounded-lg border-[#0000007a] focus:ring-0"
                   placeholder="Nom du produit"
+                  required
                 />
 
                 <div className="flex max-sm:flex-col gap-4">
@@ -379,6 +426,7 @@ const CreateProductPage: React.FC = () => {
                     onChange={(e) => setPrice(e.target.value)}
                     className="px-4 py-2 max-sm:py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                     placeholder="Prix (Fcfa)"
+                    required
                   />
 
                   <input
@@ -387,6 +435,7 @@ const CreateProductPage: React.FC = () => {
                     onChange={(e) => setStock(e.target.value)}
                     className="px-4 py-2  max-sm:py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                     placeholder="Stock"
+                    required
                   />
                 </div>
 
@@ -405,7 +454,7 @@ const CreateProductPage: React.FC = () => {
                 <div className="relative">
                   <label className="block text-lg font-semibold mb-4">Genre produit</label>
 
-                  <Select name='gender' onValueChange={handleChangeGender}>
+                  <Select name='gender' onValueChange={handleChangeGender} required>
                     <SelectTrigger>
                       <SelectValue placeholder="Choisir un genre" />
                     </SelectTrigger>
@@ -479,6 +528,7 @@ const CreateProductPage: React.FC = () => {
                         onChange={(e) => setWhatsappNumber(e.target.value)}
                         className="w-full pl-12 pr-4 py-2 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                         placeholder="Ex: +225 0123456789"
+                        required
                       />
                     </div>
                     <p className="mt-1 text-sm text-gray-500">
@@ -490,7 +540,7 @@ const CreateProductPage: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Ville cible
                     </label>
-                    <Select name='city' onValueChange={handleCityChange}>
+                    <Select name='city' onValueChange={handleCityChange} required>
                       <SelectTrigger className="bg-gray-50 border-0">
                         <SelectValue placeholder="Sélectionnez votre ville de livraison" />
                       </SelectTrigger>

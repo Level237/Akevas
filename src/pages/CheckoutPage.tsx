@@ -193,8 +193,8 @@ const CheckoutPage: React.FC = () => {
                   <input
                     type="text"
                     name="fullName"
-                    value={userDataAuth?.userName || address.fullName}
-                    disabled={!!userDataAuth?.userName}
+                    value={userDataAuth?.userName || userDataAuth?.firstName}
+                    disabled={!!userDataAuth?.userName || !!userDataAuth?.firstName}
                     onChange={handleAddressChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                   />
