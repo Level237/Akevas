@@ -29,7 +29,6 @@ interface ProductVariant {
   variant_name: string;
   attribute_value_id: number[];
   price: number;
-  stock: number;
   image: File | null;
 }
 
@@ -169,7 +168,6 @@ const CreateProductPage: React.FC = () => {
       variant_name: combo.name,
       attribute_value_id: combo.ids,
       price: Number(price) || 0,
-      stock: Number(stock) || 0,
       image: null
     }));
 
@@ -273,8 +271,7 @@ const CreateProductPage: React.FC = () => {
       // Vérifier que chaque variant a tous les champs requis
       const invalidVariants = variants.some(variant =>
         !variant.image ||
-        !variant.price ||
-        !variant.stock
+        !variant.price
       );
 
       if (invalidVariants) {
@@ -307,7 +304,6 @@ const CreateProductPage: React.FC = () => {
           variant_name: variant.variant_name,
           attribute_value_id: variant.attribute_value_id,
           price: variant.price,
-          stock: variant.stock,
           image: null
         }));
 
@@ -845,7 +841,7 @@ const CreateProductPage: React.FC = () => {
                             {variant.variant_name}
                           </span>
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-2 gap-8">
                           <div>
                             <label className="block text-xs text-gray-500 mb-1">Prix unitaire</label>
                             <input
@@ -861,55 +857,42 @@ const CreateProductPage: React.FC = () => {
                               placeholder="0.00 €"
                             />
                           </div>
-                          <div>
-                            <label className="block text-xs text-gray-500 mb-1">Quantité en stock</label>
-                            <input
-                              type="number"
-                              value={variant.stock}
-                              onChange={(e) => {
-                                const newVariants = variants.map((v) =>
-                                  v.id === variant.id ? { ...v, stock: Number(e.target.value) } : v
-                                );
-                                setVariants(newVariants);
-                              }}
-                              className="w-full px-3 py-1.5 text-sm border rounded-lg"
-                              placeholder="0"
-                            />
+
+                          {/* Section image simplifiée */}
+                          <div className="flex flex-row items-center">
+                            <label className="block text-xs text-gray-500 ">Image de la variante</label>
+                            <div className="flex">
+                              {variant.image ? (
+                                <div className="relative group w-16 h-16">
+                                  <img
+                                    src={URL.createObjectURL(variant.image)}
+                                    alt={`Variante ${variant.id}`}
+                                    className="w-full h-full object-cover rounded-lg"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => removeVariantImage(variant.id)}
+                                    className="absolute top-1 right-1 p-1 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <label className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50">
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => e.target.files?.[0] && handleVariantImageUpload(variant.id, e.target.files[0])}
+                                  />
+                                  <Plus className="w-5 h-5 text-gray-400" />
+                                </label>
+                              )}
+                            </div>
                           </div>
+
                         </div>
 
-                        {/* Section image simplifiée */}
-                        <div className="mt-3">
-                          <label className="block text-xs text-gray-500 mb-2">Image de la variante</label>
-                          <div className="flex gap-2">
-                            {variant.image ? (
-                              <div className="relative group w-16 h-16">
-                                <img
-                                  src={URL.createObjectURL(variant.image)}
-                                  alt={`Variante ${variant.id}`}
-                                  className="w-full h-full object-cover rounded-lg"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => removeVariantImage(variant.id)}
-                                  className="absolute top-1 right-1 p-1 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </div>
-                            ) : (
-                              <label className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50">
-                                <input
-                                  type="file"
-                                  className="hidden"
-                                  accept="image/*"
-                                  onChange={(e) => e.target.files?.[0] && handleVariantImageUpload(variant.id, e.target.files[0])}
-                                />
-                                <Plus className="w-5 h-5 text-gray-400" />
-                              </label>
-                            )}
-                          </div>
-                        </div>
                       </div>
                     ))}
                   </div>

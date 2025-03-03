@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ShoppingCart,
 } from 'lucide-react';
 
 import Header from '@/components/ui/header';
@@ -17,6 +18,10 @@ import MobileNav from '@/components/ui/mobile-nav';
 import { useGetProductByUrlQuery, useGetSimilarProductsQuery } from '@/services/guardService';
 import { Variant } from '@/types/products';
 import SimilarProducts from '@/components/products/SimilarProducts';
+import { addItem } from '@/store/cartSlice';
+import { useDispatch } from 'react-redux';
+import AsyncLink from '@/components/ui/AsyncLink';
+
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -27,8 +32,19 @@ const ProductDetailPage: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const { data: { data: similarProducts } = {}, isLoading: isLoadingSimilarProducts } = useGetSimilarProductsQuery(product?.id);
+  const [showCartButton, setShowCartButton] = useState(false);
+  const dispatch = useDispatch();
+  const [isLoadingCart, setIsLoadingCart] = useState(false);
 
+  const handleAddToCart = useCallback(async () => {
+    setIsLoadingCart(true);
+    dispatch(addItem({ product, quantity }));
 
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    setIsLoadingCart(false);
+    setShowCartButton(true);
+  }, [dispatch, product, quantity]);
   // Helper function to get all images
   const getAllImages = () => {
     const mainImage = { path: product?.product_profile };
@@ -47,14 +63,12 @@ const ProductDetailPage: React.FC = () => {
       return {
         price: selectedVariant.price,
         mainImage: selectedVariant.image,
-        stock: selectedVariant.quantity,
         images: selectedVariant.images || []  // Assuming variants have their own images
       };
     }
     return {
       price: product?.product_price,
       mainImage: product?.product_profile,
-      stock: product?.stock,
       images: product?.product_images || []
     };
   };
@@ -346,9 +360,9 @@ const ProductDetailPage: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                    {product.stock && (
+                    {product.product_quantity && (
                       <span className="text-sm text-gray-500">
-                        Stock disponible: {currentInfo.stock} unités
+                        Stock disponible: {product.product_quantity} unités
                       </span>
                     )}
                   </div>
@@ -407,9 +421,31 @@ const ProductDetailPage: React.FC = () => {
                       <button className="w-full bg-[#ed7e0f] text-white px-6 py-3.5 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
                         Acheter maintenant
                       </button>
-                      <button className="w-full bg-gray-100 text-gray-700 px-6 py-3.5 rounded-xl font-medium hover:bg-gray-200 transition-colors">
-                        Ajouter au panier
-                      </button>
+                      {!showCartButton ? (
+                        <button
+                          onClick={handleAddToCart}
+                          disabled={isLoadingCart}
+                          className="w-full bg-gray-100 text-gray-700 px-6 py-3.5 flex items-center justify-center gap-2 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                          {isLoadingCart ? (
+                            <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent rounded-full">
+                              <span className="sr-only">Loading...</span>
+                            </div>
+                          ) : (
+                            <>
+                              <ShoppingCart className="w-5 h-5" />
+                              Ajouter au panier
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <AsyncLink
+                          to="/cart"
+                          className="w-full bg-green-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-700 transition-all flex items-center justify-center gap-2"
+                        >
+                          <ShoppingCart className="w-5 h-5" />
+                          Voir le panier
+                        </AsyncLink>
+                      )}
                     </div>
                   </div>
                 </div>

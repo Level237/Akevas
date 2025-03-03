@@ -26,7 +26,6 @@ export type Variant = {
     id: string,
     variant_name: string,
     image: string,
-    quantity: string,
     price: string,
 
 }

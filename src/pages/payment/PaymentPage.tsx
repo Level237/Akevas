@@ -7,6 +7,8 @@ import { ArrowLeft } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import visa from '@/assets/visa.png';
 import { usePayStripeMutation } from '@/services/auth';
+import { clearCart } from '@/store/cartSlice';
+import { useDispatch } from 'react-redux';
 // Initialize Stripe
 const stripePromise = loadStripe('pk_test_oKhSR5nslBRnBZpjO6KuzZeX');
 
@@ -145,6 +147,7 @@ const Button = styled.button`
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
+  const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [payStripe, { isLoading }] = usePayStripeMutation();
@@ -184,6 +187,7 @@ const CheckoutForm = () => {
         shipping: formData.shipping,
         products: formData.productsPayments
       }));
+      dispatch(clearCart());
       window.location.href = "/checkout/success";
     }
 
