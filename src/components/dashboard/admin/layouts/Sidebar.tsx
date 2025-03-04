@@ -26,7 +26,7 @@ const navItems = [
   { icon: Truck, label: "Livreurs", href: "/admin/delivery" },
   { icon: Store, label: "Boutiques", href: "/admin/shops" },
   { icon: Users, label: "Clients", href: "/admin/customers" },
-  { icon: ShoppingCart, label: "Orders", href: "#" },
+  { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { icon: BarChart2, label: "Analytics", href: "#" },
   { icon: Settings, label: "Settings", href: "#" },
   { icon: HelpCircle, label: "Help", href: "#" },
