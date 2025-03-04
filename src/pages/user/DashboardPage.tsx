@@ -1,16 +1,15 @@
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Package, Heart, Clock, MapPin, Settings, CreditCard, DollarSign, ShoppingBag } from 'lucide-react';
 import { useGetUserStatsQuery } from '@/services/auth';
 import Stats from '@/components/dashboard/user/stats';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-
-
+import RecentOrders from '@/components/dashboard/user/orders/recent-orders';
+import AsyncLink from '@/components/ui/AsyncLink';
 const UserDashboardPage = () => {
 
-  const { data, isLoading } = useGetUserStatsQuery("Auth");
+  const { data } = useGetUserStatsQuery("Auth");
 
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
 
@@ -32,23 +31,7 @@ const UserDashboardPage = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-6">Dernières commandes</h2>
-            <div className="space-y-4">
-              {[1, 2, 3].map((_, index) => (
-                <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-                  <div className="flex-1">
-                    <h3 className="font-medium">Commande #{2024001 + index}</h3>
-                    <p className="text-sm text-gray-500">2 articles • En cours de livraison</p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Voir détails
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </Card>
+          <RecentOrders />
         </motion.div>
 
         {/* Actions rapides */}
@@ -60,17 +43,18 @@ const UserDashboardPage = () => {
             <h2 className="text-xl font-semibold mb-6">Actions rapides</h2>
             <div className="space-y-4">
               {[
-                { title: 'Gérer mes paiements', icon: CreditCard, color: 'text-purple-500' },
-                { title: 'Mes favoris', icon: Heart, color: 'text-pink-500' },
-                { title: 'Paramètres du compte', icon: Settings, color: 'text-gray-500' },
+                { title: 'Gérer mes paiements', icon: CreditCard, color: 'text-purple-500', link: '/payments' },
+                { title: 'Mon Panier', icon: ShoppingBag, color: 'text-pink-500', link: '/cart' },
+                { title: 'Paramètres du compte', icon: Settings, color: 'text-gray-500', link: '/user/profile' },
               ].map((action, index) => (
-                <button
+                <AsyncLink
                   key={index}
+                  to={action.link}
                   className="w-full flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <action.icon className={`w-5 h-5 ${action.color}`} />
                   <span className="font-medium">{action.title}</span>
-                </button>
+                </AsyncLink>
               ))}
             </div>
           </Card>
