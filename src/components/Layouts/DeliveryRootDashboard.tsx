@@ -1,7 +1,7 @@
 'use client'
 
 import { useGetUserQuery } from '@/services/auth'
-import { Activity, Clock, DollarSign, Home, Package, Settings, Star} from 'lucide-react'
+import { Activity, Clock, DollarSign, Home, Package, Settings, Star } from 'lucide-react'
 import Header from '@/components/delivery/header'
 
 import { Link } from 'react-router-dom'
@@ -10,16 +10,16 @@ import { Link } from 'react-router-dom'
 
 
 export default function DeliveryRootDashboard({ children }: { children: React.ReactNode }) {
-  const {data:userData}=useGetUserQuery('Auth')
+  const { data: userData } = useGetUserQuery('Auth')
   return (
     <div className="min-h-screen bg-background">
       {/* Top Navigation */}
 
-      <Header userData={userData}/>
+      <Header userData={userData} />
       {/* Main Content */}
       <div className="flex flex-1">
         {/* Sidebar */}
-        <aside className="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-background overflow-y-auto">
+        <aside className="hidden fixed lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-background overflow-y-auto">
           <div className="flex h-14 items-center border-b px-4">
             <h2 className="text-lg font-semibold">Dashboard</h2>
           </div>
