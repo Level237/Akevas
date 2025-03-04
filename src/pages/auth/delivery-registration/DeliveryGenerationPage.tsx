@@ -5,7 +5,7 @@ import logo from '../../../assets/logo.png';
 import { useCreateDeliveryMutation } from '@/services/guardService';
 import { RootState } from '@/store';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
-
+import { useSelector } from 'react-redux';
 import { useLoginMutation } from '@/services/auth';
 import Cookies from 'universal-cookie';
 const steps = [
@@ -36,10 +36,10 @@ const DeliveryGenerationPage: React.FC = () => {
   const [createDelivery] = useCreateDeliveryMutation()
   const { firstName, lastName, email, phone, selectedQuarters, birthDate, nationality, quarter, vehicleType, vehicleState, vehiclePlate, vehicleModel, password } = useSelector((state: RootState) => state.registerDelivery)
 
-  const identity_front = localStorage.getItem('identity_card_in_front') || null;
-  const driver_license = localStorage.getItem('drivers_license') || null || "";
-  const vehicle_image = localStorage.getItem("vehicleImage") || null;
-  const identity_with_person = localStorage.getItem('identity_card_with_the_person') || null;
+  const identity_front = sessionStorage.getItem('identity_card_in_front') || null;
+  const driver_license = sessionStorage.getItem('drivers_license') || null || "";
+  const vehicle_image = sessionStorage.getItem("vehicleImage") || null;
+  const identity_with_person = sessionStorage.getItem('identity_card_with_the_person') || null;
 
   // Conversion des images en fichiers
   const [login] = useLoginMutation()

@@ -125,6 +125,7 @@ const StoreGenerationPage = () => {
 
         setTimeout(() => {
           localStorage.removeItem('storeCreationStarted');
+          dispatch(removeData())
           navigate('/seller/dashboard');
         }, 1000);
 
