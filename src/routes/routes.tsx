@@ -50,6 +50,7 @@ import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
 import PaymentPage from "@/pages/payment/PaymentPage";
 import SuccessPage from "@/pages/payment/SuccessPage";
 import OrderDetailPage from "@/pages/user/OrderDetailPage";
+import OrdersPage from "@/pages/user/OrdersPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -246,6 +247,9 @@ export const routes = createBrowserRouter([
       }, {
         path: 'user/orders/:id',
         element: <OrderDetailPage />
+      }, {
+        path: 'user/orders',
+        element: <OrdersPage />
       }
     ]
   }
