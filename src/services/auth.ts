@@ -95,6 +95,10 @@ export const authService = createApi({
         getRecentOrders: builder.query({
             query: () => '/api/v1/recent/orders',
             providesTags: ['Auth'],
+        }),
+        getOrderDetail: builder.query({
+            query: (orderId) => `/api/v1/show/order/${orderId}`,
+            providesTags: ['Auth'],
         })
     })
 })
@@ -108,5 +112,6 @@ export const {
     useCheckAuthQuery,
     usePayStripeMutation,
     useGetUserStatsQuery,
-    useGetRecentOrdersQuery
+    useGetRecentOrdersQuery,
+    useGetOrderDetailQuery
 } = authService

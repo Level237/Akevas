@@ -186,6 +186,7 @@ const CheckoutForm = () => {
         amount: sessionStorage.getItem('total'),
         quarter_delivery: quarter,
         shipping: sessionStorage.getItem('shipping'),
+        price: price,
         stripeToken: token.id
       }
     } else {
@@ -193,6 +194,7 @@ const CheckoutForm = () => {
         productId: productId,
         quantity: quantity,
         amount: total,
+        price: price,
         quarter_delivery: quarter,
         shipping: shipping,
         stripeToken: token.id

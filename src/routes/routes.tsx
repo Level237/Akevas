@@ -49,6 +49,7 @@ import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
 import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
 import PaymentPage from "@/pages/payment/PaymentPage";
 import SuccessPage from "@/pages/payment/SuccessPage";
+import OrderDetailPage from "@/pages/user/OrderDetailPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -236,12 +237,15 @@ export const routes = createBrowserRouter([
     element: <CurrentHomeByGenderPage />
   },
   {
-    path: '/user/dashboard',
+    path: '/',
     element: <UserRootDashboard><PrivateRoute /></UserRootDashboard>,
     children: [
       {
-        path: '/user/dashboard',
+        path: 'user/dashboard',
         element: <UserDashboardPage />
+      }, {
+        path: 'user/orders/:id',
+        element: <OrderDetailPage />
       }
     ]
   }
