@@ -2,17 +2,17 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import React, { useState } from "react"
-import { MessageCircle, Package, Heart, CreditCard, Ticket,ChevronRight } from 'lucide-react'
+import { MessageCircle, Package, Heart, CreditCard, Ticket, ChevronRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import AsyncLink from "./AsyncLink"
 
 
 
-const DropdownAccount = ({children,currentUser}: {children: React.ReactNode,currentUser:any | null}) => {
+const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode, currentUser: any | null }) => {
   const [isOpen, setIsOpen] = useState(false)
- 
-  
+
+
   const menuItems = [
     { icon: Package, text: "Mes Commandes" },
     { icon: Package, text: "Mes pièces" },
@@ -35,17 +35,17 @@ const DropdownAccount = ({children,currentUser}: {children: React.ReactNode,curr
   const handleMouseLeave = () => {
     setIsOpen(false)
   }
-  
-  
+
+
   return (
     <div className="relative z-[999999] ">
-      <div 
+      <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {children}
-      
-        
+
+
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -56,12 +56,15 @@ const DropdownAccount = ({children,currentUser}: {children: React.ReactNode,curr
               className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
             >
               <div className="px-4 py-3 border-b border-gray-100">
-                {!currentUser && <><Link to={"/login"}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button></Link>
-                <Link to={"/register"}><Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button></Link></>}
-                {currentUser && currentUser.role_id===2 && <><AsyncLink to={"/shop/"+currentUser.shop.shop_id}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Voir ma boutique</Button></AsyncLink>
-                <AsyncLink to={"/seller/dashboard"}><Button variant="ghost" className="w-full text-sm">Tableau de bord</Button></AsyncLink></>}
-              {currentUser && currentUser.role_id===1 && <AsyncLink to={"/admin/dashboard"}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
-              {currentUser && currentUser.role_id===3 && <AsyncLink to={"/user/dashboard"}><Button  className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
+                {!currentUser && <><Link to={"/login"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button></Link>
+                  <Link to={"/register"}><Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button></Link></>}
+                {currentUser && currentUser.role_id === 2 && <><AsyncLink to={"/shop/" + currentUser.shop.shop_id}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Voir ma boutique</Button></AsyncLink>
+                  <AsyncLink to={"/seller/dashboard"}><Button variant="ghost" className="w-full text-sm">Tableau de bord</Button></AsyncLink></>}
+                {currentUser && currentUser.role_id === 4 && <><AsyncLink to={"/delivery/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>
+                  <AsyncLink to={"/delivery/profile"}><Button variant="ghost" className="w-full text-sm">Mon profil</Button></AsyncLink>
+                </>}
+                {currentUser && currentUser.role_id === 1 && <AsyncLink to={"/admin/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
+                {currentUser && currentUser.role_id === 3 && <AsyncLink to={"/user/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
               </div>
 
               <div className="py-2">

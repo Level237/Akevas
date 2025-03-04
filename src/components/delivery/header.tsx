@@ -17,6 +17,8 @@ import { Link } from 'react-router-dom'
 import { User } from '@/types/user'
 import { useLogoutMutation } from '@/services/auth'
 import { logoutUser } from '@/lib/logout'
+import favicon from '@/assets/favicon.png'
+import AsyncLink from '../ui/AsyncLink'
 export default function Header({ userData }: { userData: User }) {
   const [logout] = useLogoutMutation()
   const handleLogout = async () => {
@@ -28,13 +30,16 @@ export default function Header({ userData }: { userData: User }) {
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="flex h-16 items-center px-4 md:px-6">
           <MobileNav />
-          <div className="flex items-center gap-2 font-semibold ml-4 lg:ml-0">
-            <Truck className="h-6 w-6" />
-            <span className="hidden md:inline">DeliveryPro</span>
-          </div>
+          <AsyncLink to="/">
+            <div className="flex items-center  font-semibold ml-1 lg:ml-0">
+
+              <img src={favicon} alt="DeliveryPro" className="h-12 w-12" />
+              <span className="hidden md:inline">DeliveryPro</span>
+            </div>
+          </AsyncLink>
           <nav className="ml-8 hidden md:flex items-center gap-6">
             <Link className="text-sm font-medium hover:underline underline-offset-4" to="/">
-              Livraisons
+              Livraisons récentes
             </Link>
             <Link className="text-sm font-medium hover:underline underline-offset-4" to="/">
               Pages

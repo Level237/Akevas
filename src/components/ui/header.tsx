@@ -124,7 +124,7 @@ const Header = () => {
     if (roleId === 2 && seller) {
       return seller;
     }
-    if (roleId === 1 || roleId === 3) {
+    if (roleId === 1 || roleId === 3 || roleId === 4) {
       return userDataAuth;
     }
     return null;
@@ -315,11 +315,11 @@ const Header = () => {
                       </AvatarFallback>
                     </Avatar>
                   </div>}
-                  {userData && (userData.role_id === 1 || userData.role_id === 3) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                  {userData && (userData.role_id === 1 || userData.role_id === 3 || userData.role_id === 4) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
                     <Avatar>
                       <AvatarImage src={userData.profile} />
                       <AvatarFallback>
-                        {userData?.userName.charAt(0)}
+                        {userData.role_id === 4 ? userData?.firstName.charAt(0) : userData?.userName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                   </div>}
