@@ -1,10 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/services/auth";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store";
 import { useState } from "react";
-import { authTokenChange } from "@/store/authSlice";
 import Cookies from "universal-cookie";
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
@@ -19,7 +16,6 @@ export default function LoginForm() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [login, { isLoading, isError, error }] = useLoginMutation()
-  const dispatch = useDispatch<AppDispatch>();
   if (error) {
     console.log(error)
   }

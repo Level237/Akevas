@@ -3,13 +3,11 @@ import { motion } from 'framer-motion';
 import { Loader2, CheckCircle } from 'lucide-react';
 import logo from '../../../assets/logo.png';
 import { useCreateDeliveryMutation } from '@/services/guardService';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '@/store';
 import { RootState } from '@/store';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
-import { authTokenChange } from '@/store/authSlice';
-import { clearData } from '@/store/delivery/deliverySlice';
+
 import { useLoginMutation } from '@/services/auth';
+import Cookies from 'universal-cookie';
 const steps = [
   {
     id: 'verify',
@@ -36,104 +34,99 @@ const steps = [
 const DeliveryGenerationPage: React.FC = () => {
   const [currentStep, setCurrentStep] = React.useState(0);
   const [createDelivery] = useCreateDeliveryMutation()
-  const dispatch=useDispatch<AppDispatch>()
-  const {firstName,lastName,email,phone,selectedQuarters,birthDate,nationality,quarter,vehicleType,vehicleState,vehiclePlate,vehicleModel,password}=useSelector((state:RootState)=>state.registerDelivery)
-  
+  const { firstName, lastName, email, phone, selectedQuarters, birthDate, nationality, quarter, vehicleType, vehicleState, vehiclePlate, vehicleModel, password } = useSelector((state: RootState) => state.registerDelivery)
+
   const identity_front = localStorage.getItem('identity_card_in_front') || null;
   const driver_license = localStorage.getItem('drivers_license') || null || "";
-  const vehicle_image=localStorage.getItem("vehicleImage") || null;
+  const vehicle_image = localStorage.getItem("vehicleImage") || null;
   const identity_with_person = localStorage.getItem('identity_card_with_the_person') || null;
-  
-   // Conversion des images en fichiers
-    const [login]=useLoginMutation()
-   const vehicleImage=vehicle_image ? convertBase64ToFile(vehicle_image,'vehicle.png') : null;
-   const identity_front_file=identity_front ? convertBase64ToFile(identity_front,'identity_front.png') : null;
-   const identity_with_person_file=identity_with_person ? convertBase64ToFile(identity_with_person,'identity_with_person.png') : null;
-   let driver_license_file :any | null;
-  
-   if(driver_license==="null"){
-    driver_license_file=null
+
+  // Conversion des images en fichiers
+  const [login] = useLoginMutation()
+  const vehicleImage = vehicle_image ? convertBase64ToFile(vehicle_image, 'vehicle.png') : null;
+  const identity_front_file = identity_front ? convertBase64ToFile(identity_front, 'identity_front.png') : null;
+  const identity_with_person_file = identity_with_person ? convertBase64ToFile(identity_with_person, 'identity_with_person.png') : null;
+  let driver_license_file: any | null;
+
+  if (driver_license === "null") {
+    driver_license_file = null
     console.log("dd")
-   }else{
+  } else {
     console.log("ddxq,")
     console.log(driver_license)
-      console.log(driver_license_file)
-    driver_license_file=convertBase64ToFile(driver_license,'driver_license.png') ;
-   }
+    console.log(driver_license_file)
+    driver_license_file = convertBase64ToFile(driver_license, 'driver_license.png');
+  }
   useEffect(() => {
-   
-    
-     //console.log(driver_license)
-   
 
-   const createDeliveryHandler=async()=>{
 
-     const formData = new FormData();
-     try {
+    //console.log(driver_license)
 
-      const deliveryObject={
-        firstName,
-        lastName,
-        email,
-        phone_number:phone,
-        birthDate,
-        nationality,
-        residence:quarter,
-        vehicle_type:vehicleType,
-        vehicle_state:vehicleState,
-        vehicle_number:vehiclePlate,
-        vehicle_model:vehicleModel,
-        password,
-        identity_card_in_front:identity_front_file,
-        identity_card_with_the_person:identity_with_person_file,
-        drivers_license:driver_license_file,
-        vehicle_image:vehicleImage
+
+    const createDeliveryHandler = async () => {
+
+      const formData = new FormData();
+      try {
+
+        const deliveryObject = {
+          firstName,
+          lastName,
+          email,
+          phone_number: phone,
+          birthDate,
+          nationality,
+          residence: quarter,
+          vehicle_type: vehicleType,
+          vehicle_state: vehicleState,
+          vehicle_number: vehiclePlate,
+          vehicle_model: vehicleModel,
+          password,
+          identity_card_in_front: identity_front_file,
+          identity_card_with_the_person: identity_with_person_file,
+          drivers_license: driver_license_file,
+          vehicle_image: vehicleImage
+        }
+
+        Object.entries(deliveryObject).forEach(([key, value]) => {
+          if (value) formData.append(key, value);
+        });
+
+        const quarters = JSON.parse(selectedQuarters || '[]');
+        for (let i = 0; i < quarters.length; i++) {
+          formData.append('quarters[]', quarters[i]);
+        }
+
+        const response = await createDelivery(formData);
+        console.log(response)
+        const userObject = { phone_number: phone, password: password }
+        const userData = await login(userObject)
+
+        const cookies = new Cookies();
+        cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
+        cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
+
+
+
+
+
+
+
+      } catch (error) {
+        console.error('Erreur lors de la création du compte livreur:', error);
+        return;
       }
-
-      Object.entries(deliveryObject).forEach(([key, value]) => {
-        if (value) formData.append(key, value);
-      });
-
-      const quarters=JSON.parse(selectedQuarters || '[]');
-      for(let i = 0; i < quarters.length; i++) {
-        formData.append('quarters[]', quarters[i]);
-      }
-
-      const response=await createDelivery(formData);
-      console.log(response)
-      const userObject={phone_number:phone,password:password}
-         const userData=await login(userObject)
-         
-            const userState={
-                'refreshToken':userData.data.refresh_token,
-                'accessToken':userData.data.access_token
-            }
-            
-            dispatch(authTokenChange(userState))
-            
-         
-
-
-       
-   
-
-    } catch (error) {
-      console.error('Erreur lors de la création du compte livreur:', error);
-      return;
     }
-   }
 
-   createDeliveryHandler()
-         const timer = setInterval(() => {
+    createDeliveryHandler()
+    const timer = setInterval(() => {
       if (currentStep < steps.length - 1) {
         setCurrentStep(prev => prev + 1);
       } else {
         clearInterval(timer);
         // Redirect to dashboard after a short delay
         setTimeout(() => {
-          
+
           window.location.href = '/delivery/dashboard';
-          dispatch(clearData())
         }, 1500);
       }
     }, 3000);
@@ -167,19 +160,17 @@ const DeliveryGenerationPage: React.FC = () => {
           {steps.map((step, index) => (
             <div
               key={step.id}
-              className={`flex items-start gap-4 ${
-                index !== steps.length - 1 ? 'mb-8' : ''
-              }`}
+              className={`flex items-start gap-4 ${index !== steps.length - 1 ? 'mb-8' : ''
+                }`}
             >
               <div className="relative">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    index < currentStep
-                      ? 'bg-[#6e0a13]'
-                      : index === currentStep
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${index < currentStep
+                    ? 'bg-[#6e0a13]'
+                    : index === currentStep
                       ? 'bg-[#ed7e0f]'
                       : 'bg-gray-100'
-                  }`}
+                    }`}
                 >
                   {index < currentStep ? (
                     <CheckCircle className="w-5 h-5 text-white" />
@@ -191,24 +182,21 @@ const DeliveryGenerationPage: React.FC = () => {
                 </div>
                 {index !== steps.length - 1 && (
                   <div
-                    className={`absolute left-1/2 top-8 w-0.5 h-16 -translate-x-1/2 ${
-                      index < currentStep ? 'bg-[#6e0a13]' : 'bg-gray-100'
-                    }`}
+                    className={`absolute left-1/2 top-8 w-0.5 h-16 -translate-x-1/2 ${index < currentStep ? 'bg-[#6e0a13]' : 'bg-gray-100'
+                      }`}
                   />
                 )}
               </div>
               <div>
                 <h3
-                  className={`font-medium ${
-                    index <= currentStep ? 'text-gray-900' : 'text-gray-400'
-                  }`}
+                  className={`font-medium ${index <= currentStep ? 'text-gray-900' : 'text-gray-400'
+                    }`}
                 >
                   {step.title}
                 </h3>
                 <p
-                  className={`text-sm mt-1 ${
-                    index <= currentStep ? 'text-gray-600' : 'text-gray-400'
-                  }`}
+                  className={`text-sm mt-1 ${index <= currentStep ? 'text-gray-600' : 'text-gray-400'
+                    }`}
                 >
                   {step.description}
                 </p>
@@ -217,7 +205,7 @@ const DeliveryGenerationPage: React.FC = () => {
           ))}
         </div>
 
-       
+
 
         <div className="mt-8 text-center text-sm text-white">
           <p>Ne fermez pas cette fenêtre</p>
