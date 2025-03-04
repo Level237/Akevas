@@ -84,6 +84,7 @@ interface OrderDetails {
         price: number;
     }> | null;
     productId: string | null;
+    quarter_delivery: string | null;
     quantity: number | null;
     name: string | null;
     price: number | null;
@@ -176,6 +177,7 @@ const SuccessPage = () => {
                         <div className="text-gray-600">
                             <p className='max-sm:text-sm'>Date: {new Date(orderDetails.orderDate).toLocaleDateString()}</p>
                             <p className='max-sm:text-sm'>Statut: Payé</p>
+                            <p className='max-sm:text-sm'>Quartier de livraison: {orderDetails.quarter_delivery === "" ? "Dans les locaux akevas" : orderDetails.quarter_delivery}</p>
                         </div>
                     </div>
                 </div>

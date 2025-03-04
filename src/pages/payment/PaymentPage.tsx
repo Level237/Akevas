@@ -153,6 +153,7 @@ const CheckoutForm = () => {
   const [payStripe, { isLoading }] = usePayStripeMutation();
   const params = new URLSearchParams(window.location.search)
   const s = params.get('s');
+  const quarter = params.get('quarter');
   const productId = params.get('productId');
   const quantity = params.get('quantity');
   const name = params.get('name');
@@ -183,6 +184,7 @@ const CheckoutForm = () => {
       formData = {
         productsPayments: JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
         amount: sessionStorage.getItem('total'),
+        quarter_delivery: quarter,
         shipping: sessionStorage.getItem('shipping'),
         stripeToken: token.id
       }
@@ -191,6 +193,7 @@ const CheckoutForm = () => {
         productId: productId,
         quantity: quantity,
         amount: total,
+        quarter_delivery: quarter,
         shipping: shipping,
         stripeToken: token.id
       }
@@ -204,6 +207,7 @@ const CheckoutForm = () => {
           orderId: response.data.order.id,
           orderDate: new Date().toISOString(),
           amount: formData.amount,
+          quarter_delivery: quarter,
           shipping: formData.shipping,
           products: formData.productsPayments
         }));
@@ -214,6 +218,7 @@ const CheckoutForm = () => {
           price: total,
           amount: price,
           shipping: shipping,
+          quarter_delivery: quarter,
           productId: productId,
           quantity: quantity,
           name: name

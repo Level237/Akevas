@@ -88,6 +88,13 @@ const CheckoutPage: React.FC = () => {
 
   const handlePayment = () => {
     // Implémenter la logique de paiement ici
+
+    if (address.deliveryOption === 'localDelivery') {
+      if (quarter === '') {
+        alert('Veuillez choisir un quartier de livraison');
+        return;
+      }
+    }
     let productsPayments;
     if (s === '1') {
       productsPayments = cartItems.map(item => {
@@ -107,13 +114,13 @@ const CheckoutPage: React.FC = () => {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
-        navigate(`/payment?s=1&method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}`)
+        navigate(`/payment?s=1&method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}&quarter=${quarter}`)
       }, 1000);
     } else if (s === "0") {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
-        navigate(`/payment?s=0&method=${selectedPayment}&total=${total}&shipping=${shipping}&productId=${productId}&quantity=${quantity}&name=${name}&price=${price}`)
+        navigate(`/payment?s=0&method=${selectedPayment}&total=${total}&shipping=${shipping}&productId=${productId}&quantity=${quantity}&name=${name}&price=${price}&quarter=${quarter}`)
       }, 1000);
     }
 
