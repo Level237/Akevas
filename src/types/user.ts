@@ -2,6 +2,7 @@ export interface User {
    birthDate: string;
    created_at: string;
    email: string;
+   residence: string | null;
    email_verified_at: string | null;
    firstName: string;
    id: number;

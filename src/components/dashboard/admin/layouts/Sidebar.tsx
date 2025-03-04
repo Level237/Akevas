@@ -19,14 +19,13 @@ import {
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
-import { useDispatch } from "react-redux"
 import { logoutUser } from "@/lib/logout"
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
   { icon: Truck, label: "Livreurs", href: "/admin/delivery" },
   { icon: Store, label: "Boutiques", href: "/admin/shops" },
-  { icon: Users, label: "Users", href: "#" },
+  { icon: Users, label: "Clients", href: "/admin/customers" },
   { icon: ShoppingCart, label: "Orders", href: "#" },
   { icon: BarChart2, label: "Analytics", href: "#" },
   { icon: Settings, label: "Settings", href: "#" },
@@ -36,7 +35,7 @@ const navItems = [
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const [logout] = useLogoutMutation()
-  const dispatch = useDispatch();
+
   const { pathname } = useLocation()
 
   const handleLogout = async () => {

@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { setShopInfo } from '@/store/seller/registerSlice';
 const ShopInfoPage = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<SellerFormData['shopInfo']>({
@@ -33,9 +33,9 @@ const ShopInfoPage = () => {
 
   const handleNext = async () => {
     // Validation
-    const requiredFields = ['shopName', 'description', 'category'];
+    const requiredFields = ['shopName', 'description', 'category', 'gender', 'logo', 'images'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
+
     if (missingFields.length > 0) {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
@@ -46,14 +46,14 @@ const ShopInfoPage = () => {
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const shopInfoState={
-        'storeName':formData.shopName,
-        'storeDescription':formData.description,
-        'storeCategories':JSON.stringify(formData.category),
-        'storeLogo':formData.logo,
-        'gender':formData.gender,
-        'storeImages':JSON.stringify(formData.images),
-        'storeGender':formData.gender,
+      const shopInfoState = {
+        'storeName': formData.shopName,
+        'storeDescription': formData.description,
+        'storeCategories': JSON.stringify(formData.category),
+        'storeLogo': formData.logo,
+        'gender': formData.gender,
+        'storeImages': JSON.stringify(formData.images),
+        'storeGender': formData.gender,
       }
       dispatch(setShopInfo(shopInfoState));
       // Animation de succès
@@ -69,10 +69,10 @@ const ShopInfoPage = () => {
       document.body.removeChild(element);
       navigate('/seller-registration/seller-type');
     } catch (error) {
-      if (error=== 'QuotaExceededError') {
+      if (error === 'QuotaExceededError') {
         console.error('Quota exceeded! Please clear some space in localStorage.');
         // Logique pour gérer l'erreur
-    }
+      }
       console.error('Error:', error);
     } finally {
       setIsLoading(false);
@@ -83,13 +83,13 @@ const ShopInfoPage = () => {
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
         <TopLoader progress={50.1} />
-        <ScrollRestoration/>
+        <ScrollRestoration />
         <div className="max-w-5xl mx-auto">
-          <ShopInfoStep 
+          <ShopInfoStep
             data={formData}
             onUpdate={handleUpdate}
           />
-          <motion.div 
+          <motion.div
             className="mt-8 flex justify-between"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

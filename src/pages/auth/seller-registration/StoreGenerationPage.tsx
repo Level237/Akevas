@@ -1,13 +1,14 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Store } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/index';
-import { useLoginMutation,useNewStoreMutation } from '@/services/auth';
+import { useLoginMutation, useNewStoreMutation } from '@/services/auth';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
 import { authTokenChange } from '@/store/authSlice';
 import { removeData } from '@/store/seller/registerSlice';
+import Cookies from 'universal-cookie';
 const steps = [
   "Création de votre boutique...",
   "Configuration de votre espace vendeur...",
@@ -20,11 +21,11 @@ const StoreGenerationPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
-  const {firstName, lastName,gender, email, phone, birthDate, nationality,sellerType, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password,productType} = useSelector((state: RootState) => state.registerSeller);
+  const { firstName, lastName, gender, email, phone, birthDate, nationality, sellerType, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password, productType } = useSelector((state: RootState) => state.registerSeller);
 
   const [newStore] = useNewStoreMutation();
-    const [login]=useLoginMutation()
-  const dispatch=useDispatch<AppDispatch>()
+  const [login] = useLoginMutation()
+  const dispatch = useDispatch<AppDispatch>()
 
   const [error, setError] = useState<string | null>(null);
 
@@ -32,48 +33,48 @@ const StoreGenerationPage = () => {
   const identity_back = localStorage.getItem('identity_card_in_back') || null;
   const identity_with_person = localStorage.getItem('identity_card_with_the_person') || null;
   const storeLogo = localStorage.getItem('storeLogo') || null;
-   const imagesString = localStorage.getItem('storeImages') || '[]';
+  const imagesString = localStorage.getItem('storeImages') || '[]';
   // Conversion des images en fichiers
   const logoFile = storeLogo ? convertBase64ToFile(storeLogo, 'logo.png') : null;
   const frontFile = identity_front ? convertBase64ToFile(identity_front, 'identity_front.jpg') : null;
   const backFile = identity_back ? convertBase64ToFile(identity_back, 'identity_back.jpg') : null;
   const withPersonFile = identity_with_person ? convertBase64ToFile(identity_with_person, 'identity_with_person.jpg') : null;
-    
+
   const imagesArray = JSON.parse(imagesString);
-    
-  const imageFiles = imagesArray.map((image: string, index: number) => 
+
+  const imageFiles = imagesArray.map((image: string, index: number) =>
     convertBase64ToFile(image, `store_image_${index + 1}.jpg`)
-      );
-      
-   useEffect(() => {
-    
-    if(!firstName || !lastName || !email || !phone || !birthDate || !nationality || !storeName || !storeDescription || !storeCategories || !storeTown || !storeQuarter || !password || !productType || !gender) {
+  );
+
+  useEffect(() => {
+
+    if (!firstName || !lastName || !email || !phone || !birthDate || !nationality || !storeName || !storeDescription || !storeCategories || !storeTown || !storeQuarter || !password || !productType || !gender) {
       navigate(-1);
       return;
     }
     const createStore = async () => {
-     
-      
-     
+
+
+
       const formData = new FormData();
-      
+
       try {
         // Préparation des données pour l'API dès le début
         const storeObject = {
           firstName, lastName, email, phone_number: phone, birthDate, nationality,
-          identity_card_in_front: frontFile, identity_card_in_back: backFile, 
+          identity_card_in_front: frontFile, identity_card_in_back: backFile,
           identity_card_with_the_person: withPersonFile,
           shop_name: storeName, shop_description: storeDescription, shop_profile: logoFile,
           town_id: storeTown, quarter_id: storeQuarter, password,
-          isWholesaler:sellerType,
+          isWholesaler: sellerType,
           product_type: productType,
-          shop_gender:gender,
+          shop_gender: gender,
         };
         Object.entries(storeObject).forEach(([key, value]) => {
           if (value) formData.append(key, value);
         });
         const categories = JSON.parse(storeCategories || '[]');
-        for(let i = 0; i < categories.length; i++) {
+        for (let i = 0; i < categories.length; i++) {
           formData.append('categories[]', categories[i]);
         }
         for (let i = 0; i < imageFiles.length; i++) {
@@ -82,14 +83,14 @@ const StoreGenerationPage = () => {
 
         // Lancement de l'appel API immédiatement
         await newStore(formData);
-       
+
         const stepDuration = 3000;
         const handleStepProgress = (stepIndex: number) => {
           return new Promise<void>((resolve) => {
             setCurrentStep(stepIndex);
             const startProgress = (stepIndex * 100) / steps.length;
             const endProgress = ((stepIndex + 1) * 100) / steps.length;
-            
+
             const interval = setInterval(() => {
               setProgress(prev => {
                 const newProgress = prev + 1;
@@ -110,17 +111,13 @@ const StoreGenerationPage = () => {
         }
 
         // Attente de la réponse de l'API
-       
-        const userObject={phone_number:phone,password:password}
-         const userData=await login(userObject)
-         
-            const userState={
-                'refreshToken':userData.data.refresh_token,
-                'accessToken':userData.data.access_token
-            }
-            
-            dispatch(authTokenChange(userState))
-            dispatch(removeData())
+
+        const userObject = { phone_number: phone, password: password }
+        const userData = await login(userObject)
+
+        const cookies = new Cookies();
+        cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
+        cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
 
         // Dernière étape et finalisation
         await handleStepProgress(steps.length - 1);
@@ -131,16 +128,16 @@ const StoreGenerationPage = () => {
           navigate('/seller/dashboard');
         }, 1000);
 
-      } catch (error:any) {
+      } catch (error: any) {
         console.log(error);
         setError("Une erreur est survenue lors de la création de votre boutique. Veuillez actualiser la page et réessayer.");
-        
+
       }
     };
 
     createStore();
 
-    
+
   }, [navigate, newStore]);
 
   return (
@@ -149,7 +146,7 @@ const StoreGenerationPage = () => {
         <div className="bg-red-50 p-6 rounded-lg shadow-lg text-center">
           <h3 className="text-xl font-bold text-red-700 mb-4">Erreur</h3>
           <p className="text-red-600 mb-4">{error}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
           >
@@ -162,7 +159,7 @@ const StoreGenerationPage = () => {
           animate={{ scale: 1, opacity: 1 }}
           className="w-full max-w-2xl space-y-8"
         >
-        
+
           {/* Store Icon */}
           <div className="flex justify-center">
             <motion.div
@@ -189,7 +186,7 @@ const StoreGenerationPage = () => {
               {steps[currentStep]}
             </p>
           </div>
-              
+
           {/* Progress Bar */}
           <div className="relative pt-1">
             <div className="flex mb-2 items-center justify-between">
@@ -238,14 +235,12 @@ const StoreGenerationPage = () => {
                 className="flex items-center space-x-3"
               >
                 <div
-                  className={`w-2 h-2 rounded-full ${
-                    index <= currentStep ? 'bg-[#ed7e0f]' : 'bg-gray-300'
-                  }`}
+                  className={`w-2 h-2 rounded-full ${index <= currentStep ? 'bg-[#ed7e0f]' : 'bg-gray-300'
+                    }`}
                 />
                 <span
-                  className={`text-sm ${
-                    index <= currentStep ? 'text-gray-800' : 'text-gray-400'
-                  }`}
+                  className={`text-sm ${index <= currentStep ? 'text-gray-800' : 'text-gray-400'
+                    }`}
                 >
                   {step}
                 </span>

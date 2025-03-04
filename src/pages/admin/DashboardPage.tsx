@@ -4,7 +4,7 @@ import { RecentProducts } from "@/components/dashboard/admin/recent-products"
 import { UserStats } from "@/components/dashboard/admin/user-stats"
 import RecentGridUser from "@/components/dashboard/admin/users/recent-grid-user"
 import { useRecentProductsQuery } from "@/services/adminService"
-import { Users, TrendingUp, Package,ShoppingCart, DollarSign } from "lucide-react"
+import { Users, TrendingUp, Package, ShoppingCart, DollarSign } from "lucide-react"
 
 
 
@@ -29,53 +29,53 @@ const delivererStats = [
 
 export default function DashboardAdminPage() {
 
-  const {data:{data:recentProducts}={},isLoading}=useRecentProductsQuery('admin')
+  const { data: { data: recentProducts } = {}, isLoading } = useRecentProductsQuery('admin')
   console.log(recentProducts)
   return (
     <main className="p-4 md:p-6 mt-16">
-    <h1 className="text-2xl font-bold mb-6">Akevas Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-6">Akevas Dashboard</h1>
 
-    <div className="grid gap-6 mb-6">
-      <UserStats
-        stats={[
-          {
-            title: "Total Revenue",
-            value: 0,
-            change: 12,
-            icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-          },
-          {
-            title: "Active Orders",
-            value: 0,
-            change: 8,
-            icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />,
-          },
-          {
-            title: "Total Products",
-            value: 0,
-            change: 3,
-            icon: <Package className="h-4 w-4 text-muted-foreground" />,
-          },
-        ]}
-      />
-    </div>
-
-    <div className="grid gap-6 mb-6">
-      <RecentGridUser/>
-      <RecentProducts products={recentProducts} isLoading={isLoading} />
-    </div>
-
-    <div className="grid gap-6">
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Seller Statistics</h2>
-        <UserStats stats={sellerStats} />
+      <div className="grid gap-6 mb-6">
+        <UserStats
+          stats={[
+            {
+              title: "Total Revenue",
+              value: 0,
+              change: 12,
+              icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+            },
+            {
+              title: "Active Orders",
+              value: 0,
+              change: 8,
+              icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />,
+            },
+            {
+              title: "Total Products",
+              value: 0,
+              change: 3,
+              icon: <Package className="h-4 w-4 text-muted-foreground" />,
+            },
+          ]}
+        />
       </div>
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Deliverer Statistics</h2>
-        <UserStats stats={delivererStats} />
+
+      <div className="grid gap-6 mb-6">
+        <RecentGridUser />
+        <RecentProducts products={recentProducts} isLoading={isLoading} />
       </div>
-    </div>
-  </main>
+
+      <div className="grid gap-6">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Seller Statistics</h2>
+          <UserStats stats={sellerStats} />
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Deliverer Statistics</h2>
+          <UserStats stats={delivererStats} />
+        </div>
+      </div>
+    </main>
   )
 }
 

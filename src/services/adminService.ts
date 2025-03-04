@@ -1,79 +1,84 @@
-import {createApi} from "@reduxjs/toolkit/query/react"
+import { createApi } from "@reduxjs/toolkit/query/react"
 import { baseQueryWithReauth } from "./baseQueryWithReauth";
 
 
 
 
-export const adminService=createApi({
-    baseQuery:baseQueryWithReauth,
-    reducerPath:"adminService",
-    tagTypes:['admin'],
-    endpoints:builder=>({
-       
-        recentSeller:builder.query({
-           
-                query:()=>'/api/v1/recent/sellers',
-                providesTags: ['admin'],
-               
+export const adminService = createApi({
+    baseQuery: baseQueryWithReauth,
+    reducerPath: "adminService",
+    tagTypes: ['admin'],
+    endpoints: builder => ({
+
+        recentSeller: builder.query({
+
+            query: () => '/api/v1/recent/sellers',
+            providesTags: ['admin'],
+
         }),
-        listSellers:builder.query({
-           
-                query:()=>'/api/v1/sellers',
-                providesTags: ['admin'],
-               
+        listSellers: builder.query({
+
+            query: () => '/api/v1/sellers',
+            providesTags: ['admin'],
+
         }),
-        getSeller:builder.query({
-            query:(id)=>`/api/v1/sellers/${id}`,
-           providesTags: ['admin'],
+        getSeller: builder.query({
+            query: (id) => `/api/v1/sellers/${id}`,
+            providesTags: ['admin'],
         }),
-        confirmOrNotShop:builder.mutation({
-            query:({shop_id, formData})=>({
-                url:`/api/v1/shop/confirm/${shop_id}`,
-                method:'POST',
-                body:formData
+        confirmOrNotShop: builder.mutation({
+            query: ({ shop_id, formData }) => ({
+                url: `/api/v1/shop/confirm/${shop_id}`,
+                method: 'POST',
+                body: formData
             }),
-            invalidatesTags:['admin']
+            invalidatesTags: ['admin']
         }),
-        recentProducts:builder.query({
-            query:()=>'/api/v1/recent/products',
+        recentProducts: builder.query({
+            query: () => '/api/v1/recent/products',
             providesTags: ['admin'],
         }),
-        recentDelivery:builder.query({
-            query:()=>'/api/v1/recent/deliveries',
+        recentDelivery: builder.query({
+            query: () => '/api/v1/recent/deliveries',
             providesTags: ['admin'],
         }),
-        adminListDelivery:builder.query({
-            query:()=>'/api/v1/admin/deliveries',
+        adminListDelivery: builder.query({
+            query: () => '/api/v1/admin/deliveries',
             providesTags: ['admin'],
         }),
-        adminListProducts:builder.query({
-            query:()=>'/api/v1/admin/products',
+        adminListProducts: builder.query({
+            query: () => '/api/v1/admin/products',
             providesTags: ['admin'],
         }),
-        getDelivery:builder.query({
-            query:(id)=>`/api/v1/admin/deliveries/${id}`,
+        getDelivery: builder.query({
+            query: (id) => `/api/v1/admin/deliveries/${id}`,
             providesTags: ['admin'],
         }),
-        confirmOrNotDelivery:builder.mutation({
-            query:({delivery_id,formData})=>({
-                url:`/api/v1/delivery/confirm/${delivery_id}`,
-                method:'POST',
-                body:formData
+        confirmOrNotDelivery: builder.mutation({
+            query: ({ delivery_id, formData }) => ({
+                url: `/api/v1/delivery/confirm/${delivery_id}`,
+                method: 'POST',
+                body: formData
             }),
-            invalidatesTags:['admin']
+            invalidatesTags: ['admin']
+        }),
+        adminListCustomers: builder.query({
+            query: () => '/api/v1/admin/customers',
+            providesTags: ['admin'],
         })
     })
 })
 
 export const {
-useRecentSellerQuery,
-useListSellersQuery,
-useGetSellerQuery,
-useConfirmOrNotShopMutation,
-useRecentProductsQuery,
-useRecentDeliveryQuery,
-useAdminListProductsQuery,
-useAdminListDeliveryQuery,
-useGetDeliveryQuery,
-useConfirmOrNotDeliveryMutation 
-}=adminService
+    useRecentSellerQuery,
+    useListSellersQuery,
+    useGetSellerQuery,
+    useConfirmOrNotShopMutation,
+    useRecentProductsQuery,
+    useRecentDeliveryQuery,
+    useAdminListProductsQuery,
+    useAdminListDeliveryQuery,
+    useGetDeliveryQuery,
+    useConfirmOrNotDeliveryMutation,
+    useAdminListCustomersQuery
+} = adminService
