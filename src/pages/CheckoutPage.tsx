@@ -11,6 +11,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useGetUserQuery } from '@/services/auth';
 import { useNavigate } from 'react-router-dom';
+import { useGetQuartersQuery } from '@/services/guardService';
+import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 type PaymentMethod = 'card' | 'orange' | 'momo';
 type DeliveryOption = 'pickup' | 'localDelivery' | 'remotePickup' | 'remoteDelivery';
 
@@ -26,18 +29,27 @@ interface DeliveryAddress {
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('card');
+  const [quarter, setQuarter] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const params = new URLSearchParams(window.location.search);
   const s = params.get('s');
   const residence = params.get('residence');
   const totalPrice = params.get('price');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
+
   const { data: userDataAuth } = useGetUserQuery('Auth');
   const productIds = getProductIdsFromUrl();
   const productId = params.get('productId');
   const quantity = params.get('quantity');
   const price = params.get('price');
   const name = params.get('name');
+
+  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+
+
+  const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);
+
+  console.log(filteredQuarters)
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
     phone: '',
@@ -194,6 +206,35 @@ const CheckoutPage: React.FC = () => {
                 </div>
               </div>
 
+              {address.deliveryOption === 'localDelivery' && (
+                <div className="space-y-2 mb-6">
+                  <Label htmlFor="street">Choisir un quartier de livraison</Label>
+                  <Select
+                    name="quarter"
+                    value={quarter}
+                    disabled={quartersLoading}
+                    onValueChange={(value) => setQuarter(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un quartier" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {quartersLoading ? (
+                        <SelectItem value="loading">Chargement des quartiers...</SelectItem>
+                      ) : (
+                        filteredQuarters?.map((quarter: { id: string, quarter_name: string }) => (
+                          <SelectItem key={quarter.id} value={quarter.quarter_name}>
+                            {quarter.quarter_name}
+                          </SelectItem>
+                        ))
+                      )}
+                      {filteredQuarters?.length === 0 && (
+                        <SelectItem value="no-quarters">Aucun quartier trouvé,veuillez verifier votre ville</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="space-y-4 mb-6">
                 <div className="col-span-2 sm:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -235,6 +276,7 @@ const CheckoutPage: React.FC = () => {
                   />
                 </div>
               </div>
+
             </div>
 
             {/* Méthodes de paiement */}
