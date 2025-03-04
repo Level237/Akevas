@@ -87,6 +87,10 @@ export const authService = createApi({
                 body: formData
             }),
             invalidatesTags: ['Auth']
+        }),
+        getUserStats: builder.query({
+            query: () => '/api/v1/current/stats',
+            providesTags: ['Auth'],
         })
     })
 })
@@ -98,5 +102,6 @@ export const {
     useNewStoreMutation,
     useRegisterMutation,
     useCheckAuthQuery,
-    usePayStripeMutation
+    usePayStripeMutation,
+    useGetUserStatsQuery
 } = authService
