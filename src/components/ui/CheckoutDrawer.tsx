@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useCheckAuthQuery } from '@/services/auth';
 
 interface CheckoutDrawerProps {
     isOpen: boolean;
@@ -25,9 +26,14 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
     currentInfo,
     getAllImages,
 }) => {
-
+    const { data, isLoading, isError } = useCheckAuthQuery()
     const checkOutNavigation = () => {
-        window.location.href = `/checkout?s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}`;
+        if (data?.isAuthenticated) {
+            window.location.href = `/checkout?s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}`;
+        } else {
+
+            window.location.href = `/login?redirect=checkout&s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}`;
+        }
     }
     return (
         <>

@@ -1,4 +1,4 @@
-"use client"
+
 
 import { Link } from "react-router-dom"
 import RegisterForm from "@/components/frontend/forms/RegisterForm"

@@ -237,6 +237,7 @@ const CheckoutForm = () => {
       <div className='flex justify-center items-center gap-2'>
 
         <img className='w-24 h-24' src={visa} alt="Visa" />
+
       </div>
 
       <CardContainer>

@@ -8,7 +8,12 @@ import { authTokenChange } from "@/store/authSlice";
 import Cookies from "universal-cookie";
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
-  const productIds = params.getAll('productId');
+  const productId = params.get('productId');
+  const quantity = params.get('quantity');
+  const price = params.get('price');
+  const name = params.get('name');
+  const residence = params.get('residence');
+
   const redirectUrl = params.get('redirect');
   const s = params.get('s');
   const [phone, setPhone] = useState('');
@@ -22,7 +27,7 @@ export default function LoginForm() {
     e.preventDefault()
     const userObject = { phone_number: phone, password: password }
     const userData = await login(userObject)
-    console.log(userData)
+
     const cookies = new Cookies();
     cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
     cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
@@ -32,7 +37,7 @@ export default function LoginForm() {
       if (s === '1') {
         window.location.href = redirectUrl + `?s=${s}`
       } else {
-        window.location.href = redirectUrl + `?s=${s}&productIds=${productIds}`
+        window.location.href = redirectUrl + `?s=${s}&productId=${productId}&quantity=${quantity}&price=${price}&name=${name}&residence=${residence}`
       }
     } else {
       setPhone('')
