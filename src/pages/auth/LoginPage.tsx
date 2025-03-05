@@ -2,16 +2,42 @@ import LoginForm from "@/components/frontend/forms/LoginForm";
 import { Card } from "@/components/ui/card";
 
 import { Shield, Truck } from "lucide-react";
+import Pusher from 'pusher-js';
+import { useEffect, useState } from "react";
 
-
+interface NotificationData {
+  message: string;
+}
 
 export default function LoginPage() {
+  const [notifications, setNotifications] = useState<NotificationData[]>([]);
 
+  Pusher.logToConsole = true;
+  useEffect(() => {
+    const pusher = new Pusher('a8cb3174d374d27790ba', {
+      cluster: 'eu',
+    });
 
+    const channel = pusher.subscribe('notifications');
+    channel.bind('notification-event', (message: any) => {
+      console.log("Received notification: ", message);
+      alert(JSON.stringify(message));
+      // Traitez la notification ici
+    });
 
+    console.log("Notifications: ", channel);
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, []);
 
   return (
     <div className="h-[100vh] overflow-hidden w-full bg-white">
+      {notifications.map((notification, index) => (
+        <li key={index}>{notification.message}</li>
+      ))}
       <div className="mx-auto grid min-h-screen   md:grid-cols-2">
         {/* Left Column - Si<div className="min-h-screen w-full bg-white">
       <div className="mx-auto grid min-h-screen max-w-screen-xl md:grid-cols-2">
