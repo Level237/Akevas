@@ -26,8 +26,8 @@ export default function LoginForm() {
       const userData = await login(userObject)
 
       const cookies = new Cookies();
-      cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
-      cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
+      cookies.set('tokenDelivery', userData.data.access_token, { path: '/', secure: true, sameSite: 'strict' });
+      cookies.set('refreshTokenDelivery', userData.data.refresh_token, { path: '/', secure: true, sameSite: 'strict' });
 
 
       if (redirectUrl) {

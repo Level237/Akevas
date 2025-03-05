@@ -102,8 +102,8 @@ const DeliveryGenerationPage: React.FC = () => {
         const userData = await login(userObject)
 
         const cookies = new Cookies();
-        cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
-        cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
+        cookies.set('tokenDelivery', userData.data.access_token, { path: '/', secure: true });
+        cookies.set('refreshTokenDelivery', userData.data.refresh_token, { path: '/', secure: true });
 
 
 

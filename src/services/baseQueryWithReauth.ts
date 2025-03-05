@@ -24,8 +24,8 @@ export const baseQueryWithReauth: BaseQueryFn<
     if (refreshResult.data) {
       // Store the new tokens
       const cookies = new Cookies();
-      cookies.set('accessToken', (refreshResult.data as { accessToken: string }).accessToken, { path: '/', secure: true });
-      cookies.set('refreshToken', authState.refreshToken as string, { path: '/', secure: true });
+      cookies.set('tokenDelivery', (refreshResult.data as { accessToken: string }).accessToken, { path: '/', secure: true });
+      cookies.set('refreshTokenDevery', authState.refreshToken as string, { path: '/', secure: true });
       // Retry the original request
       result = await baseQuery(args, store, extraOptions);
     } else {

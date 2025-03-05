@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock, Bell } from 'lucide-react'
+import { User, Search, X, Menu, Bell } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -14,8 +14,8 @@ import { useGetUserQuery } from '@/services/auth';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { CategoryNavigation } from '../categories/CategoryNavigation';
-import MobileCategoryMenu from '../categories/MobileCategoryMenu';
+
+import { MobileSidebar } from '../delivery/MobileSidebar'
 
 
 const ListItem = React.forwardRef<
@@ -57,6 +57,7 @@ const Header = () => {
     isScrolled: false,
   });
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Optimiser les queries avec les options RTK Query
   const { data: { data: seller } = {}, isLoading } = useCurrentSellerQuery('seller', {
@@ -154,6 +155,15 @@ const Header = () => {
         }`}>
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
+            {/* Burger Menu pour Mobile */}
+            <button
+              className="lg:hidden p-2"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+
+            {/* Logo */}
             <AsyncLink to="/dashboard" className="flex-shrink-0">
               <img src={logo} alt="AKEVAS Delivery" className="h-16 w-auto" />
             </AsyncLink>
@@ -198,7 +208,7 @@ const Header = () => {
                   <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={userData.profile} />
-                      <AvatarFallback>{userData?.userName?.charAt(0)}</AvatarFallback>
+                      <AvatarFallback>{userData?.firstName?.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </div>
                 )}
@@ -269,6 +279,12 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Mobile Sidebar */}
+      <MobileSidebar
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+      />
     </>
   );
 };
