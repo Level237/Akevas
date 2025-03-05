@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
+import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock, Bell } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -43,20 +43,11 @@ const ListItem = React.forwardRef<
   )
 })
 ListItem.displayName = "ListItem"
-const searchCategories = [
-  { id: 'all', label: 'Tout' },
-  { id: 'deliveries', label: 'Livraisons' },
-  { id: 'history', label: 'Historique' },
-];
 
 
 
-// Ajouter cette constante pour les genres
-const genders = [
-  { id: 'femme', label: 'FEMME', "url": "femme" },
-  { id: 'homme', label: 'HOMME', "url": "homme" },
-  { id: 'enfant', label: 'ENFANT', "url": "enfant" },
-];
+
+
 
 const Header = () => {
   // Regrouper les états liés dans un seul objet pour réduire les re-renderings
@@ -66,24 +57,6 @@ const Header = () => {
     isScrolled: false,
   });
 
-  const [searchState, setSearchState] = useState({
-    query: '',
-    selectedCategory: searchCategories[0]
-  });
-
-  // Memoize les callbacks
-  const handleMenuToggle = useCallback(() => {
-    setUiState(prev => ({ ...prev, isMenuOpen: !prev.isMenuOpen }));
-  }, []);
-
-  const handleSearchToggle = useCallback(() => {
-    setUiState(prev => ({ ...prev, isSearchOpen: !prev.isSearchOpen }));
-  }, []);
-
-  const handleCategorySelect = useCallback((category: typeof searchCategories[0]) => {
-    setSearchState(prev => ({ ...prev, selectedCategory: category }));
-    setUiState(prev => ({ ...prev, showCategories: false }));
-  }, []);
 
   // Optimiser les queries avec les options RTK Query
   const { data: { data: seller } = {}, isLoading } = useCurrentSellerQuery('seller', {
@@ -145,7 +118,7 @@ const Header = () => {
   const headerActions = useMemo(() => (
     <div className="flex items-center gap-4">
       <button
-        onClick={handleSearchToggle}
+
         className="text-gray-700 hover:text-[#ed7e0f]"
       >
         <Search className="w-6 h-6" />
@@ -172,12 +145,12 @@ const Header = () => {
 
 
     </div>
-  ), [userData, handleSearchToggle, totalQuantity]);
+  ), [userData, totalQuantity]);
 
   return (
     <>
       {/* Header Principal */}
-      <header className={`w-full bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 ${uiState.isScrolled ? 'shadow-md' : ''
+      <header className={`w-full bg-white border-b z-50 sticky top-0 left-0 transition-all duration-300 ${uiState.isScrolled ? 'shadow-md' : ''
         }`}>
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
@@ -229,7 +202,13 @@ const Header = () => {
                     </Avatar>
                   </div>
                 )}
+                {!userData && (
+                  <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                    <User className="h-6 w-6" />
+                  </div>
+                )}
               </DropdownAccount>
+              <Bell />
             </div>
           </div>
         </div>
