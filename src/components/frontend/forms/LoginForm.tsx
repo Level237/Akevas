@@ -28,8 +28,8 @@ export default function LoginForm() {
       const userData = await login(userObject)
 
       const cookies = new Cookies();
-      cookies.set('token-seller', userData.data.access_token, { path: '/', secure: true });
-      cookies.set('refreshToken-seller', userData.data.refresh_token, { path: '/', secure: true });
+      cookies.set('tokenSeller', userData.data.access_token, { path: '/', secure: true });
+      cookies.set('refreshTokenSeller', userData.data.refresh_token, { path: '/', secure: true });
 
 
       if (redirectUrl) {

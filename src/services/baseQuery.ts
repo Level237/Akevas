@@ -8,7 +8,7 @@ export const baseQuery = fetchBaseQuery({
     prepareHeaders: (headers, { getState }) => {
 
         const cookies = new Cookies();
-        const token = cookies.get('accessToken');
+        const token = cookies.get('tokenSeller');
         if (token) {
             headers.set('authorization', `Bearer ${token}`)
         }
