@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Store, ShoppingBag, ShoppingCart, User } from 'lucide-react';
+import {
+  Home,
+  Package,
+  History,
+  BarChart2,
+  User,
+} from 'lucide-react';
 
 const MobileNav: React.FC = () => {
   const location = useLocation();
@@ -16,23 +22,23 @@ const MobileNav: React.FC = () => {
       path: '/'
     },
     {
-      icon: Store,
-      label: 'Boutiques',
-      path: '/shops'
+      icon: Package,
+      label: 'Commandes',
+      path: '/orders'
     },
     {
-      icon: ShoppingBag,
-      label: 'Produits',
-      path: '/products'
+      icon: History,
+      label: 'Historique',
+      path: '/delivery/history'
     },
     {
-      icon: ShoppingCart,
-      label: 'Panier',
-      path: '/cart'
+      icon: BarChart2,
+      label: 'Stats',
+      path: '/delivery/stats'
     },
     {
       icon: User,
-      label: 'Compte',
+      label: 'Profil',
       path: '/account'
     }
   ];
@@ -48,9 +54,8 @@ const MobileNav: React.FC = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center flex-1 h-full ${
-                active ? 'text-[#ed7e0f]' : 'text-gray-500'
-              }`}
+              className={`flex flex-col items-center justify-center flex-1 h-full ${active ? 'text-[#ed7e0f]' : 'text-gray-500'
+                }`}
             >
               <Icon className="w-6 h-6" />
               <span className="text-xs mt-1">{item.label}</span>

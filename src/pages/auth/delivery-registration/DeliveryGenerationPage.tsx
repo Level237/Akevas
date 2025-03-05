@@ -126,7 +126,7 @@ const DeliveryGenerationPage: React.FC = () => {
         // Redirect to dashboard after a short delay
         setTimeout(() => {
 
-          window.location.href = '/delivery/dashboard';
+          window.location.href = '/dashboard';
         }, 1500);
       }
     }, 3000);

@@ -16,6 +16,11 @@ import NotificationsPage from "@/pages/NotificationsPage";
 import { GuardRoute } from "@/pages/auth/guard-route";
 import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
 import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
+import DeliveryHistory from "@/pages/DeliveryHistory";
+import DeliveryStats from "@/pages/DeliveryStats";
+import OrderDetailPage from "@/pages/OrderDetailPage";
+import DeliveryOrders from "@/pages/DeliveryOrders";
+import Account from "@/pages/Account";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -70,13 +75,35 @@ export const routes = createBrowserRouter([
         path: 'delivery/orders',
         element: <DeliveriesPage />
       },
+
     ]
+  },
+  {
+    path: '/order/:orderId',
+    element: <OrderDetailPage />
+  },
+  {
+    path: '/delivery/stats',
+    element: <DeliveryStats />
+  },
+  {
+    path: '/delivery/history',
+    element: <DeliveryHistory />
+  },
+  {
+    path: '/orders',
+    element: <DeliveryOrders />
   },
   {
     path: '/',
     element: <Homepage />,
 
-  }, {
+  },
+  {
+    path: '/account',
+    element: <Account />
+  },
+  {
     path: 'shops',
     element: <ShopsPage />
   },
