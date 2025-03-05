@@ -2,18 +2,22 @@
 
 import { Link } from "react-router-dom"
 import RegisterForm from "@/components/frontend/forms/RegisterForm"
-
+import logo from "@/assets/favicon.png"
 export default function SignupForm() {
   return (
     <div className="min-h-screen bg-[#fafafa] flex">
       {/* Left Section */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-[480px] space-y-8">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">Créer un compte</h1>
-            <p className="text-gray-500">Inscrivez-vous et obtenez 30 jours d'essai gratuit</p>
-          </div>
+      <div className="flex-1 px-4 flex mx-12 py-12 ">
+        <div className="w-full space-y-8">
+          <div className="space-y-2 flex justify-center items-center ">
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-24"
+            />
+            <h1 className="text-3xl text-center font-semibold tracking-tight">Créer un compte</h1>
 
+          </div>
           <RegisterForm />
 
           <div className="flex justify-between text-sm">
@@ -31,7 +35,7 @@ export default function SignupForm() {
       </div>
 
       {/* Right Section */}
-      <div className="hidden lg:block relative w-1/2 bg-[#ed7e0f]/5">
+      <div className="hidden lg:block relative w-[40%] bg-[#ed7e0f]/5">
         <div className="absolute inset-0">
           <img
             src="/register.jpeg"

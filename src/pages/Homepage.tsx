@@ -119,7 +119,7 @@ const Homepage = () => {
       <section className='overflow-hidden'>
         <TopBar />
 
-        <Header />
+
         <GenderNavigationMobile />
         <StoreHero />
 

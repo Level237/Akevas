@@ -96,21 +96,20 @@ export default function RegisterForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
-
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nom d'utilisateur</FormLabel>
-              <FormControl>
-                <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Nom d'utilisateur" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-4">
+        <div className="grid max-sm:grid-cols-1 w-[100%] grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nom d'utilisateur</FormLabel>
+                <FormControl>
+                  <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Nom d'utilisateur" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -118,12 +117,15 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Email" type="email" {...field} />
+                  <Input className="h-12 px-4 w-full rounded-xl bg-white" placeholder="Email" type="email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </div>
+        <div className="grid max-sm:grid-cols-1 w-[100%] grid-cols-2 gap-4">
+
           <FormField
             control={form.control}
             name="phone"
@@ -137,9 +139,6 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="town"
@@ -172,13 +171,17 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
 
           <FormField
             control={form.control}
             name="quarter"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Ville</FormLabel>
+                <FormLabel>Quartier</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-12 px-4 rounded-xl bg-white">
@@ -204,21 +207,22 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Mot de passe</FormLabel>
+                <FormControl>
+                  <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Entrez votre mot de passe" type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mot de passe</FormLabel>
-              <FormControl>
-                <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Entrez votre mot de passe" type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
 
         <FormField
           control={form.control}
