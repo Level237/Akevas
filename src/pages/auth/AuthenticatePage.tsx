@@ -3,7 +3,7 @@ import { AppDispatch, RootState } from "@/store";
 import { getUserRole } from "@/store/authSlice";
 import { useEffect } from "react"
 import { useDispatch } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export const AuthenticatePage = () => {
 
@@ -35,7 +35,7 @@ export const AuthenticatePage = () => {
                         navigate('/user/dashboard')
                         break;
                     case 4:
-                        navigate('/delivery/dashboard')
+                        navigate('/dashboard')
                         break;
                 }
 

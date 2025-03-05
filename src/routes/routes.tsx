@@ -15,6 +15,7 @@ import ShopsPage from "@/pages/ShopsPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import { GuardRoute } from "@/pages/auth/guard-route";
 import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
+import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -23,6 +24,10 @@ export const routes = createBrowserRouter([
   {
     path: '/login',
     element: <GuardRoute><LoginPage /></GuardRoute>
+  },
+  {
+    path: '/authenticate',
+    element: <AuthenticatePage />
   },
   {
     path: '/delivery/register',
@@ -59,7 +64,7 @@ export const routes = createBrowserRouter([
     element: <DeliveryRootDashboard><PrivateRoute /></DeliveryRootDashboard>,
     children: [
       {
-        path: 'delivery/dashboard',
+        path: 'dashboard',
         element: <DeliveryDashboard />
       }, {
         path: 'delivery/orders',
