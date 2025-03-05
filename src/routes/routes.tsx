@@ -6,53 +6,28 @@ import DashboardPage from "@/pages/seller/DashboardPage";
 import IdentityInfoPage from "@/pages/auth/seller-registration/IdentityInfoPage";
 import ProductListPage from "@/pages/ProductListPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
-import CartPage from "@/pages/CartPage";
+
 import StorePage from "@/pages/StorePage";
-import CheckoutPage from "@/pages/CheckoutPage";
 import StoreBoostPage from "@/pages/seller/StoreBoostPage";
 import CreateProductPage from "@/pages/seller/CreateProductPage";
 import DashboardProductListPage from "@/pages/seller/dashboard/ProductListPage";
-import DeliveryRegisterPage from "@/pages/auth/delivery-registration/DeliveryRegisterPage";
-import VehicleInfoPage from "@/pages/auth/delivery-registration/VehicleInfoPage";
-import DeliveryZonePage from "@/pages/auth/delivery-registration/DeliveryZonePage";
-import DocumentsPage from "@/pages/auth/delivery-registration/DocumentsPage";
-import ValidationPage from "@/pages/auth/delivery-registration/ValidationPage";
-import DeliveryGenerationPage from "@/pages/auth/delivery-registration/DeliveryGenerationPage";
 import PersonalInfoPage from "@/pages/auth/seller-registration/PersonalInfoPage";
 import SecurityInfoPage from "@/pages/auth/seller-registration/SecurityInfoPage";
 import ShopInfoPage from "@/pages/auth/seller-registration/ShopInfoPage";
 
 import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
-import DeliveryDashboard from "@/pages/delivery/DashboardPage";
-import DeliveriesPage from "@/pages/delivery/DeliveryPage";
-import DeliveryRootDashboard from "@/components/Layouts/DeliveryRootDashboard";
 import { PrivateRoute } from "@/pages/auth/private-route";
 import SellerGuidePage from "@/pages/seller/SellerGuidePage";
-import DashboardAdminPage from "@/pages/admin/DashboardPage";
 import ShopsPage from "@/pages/ShopsPage";
 import NotificationsPage from "@/pages/NotificationsPage";
-import AdminRootDashboard from "@/components/Layouts/AdminRootDashboard";
-import AdminProductListPage from "@/pages/admin/products/ProductPage";
-import AdminShopDetailPage from "@/pages/admin/shops/ShopDetailPage";
-import AdminShopPage from "@/pages/admin/shops/ShopPage";
 import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
 import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage";
 import { GuardRoute } from "@/pages/auth/guard-route";
 import SellerRootDashboard from "@/components/Layouts/SellerRootDashboard";
 import StoreEditorPage from "@/pages/seller/StoreEditorPage";
-import CurrentHomeByGenderPage from "@/pages/gender/CurrentHomeByGenderPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
-import UserDashboardPage from "@/pages/user/DashboardPage";
-import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
-import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
-import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
-import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
-import PaymentPage from "@/pages/payment/PaymentPage";
-import SuccessPage from "@/pages/payment/SuccessPage";
-import OrderDetailPage from "@/pages/user/OrderDetailPage";
-import OrdersPage from "@/pages/user/OrdersPage";
-import ListCustomerPage from "@/pages/admin/customers/ListCustomerPage";
-import ListOrdersPage from "@/pages/admin/orders/ListOrdersPage";
+import SellerCatalog from "@/pages/SellerCatalog";
+import AccountPage from "@/pages/Account";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -66,30 +41,7 @@ export const routes = createBrowserRouter([
     path: '/register',
     element: <GuardRoute><RegisterPage /></GuardRoute>
   },
-  {
-    path: '/delivery/register',
-    element: <DeliveryRegisterPage />
-  },
-  {
-    path: '/delivery/vehicle',
-    element: <VehicleInfoPage />
-  },
-  {
-    path: '/delivery/zone',
-    element: <DeliveryZonePage />
-  },
-  {
-    path: '/delivery/documents',
-    element: <DocumentsPage />
-  },
-  {
-    path: '/delivery/validation',
-    element: <ValidationPage />
-  },
-  {
-    path: '/delivery/generating',
-    element: <DeliveryGenerationPage />
-  },
+
   {
     path: '/seller-registration/personal-info',
     element: <PersonalInfoPage />
@@ -141,6 +93,14 @@ export const routes = createBrowserRouter([
       {
         path: '/seller/products',
         element: <DashboardProductListPage />
+      },
+      {
+        path: '/catalogue',
+        element: <SellerCatalog />
+      },
+      {
+        path: '/account',
+        element: <AccountPage />
       }
     ]
   },
@@ -148,10 +108,7 @@ export const routes = createBrowserRouter([
     path: '/seller/guide',
     element: <SellerGuidePage />
   },
-  {
-    path: '/delivery/guide',
-    element: <DeliveryGuidePage />
-  },
+
   {
     path: '/products',
     element: <ProductListPage />
@@ -160,71 +117,14 @@ export const routes = createBrowserRouter([
     path: '/produit/:url',
     element: <ProductDetailPage />
   },
-  {
-    path: '/cart',
-    element: <CartPage />
-  },
-  {
-    path: '/checkout',
-    element: <><CheckoutPage /><PrivateRoute /></>
-  },
-  {
-    path: '/payment',
-    element: <PaymentPage />
-  },
-  {
-    path: '/checkout/success',
-    element: <SuccessPage />
-  },
+
+
   {
     path: '/shop/:id',
     element: <StorePage />
   },
-  {
-    path: "/",
-    element: <AdminRootDashboard><PrivateRoute /></AdminRootDashboard>,
-    children: [
-      {
-        path: "admin/dashboard",
-        element: <DashboardAdminPage />
-      }, {
-        path: "admin/products",
-        element: <AdminProductListPage />
-      }, {
-        path: "admin/shops/:id",
-        element: <AdminShopDetailPage />
-      }, {
-        path: "admin/shops",
-        element: <AdminShopPage />
-      }, {
-        path: "admin/delivery",
-        element: <ListDeveryPage />
-      },
-      {
-        path: "admin/delivery/:id",
-        element: <DeliveryDetailPage />
-      }, {
-        path: "admin/customers",
-        element: <ListCustomerPage />
-      }, {
-        path: "admin/orders",
-        element: <ListOrdersPage />
-      }
-    ]
-  },
-  {
-    path: '/',
-    element: <DeliveryRootDashboard><PrivateRoute /></DeliveryRootDashboard>,
-    children: [
-      {
-        path: 'delivery/dashboard',
-        element: <DeliveryDashboard />
-      }, {
-        path: 'delivery/orders',
-        element: <DeliveriesPage />
-      },
-    ]
-  },
+
+
   {
     path: '/',
     element: <Homepage />,
@@ -241,24 +141,5 @@ export const routes = createBrowserRouter([
     path: '/authenticate',
     element: <AuthenticatePage />
   },
-  {
-    path: '/home',
-    element: <CurrentHomeByGenderPage />
-  },
-  {
-    path: '/',
-    element: <UserRootDashboard><PrivateRoute /></UserRootDashboard>,
-    children: [
-      {
-        path: 'user/dashboard',
-        element: <UserDashboardPage />
-      }, {
-        path: 'user/orders/:id',
-        element: <OrderDetailPage />
-      }, {
-        path: 'user/orders',
-        element: <OrdersPage />
-      }
-    ]
-  }
+
 ]);

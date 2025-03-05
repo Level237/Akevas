@@ -247,57 +247,10 @@ const Header = () => {
             </AsyncLink>
 
             <div className="flex flex-1 items-center justify-end gap-8">
-              {/* Barre de recherche redimensionnable */}
-              <div className={`transition-all duration-300 ease-in-out 
-                 w-[500px] 
-              `}>
-                <div className="relative w-full">
-                  <button
-                    onClick={() => setUiState(prev => ({ ...prev, showCategories: !prev.showCategories }))}
-                    className="absolute left-0 top-0 h-full px-2 flex items-center gap-1 text-gray-500 hover:text-gray-700 border-r"
-                  >
-                    {searchState.selectedCategory.label}
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                  <input
-                    type="text"
-                    placeholder="Rechercher..."
-                    className="w-full pl-24 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent text-sm"
 
-                  />
-                  <button className="absolute right-0 top-0 h-full px-3 text-gray-500 hover:text-gray-700">
-                    <Search className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Categories Dropdown */}
-                {uiState.showCategories && (
-                  <div className="absolute top-full z-[999999] left-0 w-48 mt-1 bg-white rounded-lg shadow-lg border">
-                    {searchCategories.map((category) => (
-                      <button
-                        key={category.id}
-                        onClick={() => handleCategorySelect(category)}
-                        className="w-full px-4 py-2 text-left hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
-                      >
-                        {category.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
+              <div className="flex justify-center w-full">
+                <CategoryNavigation />
               </div>
-
-              {/* Navigation par genre */}
-              <nav className="flex items-center gap-6">
-                {genders.map((gender) => (
-                  <AsyncLink
-                    key={gender.id}
-                    to={`/home?g=${gender.url}`}
-                    className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors whitespace-nowrap"
-                  >
-                    {gender.label}
-                  </AsyncLink>
-                ))}
-              </nav>
 
               {/* Actions (compte, panier, etc.) */}
               <div className="flex items-center gap-4">
@@ -359,9 +312,7 @@ const Header = () => {
           </div>
 
           {/* Navigation avec menus déroulants */}
-          <div className="flex justify-center w-full">
-            <CategoryNavigation />
-          </div>
+
         </div>
       </header>
 

@@ -1,6 +1,6 @@
 import LoginForm from "@/components/frontend/forms/LoginForm";
 import { Card } from "@/components/ui/card";
-
+import { Shield, Truck, ArrowLeft } from "lucide-react";
 import shop from '@/assets/shop.jpg'
 
 export default function LoginPage() {

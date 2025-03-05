@@ -112,7 +112,7 @@ const StoreGenerationPage = () => {
 
         // Attente de la réponse de l'API
 
-        const userObject = { phone_number: phone, password: password }
+        const userObject = { phone_number: phone, password: password, role_id: 2 }
         const userData = await login(userObject)
 
         const cookies = new Cookies();

@@ -7,17 +7,17 @@ import React from 'react'
 
 import { useDispatch } from 'react-redux'
 import { Seller } from '@/types/seller'
-import { CheckStateSeller } from '../../admin/seller/list-sellers'
+
 import { useLogoutMutation } from '@/services/auth'
 import AsyncLink from '@/components/ui/AsyncLink'
 import { logoutUser } from '@/lib/logout'
-
+import logo from '@/assets/favicon.png'
+import { CheckStateSeller } from '@/components/dashboard/seller/CheckStateSeller'
 export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isMobile: boolean, setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>, sellerData: Seller | null | undefined }) {
 
 
 
   const [logout] = useLogoutMutation()
-  const dispatch = useDispatch();
   const handleLogout = async () => {
     await logout('Auth');
     logoutUser()
@@ -37,12 +37,13 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
               </button>
             )}
             <div className="flex max-sm:hidden items-center">
-              <Store className="w-8 h-8 text-blue-600" />
+              <img src={logo} alt="Espace Vendeur" className="w-16 h-16" />
               <h1 className="ml-2 text-xl font-semibold text-gray-900">
                 Espace Vendeur
               </h1>
             </div>
             <nav className="hidden lg:flex space-x-6">
+              <AsyncLink to='/'>Accueil</AsyncLink>
               <AsyncLink to='/seller/dashboard'><span className="text-[#ed7e0f] font-medium">Tableau de bord</span></AsyncLink>
               {sellerData?.shop.level !== "1" && <AsyncLink to='/seller/products'><span className="text-gray-400 cursor-pointer">Produits</span></AsyncLink>}
               {sellerData?.shop.level === "1" && <span className="text-gray-400 cursor-not-allowed">Produits</span>}

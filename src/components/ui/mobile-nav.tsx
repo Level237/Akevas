@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Store, ShoppingBag, ShoppingCart, User } from 'lucide-react';
+import { useCurrentSellerQuery } from '@/services/sellerService';
 
 const MobileNav: React.FC = () => {
   const location = useLocation();
-
+  const { data: { data: seller } = {}, isLoading } = useCurrentSellerQuery('seller');
+  const shopId = seller?.shop?.shop_id;
   const isActive = (path: string) => {
     return location.pathname === path;
   };
@@ -17,22 +19,22 @@ const MobileNav: React.FC = () => {
     },
     {
       icon: Store,
-      label: 'Boutiques',
-      path: '/shops'
+      label: 'Ma Boutique',
+      path: `/shop/${shopId}`
     },
     {
       icon: ShoppingBag,
-      label: 'Produits',
-      path: '/products'
+      label: 'Catalogue',
+      path: '/catalogue'
     },
     {
       icon: ShoppingCart,
-      label: 'Panier',
-      path: '/cart'
+      label: 'Commandes',
+      path: '/orders'
     },
     {
       icon: User,
-      label: 'Compte',
+      label: 'Profil',
       path: '/account'
     }
   ];
@@ -48,9 +50,8 @@ const MobileNav: React.FC = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center flex-1 h-full ${
-                active ? 'text-[#ed7e0f]' : 'text-gray-500'
-              }`}
+              className={`flex flex-col items-center justify-center flex-1 h-full ${active ? 'text-[#ed7e0f]' : 'text-gray-500'
+                }`}
             >
               <Icon className="w-6 h-6" />
               <span className="text-xs mt-1">{item.label}</span>

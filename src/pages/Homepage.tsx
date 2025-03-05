@@ -1,139 +1,204 @@
-import { useState, useEffect, useTransition } from 'react';
 
 
 
-import StoreHero from '@/components/frontend/StoreHero'
+
+
 import Header from '@/components/ui/header'
 import TopBar from '@/components/ui/topBar'
 
-import StoreStories from '@/components/stores/store-stories'
-import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
-import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
-import { useGetCategoriesWithParentIdNullQuery, useGetHomeShopsQuery } from '@/services/guardService';
-import CategoryGridList from '@/components/categories/CategoryGridList';
-import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
-import { Shop } from '@/types/shop';
+
+import vendor from '@/assets/vendor.jpg'
+import { Package, Truck, CreditCard } from 'lucide-react';
+import AsyncLink from '@/components/ui/AsyncLink';
+
 const Homepage = () => {
-  //t [loading, setLoading] = useState(true);
-  const [isPending, startTransition] = useTransition();
-  const [localShops, setLocalShops] = useState<Shop[]>([])
-  const [showFeaturedShop, setShowFeaturedShop] = useState(false);
-  const { data: { data: shops } = {}, isLoading } = useGetHomeShopsQuery("guard", {
-
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: 30
-  })
-  const { data: { data: categories } = {}, isLoading: isLoadingCategories } = useGetCategoriesWithParentIdNullQuery("guard", {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: 30
-  })
-  console.log(shops)
-
-  useEffect(() => {
-    if (shops) {
-      startTransition(() => {
-        setLocalShops(shops);
-
-      })
-    }
-  }, [shops])
-  useEffect(() => {
-    // Simulate loading delay 
-    //const timer = setTimeout(() => {
-    //setLoading(false);
-    //}, 4000);
-
-    //return () => clearTimeout(timer);
-  }, []);
 
 
 
 
-  //if (loading) {
-  //  return (
-  //    <div className="flex flex-col">
-  //      {/* Hero Section Skeleton */}
-  //      <div className="mb-12">
-  //        <Skeleton className="py-8 w-full" />
-  //      </div>
-  //      {/* Header */}
-  //      <div className='flex mx-16 items-center justify-between gap-4'>
-  //        <Skeleton className="w-16 h-16 rounded-full" />
-  //        <Skeleton className=" h-14 w-96 pr-12" />
-  //        <Skeleton className="h-8 w-48" />
-  //        </div>
 
-  {/* Hero Skeleton */ }
-  //<div className='flex items-start mt-28 gap-4 mx-16 h-[30rem]'>
-  //  <Skeleton className="w-[75%] rounded-3xl  relative h-96" />
-  //  <Skeleton className="flex w-[25%] h-96 gap-4" />
-  //</div>
-  {/* Categories Skeleton */ }
-  //<div className="mb-12 ">
-  //  <Skeleton className="h-8 w-48 mb-6" />
-  //  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-  //    {[1, 2, 3, 4, 5, 6].map((item) => (
-  //      <Skeleton key={item} className="h-24 w-full rounded-xl" />
-  //    ))}
-  //  </div>
-  //</div>
-
-  {/* Featured Products Skeleton */ }
-  //<div className="mb-12">
-  //  <Skeleton className="h-8 w-48 mb-6" />
-  //  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-  //    {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-  //      <div key={item} className="space-y-4">
-  //        <Skeleton className="h-64 w-full rounded-xl" />
-  //        <Skeleton className="h-4 w-3/4" />
-  //<Skeleton className="h-4 w-1/2" />
-  //<Skeleton className="h-8 w-32" />
-  //</div>
-  //))}
-  //</div>
-  //</div>
-
-  {/* Featured Stores Skeleton */ }
-  //<div>
-  //  <Skeleton className="h-8 w-48 mb-6" />
-  //  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  //    {[1, 2, 3].map((item) => (
-  //      <div key={item} className="space-y-4">
-  //        <Skeleton className="h-40 w-full rounded-xl" />
-  //        <Skeleton className="h-16 w-16 rounded-full -mt-8 ml-6" />
-  //        <div className="space-y-2">
-  //          <Skeleton className="h-4 w-3/4" />
-  //          <Skeleton className="h-4 w-1/2" />
-  //        </div>
-  //</div>
-  //))}
-  //</div>
-  //</div>
-  //</div>
-  //);
-  //}
 
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
-      <section className='overflow-hidden'>
-        <TopBar />
+      <TopBar />
+      <Header />
 
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-[#ed7e0f] to-[#6e0a13] py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <h1 className="text-5xl max-sm:text-3xl font-bold mb-6">
+              Développez votre business avec Akevas
+            </h1>
+            <p className="text-xl max-sm:text-sm mb-8">
+              Rejoignez la marketplace qui connecte plus de 2 millions d'acheteurs à des vendeurs de confiance
+            </p>
+            <AsyncLink to="/seller-registration/personal-info">
+              <button className="bg-white text-[#ed7e0f] px-8 py-4 rounded-xl font-medium hover:bg-gray-100 transition-colors">
+                Commencer maintenant
+              </button>
+            </AsyncLink>
+          </div>
+        </div>
+      </div>
 
-        <GenderNavigationMobile />
-        <Header />
-        <StoreHero />
+      {/* Benefits Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-6">
+              <Package className="w-7 h-7 text-[#ed7e0f]" />
+            </div>
+            <h3 className="text-xl font-semibold mb-4">Vendez sans limites</h3>
+            <p className="text-gray-600">Accédez à des millions de clients potentiels et développez votre activité sans contraintes géographiques.</p>
+          </div>
+          <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-6">
+              <Truck className="w-7 h-7 text-[#ed7e0f]" />
+            </div>
+            <h3 className="text-xl font-semibold mb-4">Logistique simplifiée</h3>
+            <p className="text-gray-600">Profitez de notre réseau de livraison optimisé et de nos outils de gestion des commandes intégrés.</p>
+          </div>
+          <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-6">
+              <CreditCard className="w-7 h-7 text-[#ed7e0f]" />
+            </div>
+            <h3 className="text-xl font-semibold mb-4">Paiements sécurisés</h3>
+            <p className="text-gray-600">Recevez vos paiements de manière rapide et sécurisée tous les 7 jours.</p>
+          </div>
+        </div>
+      </div>
 
+      {/* Illustration Section */}
+      <div className="bg-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Illustration */}
+            <div className="relative max-sm:hidden">
+              <div className="absolute -top-6 -left-6 w-24 h-24 bg-orange-100 rounded-full opacity-50"></div>
+              <img
+                src={vendor}
+                alt="Vendeur sur Akevas"
+                className="relative z-10 w-full max-w-lg mx-auto"
+              />
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-orange-50 rounded-full opacity-50"></div>
+            </div>
 
-        <PremiumProducts />
-        <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
+            {/* Content */}
+            <div className="space-y-6">
+              <h2 className="text-3xl max-sm:text-2xl max-sm:text-center max-sm:mb-4 md:text-4xl font-bold text-gray-900">
+                Transformez votre passion en succès commercial
+              </h2>
+              <div className="relative hidden max-sm:block ">
+                <div className="absolute -top-6 -left-6 w-24 h-24 bg-orange-100 rounded-full opacity-50"></div>
+                <img
+                  src={vendor}
+                  alt="Vendeur sur Akevas"
+                  className="relative  z-10 w-full max-w-lg mx-auto"
+                />
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-orange-50 rounded-full opacity-50"></div>
+              </div>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Que vous soyez artisan, créateur ou commerçant, Akevas vous offre tous les outils nécessaires pour développer votre activité en ligne. Profitez de notre marketplace en pleine croissance et atteignez des millions de clients potentiels.
+              </p>
+              <ul className="space-y-4">
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700">Inscription gratuite et rapide</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700">Commission compétitive</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700">Support dédié 7j/7</span>
+                </li>
+              </ul>
+              <div className="pt-6">
+                <AsyncLink to="/seller-registration/personal-info">
+                  <button className="bg-[#ed7e0f] text-white px-8 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors inline-flex items-center gap-2">
+                    Commencer maintenant
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </button>
+                </AsyncLink>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      </section>
+      {/* Stats Section */}
+      <div className="bg-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <h3 className="text-4xl font-bold text-[#ed7e0f] mb-2">2M+</h3>
+              <p className="text-gray-600">Clients actifs</p>
+            </div>
+            <div>
+              <h3 className="text-4xl font-bold text-[#ed7e0f] mb-2">50k+</h3>
+              <p className="text-gray-600">Vendeurs satisfaits</p>
+            </div>
+            <div>
+              <h3 className="text-4xl font-bold text-[#ed7e0f] mb-2">500M+</h3>
+              <p className="text-gray-600">Ventes mensuelles</p>
+            </div>
+            <div>
+              <h3 className="text-4xl font-bold text-[#ed7e0f] mb-2">24/7</h3>
+              <p className="text-gray-600">Support dédié</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="container mx-auto px-4 py-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6">Prêt à développer votre business ?</h2>
+          <p className="text-gray-600 mb-8">
+            Commencez à vendre sur Akevas dès aujourd'hui et rejoignez notre communauté de vendeurs prospères
+          </p>
+          <div className="flex gap-4 justify-center">
+            <AsyncLink to="/seller-registration/personal-info">
+              <button className="bg-[#ed7e0f] text-white max-sm:px-4 max-sm:py-4 px-8 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
+                Devenir vendeur
+              </button>
+            </AsyncLink>
+            <AsyncLink to="/seller/guide">
+              <button className="bg-gray-100 text-gray-800 max-sm:px-4 max-sm:py-4 px-8 py-4 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                En savoir plus
+              </button>
+            </AsyncLink>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="bg-gray-900 max-sm:mb-10 text-white py-8">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-gray-400">
+            © 2025 Akevas. La marketplace africaine de confiance.
+          </p>
+        </div>
+      </div>
+
       <MobileNav />
-      <FeaturedShopModal
-        isOpen={showFeaturedShop}
-        onClose={() => setShowFeaturedShop(false)}
-      />
     </div>
   );
 };
