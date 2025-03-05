@@ -116,8 +116,8 @@ const StoreGenerationPage = () => {
         const userData = await login(userObject)
 
         const cookies = new Cookies();
-        cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
-        cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
+        cookies.set('tokenSeller', userData.data.access_token, { path: '/', secure: true });
+        cookies.set('refreshTokenSeller', userData.data.refresh_token, { path: '/', secure: true });
 
         // Dernière étape et finalisation
         await handleStepProgress(steps.length - 1);
