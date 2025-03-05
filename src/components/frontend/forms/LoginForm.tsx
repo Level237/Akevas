@@ -16,30 +16,35 @@ export default function LoginForm() {
   const s = params.get('s');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [login, { isLoading, isError, error }] = useLoginMutation()
   if (error) {
     console.log(error)
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const userObject = { phone_number: phone, password: password }
-    const userData = await login(userObject)
+    try {
+      const userObject = { phone_number: phone, password: password, role_id: 3 }
+      const userData = await login(userObject)
 
-    const cookies = new Cookies();
-    cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
-    cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
+      const cookies = new Cookies();
+      cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
+      cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
 
 
-    if (redirectUrl) {
-      if (s === '1') {
-        window.location.href = redirectUrl + `?s=${s}`
+      if (redirectUrl) {
+        if (s === '1') {
+          window.location.href = redirectUrl + `?s=${s}`
+        } else {
+          window.location.href = redirectUrl + `?s=${s}&productId=${productId}&quantity=${quantity}&price=${price}&name=${name}&residence=${residence}`
+        }
       } else {
-        window.location.href = redirectUrl + `?s=${s}&productId=${productId}&quantity=${quantity}&price=${price}&name=${name}&residence=${residence}`
+        setPhone('')
+        setPassword('')
+        window.location.href = `/authenticate`
       }
-    } else {
-      setPhone('')
-      setPassword('')
-      window.location.href = `/authenticate`
+    } catch (error) {
+      setErrorMessage("Vous n'avez pas accès à cette application")
     }
   }
   return (
@@ -65,7 +70,9 @@ export default function LoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
-            {'data' in error ? JSON.stringify(error.data) : 'le numero de telephone ou le mot de passe est incorrect'}
+            {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
+              {errorMessage}
+            </div>}
           </div>}
 
           <div className="space-y-2 mt-3">

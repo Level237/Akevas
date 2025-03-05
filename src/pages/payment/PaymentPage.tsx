@@ -9,6 +9,7 @@ import visa from '@/assets/visa.png';
 import { usePayStripeMutation } from '@/services/auth';
 import { clearCart } from '@/store/cartSlice';
 import { useDispatch } from 'react-redux';
+import MobileNav from '@/components/ui/mobile-nav';
 // Initialize Stripe
 const stripePromise = loadStripe('pk_test_oKhSR5nslBRnBZpjO6KuzZeX');
 
@@ -101,6 +102,10 @@ const Card = styled.div`
   border: 1px solid rgba(61, 53, 53, 0.2);
   padding: 2rem;
   overflow: hidden;
+
+ @media (max-width: 768px) {
+    padding: 0.9rem;
+  }
 `;
 
 
@@ -112,6 +117,7 @@ const PaymentForm = styled.form`
 
   @media (max-width: 768px) {
     padding: 1rem;
+    
   }
 `;
 
@@ -150,7 +156,7 @@ const CheckoutForm = () => {
   const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [payStripe, { isLoading }] = usePayStripeMutation();
+  const [payStripe, { isLoading, error: errorPay }] = usePayStripeMutation();
   const params = new URLSearchParams(window.location.search)
   const s = params.get('s');
   const quarter = params.get('quarter');
@@ -164,70 +170,78 @@ const CheckoutForm = () => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
-    if (!stripe || !elements) {
-      return;
-    }
-
-    setProcessing(true);
-
-    const cardElement = elements.getElement(CardElement);
-    const { token, error } = await stripe.createToken(cardElement as StripeCardElement);
-
-    if (error) {
-      setError(error.message || 'Une erreur est survenue');
-      setProcessing(false);
-      return;
-    }
-    let formData;
-
-    if (s == "1") {
-      formData = {
-        productsPayments: JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
-        amount: sessionStorage.getItem('total'),
-        quarter_delivery: quarter,
-        shipping: sessionStorage.getItem('shipping'),
-        price: price,
-        stripeToken: token.id
+    try {
+      if (!stripe || !elements) {
+        return;
       }
-    } else {
-      formData = {
-        productId: productId,
-        quantity: quantity,
-        amount: total,
-        price: price,
-        quarter_delivery: quarter,
-        shipping: shipping,
-        stripeToken: token.id
+
+      setProcessing(true);
+
+      const cardElement = elements.getElement(CardElement);
+      const { token, error } = await stripe.createToken(cardElement as StripeCardElement);
+
+      if (error) {
+        setError(error.message || 'Une erreur est survenue');
+        setProcessing(false);
+        return;
       }
-    }
-    const response = await payStripe(formData);
-    console.log(response)
-    if (response.data.success) {
+
+      let formData;
 
       if (s == "1") {
-        sessionStorage.setItem('orderDetails', JSON.stringify({
-          orderId: response.data.order.id,
-          orderDate: new Date().toISOString(),
-          amount: formData.amount,
+        formData = {
+          productsPayments: JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
+          amount: sessionStorage.getItem('total'),
           quarter_delivery: quarter,
-          shipping: formData.shipping,
-          products: formData.productsPayments
-        }));
+          shipping: sessionStorage.getItem('shipping'),
+          price: price,
+          stripeToken: token.id
+        }
       } else {
-        sessionStorage.setItem('orderDetails', JSON.stringify({
-          orderId: response.data.order.id,
-          orderDate: new Date().toISOString(),
-          price: total,
-          amount: price,
-          shipping: shipping,
-          quarter_delivery: quarter,
+        formData = {
           productId: productId,
           quantity: quantity,
-          name: name
-        }));
+          amount: total,
+          price: price,
+          quarter_delivery: quarter,
+          shipping: shipping,
+          stripeToken: token.id
+        }
       }
-      dispatch(clearCart());
-      window.location.href = "/checkout/success";
+      const response = await payStripe(formData);
+      console.log(response)
+      if (response.data.success) {
+
+        if (s == "1") {
+          sessionStorage.setItem('orderDetails', JSON.stringify({
+            orderId: response.data.order.id,
+            orderDate: new Date().toISOString(),
+            amount: formData.amount,
+            quarter_delivery: quarter,
+            shipping: formData.shipping,
+            products: formData.productsPayments
+          }));
+        } else {
+          sessionStorage.setItem('orderDetails', JSON.stringify({
+            orderId: response.data.order.id,
+            orderDate: new Date().toISOString(),
+            price: total,
+            amount: price,
+            shipping: shipping,
+            quarter_delivery: quarter,
+            productId: productId,
+            quantity: quantity,
+            name: name
+          }));
+        }
+        dispatch(clearCart());
+        window.location.href = "/checkout/success";
+      }
+
+    } catch (e) {
+      setError("carte bancaire invalide")
+      setProcessing(false);
+      return;
     }
 
     //setProcessing(false);
@@ -323,7 +337,7 @@ const PaymentPage = () => {
           </SecureLabel>
         </HeaderRight>
       </Header>
-      <div className="max-w-[1500px] mx-12 p-8">
+      <div className="max-w-[1500px] mx-12 max-sm:mx-0 p-8">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Formulaire de paiement */}
           <div className="md:col-span-3">
@@ -362,6 +376,7 @@ const PaymentPage = () => {
             </Card>
           </div>
         </div>
+        <MobileNav />
       </div>
     </>
   );

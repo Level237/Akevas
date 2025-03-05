@@ -14,7 +14,6 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { AppDispatch } from "@/store";
 import { useDispatch } from "react-redux";
-import { authTokenChange } from "@/store/authSlice";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCheckIfEmailExistsMutation, useGetQuartersQuery, useGetTownsQuery } from "@/services/guardService";
 import { useState } from "react";
@@ -73,6 +72,7 @@ export default function RegisterForm() {
         residence: values.quarter
       }
       const response = await register(formData)
+
       const cookies = new Cookies();
       cookies.set('accessToken', response.data.access_token, { path: '/', secure: true });
       cookies.set('refreshToken', response.data.refresh_token, { path: '/', secure: true });
