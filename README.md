@@ -1,59 +1,77 @@
-# Akevas: Online Marketplace
+## Akevas - Become a Delivery Driver: Driver's Guide
 
-## Overview
+![image](https://github.com/user-attachments/assets/a2025e67-e20c-4683-a79e-4ffbba3f01c4)
 
-Welcome to Akevas, a dynamic online marketplace built with React.js! Akevas serves as a platform for various online shops, facilitating easy navigation and encouraging seamless transactions between buyers and sellers. Our mission is to create a user-friendly shopping experience while providing shop owners with the tools they need to manage their stores effectively.
+**Welcome to Akevas!** This guide explains step-by-step how to become a delivery driver on our platform and start earning money.
 
-![image](https://github.com/user-attachments/assets/3b8ae905-ad63-4476-94bb-3348e967ac17)
+**Requirements:**
 
+*   **Age:** Be at least 18 years old.
+*   **Driver's License:** Possess a valid driver's license (if delivering by car or scooter).
+*   **Vehicle:** Have a vehicle in good working condition (car, scooter, bicycle, depending on the options available in your region).
+*   **Smartphone:** Own a smartphone with a data plan.
+*   **Criminal Record:** Not have a criminal record incompatible with the provision of delivery services (verification carried out by Akevas).
+*   **Documents:** Provide the required documents (see list below).
 
-## Features
+**Steps to Become an Akevas Delivery Driver:**
 
-- **User-Friendly Interface**: A visually appealing and intuitive design that enhances the shopping experience.
-- **Shop Management Tools**: A comprehensive dashboard for shop owners to manage products, track sales, and analyze performance.
-- **Search and Filter Options**: Advanced search features that allow users to find products quickly and easily.
-- **Secure Payment Integration**: Support for various payment gateways to ensure secure and reliable transactions.
-- **Responsive Design**: An adaptable user interface that works seamlessly on both desktop and mobile devices.
-- **Customer Reviews and Ratings**: Features that allow buyers to leave feedback on products to help inform future customers.
+**1. Registration:**
 
-## Installation
+*   **Download the "Akevas Driver" app** available on the App Store (iOS) or Google Play Store (Android).
+*   **Open the app and click on "Become a Driver".**
+*   **Fill out the registration form** with your personal information:
+    *   Full name
+    *   Email address
+    *   Phone number
+    *   Password
+    *   Vehicle information (type, make, model, registration number)
+    *   Desired delivery area
+*   **Read and accept Akevas's Terms and Conditions (T&Cs) and Privacy Policy.**
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/akevas.git
-   ```
+**2. Document Submission:**
 
-2. Navigate to the project directory:
-   ```bash
-   cd akevas
-   ```
+*   **Upload the following documents directly via the app:**
+    *   **Identification Document:** Identity card or passport (front and back).
+    *   **Driver's License:** (front and back) if using a car or scooter.
+    *   **Vehicle Registration Document:** (if using a car or scooter).
+    *   **Vehicle Insurance Certificate:** (if using a car or scooter).
+    *   **Proof of Address:** (less than 3 months old).
+    *   **Bank Details (RIB - Relevé d'Identité Bancaire):** For the payment of your earnings.
+*   **Ensure that the documents are clear, legible and complete.** Illegible or incomplete documents may delay your registration.
 
-3. Install the dependencies:
-   ```bash
-   npm install
-   ```
+**3. Verification and Training:**
 
-4. Start the development server:
-   ```bash
-   npm start
-   ```
+*   **Akevas will verify the information and documents you have provided.** This process may take a few days.
+*   **Once your registration is approved, you will be invited to complete mandatory online training.** This training will explain:
+    *   How the Driver app works.
+    *   Road safety rules.
+    *   Best delivery practices.
+    *   Order and payment management.
+    *   Akevas customer service.
 
-Your application will be running on `http://localhost:3000`.
+**4. Account Activation:**
 
-## Usage
+*   **After successfully completing the training, your Driver account will be activated.**
+*   **You will receive a notification by email and in the app confirming the activation.**
 
-Once installed, you can register as a shop owner or a customer to start exploring the marketplace. Browse various online shops, manage your store, or shop for your favorite products with ease!
+**5. Start Delivering!**
 
-## License
+*   **Log in to the "Akevas Driver" app.**
+*   **Set your availability and delivery area.**
+*   **Accept orders and follow the app's instructions to complete deliveries.**
+*   **Ensure that you meet delivery deadlines and provide excellent customer service.**
 
-This project is licensed under a private license. For more details regarding the terms of use, please refer to the LICENSE file in the repository.
+**Important Tips:**
 
-## Contributing
+*   **Safety:** Always prioritize your safety and respect traffic laws.
+*   **Communication:** Communicate clearly with customers and restaurants in case of problems.
+*   **Customer Service:** Be courteous, professional, and responsive to customer requests.
+*   **Vehicle Maintenance:** Make sure your vehicle is in good working condition.
+*   **Optimization:** Learn to optimize your routes to maximize your earnings.
+*   **Application:** Familiarize yourself with all the features of the Driver app.
 
-We welcome contributions to Akevas! If you're interested in helping improve the project, please fork the repository and submit a pull request. Before contributing, please make sure to discuss your ideas with the team.
+**Support:**
 
-## Contact
+*   For any questions or assistance, consult the "Help" section of the Driver app or contact Akevas support by email at [support email address] or by phone at [support phone number].
 
-For any inquiries or support, please contact our developper at bramslevel129@gmail.com
-
-Thank you for being a part of Akevas! Happy shopping and selling!
+**We are delighted to welcome you to the Akevas Delivery Driver community!**
