@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Homepage from "@/pages/Homepage";
-import LoginPage from "@/pages/auth/LoginPage";
+
 import StoreGenerationPage from "@/pages/auth/seller-registration/StoreGenerationPage";
 import DashboardPage from "@/pages/seller/DashboardPage";
 import IdentityInfoPage from "@/pages/auth/seller-registration/IdentityInfoPage";
@@ -53,6 +53,7 @@ import OrderDetailPage from "@/pages/user/OrderDetailPage";
 import OrdersPage from "@/pages/user/OrdersPage";
 import ListCustomerPage from "@/pages/admin/customers/ListCustomerPage";
 import ListOrdersPage from "@/pages/admin/orders/ListOrdersPage";
+import LoginPage from "@/pages/auth/LoginPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
