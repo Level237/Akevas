@@ -2,7 +2,7 @@ import Cookies from "universal-cookie";
 
 export const logoutUser = () => {
     const cookies = new Cookies();
-    cookies.remove('token-seller', { path: '/' });
-    cookies.remove('refreshToken-seller', { path: '/' });
+    cookies.remove('tokenSeller', { path: '/' });
+    cookies.remove('refreshTokenSeller', { path: '/' });
     window.location.href = '/login'
 }
