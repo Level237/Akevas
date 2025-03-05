@@ -1,6 +1,6 @@
 import LoginForm from "@/components/frontend/forms/LoginForm";
 import { Card } from "@/components/ui/card";
-import { Shield, Truck, ArrowLeft } from "lucide-react";
+import MobileNav from "@/components/ui/mobile-nav";
 import login from '@/assets/login.jpg'
 
 
@@ -38,6 +38,7 @@ export default function LoginPage() {
 
 
         </Card>
+        <MobileNav />
       </div>
     </div>
   );

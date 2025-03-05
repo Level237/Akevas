@@ -54,6 +54,7 @@ import OrdersPage from "@/pages/user/OrdersPage";
 import ListCustomerPage from "@/pages/admin/customers/ListCustomerPage";
 import ListOrdersPage from "@/pages/admin/orders/ListOrdersPage";
 import LoginPage from "@/pages/auth/LoginPage";
+import AdminLoginPage from "@/pages/admin/LoginPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -62,6 +63,10 @@ export const routes = createBrowserRouter([
   {
     path: '/login',
     element: <GuardRoute><LoginPage /></GuardRoute>
+  },
+  {
+    path: '/admin/login',
+    element: <GuardRoute><AdminLoginPage /></GuardRoute>
   },
   {
     path: '/register',
