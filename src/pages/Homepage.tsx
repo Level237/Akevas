@@ -123,15 +123,11 @@ const Homepage = () => {
         <GenderNavigationMobile />
         <StoreHero />
 
-<<<<<<< HEAD
-        <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={localShops} isLoading={isPending} />
-=======
-
-        <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={localShops} isLoading={isPending} />
 
 
 
->>>>>>> 01499fa (update)
+
+
         <PremiumProducts />
         <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
 
