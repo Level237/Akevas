@@ -126,7 +126,7 @@ const Homepage = () => {
         <StoreStories title={`Boutiques`} description={`Découvrez nos meilleures boutiques`} shops={localShops} isLoading={isPending} />
         <PremiumProducts />
         <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
-
+        ee
       </section>
       <MobileNav />
       <FeaturedShopModal
