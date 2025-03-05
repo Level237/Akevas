@@ -1,22 +1,30 @@
-# Akevas: Online Marketplace
+# Akevas: Online Marketplace - For Sellers
 
 ## Overview
+![image](https://github.com/user-attachments/assets/298b11da-72b1-4cc3-be2a-d6cbe5b99bf2)
 
-Welcome to Akevas, a dynamic online marketplace built with React.js! Akevas serves as a platform for various online shops, facilitating easy navigation and encouraging seamless transactions between buyers and sellers. Our mission is to create a user-friendly shopping experience while providing shop owners with the tools they need to manage their stores effectively.
+Welcome to Akevas, a dynamic online marketplace built with React.js! Akevas provides you with a platform to showcase and sell your products to a wide audience. We aim to empower shop owners with the tools they need to manage their stores effectively and reach new customers.
 
-![image](https://github.com/user-attachments/assets/3b8ae905-ad63-4476-94bb-3348e967ac17)
+## Features for Sellers
 
+- **Shop Management Tools**: A comprehensive dashboard to manage products, track sales, analyze performance, and customize your shop's appearance.
+- **Product Listing Management**: Easily add, edit, and remove products with detailed descriptions, images, and pricing.
+- **Sales Tracking**: Monitor your sales in real-time and gain insights into your top-selling products.
+- **Performance Analytics**: Access data-driven insights to understand your customers and optimize your sales strategy.
+- **Secure Payment Integration**: Receive payments securely through various integrated payment gateways.
+- **Customer Interaction**: Engage with your customers through direct messaging and respond to reviews.
 
-## Features
+## Getting Started as a Seller
 
-- **User-Friendly Interface**: A visually appealing and intuitive design that enhances the shopping experience.
-- **Shop Management Tools**: A comprehensive dashboard for shop owners to manage products, track sales, and analyze performance.
-- **Search and Filter Options**: Advanced search features that allow users to find products quickly and easily.
-- **Secure Payment Integration**: Support for various payment gateways to ensure secure and reliable transactions.
-- **Responsive Design**: An adaptable user interface that works seamlessly on both desktop and mobile devices.
-- **Customer Reviews and Ratings**: Features that allow buyers to leave feedback on products to help inform future customers.
+1.  **Registration:** Upon installation and accessing the application, register as a shop owner.
 
-## Installation
+2.  **Shop Setup:** Complete your shop profile with necessary details.
+
+3.  **Product Listing:** Begin adding your products to the marketplace with compelling descriptions and high-quality images.
+
+4.  **Manage and Grow:** Utilize the shop management tools to track sales, analyze performance, and optimize your product offerings.
+
+## Installation (For Developers/Administrators)
 
 1. Clone the repository:
    ```bash
@@ -42,18 +50,8 @@ Your application will be running on `http://localhost:3000`.
 
 ## Usage
 
-Once installed, you can register as a shop owner or a customer to start exploring the marketplace. Browse various online shops, manage your store, or shop for your favorite products with ease!
+After installation, register as a shop owner to begin managing your store. Upload your products, track sales, and engage with your customers.
 
 ## License
 
 This project is licensed under a private license. For more details regarding the terms of use, please refer to the LICENSE file in the repository.
-
-## Contributing
-
-We welcome contributions to Akevas! If you're interested in helping improve the project, please fork the repository and submit a pull request. Before contributing, please make sure to discuss your ideas with the team.
-
-## Contact
-
-For any inquiries or support, please contact our developper at bramslevel129@gmail.com
-
-Thank you for being a part of Akevas! Happy shopping and selling!
