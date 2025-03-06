@@ -21,6 +21,7 @@ import DeliveryStats from "@/pages/DeliveryStats";
 import OrderDetailPage from "@/pages/OrderDetailPage";
 import DeliveryOrders from "@/pages/DeliveryOrders";
 import Account from "@/pages/Account";
+import DeliveryCountdown from "@/components/DeliveryCountdown";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -85,6 +86,10 @@ export const routes = createBrowserRouter([
   {
     path: '/delivery/stats',
     element: <DeliveryStats />
+  },
+  {
+    path: '/delivery/countdown/:orderId',
+    element: <DeliveryCountdown orderId="123" />
   },
   {
     path: '/delivery/history',

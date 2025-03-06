@@ -146,7 +146,7 @@ const OrderDetailPage = () => {
                             <button
                                 onClick={handleAccept}
                                 disabled={isAccepting}
-                                className="flex-1 bg-[#ed7e0f] text-white py-3 rounded-lg font-medium hover:bg-[#007BFF] disabled:bg-[#007BFF] disabled:opacity-50"
+                                className="flex-1 bg-[#ed7e0f] text-white py-3 rounded-lg font-medium hover:bg-[#ed7e0f]/90 disabled:bg-[#ed7e0f] disabled:opacity-50"
                             >
                                 {isAccepting ? 'En cours...' : 'Accepter la livraison'}
                             </button>
