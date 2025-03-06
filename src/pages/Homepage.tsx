@@ -5,7 +5,7 @@ import { useState, useEffect, useTransition } from 'react';
 import StoreHero from '@/components/frontend/StoreHero'
 import Header from '@/components/ui/header'
 import TopBar from '@/components/ui/topBar'
-
+import InstallButton from '@/components/InstallButton';
 import StoreStories from '@/components/stores/store-stories'
 import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
@@ -132,6 +132,7 @@ const Homepage = () => {
         <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
 
       </section>
+
       <MobileNav />
       <FeaturedShopModal
         isOpen={showFeaturedShop}
