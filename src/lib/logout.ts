@@ -1,8 +1,12 @@
+import { useDispatch } from "react-redux";
+import { clearUser } from "@/store/authSlice";
 import Cookies from "universal-cookie";
 
 export const logoutUser = () => {
     const cookies = new Cookies();
-    cookies.remove('accessToken', { path: '/' });
-    cookies.remove('refreshToken', { path: '/' });
+
+    cookies.remove('tokenDelivery', { path: '/' });
+    cookies.remove('refreshTokenDelivery', { path: '/' });
     window.location.href = '/login'
-}
+
+}   

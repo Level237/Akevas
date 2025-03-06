@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
 import { MobileSidebar } from '../delivery/MobileSidebar'
+import Cookies from 'universal-cookie';
 
 
 const ListItem = React.forwardRef<
@@ -73,7 +74,9 @@ const Header = () => {
     refetchOnReconnect: false,
     pollingInterval: 0,
   });
-
+  const cookies = new Cookies()
+  const user = cookies.get('userData')
+  console.log(user)
   // Memoize userData avec des dépendances plus précises
   const userData = useMemo(() => {
     const roleId = userDataAuth?.role_id;
@@ -180,7 +183,7 @@ const Header = () => {
                 to="/orders"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
-               Commandes
+                Commandes
               </AsyncLink>
               <AsyncLink
                 to="/delivery/history"

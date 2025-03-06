@@ -8,6 +8,7 @@ import { Search, MapPin, Package, Clock } from 'lucide-react'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import { useNavigate } from 'react-router-dom'
 import HomeAuth from '@/components/HomeAuth'
+
 const Homepage = () => {
   const { data, isLoading, isError } = useCheckAuthQuery()
   const [searchQuery, setSearchQuery] = useState('')

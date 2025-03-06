@@ -103,6 +103,10 @@ export const authService = createApi({
         getOrders: builder.query({
             query: () => '/api/v1/list/orders',
             providesTags: ['Auth'],
+        }),
+        getOrderByTown: builder.query({
+            query: () => `/api/v1/orders/towns`,
+            providesTags: ['Auth'],
         })
     })
 })
@@ -118,5 +122,6 @@ export const {
     useGetUserStatsQuery,
     useGetRecentOrdersQuery,
     useGetOrderDetailQuery,
-    useGetOrdersQuery
+    useGetOrdersQuery,
+    useGetOrderByTownQuery
 } = authService
