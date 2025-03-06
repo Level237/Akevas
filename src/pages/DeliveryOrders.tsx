@@ -122,7 +122,7 @@ const DeliveryOrders = () => {
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
                                         <div className="flex items-center gap-3 mb-2">
-                                            <Package className="text-blue-500" size={24} />
+                                            <Package className="text-[#ed7e0f]" size={24} />
                                             <h3 className="font-semibold text-lg">
                                                 Commande {order.id}
                                             </h3>

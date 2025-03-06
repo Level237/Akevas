@@ -1,4 +1,4 @@
-import { Search, MapPin, Clock, Package } from 'lucide-react'
+import { Search, MapPin, Clock, Package, RefreshCw } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useGetOrderByTownQuery, useGetOrderByPreferencesQuery } from '@/services/auth'
@@ -16,13 +16,22 @@ const HomeAuth = () => {
   const { data: ordersPreferences, isLoading: isLoadingPreferences, error: errorPreferences } = useGetOrderByPreferencesQuery("Auth")
   return <div>        <div className="max-w-7xl mx-auto px-4 py-6">
     {/* En-tête de la section */}
-    <div className="mb-8">
-      <h1 className="text-2xl font-bold text-gray-800 mb-2">
-        Tableau de bord Livreur
-      </h1>
-      <p className="text-gray-600">
-        Retrouvez ici toutes les commandes disponibles
-      </p>
+    <div className="mb-8 flex justify-between items-center">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          Tableau de bord Livreur
+        </h1>
+        <p className="text-gray-600">
+          Retrouvez ici toutes les commandes disponibles
+        </p>
+      </div>
+      <button
+        onClick={() => window.location.reload()}
+        className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+        title="Rafraîchir la page"
+      >
+        <RefreshCw size={24} className="text-[#ed7e0f]" />
+      </button>
     </div>
 
     {/* Barre de recherche */}
@@ -50,7 +59,7 @@ const HomeAuth = () => {
     </div>
 
     {/* Onglets */}
-    <div className="flex gap-4 mb-6">
+    <div className="flex max-sm:text-sm max-sm:gap-2 gap-4 mb-6">
       <button
         className={`px-4 py-2 rounded-lg ${activeTab === 'all' ? 'bg-[#ed7e0f] text-white' : 'bg-white text-gray-600'
           }`}
