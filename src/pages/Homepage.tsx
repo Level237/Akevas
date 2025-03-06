@@ -119,14 +119,14 @@ const Homepage = () => {
       <section className='overflow-hidden'>
         <TopBar />
 
-
+        <Header />
         <GenderNavigationMobile />
         <StoreHero />
 
 
 
 
-
+        <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette qui offrent des produits de qualité et des services exceptionnels." shops={localShops} isLoading={isLoading} />
 
         <PremiumProducts />
         <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
