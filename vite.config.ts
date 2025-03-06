@@ -3,9 +3,9 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import { VitePWA } from "vite-plugin-pwa";
 
-const manifestForPlugIn = {
+export const manifestForPlugIn = {
   registerType: 'autoUpdate' as const,
-  includeAssests: ['favicon.png'],
+  includeAssests: ['favicon.png', 'service-worker.js'],
   devOptions: {
     enabled: true,
     type: 'module',
