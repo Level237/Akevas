@@ -36,7 +36,7 @@ const Account = () => {
         status: 'Actif'
     }
 
-    const { data: userData } = useGetUserQuery('Auth', {
+    const { data: userData, isLoading } = useGetUserQuery('Auth', {
         refetchOnFocus: false,
         refetchOnMountOrArgChange: false,
         refetchOnReconnect: false,
@@ -70,7 +70,7 @@ const Account = () => {
                                     </button>
                                 </div>
                                 <h1 className="text-xl font-bold text-gray-800">{userData?.firstName} {userData?.lastName}</h1>
-                                <p className="text-sm text-gray-500 mt-1">{formatDate(userData?.created_at)}</p>
+                                <p className="text-sm text-gray-500 mt-1">{isLoading ? 'Chargement...' : formatDate((userData.created_at))}</p>
                                 <div className="flex items-center justify-center mt-3">
                                     <Star className="w-4 h-4 text-yellow-400" />
                                     <span className="ml-1 text-gray-600">{user.rating}</span>
