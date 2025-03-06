@@ -98,7 +98,7 @@ const DeliveryGenerationPage: React.FC = () => {
 
         const response = await createDelivery(formData);
         console.log(response)
-        const userObject = { phone_number: phone, password: password }
+        const userObject = { phone_number: phone, password: password, role_id: 4 }
         const userData = await login(userObject)
 
         const cookies = new Cookies();
