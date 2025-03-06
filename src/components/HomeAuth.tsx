@@ -1,23 +1,19 @@
 import { Search, MapPin, Clock, Package } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { useGetOrderByTownQuery } from '@/services/auth'
+import { useGetOrderByTownQuery, useGetOrderByPreferencesQuery } from '@/services/auth'
 import { formatDate } from '@/lib/formatDate'
+import IsLoadingComponents from './ui/isLoadingComponents'
 
 
 const HomeAuth = () => {
 
-  // Simulation des données de commandes (à remplacer par vos vraies données)
-  const orders = [
-    { id: 1, city: 'Paris', district: 'Marais', status: 'En attente', address: '123 Rue du Commerce', time: '14:30' },
-    { id: 2, city: 'Paris', district: 'Bastille', status: 'En cours', address: '45 Avenue République', time: '15:00' },
-    // ... autres commandes
-  ]
+
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('all')
   const { data: ordersCity, isLoading, error } = useGetOrderByTownQuery('Auth')
-
+  const { data: ordersPreferences, isLoading: isLoadingPreferences, error: errorPreferences } = useGetOrderByPreferencesQuery()
   return <div>        <div className="max-w-7xl mx-auto px-4 py-6">
     {/* En-tête de la section */}
     <div className="mb-8">
@@ -67,13 +63,14 @@ const HomeAuth = () => {
           }`}
         onClick={() => setActiveTab('nearby')}
       >
-        À proximité
+        Selon vos préférences
       </button>
     </div>
 
     {/* Liste des commandes */}
     <div className="grid gap-4">
-      {!isLoading && ordersCity?.map((order) => (
+      {isLoading && <IsLoadingComponents isLoading={isLoading} />}
+      {activeTab === 'all' && !isLoading && ordersCity?.map((order) => (
         <div
           key={order.id}
           className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"
@@ -102,6 +99,38 @@ const HomeAuth = () => {
           </div>
         </div>
       ))}
+      {activeTab === "all" && !isLoading && ordersCity?.length === 0 && <div className="text-center text-gray-600">Aucune commande disponible</div>}
+      {isLoadingPreferences && <IsLoadingComponents isLoading={isLoadingPreferences} />}
+      {activeTab === 'nearby' && !isLoadingPreferences && ordersPreferences?.map((order) => (
+        <div
+          key={order.id}
+          className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"
+          onClick={() => navigate(`/order/${order.id}`)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Package className="text-[#ed7e0f]" size={24} />
+              <div>
+                <h3 className="font-semibold">Commande #{order.id}</h3>
+                <div className="flex items-center text-gray-600 text-sm">
+                  <MapPin size={16} className="mr-1" />
+                  {`Beedi`} - {order.quarter_delivery}
+                </div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center text-gray-600">
+                <Clock size={16} className="mr-1" />
+                <span>{formatDate(order.created_at)}</span>
+              </div>
+              <span className="text-sm font-medium text-[#ed7e0f]">
+                {order.isTake == "0" ? "En attente" : "En cours"}
+              </span>
+            </div>
+          </div>
+        </div>
+      ))}
+      {activeTab === 'nearby' && !isLoadingPreferences && ordersPreferences?.length === 0 && <div className="text-center text-gray-600">Aucune commande disponible</div>}
     </div>
   </div></div>
 }
