@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Clock, AlertCircle, XCircle } from 'lucide-react'
 import Header from './ui/header'
-
+import MobileNav from './ui/mobile-nav'
 interface CountdownProps {
     orderId: string
     onTimeUp?: () => void
@@ -83,11 +83,11 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
     const strokeDashoffset = circumference - (getProgressPercentage() / 100) * circumference
 
     return (
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-lg  shadow-sm p-6 mb-6">
             <Header />
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center mt-20 gap-3 mb-6">
                 <Clock className="text-[#ed7e0f]" size={24} />
-                <h2 className="text-lg font-semibold">Temps de livraison restant</h2>
+                <h2 className="text-lg  font-semibold">Temps de livraison restant</h2>
             </div>
 
             <div className="flex flex-col items-center justify-center">
@@ -157,6 +157,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
                         </button>
                     )}
                 </div>
+                <MobileNav />
             </div>
         </div>
     )

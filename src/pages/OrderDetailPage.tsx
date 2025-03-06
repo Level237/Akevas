@@ -31,7 +31,7 @@ const OrderDetailPage = () => {
         try {
             // Appel API pour accepter la commande
             // await acceptOrder(orderId)
-            navigate('/dashboard') // Redirection après acceptation
+            navigate(`/delivery/countdown/${orderId}`) // Redirection après acceptation
         } catch (error) {
             console.error('Erreur lors de l\'acceptation:', error)
         } finally {
@@ -93,7 +93,7 @@ const OrderDetailPage = () => {
                                 <div className="flex items-center gap-2 text-orange-700">
                                     <AlertCircle size={20} />
                                     <span className="font-medium">
-                                        Vous avez 1 heure pour récupérer la commande
+                                        Vous avez 1 heure pour récupérer la commande et la livrer
                                     </span>
                                 </div>
                             </div>
