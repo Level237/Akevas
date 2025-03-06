@@ -7,19 +7,14 @@ import { useState } from 'react'
 import { Search, MapPin, Package, Clock } from 'lucide-react'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import { useNavigate } from 'react-router-dom'
-
+import HomeAuth from '@/components/HomeAuth'
 const Homepage = () => {
   const { data, isLoading, isError } = useCheckAuthQuery()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('all')
   const navigate = useNavigate()
 
-  // Simulation des données de commandes (à remplacer par vos vraies données)
-  const orders = [
-    { id: 1, city: 'Paris', district: 'Marais', status: 'En attente', address: '123 Rue du Commerce', time: '14:30' },
-    { id: 2, city: 'Paris', district: 'Bastille', status: 'En cours', address: '45 Avenue République', time: '15:00' },
-    // ... autres commandes
-  ]
+
   if (isLoading) return <IsLoadingComponents isLoading={isLoading} />
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
@@ -29,92 +24,7 @@ const Homepage = () => {
       {!data?.isAuthenticated ? (
         <HomeGuard />
       ) : (
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* En-tête de la section */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">
-              Tableau de bord Livreur
-            </h1>
-            <p className="text-gray-600">
-              Retrouvez ici toutes les commandes disponibles
-            </p>
-          </div>
-
-          {/* Barre de recherche */}
-          <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-            <div className="flex max-sm:flex-col gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                  <input
-                    type="text"
-                    placeholder="Rechercher par ville ou quartier..."
-                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-              <select className="border rounded-lg px-4 py-2 bg-white">
-                <option value="">Toutes les villes</option>
-                <option value="paris">Paris</option>
-                <option value="lyon">Lyon</option>
-                {/* Ajoutez d'autres villes */}
-              </select>
-            </div>
-          </div>
-
-          {/* Onglets */}
-          <div className="flex gap-4 mb-6">
-            <button
-              className={`px-4 py-2 rounded-lg ${activeTab === 'all' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600'
-                }`}
-              onClick={() => setActiveTab('all')}
-            >
-              Toutes les commandes
-            </button>
-            <button
-              className={`px-4 py-2 rounded-lg ${activeTab === 'nearby' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600'
-                }`}
-              onClick={() => setActiveTab('nearby')}
-            >
-              À proximité
-            </button>
-          </div>
-
-          {/* Liste des commandes */}
-          <div className="grid gap-4">
-            {orders.map((order) => (
-              <div
-                key={order.id}
-                className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => navigate(`/order/${order.id}`)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Package className="text-blue-500" size={24} />
-                    <div>
-                      <h3 className="font-semibold">Commande #{order.id}</h3>
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <MapPin size={16} className="mr-1" />
-                        {order.city} - {order.district}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center text-gray-600">
-                      <Clock size={16} className="mr-1" />
-                      <span>{order.time}</span>
-                    </div>
-                    <span className="text-sm font-medium text-blue-500">
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <HomeAuth />
       )}
 
       <MobileNav />

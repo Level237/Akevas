@@ -35,7 +35,7 @@ export const AuthenticatePage = () => {
                         navigate('/user/dashboard')
                         break;
                     case 4:
-                        navigate('/dashboard')
+                        navigate('/')
                         break;
                 }
 

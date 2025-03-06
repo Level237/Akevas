@@ -171,28 +171,28 @@ const Header = () => {
             {/* Navigation principale du livreur */}
             <nav className="hidden md:flex items-center space-x-6">
               <AsyncLink
-                to="/dashboard"
+                to="/"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
                 Tableau de bord
               </AsyncLink>
               <AsyncLink
-                to="/deliveries"
+                to="/orders"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
-                Mes livraisons
+               Commandes
               </AsyncLink>
               <AsyncLink
-                to="/history"
+                to="/delivery/history"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
                 Historique
               </AsyncLink>
               <AsyncLink
-                to="/earnings"
+                to="/delivery/stats"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
-                Mes gains
+                Statistiques
               </AsyncLink>
             </nav>
 
