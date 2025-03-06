@@ -19,7 +19,9 @@ import {
     Clock,
     Award
 } from 'lucide-react'
-
+import { useGetUserQuery, useLogoutMutation } from '@/services/auth'
+import { formatDate } from '@/lib/formatDate'
+import { logoutUser } from '@/lib/logout'
 const Account = () => {
     const user = {
         name: 'John Doe',
@@ -34,6 +36,18 @@ const Account = () => {
         status: 'Actif'
     }
 
+    const { data: userData } = useGetUserQuery('Auth', {
+        refetchOnFocus: false,
+        refetchOnMountOrArgChange: false,
+        refetchOnReconnect: false,
+        pollingInterval: 0,
+    });
+    const [logout] = useLogoutMutation();
+
+    const handleLogout = async () => {
+        await logout('Auth');
+        logoutUser();
+    }
     return (
         <div className="min-h-screen mb-20 bg-[#F8F9FC]">
             <TopBar />
@@ -47,16 +61,16 @@ const Account = () => {
                             <div className="flex flex-col items-center text-center mb-6">
                                 <div className="relative mb-4">
                                     <img
-                                        src={user.avatar || 'https://via.placeholder.com/150'}
-                                        alt={user.name}
+                                        src={userData?.vehicle.vehicle_image || 'https://via.placeholder.com/150'}
+                                        alt={userData?.firstName}
                                         className="w-24 h-24 rounded-full border-4 border-gray-50 shadow-sm"
                                     />
-                                    <button className="absolute bottom-0 right-0 p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600">
+                                    <button className="absolute bottom-0 right-0 p-2 bg-[#ed7e0f] text-white rounded-full hover:bg-[#ed7e0f]">
                                         <Edit size={14} />
                                     </button>
                                 </div>
-                                <h1 className="text-xl font-bold text-gray-800">{user.name}</h1>
-                                <p className="text-sm text-gray-500 mt-1">{user.joinDate}</p>
+                                <h1 className="text-xl font-bold text-gray-800">{userData?.firstName} {userData?.lastName}</h1>
+                                <p className="text-sm text-gray-500 mt-1">{formatDate(userData?.created_at)}</p>
                                 <div className="flex items-center justify-center mt-3">
                                     <Star className="w-4 h-4 text-yellow-400" />
                                     <span className="ml-1 text-gray-600">{user.rating}</span>
@@ -68,14 +82,14 @@ const Account = () => {
                                 <div className="bg-blue-50 p-4 rounded-lg text-center">
                                     <Truck className="w-5 h-5 text-blue-500 mx-auto mb-2" />
                                     <div className="text-lg font-semibold text-gray-800">
-                                        {user.totalDeliveries}
+                                        {userData?.ordersCount}
                                     </div>
                                     <div className="text-xs text-gray-500">Livraisons</div>
                                 </div>
                                 <div className="bg-green-50 p-4 rounded-lg text-center">
                                     <Wallet className="w-5 h-5 text-green-500 mx-auto mb-2" />
                                     <div className="text-lg font-semibold text-gray-800">
-                                        {user.earnings}
+                                        0
                                     </div>
                                     <div className="text-xs text-gray-500">Gains</div>
                                 </div>
@@ -85,15 +99,15 @@ const Account = () => {
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3 text-gray-600">
                                     <Mail className="w-5 h-5 text-gray-400" />
-                                    <span className="text-sm">{user.email}</span>
+                                    <span className="text-sm">{userData?.email}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-gray-600">
                                     <Phone className="w-5 h-5 text-gray-400" />
-                                    <span className="text-sm">{user.phone}</span>
+                                    <span className="text-sm">{userData?.phone_number}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-gray-600">
                                     <MapPin className="w-5 h-5 text-gray-400" />
-                                    <span className="text-sm">{user.address}</span>
+                                    <span className="text-sm">{userData?.residence}</span>
                                 </div>
                             </div>
                         </div>
@@ -117,13 +131,13 @@ const Account = () => {
                                     icon={Truck}
                                     title="Historique des livraisons"
                                     subtitle="Consultez vos livraisons passées"
-                                    link="/delivery-history"
+                                    link="/delivery/history"
                                 />
                                 <MenuItem
                                     icon={Award}
                                     title="Performances"
                                     subtitle="Vos statistiques et récompenses"
-                                    link="/performance"
+                                    link="/delivery/stats"
                                 />
                             </div>
                         </div>
@@ -156,7 +170,7 @@ const Account = () => {
                         </div>
 
                         {/* Bouton de déconnexion */}
-                        <button className="w-full flex items-center justify-center gap-2 p-4 text-red-600 bg-white rounded-lg shadow-sm hover:bg-red-50 transition-colors">
+                        <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 p-4 text-red-600 bg-white rounded-lg shadow-sm hover:bg-red-50 transition-colors">
                             <LogOut className="w-5 h-5" />
                             <span>Se déconnecter</span>
                         </button>

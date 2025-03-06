@@ -61,7 +61,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                 {currentUser && currentUser.role_id === 2 && <><AsyncLink to={"/shop/" + currentUser.shop.shop_id}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Voir ma boutique</Button></AsyncLink>
                   <AsyncLink to={"/seller/dashboard"}><Button variant="ghost" className="w-full text-sm">Tableau de bord</Button></AsyncLink></>}
                 {currentUser && currentUser.role_id === 4 && <><AsyncLink to={"/delivery/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>
-                  <AsyncLink to={"/delivery/profile"}><Button variant="ghost" className="w-full text-sm">Mon profil</Button></AsyncLink>
+                  <AsyncLink to={"/account"}><Button variant="ghost" className="w-full text-sm">Mon compte</Button></AsyncLink>
                 </>}
                 {currentUser && currentUser.role_id === 1 && <AsyncLink to={"/admin/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
                 {currentUser && currentUser.role_id === 3 && <AsyncLink to={"/user/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}

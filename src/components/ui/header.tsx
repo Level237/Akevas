@@ -74,9 +74,7 @@ const Header = () => {
     refetchOnReconnect: false,
     pollingInterval: 0,
   });
-  const cookies = new Cookies()
-  const user = cookies.get('userData')
-  console.log(user)
+  console.log(userDataAuth)
   // Memoize userData avec des dépendances plus précises
   const userData = useMemo(() => {
     const roleId = userDataAuth?.role_id;

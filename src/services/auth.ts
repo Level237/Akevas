@@ -67,7 +67,7 @@ export const authService = createApi({
         }),
         getUser: builder.query({
 
-            query: () => '/api/v1/current/user',
+            query: () => '/api/v1/current/delivery',
             providesTags: ['Auth'],
             transformErrorResponse: (baseQueryResult) => {
                 // Ici, vous pouvez personnaliser la réponse d'erreur
