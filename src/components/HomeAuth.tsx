@@ -13,7 +13,7 @@ const HomeAuth = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('all')
   const { data: ordersCity, isLoading, error } = useGetOrderByTownQuery('Auth')
-  const { data: ordersPreferences, isLoading: isLoadingPreferences, error: errorPreferences } = useGetOrderByPreferencesQuery()
+  const { data: ordersPreferences, isLoading: isLoadingPreferences, error: errorPreferences } = useGetOrderByPreferencesQuery("Auth")
   return <div>        <div className="max-w-7xl mx-auto px-4 py-6">
     {/* En-tête de la section */}
     <div className="mb-8">

@@ -12,11 +12,14 @@ import {
     Calendar,
     AlertCircle
 } from 'lucide-react'
+import { useGetOrderByTownQuery } from '@/services/auth'
+import IsLoadingComponents from '@/components/ui/isLoadingComponents'
+import { formatDate } from '@/lib/formatDate'
 
 const DeliveryOrders = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [filterStatus, setFilterStatus] = useState('all')
-
+    const { data: ordersCity, isLoading, error } = useGetOrderByTownQuery('Auth')
     // Simulation des données de commandes (à remplacer par les données réelles)
     const orders = [
         {
@@ -110,7 +113,7 @@ const DeliveryOrders = () => {
 
                 {/* Liste des commandes */}
                 <div className="space-y-4">
-                    {orders.map((order) => (
+                    {!isLoading && ordersCity?.map((order) => (
                         <div
                             key={order.id}
                             className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
@@ -126,11 +129,11 @@ const DeliveryOrders = () => {
                                         </div>
                                         <div className="flex items-center gap-2 text-sm text-gray-500">
                                             <Calendar size={16} />
-                                            <span>{order.createdAt}</span>
+                                            <span>{formatDate(order.created_at)}</span>
                                         </div>
                                     </div>
-                                    <span className={`px-3 py-1 rounded-full text-sm ${getStatusBadge(order.status).color}`}>
-                                        {getStatusBadge(order.status).text}
+                                    <span className={`px-3 py-1 rounded-full text-sm ${getStatusBadge(order.status == "0" ? "pending" : order.status == "1" ? "in_progress" : order.status == "2" ? "completed" : "cancelled").color}`}>
+                                        {getStatusBadge(order.status == "0" ? "pending" : order.status == "1" ? "in_progress" : order.status == "2" ? "completed" : "cancelled").text}
                                     </span>
                                 </div>
 
@@ -140,14 +143,14 @@ const DeliveryOrders = () => {
                                         <MapPin className="text-gray-400 mt-1" size={20} />
                                         <div>
                                             <p className="text-sm text-gray-500">Point de retrait</p>
-                                            <p className="text-gray-700">{order.pickupAddress}</p>
+                                            <p className="text-gray-700">Beedi</p>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
                                         <MapPin className="text-gray-400 mt-1" size={20} />
                                         <div>
                                             <p className="text-sm text-gray-500">Livraison</p>
-                                            <p className="text-gray-700">{order.deliveryAddress}</p>
+                                            <p className="text-gray-700">{order.quarter_delivery}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -157,27 +160,31 @@ const DeliveryOrders = () => {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-sm text-gray-500 mb-1">Produits</p>
-                                            {order.products.map((product, index) => (
-                                                <p key={index} className="text-gray-700">
-                                                    {product.quantity}x {product.name}
-                                                </p>
-                                            ))}
+                                            {!isLoading && order.order_details?.map((order_detail) =>
+
+                                                <div className='flex items-center gap-4'>
+                                                    <img className='w-14 h-14' src={order_detail.product.product_profile} alt="" />
+                                                    <p key={order_detail.product.id} className="text-gray-700">
+                                                        {order_detail.quantity} x {order_detail.product.product_name}
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="text-right">
                                             <p className="text-sm text-gray-500 mb-1">Rémunération</p>
-                                            <p className="text-lg font-semibold text-green-600">{order.price}</p>
+                                            <p className="text-lg font-semibold text-green-600">{order.fee_of_shipping} FCFA</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Temps limite et action */}
-                                {order.status === 'pending' && (
+                                {order.status == "0" && (
                                     <div className="flex items-center justify-between mt-4 pt-4 border-t">
                                         <div className="flex items-center gap-2 text-orange-600">
                                             <AlertCircle size={20} />
                                             <span>Temps restant: {order.timeLimit}</span>
                                         </div>
-                                        <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                        <button className="px-4 max-sm:px-3 max-sm:py-3 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f] transition-colors">
                                             Accepter la livraison
                                         </button>
                                     </div>
@@ -185,6 +192,7 @@ const DeliveryOrders = () => {
                             </div>
                         </div>
                     ))}
+                    {isLoading && <IsLoadingComponents isLoading={isLoading} />}
                 </div>
             </div>
 
