@@ -12,19 +12,7 @@ const OrderDetailPage = () => {
     const [isAccepting, setIsAccepting] = useState(false)
     const { data: orderData, isLoading } = useShowOrderQuery(orderId)
 
-    // Simulation des données de la commande (à remplacer par un appel API)
-    const order = {
-        id: orderId,
-        status: 'En attente',
-        pickupAddress: '123 Rue Akevas, 75001 Paris',
-        deliveryAddress: '45 Avenue République, 75011 Paris',
-        timeLimit: '1 heure',
-        products: [
-            { id: 1, name: 'T-shirt Akevas', quantity: 2, size: 'M' },
-            { id: 2, name: 'Pantalon Classic', quantity: 1, size: 'L' },
-        ],
-        createdAt: '14:30',
-    }
+
 
     const handleAccept = async () => {
         setIsAccepting(true)
