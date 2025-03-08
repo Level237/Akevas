@@ -70,35 +70,29 @@ export const routes = createBrowserRouter([
     element: <DeliveryRootDashboard><PrivateRoute /></DeliveryRootDashboard>,
     children: [
       {
-        path: 'dashboard',
-        element: <DeliveryDashboard />
-      }, {
-        path: 'delivery/orders',
-        element: <DeliveriesPage />
+        path: '/order/:orderId',
+        element: <OrderDetailPage />
       },
+      {
+        path: '/delivery/stats',
+        element: <DeliveryStats />
+      },
+      {
+        path: '/delivery/countdown/:orderId',
+        element: <DeliveryCountDownPage />
+      },
+      {
+        path: '/delivery/history',
+        element: <DeliveryHistory />
+      },
+      {
+        path: '/orders',
+        element: <DeliveryOrders />
+      }
 
     ]
   },
-  {
-    path: '/order/:orderId',
-    element: <OrderDetailPage />
-  },
-  {
-    path: '/delivery/stats',
-    element: <DeliveryStats />
-  },
-  {
-    path: '/delivery/countdown/:orderId',
-    element: <DeliveryCountDownPage />
-  },
-  {
-    path: '/delivery/history',
-    element: <DeliveryHistory />
-  },
-  {
-    path: '/orders',
-    element: <DeliveryOrders />
-  },
+
   {
     path: '/',
     element: <Homepage />,

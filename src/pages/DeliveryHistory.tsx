@@ -1,33 +1,22 @@
-import TopBar from '@/components/ui/topBar'
-import Header from '@/components/ui/header'
-import { Package, MapPin, Clock, Search, Filter } from 'lucide-react'
+
+
+import { Package, MapPin, Search, Calendar, AlertCircle } from 'lucide-react'
 import { useState } from 'react'
 import MobileNav from '@/components/ui/mobile-nav'
+import { useOrderHistoryQuery } from '@/services/auth'
+import AsyncLink from '@/components/ui/AsyncLink'
+import { formatDate } from '@/lib/formatDate'
+import { getStatusBadge } from './DeliveryOrders'
 const DeliveryHistory = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [filterStatus, setFilterStatus] = useState('all')
-
+    const { data: orders, isLoading } = useOrderHistoryQuery("Auth")
     // Simulation de l'historique des livraisons (à remplacer par des données réelles)
-    const deliveries = [
-        {
-            id: 1,
-            date: '2024-03-15',
-            time: '14:30',
-            status: 'completed',
-            address: '123 Rue du Commerce, Paris',
-            products: [
-                { name: 'T-shirt Akevas', quantity: 2 },
-                { name: 'Pantalon Classic', quantity: 1 },
-            ],
-            earnings: '15 €'
-        },
-        // Ajoutez plus de livraisons ici
-    ]
+
 
     return (
         <div className="min-h-screen bg-[#F8F9FC]">
-            <TopBar />
-            <Header />
+
 
             <div className="max-w-7xl mx-auto px-4 py-6">
                 <div className="mb-8">
@@ -68,46 +57,83 @@ const DeliveryHistory = () => {
 
                 {/* Liste des livraisons */}
                 <div className="space-y-4">
-                    {deliveries.map((delivery) => (
-                        <div key={delivery.id} className="bg-white rounded-lg shadow-sm p-6">
-                            <div className="flex flex-col md:flex-row justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    <Package className="text-blue-500" size={24} />
+                    {!isLoading && orders?.length > 0 && orders?.map((order: any) => (
+                        <div
+                            key={order.id}
+                        >
+                            <div className="p-6">
+                                <div className="flex justify-between items-start mb-4">
                                     <div>
-                                        <h3 className="font-semibold">Livraison #{delivery.id}</h3>
-                                        <div className="flex items-center text-gray-600 text-sm">
-                                            <Clock size={16} className="mr-1" />
-                                            <span>{delivery.date} - {delivery.time}</span>
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Package className="text-[#ed7e0f]" size={24} />
+                                            <h3 className="font-semibold text-lg">
+                                                Commande {order.id}
+                                            </h3>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                                            <Calendar size={16} />
+                                            <span>{formatDate(order.created_at)}</span>
+                                        </div>
+                                    </div>
+                                    <span className={`px-3 py-1 rounded-full text-sm ${getStatusBadge(order.status == "0" ? "pending" : order.status == "1" ? "in_progress" : order.status == "2" ? "completed" : "cancelled").color}`}>
+                                        {getStatusBadge(order.status == "0" ? "pending" : order.status == "1" ? "in_progress" : order.status == "2" ? "completed" : "cancelled").text}
+                                    </span>
+                                </div>
+
+                                {/* Détails de la commande */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div className="flex items-start gap-3">
+                                        <MapPin className="text-gray-400 mt-1" size={20} />
+                                        <div>
+                                            <p className="text-sm text-gray-500">Point de retrait</p>
+                                            <p className="text-gray-700">Beedi</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <MapPin className="text-gray-400 mt-1" size={20} />
+                                        <div>
+                                            <p className="text-sm text-gray-500">Livraison</p>
+                                            <p className="text-gray-700">{order.quarter_delivery}</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-4 md:mt-0">
-                                    <span className={`px-3 py-1 rounded-full text-sm ${delivery.status === 'completed'
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-red-100 text-red-800'
-                                        }`}>
-                                        {delivery.status === 'completed' ? 'Terminée' : 'Annulée'}
-                                    </span>
-                                </div>
-                            </div>
 
-                            <div className="border-t pt-4">
-                                <div className="flex items-start gap-2 text-gray-600 mb-3">
-                                    <MapPin size={16} className="mt-1" />
-                                    <span>{delivery.address}</span>
-                                </div>
-                                <div className="space-y-2">
-                                    {delivery.products.map((product, index) => (
-                                        <div key={index} className="text-sm text-gray-600">
-                                            {product.quantity}x {product.name}
+                                {/* Produits */}
+                                <div className="border-t pt-4">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm text-gray-500 mb-1">Produits</p>
+                                            {!isLoading && order.order_details?.map((order_detail: any) =>
+
+                                                <div className='flex items-center gap-4'>
+                                                    <img className='w-14 h-14' src={order_detail.product.product_profile} alt="" />
+                                                    <p key={order_detail.product.id} className="text-gray-700">
+                                                        {order_detail.quantity} x {order_detail.product.product_name}
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
+                                        <div className="text-right">
+                                            <p className="text-sm text-gray-500 mb-1">Rémunération</p>
+                                            <p className="text-lg font-semibold text-green-600">{order.fee_of_shipping} FCFA</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="mt-4 text-right">
-                                    <span className="font-medium text-green-600">
-                                        Gains: {delivery.earnings}
-                                    </span>
-                                </div>
+
+                                {/* Temps limite et action */}
+                                {order.status == "0" && (
+                                    <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                                        <div className="flex items-center gap-2 text-orange-600">
+                                            <AlertCircle size={20} />
+                                            <span>Temps restant: {order.timeLimit}</span>
+                                        </div>
+                                        <AsyncLink to={`/delivery/countdown/${order.id}`}>
+                                            <button className="px-4 max-sm:px-3 max-sm:py-3 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f] transition-colors">
+                                                Accepter la livraison
+                                            </button>
+                                        </AsyncLink>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}

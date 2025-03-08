@@ -126,6 +126,10 @@ export const authService = createApi({
                 method: 'POST',
             }),
             invalidatesTags: ['Auth'],
+        }),
+        orderHistory: builder.query({
+            query: () => '/api/v1/orders/history',
+            providesTags: ['Auth'],
         })
     })
 })
@@ -146,5 +150,6 @@ export const {
     useGetOrderByPreferencesQuery,
     useShowOrderQuery,
     useGetOrdersByQuarterQuery,
-    useTakeOrderMutation
+    useTakeOrderMutation,
+    useOrderHistoryQuery
 } = authService

@@ -25,8 +25,7 @@ const DeliveryStats = () => {
 
     return (
         <div className="min-h-screen bg-[#F8F9FC]">
-            <TopBar />
-            <Header />
+
 
             <div className="max-w-7xl mx-auto px-4 py-6">
                 <div className="mb-8">

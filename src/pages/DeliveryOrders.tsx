@@ -1,14 +1,9 @@
 import { useState } from 'react'
-import TopBar from '@/components/ui/topBar'
-import Header from '@/components/ui/header'
 import MobileNav from '@/components/ui/mobile-nav'
 import {
     Package,
-    Search,
     Filter,
     MapPin,
-    Clock,
-    ChevronRight,
     Calendar,
     AlertCircle
 } from 'lucide-react'
@@ -19,22 +14,23 @@ import { useGetQuartersQuery } from '@/services/guardService'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import AsyncLink from '@/components/ui/AsyncLink'
 
+export const getStatusBadge = (status: string) => {
+    const statusConfig = {
+        pending: { color: 'bg-yellow-100 text-yellow-800', text: 'En attente' },
+        in_progress: { color: 'bg-blue-100 text-blue-800', text: 'En cours' },
+        completed: { color: 'bg-green-100 text-green-800', text: 'Terminée' },
+        cancelled: { color: 'bg-red-100 text-red-800', text: 'Annulée' }
+    }
+    return statusConfig[status as keyof typeof statusConfig]
+}
 const DeliveryOrders = () => {
-    const [searchQuery, setSearchQuery] = useState('')
+
     const [filterStatus, setFilterStatus] = useState('all')
     const [quarterId, setQuarterId] = useState('0')
     const { data: ordersCity, isLoading, error } = useGetOrderByTownQuery('Auth')
-    const { data: ordersQuarter, isLoading: ordersQuarterLoading, isSuccess: ordersQuarterSuccess } = useGetOrdersByQuarterQuery(quarterId)
+    const { data: ordersQuarter, isLoading: ordersQuarterLoading } = useGetOrdersByQuarterQuery(quarterId)
 
-    const getStatusBadge = (status: string) => {
-        const statusConfig = {
-            pending: { color: 'bg-yellow-100 text-yellow-800', text: 'En attente' },
-            in_progress: { color: 'bg-blue-100 text-blue-800', text: 'En cours' },
-            completed: { color: 'bg-green-100 text-green-800', text: 'Terminée' },
-            cancelled: { color: 'bg-red-100 text-red-800', text: 'Annulée' }
-        }
-        return statusConfig[status as keyof typeof statusConfig]
-    }
+
     const { data: userData } = useGetUserQuery('Auth', {
         refetchOnFocus: false,
         refetchOnMountOrArgChange: false,
@@ -46,8 +42,7 @@ const DeliveryOrders = () => {
     console.log(ordersQuarter)
     return (
         <div className="min-h-screen mb-20 bg-[#F8F9FC]">
-            <TopBar />
-            <Header />
+
 
             <div className="max-w-7xl mx-auto px-4 py-6">
                 {/* En-tête */}
@@ -172,7 +167,7 @@ const DeliveryOrders = () => {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-sm text-gray-500 mb-1">Produits</p>
-                                            {!isLoading && order.order_details?.map((order_detail) =>
+                                            {!isLoading && order.order_details?.map((order_detail: any) =>
 
                                                 <div className='flex items-center gap-4'>
                                                     <img className='w-14 h-14' src={order_detail.product.product_profile} alt="" />
@@ -255,7 +250,7 @@ const DeliveryOrders = () => {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-sm text-gray-500 mb-1">Produits</p>
-                                            {!isLoading && order.order_details?.map((order_detail) =>
+                                            {!isLoading && order.order_details?.map((order_detail: any) =>
 
                                                 <div className='flex items-center gap-4'>
                                                     <img className='w-14 h-14' src={order_detail.product.product_profile} alt="" />
