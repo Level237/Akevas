@@ -130,6 +130,13 @@ export const authService = createApi({
         orderHistory: builder.query({
             query: () => '/api/v1/orders/history',
             providesTags: ['Auth'],
+        }),
+        completeOrder: builder.mutation({
+            query: (orderId) => ({
+                url: `/api/v1/order/completed/${orderId}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Auth'],
         })
     })
 })
@@ -151,5 +158,6 @@ export const {
     useShowOrderQuery,
     useGetOrdersByQuarterQuery,
     useTakeOrderMutation,
-    useOrderHistoryQuery
+    useOrderHistoryQuery,
+    useCompleteOrderMutation
 } = authService
