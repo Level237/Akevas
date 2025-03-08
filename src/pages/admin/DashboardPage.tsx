@@ -3,7 +3,7 @@ import { RecentProducts } from "@/components/dashboard/admin/recent-products"
 
 import { UserStats } from "@/components/dashboard/admin/user-stats"
 import RecentGridUser from "@/components/dashboard/admin/users/recent-grid-user"
-import { useAdminActiveStatsQuery, useRecentProductsQuery } from "@/services/adminService"
+import { useAdminActiveSellerStatsQuery, useAdminActiveStatsQuery, useRecentProductsQuery } from "@/services/adminService"
 import { Users, TrendingUp, Package, ShoppingCart, DollarSign } from "lucide-react"
 
 
@@ -26,14 +26,15 @@ const delivererStats = [
 export default function DashboardAdminPage() {
 
   const { data: activeStats } = useAdminActiveStatsQuery("admin")
-
-
+  const { data: sellerStatsAdmin } = useAdminActiveSellerStatsQuery("admin")
+  console.log(sellerStatsAdmin)
   const sellerStats = [
-    { title: "Total Sellers", value: 0, change: 12, icon: <Users className="h-4 w-4 text-muted-foreground" /> },
-    { title: "New Sellers", value: 56, change: 8, icon: <TrendingUp className="h-4 w-4 text-muted-foreground" /> },
-    { title: "Active Products", value: 789, change: -3, icon: <Package className="h-4 w-4 text-muted-foreground" /> },
+    { title: "Total Sellers", value: sellerStatsAdmin?.totalSellers, change: 12, icon: <Users className="h-4 w-4 text-muted-foreground" /> },
+    { title: "New Sellers", value: sellerStatsAdmin?.activeSellers, change: 8, icon: <TrendingUp className="h-4 w-4 text-muted-foreground" /> },
+    { title: "Active Products", value: sellerStatsAdmin?.activeProducts, change: -3, icon: <Package className="h-4 w-4 text-muted-foreground" /> },
   ]
   const { data: { data: recentProducts } = {}, isLoading } = useRecentProductsQuery('admin')
+
   console.log(recentProducts)
   return (
     <main className="p-4 md:p-6 mt-16">
