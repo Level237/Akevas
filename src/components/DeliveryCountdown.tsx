@@ -91,7 +91,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
 
     const handleDeliveryComplete = async () => {
         const report = generateReport()
-        await completeOrder(orderId)
+        await completeOrder({ orderId, actualDuration: report?.actualDuration })
         setDeliveryReport(report)
         setShowConfirmModal(false)
         setShowReportModal(true)

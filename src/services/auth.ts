@@ -132,8 +132,8 @@ export const authService = createApi({
             providesTags: ['Auth'],
         }),
         completeOrder: builder.mutation({
-            query: (orderId) => ({
-                url: `/api/v1/order/completed/${orderId}`,
+            query: ({ orderId, actualDuration }) => ({
+                url: `/api/v1/order/completed/${orderId}/${actualDuration}`,
                 method: 'POST',
             }),
             invalidatesTags: ['Auth'],
