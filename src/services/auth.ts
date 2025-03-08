@@ -119,6 +119,13 @@ export const authService = createApi({
         getOrdersByQuarter: builder.query({
             query: (quarterId) => `/api/v1/orders/quarter/${quarterId}`,
             providesTags: ['Auth'],
+        }),
+        takeOrder: builder.mutation({
+            query: (orderId) => ({
+                url: `/api/v1/take/order/${orderId}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Auth'],
         })
     })
 })
@@ -138,5 +145,6 @@ export const {
     useGetOrderByTownQuery,
     useGetOrderByPreferencesQuery,
     useShowOrderQuery,
-    useGetOrdersByQuarterQuery
+    useGetOrdersByQuarterQuery,
+    useTakeOrderMutation
 } = authService

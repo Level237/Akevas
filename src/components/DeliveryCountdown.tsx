@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Clock, AlertCircle, XCircle } from 'lucide-react'
+import { Clock, AlertCircle, XCircle, Loader2 } from 'lucide-react'
 import Header from './ui/header'
 import MobileNav from './ui/mobile-nav'
+import { useTakeOrderMutation } from '../services/auth'
 interface CountdownProps {
     orderId: string
     onTimeUp?: () => void
@@ -11,7 +12,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
     const [timeLeft, setTimeLeft] = useState<number>(0)
     const [isRunning, setIsRunning] = useState<boolean>(false)
     const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
-
+    const [takeOrder, { isLoading: isTakingOrder }] = useTakeOrderMutation()
     useEffect(() => {
         const savedEndTime = localStorage.getItem(`countdown_end_${orderId}`)
 
@@ -48,7 +49,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
         return () => clearInterval(interval)
     }, [isRunning, timeLeft, onTimeUp])
 
-    const startCountdown = () => {
+    const startCountdown = async () => {
         const duration = 60 * 60 // 1 heure en secondes
         const endTime = new Date().getTime() + duration * 1000
 
@@ -56,6 +57,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
         setIsRunning(true)
 
         localStorage.setItem(`countdown_end_${orderId}`, endTime.toString())
+        await takeOrder(orderId)
     }
 
     const cancelCountdown = () => {
@@ -152,7 +154,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
                             onClick={startCountdown}
                             className="bg-[#ed7e0f] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#d97100] transition-colors w-full"
                         >
-                            Démarrer la livraison
+                            {isTakingOrder ? <Loader2 className="animate-spin" size={20} /> : "Démarrer la livraison"}
                         </button>
                     )}
 
