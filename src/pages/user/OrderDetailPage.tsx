@@ -48,7 +48,7 @@ const OrderDetailPage = () => {
                         Commande #{order?.id}
                     </h1>
                     <Badge className={getStatusColor(order?.status === "0" ? "en_attente" : order?.status === "1" ? "confirmé" : order?.status === "2" ? "en_cours" : order?.status === "3" ? "livré" : "annulé")}>
-                        {order?.status === "0" ? "En attente" : order?.status === "1" ? "Confirmé" : order?.status === "2" ? "En cours" : order?.status === "3" ? "Livré" : "Annulé"}
+                        {order?.status === "0" ? "En attente" : order?.status === "1" ? "En cours de livraison" : order?.status === "2" ? "Livré" : "Annulé"}
                     </Badge>
                 </div>
 

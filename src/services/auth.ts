@@ -97,7 +97,7 @@ export const authService = createApi({
             providesTags: ['Auth'],
         }),
         getOrderDetail: builder.query({
-            query: (orderId) => `/api/v1/show/order/${orderId}`,
+            query: (orderId) => `/api/v1/user/show/order/${orderId}`,
             providesTags: ['Auth'],
         }),
         getOrders: builder.query({
