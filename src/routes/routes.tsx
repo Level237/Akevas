@@ -143,6 +143,9 @@ export const routes = createBrowserRouter([
       }, {
         path: 'user/orders',
         element: <OrdersPage />
+      }, {
+        path: 'user/account',
+        element: <AccountPage />
       }
     ]
   }

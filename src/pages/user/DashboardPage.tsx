@@ -45,7 +45,7 @@ const UserDashboardPage = () => {
               {[
                 { title: 'Gérer mes paiements', icon: CreditCard, color: 'text-purple-500', link: '/payments' },
                 { title: 'Mon Panier', icon: ShoppingBag, color: 'text-pink-500', link: '/cart' },
-                { title: 'Paramètres du compte', icon: Settings, color: 'text-gray-500', link: '/user/profile' },
+                { title: 'Paramètres du compte', icon: Settings, color: 'text-gray-500', link: '/account' },
               ].map((action, index) => (
                 <AsyncLink
                   key={index}

@@ -18,7 +18,7 @@ const RecentOrders = () => {
                             </div>
                             <div className="flex-1">
                                 <h3 className="font-medium">Commande {order.id}</h3>
-                                <p className="text-sm text-gray-500">{order.itemsCount} articles • en cours de livraison</p>
+                                <p className="text-sm text-gray-500">{order.itemsCount} articles • {order.status === "0" ? "en attente" : order.status === "1" ? "en cours de livraison" : "livré"}</p>
                             </div>
                             <Button variant="outline" size="sm">
                                 <AsyncLink to={`/user/orders/${order.id}`}>Voir détails</AsyncLink>

@@ -38,10 +38,9 @@ const OrdersPage = () => {
     const getStatusText = (status: string) => {
         const statusText = {
             '0': 'En attente',
-            '1': 'Confirmé',
-            '2': 'En cours',
-            '3': 'Livré',
-            '4': 'Annulé',
+            '1': 'En cours de livraison',
+            '2': 'Livré',
+            '3': 'Annulé',
         };
         return statusText[status as keyof typeof statusText] || 'Inconnu';
     };
