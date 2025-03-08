@@ -32,6 +32,7 @@ import ListCustomerPage from "@/pages/admin/customers/ListCustomerPage";
 import ListOrdersPage from "@/pages/admin/orders/ListOrdersPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import AdminLoginPage from "@/pages/admin/LoginPage";
+import AccountPage from "@/pages/AccountPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -144,7 +145,7 @@ export const routes = createBrowserRouter([
         path: 'user/orders',
         element: <OrdersPage />
       }, {
-        path: 'user/account',
+        path: 'account',
         element: <AccountPage />
       }
     ]

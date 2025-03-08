@@ -19,7 +19,7 @@ export default function Header({ userData }: { userData: User | null | undefined
     { href: '/', label: 'Accueil', icon: <Home className="w-4 h-4" /> },
     { href: '/user/dashboard', label: 'Tableau de bord', icon: <LayoutDashboard className="w-4 h-4" /> },
     { href: '/user/orders', label: 'Commandes', icon: <ShoppingBag className="w-4 h-4" /> },
-    { href: '/user/account', label: 'Mon compte', icon: <UserIcon className="w-4 h-4" /> },
+    { href: '/account', label: 'Mon compte', icon: <UserIcon className="w-4 h-4" /> },
   ]
 
   return (
