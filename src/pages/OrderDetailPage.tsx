@@ -1,8 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
-import { Package, MapPin, Clock, AlertCircle, ChevronLeft, Box, Loader2 } from 'lucide-react'
-import TopBar from '@/components/ui/topBar'
-import Header from '@/components/ui/header'
+import { useState, useEffect } from 'react'
+import { Package, MapPin, AlertCircle, ChevronLeft, Box } from 'lucide-react'
 import MobileNav from '@/components/ui/mobile-nav'
 import { useShowOrderQuery } from '@/services/auth'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
@@ -11,15 +9,46 @@ const OrderDetailPage = () => {
     const navigate = useNavigate()
     const [isAccepting, setIsAccepting] = useState(false)
     const { data: orderData, isLoading } = useShowOrderQuery(orderId)
+    const [activeDelivery, setActiveDelivery] = useState<string | null>(null)
+    const [showWarningModal, setShowWarningModal] = useState(false)
 
+    useEffect(() => {
+        // Vérifier s'il y a une livraison active en cherchant dans le localStorage
+        const checkActiveDelivery = () => {
+            const allKeys = Object.keys(localStorage)
+            const deliveryKey = allKeys.find(key => key.startsWith('countdown_end_'))
+
+            if (deliveryKey) {
+                const orderId = deliveryKey.replace('countdown_end_', '')
+                const endTime = parseInt(localStorage.getItem(deliveryKey) || '0')
+
+                if (endTime > new Date().getTime()) {
+                    setActiveDelivery(orderId)
+                } else {
+                    setActiveDelivery(null)
+                }
+            } else {
+                setActiveDelivery(null)
+            }
+        }
+
+        checkActiveDelivery()
+        // Vérifier toutes les 30 secondes
+        const interval = setInterval(checkActiveDelivery, 30000)
+
+        return () => clearInterval(interval)
+    }, [])
 
 
     const handleAccept = async () => {
         setIsAccepting(true)
         try {
-            // Appel API pour accepter la commande
-            // await acceptOrder(orderId)
-            navigate(`/delivery/countdown/${orderId}`) // Redirection après acceptation
+            if (activeDelivery) {
+                setShowWarningModal(true)
+                setIsAccepting(false)
+                return;
+            }
+            navigate(`/delivery/countdown/${orderId}`)
         } catch (error) {
             console.error('Erreur lors de l\'acceptation:', error)
         } finally {
@@ -39,8 +68,7 @@ const OrderDetailPage = () => {
 
     return (
         <div className="min-h-screen bg-[#F8F9FC]">
-            <TopBar />
-            <Header />
+
 
             <div className="max-w-3xl mb-20 mx-auto px-4 py-6">
                 {/* En-tête avec bouton retour */}
@@ -149,6 +177,32 @@ const OrderDetailPage = () => {
                 )}
             </div>
             <MobileNav />
+
+            {/* Modal d'avertissement */}
+            {showWarningModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                        <h3 className="text-xl font-semibold mb-4">Attention</h3>
+                        <div className="mb-6">
+                            <div className="flex items-start gap-2 text-red-600 mb-4">
+                                <AlertCircle className="w-5 h-5 mt-1" />
+                                <p className="text-sm">
+                                    Vous avez une livraison active en cours.
+                                    Veuillez la terminer avant de prendre une nouvelle commande.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => setShowWarningModal(false)}
+                                className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/90"
+                            >
+                                J'ai compris
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

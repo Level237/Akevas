@@ -95,7 +95,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
 
     return (
         <div className="bg-white rounded-lg  shadow-sm p-6 mb-6">
-            <Header />
+
             <div className="flex items-center mt-20 gap-3 mb-6">
                 <Clock className="text-[#ed7e0f]" size={24} />
                 <h2 className="text-lg  font-semibold">Temps de livraison restant</h2>
