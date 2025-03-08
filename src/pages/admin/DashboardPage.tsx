@@ -3,18 +3,14 @@ import { RecentProducts } from "@/components/dashboard/admin/recent-products"
 
 import { UserStats } from "@/components/dashboard/admin/user-stats"
 import RecentGridUser from "@/components/dashboard/admin/users/recent-grid-user"
-import { useRecentProductsQuery } from "@/services/adminService"
+import { useAdminActiveStatsQuery, useRecentProductsQuery } from "@/services/adminService"
 import { Users, TrendingUp, Package, ShoppingCart, DollarSign } from "lucide-react"
 
 
 
 
 
-const sellerStats = [
-  { title: "Total Sellers", value: 1234, change: 12, icon: <Users className="h-4 w-4 text-muted-foreground" /> },
-  { title: "New Sellers", value: 56, change: 8, icon: <TrendingUp className="h-4 w-4 text-muted-foreground" /> },
-  { title: "Active Products", value: 789, change: -3, icon: <Package className="h-4 w-4 text-muted-foreground" /> },
-]
+
 
 const delivererStats = [
   { title: "Total Deliverers", value: 567, change: 5, icon: <Users className="h-4 w-4 text-muted-foreground" /> },
@@ -29,6 +25,14 @@ const delivererStats = [
 
 export default function DashboardAdminPage() {
 
+  const { data: activeStats } = useAdminActiveStatsQuery("admin")
+
+
+  const sellerStats = [
+    { title: "Total Sellers", value: 0, change: 12, icon: <Users className="h-4 w-4 text-muted-foreground" /> },
+    { title: "New Sellers", value: 56, change: 8, icon: <TrendingUp className="h-4 w-4 text-muted-foreground" /> },
+    { title: "Active Products", value: 789, change: -3, icon: <Package className="h-4 w-4 text-muted-foreground" /> },
+  ]
   const { data: { data: recentProducts } = {}, isLoading } = useRecentProductsQuery('admin')
   console.log(recentProducts)
   return (
@@ -40,19 +44,19 @@ export default function DashboardAdminPage() {
           stats={[
             {
               title: "Total Revenue",
-              value: 0,
+              value: activeStats?.revenues,
               change: 12,
               icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
             },
             {
               title: "Active Orders",
-              value: 0,
+              value: activeStats?.activeOrders,
               change: 8,
               icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />,
             },
             {
               title: "Total Products",
-              value: 0,
+              value: activeStats?.totalProducts,
               change: 3,
               icon: <Package className="h-4 w-4 text-muted-foreground" />,
             },

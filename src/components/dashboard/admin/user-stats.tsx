@@ -22,7 +22,7 @@ export function UserStats({ stats }: UserStatsProps) {
             {stat.icon}
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stat.value}</div>
+            <div className="text-2xl font-bold">{stat.value} {stat.title === "Total Revenue" && "XAF"}</div>
             <p className="text-xs text-muted-foreground">
               {stat.change > 0 ? "+" : ""}
               {stat.change}% from last month
