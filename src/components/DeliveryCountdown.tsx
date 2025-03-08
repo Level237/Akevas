@@ -10,6 +10,7 @@ interface CountdownProps {
 const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
     const [timeLeft, setTimeLeft] = useState<number>(0)
     const [isRunning, setIsRunning] = useState<boolean>(false)
+    const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
 
     useEffect(() => {
         const savedEndTime = localStorage.getItem(`countdown_end_${orderId}`)
@@ -82,6 +83,14 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
     const circumference = 2 * Math.PI * radius
     const strokeDashoffset = circumference - (getProgressPercentage() / 100) * circumference
 
+    const handleDeliveryComplete = () => {
+        // Ici vous pouvez ajouter la logique pour marquer la livraison comme terminée
+        cancelCountdown()
+        setShowConfirmModal(false)
+        // Rediriger vers la page des livraisons ou le dashboard
+        window.location.href = '/dashboard'
+    }
+
     return (
         <div className="bg-white rounded-lg  shadow-sm p-6 mb-6">
             <Header />
@@ -148,17 +157,61 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
                     )}
 
                     {isRunning && (
-                        <button
-                            onClick={cancelCountdown}
-                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors w-full"
-                        >
-                            <XCircle size={20} />
-                            <span>Annuler la livraison</span>
-                        </button>
+                        <>
+                            <button
+                                onClick={() => setShowConfirmModal(true)}
+                                className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors w-full flex items-center justify-center gap-2"
+                            >
+                                Terminer la livraison
+                            </button>
+                            <button
+                                onClick={cancelCountdown}
+                                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors w-full"
+                            >
+                                <XCircle size={20} />
+                                <span>Annuler la livraison</span>
+                            </button>
+                        </>
                     )}
                 </div>
                 <MobileNav />
             </div>
+
+            {/* Modal de confirmation */}
+            {showConfirmModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                        <h3 className="text-xl font-semibold mb-4">Confirmer la fin de livraison</h3>
+                        <div className="mb-6">
+                            <div className="flex items-start gap-2 text-red-600 mb-4">
+                                <AlertCircle className="w-5 h-5 mt-1" />
+                                <p className="text-sm">
+                                    Attention : En cas de fausse déclaration de livraison terminée,
+                                    votre compte sera immédiatement suspendu et vous ne pourrez plus
+                                    effectuer de livraisons sur la plateforme.
+                                </p>
+                            </div>
+                            <p className="text-gray-600">
+                                Êtes-vous sûr d'avoir bien livré la commande #{orderId} ?
+                            </p>
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowConfirmModal(false)}
+                                className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                onClick={handleDeliveryComplete}
+                                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                            >
+                                Confirmer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

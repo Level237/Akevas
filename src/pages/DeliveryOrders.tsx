@@ -17,6 +17,7 @@ import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import { formatDate } from '@/lib/formatDate'
 import { useGetQuartersQuery } from '@/services/guardService'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import AsyncLink from '@/components/ui/AsyncLink'
 
 const DeliveryOrders = () => {
     const [searchQuery, setSearchQuery] = useState('')
@@ -195,9 +196,11 @@ const DeliveryOrders = () => {
                                             <AlertCircle size={20} />
                                             <span>Temps restant: {order.timeLimit}</span>
                                         </div>
-                                        <button className="px-4 max-sm:px-3 max-sm:py-3 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f] transition-colors">
-                                            Accepter la livraison
-                                        </button>
+                                        <AsyncLink to={`/delivery/countdown/${order.id}`}>
+                                            <button className="px-4 max-sm:px-3 max-sm:py-3 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f] transition-colors">
+                                                Accepter la livraison
+                                            </button>
+                                        </AsyncLink>
                                     </div>
                                 )}
                             </div>
@@ -276,9 +279,11 @@ const DeliveryOrders = () => {
                                             <AlertCircle size={20} />
                                             <span>Temps restant: {order.timeLimit}</span>
                                         </div>
-                                        <button className="px-4 max-sm:px-3 max-sm:py-3 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f] transition-colors">
-                                            Accepter la livraison
-                                        </button>
+                                        <AsyncLink to={`/delivery/countdown/${order.id}`}>
+                                            <button className="px-4 max-sm:px-3 max-sm:py-3 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f] transition-colors">
+                                                Accepter la livraison
+                                            </button>
+                                        </AsyncLink>
                                     </div>
                                 )}
                             </div>
