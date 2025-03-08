@@ -78,6 +78,10 @@ export const adminService = createApi({
             query: () => '/api/v1/admin/active/seller/stats',
             providesTags: ['admin'],
         }),
+        adminDeliveryStats: builder.query({
+            query: () => '/api/v1/admin/active/delivery/stats',
+            providesTags: ['admin'],
+        }),
 
     })
 })
@@ -97,4 +101,5 @@ export const {
     useAdminListOrdersQuery,
     useAdminActiveStatsQuery,
     useAdminActiveSellerStatsQuery,
+    useAdminDeliveryStatsQuery,
 } = adminService
