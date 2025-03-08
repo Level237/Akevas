@@ -1,6 +1,4 @@
-
-
-import { Package, MapPin, Search, Calendar, AlertCircle } from 'lucide-react'
+import { Package, MapPin, Search, Calendar, AlertCircle, Clock } from 'lucide-react'
 import { useState } from 'react'
 import MobileNav from '@/components/ui/mobile-nav'
 import { useOrderHistoryQuery } from '@/services/auth'
@@ -96,6 +94,15 @@ const DeliveryHistory = () => {
                                             <p className="text-gray-700">{order.quarter_delivery}</p>
                                         </div>
                                     </div>
+                                    {order.duration_of_delivery && (
+                                        <div className="flex items-start gap-3">
+                                            <Clock className="text-gray-400 mt-1" size={20} />
+                                            <div>
+                                                <p className="text-sm text-gray-500">Durée de livraison</p>
+                                                <p className="text-gray-700">{order.duration_of_delivery}</p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Produits */}

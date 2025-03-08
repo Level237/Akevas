@@ -89,14 +89,6 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
         }
     }
 
-    const handleDeliveryComplete = async () => {
-        const report = generateReport()
-        await completeOrder({ orderId, actualDuration: report?.actualDuration })
-        setDeliveryReport(report)
-        setShowConfirmModal(false)
-        setShowReportModal(true)
-
-    }
 
     const formatDuration = (seconds: number): string => {
         const hours = Math.floor(Math.abs(seconds) / 3600)
@@ -107,6 +99,17 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
             .toString()
             .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
     }
+    const handleDeliveryComplete = async () => {
+        const report = generateReport()
+        await completeOrder({ orderId, actualDuration: formatDuration(report?.actualDuration || 0) })
+        setDeliveryReport(report)
+        setShowConfirmModal(false)
+        cancelCountdown()
+        setShowReportModal(true)
+
+
+    }
+
 
     const generatePDF = async () => {
         if (!reportRef.current || !deliveryReport) return
@@ -177,6 +180,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
         setTimeLeft(0)
         setIsRunning(false)
         localStorage.removeItem(`countdown_end_${orderId}`)
+        localStorage.removeItem(`countdown_start_${orderId}`)
     }
 
     return (
