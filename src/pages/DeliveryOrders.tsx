@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import MobileNav from '@/components/ui/mobile-nav'
 import {
     Package,
@@ -13,7 +13,8 @@ import { formatDate } from '@/lib/formatDate'
 import { useGetQuartersQuery } from '@/services/guardService'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import AsyncLink from '@/components/ui/AsyncLink'
-
+import ModalAlert from '@/components/ui/modal-alert'
+import { useNavigate } from 'react-router-dom'
 export const getStatusBadge = (status: string) => {
     const statusConfig = {
         pending: { color: 'bg-yellow-100 text-yellow-800', text: 'En attente' },
@@ -39,7 +40,36 @@ const DeliveryOrders = () => {
     });
     const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
     const filteredQuarters = quarters?.quarters.filter((quarter: { town_id: number }) => quarter.town_id === parseInt(userData?.residence_id));
-    console.log(ordersQuarter)
+
+    const [activeDelivery, setActiveDelivery] = useState<string | null>(null)
+    const [showWarningModal, setShowWarningModal] = useState(false)
+    const navigate = useNavigate()
+    useEffect(() => {
+        // Vérifier s'il y a une livraison active en cherchant dans le localStorage
+        const checkActiveDelivery = () => {
+            const allKeys = Object.keys(localStorage)
+            const deliveryKey = allKeys.find(key => key.startsWith('countdown_end_'))
+
+            if (deliveryKey) {
+                const orderId = deliveryKey.replace('countdown_end_', '')
+                const endTime = parseInt(localStorage.getItem(deliveryKey) || '0')
+
+                if (endTime > new Date().getTime()) {
+                    setActiveDelivery(orderId)
+                } else {
+                    setActiveDelivery(null)
+                }
+            } else {
+                setActiveDelivery(null)
+            }
+        }
+
+        checkActiveDelivery()
+        // Vérifier toutes les 30 secondes
+        const interval = setInterval(checkActiveDelivery, 30000)
+
+        return () => clearInterval(interval)
+    }, [])
     return (
         <div className="min-h-screen mb-20 bg-[#F8F9FC]">
 
@@ -274,11 +304,19 @@ const DeliveryOrders = () => {
                                             <AlertCircle size={20} />
                                             <span>Temps restant: {order.timeLimit}</span>
                                         </div>
-                                        <AsyncLink to={`/delivery/countdown/${order.id}`}>
-                                            <button className="px-4 max-sm:px-3 max-sm:py-3 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f] transition-colors">
-                                                Accepter la livraison
-                                            </button>
-                                        </AsyncLink>
+
+                                        <button onClick={
+                                            () => {
+                                                if (activeDelivery) {
+                                                    setShowWarningModal(true)
+                                                } else {
+                                                    navigate(`/delivery/countdown/${order.id}`)
+                                                }
+                                            }
+                                        } className="px-4 max-sm:px-3 max-sm:py-3 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f] transition-colors">
+                                            Accepter la livraison
+                                        </button>
+
                                     </div>
                                 )}
                             </div>
@@ -297,7 +335,7 @@ const DeliveryOrders = () => {
                     )}
                 </div>
             </div>
-
+            <ModalAlert showWarningModal={showWarningModal} setShowWarningModal={setShowWarningModal} />
             <MobileNav />
         </div>
     )

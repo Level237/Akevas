@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Clock, AlertCircle, XCircle, Loader2 } from 'lucide-react'
-import Header from './ui/header'
 import MobileNav from './ui/mobile-nav'
 import { useTakeOrderMutation } from '../services/auth'
 interface CountdownProps {
