@@ -5,6 +5,7 @@ import { ChevronDown, Sparkle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AsyncLink from '../ui/AsyncLink';
 import { Category } from '@/types/products';
+import { Link } from 'react-router-dom';
 
 
 // Composant pour le skeleton loading
@@ -61,12 +62,12 @@ const CategoryDropdown = React.memo(({
                     <ul className="space-y-2">
                       {parentCat.children.map((childCat: any) => (
                         <li key={childCat.id}>
-                          <AsyncLink
-                            to={`/c/${childCat.category_url}`}
+                          <Link
+                            to={`https://dev.akevas.com/c/${childCat.category_url}`}
                             className="text-sm text-gray-600 hover:text-orange-500"
                           >
                             {childCat.category_name}
-                          </AsyncLink>
+                          </Link>
                         </li>
                       ))}
                     </ul>
@@ -81,12 +82,12 @@ const CategoryDropdown = React.memo(({
                   <ul className="space-y-2">
                     {categories.map((item: any) => (
                       <li key={item.id}>
-                        <AsyncLink
-                          to={`/c/${item.category_url}`}
+                        <Link
+                          to={`https://dev.akevas.com/c/${item.category_url}`}
                           className="text-sm text-gray-600 hover:text-orange-500"
                         >
                           {item.category_name} {key}
-                        </AsyncLink>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -106,13 +107,13 @@ const CategoryDropdown = React.memo(({
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white">
                 <h3 className="text-xl font-bold mb-2">Collection {category.category_name}</h3>
                 <p className="text-sm mb-4">Découvrez nos nouveautés</p>
-                <AsyncLink
-                  to={`/c/${category.category_url}`}
+                <Link
+                  to={`https://dev.akevas.com/c/${category.category_url}`}
                   className="inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-orange-500 hover:text-white transition-colors"
                 >
                   Découvrir
                   <Sparkle className="w-4 h-4" />
-                </AsyncLink>
+                </Link>
               </div>
             </div>
 
@@ -148,7 +149,7 @@ export const CategoryNavigation = () => {
     refetchOnFocus: false,
     refetchOnReconnect: false
   });
-
+  console.log(categoriesParent);
   const {
     data: categoriesChildren,
     isLoading: isLoadingChildren
