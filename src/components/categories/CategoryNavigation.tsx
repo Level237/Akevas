@@ -50,19 +50,19 @@ const CategoryDropdown = React.memo(({
         <div className="grid grid-cols-4 gap-8 p-8">
           {/* Sections Principales */}
           <div className="col-span-3 grid grid-cols-3 gap-8">
-            {!isLoadingChildren && Object.entries(categoriesChildren).map(([key, categories]) => {
+            {!isLoadingChildren && Object.entries(categoriesChildren).map(([key, categories]: any) => {
               if (key === 'sans_genre') {
                 // Grouper les catégories par parent_id
-                const parentCategories = categories.filter(cat => cat.children && cat.children.length > 0);
+                const parentCategories = categories.filter((cat: any) => cat.children && cat.children.length > 0);
 
-                return parentCategories.map(parentCat => (
+                return parentCategories.map((parentCat: any) => (
                   <div key={parentCat.id} className="space-y-4">
                     <h3 className="font-medium text-lg">{parentCat.category_name}</h3>
                     <ul className="space-y-2">
                       {parentCat.children.map((childCat: any) => (
                         <li key={childCat.id}>
                           <AsyncLink
-                            to={`/category/${childCat.category_url}`}
+                            to={`/c/${childCat.category_url}`}
                             className="text-sm text-gray-600 hover:text-orange-500"
                           >
                             {childCat.category_name}
@@ -82,7 +82,7 @@ const CategoryDropdown = React.memo(({
                     {categories.map((item: any) => (
                       <li key={item.id}>
                         <AsyncLink
-                          to={`/category/${item.category_url}`}
+                          to={`/c/${item.category_url}`}
                           className="text-sm text-gray-600 hover:text-orange-500"
                         >
                           {item.category_name} {key}
@@ -107,7 +107,7 @@ const CategoryDropdown = React.memo(({
                 <h3 className="text-xl font-bold mb-2">Collection {category.category_name}</h3>
                 <p className="text-sm mb-4">Découvrez nos nouveautés</p>
                 <AsyncLink
-                  to={`/category/${category.category_name}`}
+                  to={`/c/${category.category_url}`}
                   className="inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-orange-500 hover:text-white transition-colors"
                 >
                   Découvrir
@@ -170,7 +170,7 @@ export const CategoryNavigation = () => {
   const renderCategories = useMemo(() => {
     if (!categoriesParent) return null;
     console.log(categoriesChildren);
-    return Object.entries(categoriesParent).map(([key, category]) => (
+    return Object.entries(categoriesParent).map(([key, category]: any) => (
       <li
         key={key}
         className="relative py-4"
@@ -212,4 +212,3 @@ export const CategoryNavigation = () => {
 
 // Exporter un composant mémoïsé
 export default React.memo(CategoryNavigation);
-

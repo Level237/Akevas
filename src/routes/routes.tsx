@@ -5,7 +5,7 @@ import StoreGenerationPage from "@/pages/auth/seller-registration/StoreGeneratio
 import DashboardPage from "@/pages/seller/DashboardPage";
 import IdentityInfoPage from "@/pages/auth/seller-registration/IdentityInfoPage";
 import ProductListPage from "@/pages/ProductListPage";
-import ProductDetailPage from "@/pages/ProductDetailPage";
+
 
 import StorePage from "@/pages/StorePage";
 import StoreBoostPage from "@/pages/seller/StoreBoostPage";
@@ -25,7 +25,6 @@ import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage";
 import { GuardRoute } from "@/pages/auth/guard-route";
 import SellerRootDashboard from "@/components/Layouts/SellerRootDashboard";
 import StoreEditorPage from "@/pages/seller/StoreEditorPage";
-import RegisterPage from "@/pages/auth/RegisterPage";
 import SellerCatalog from "@/pages/SellerCatalog";
 import AccountPage from "@/pages/Account";
 import OrdersPage from "@/pages/seller/OrdersPage";
@@ -37,10 +36,6 @@ export const routes = createBrowserRouter([
   {
     path: '/login',
     element: <GuardRoute><LoginPage /></GuardRoute>
-  },
-  {
-    path: '/register',
-    element: <GuardRoute><RegisterPage /></GuardRoute>
   },
 
   {
@@ -117,10 +112,6 @@ export const routes = createBrowserRouter([
   {
     path: '/products',
     element: <ProductListPage />
-  },
-  {
-    path: '/produit/:url',
-    element: <ProductDetailPage />
   },
 
 

@@ -1,11 +1,8 @@
 import { LogOut, Menu, User } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { AvatarImage } from '@radix-ui/react-avatar'
-import { Bell, Settings } from 'lucide-react'
-import { Store } from 'lucide-react'
 import React from 'react'
 
-import { useDispatch } from 'react-redux'
 import { Seller } from '@/types/seller'
 
 import { useLogoutMutation } from '@/services/auth'

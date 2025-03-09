@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
+import { ShoppingCart, User, Search, X, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -65,13 +65,6 @@ const searchCategories = [
 
 
 
-// Ajouter cette constante pour les genres
-const genders = [
-  { id: 'femme', label: 'FEMME', "url": "femme" },
-  { id: 'homme', label: 'HOMME', "url": "homme" },
-  { id: 'enfant', label: 'ENFANT', "url": "enfant" },
-];
-
 const Header = () => {
   // Regrouper les états liés dans un seul objet pour réduire les re-renderings
   const [uiState, setUiState] = useState({
@@ -86,19 +79,13 @@ const Header = () => {
     selectedCategory: searchCategories[0]
   });
 
-  // Memoize les callbacks
-  const handleMenuToggle = useCallback(() => {
-    setUiState(prev => ({ ...prev, isMenuOpen: !prev.isMenuOpen }));
-  }, []);
+
 
   const handleSearchToggle = useCallback(() => {
     setUiState(prev => ({ ...prev, isSearchOpen: !prev.isSearchOpen }));
   }, []);
 
-  const handleCategorySelect = useCallback((category: typeof searchCategories[0]) => {
-    setSearchState(prev => ({ ...prev, selectedCategory: category }));
-    setUiState(prev => ({ ...prev, showCategories: false }));
-  }, []);
+
 
   // Optimiser les queries avec les options RTK Query
   const { data: { data: seller } = {}, isLoading } = useCurrentSellerQuery('seller', {
@@ -434,21 +421,6 @@ const Header = () => {
   );
 };
 
-// Hook personnalisé pour tracer les re-renderings (optionnel)
-const useTraceUpdate = (props: any) => {
-  const prev = useRef(props);
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps: any, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }
-      return ps;
-    }, {});
-    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps);
-    }
-    prev.current = props;
-  });
-};
+
 
 export default React.memo(Header);

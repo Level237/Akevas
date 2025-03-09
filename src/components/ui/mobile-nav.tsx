@@ -5,7 +5,7 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 
 const MobileNav: React.FC = () => {
   const location = useLocation();
-  const { data: { data: seller } = {}, isLoading } = useCurrentSellerQuery('seller');
+  const { data: { data: seller } = {} } = useCurrentSellerQuery('seller');
   const shopId = seller?.shop?.shop_id;
   const isActive = (path: string) => {
     return location.pathname === path;

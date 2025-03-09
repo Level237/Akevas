@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCurrentSellerQuery } from '@/services/sellerService';
-import { Share2, Filter, Plus, ShoppingBag } from 'lucide-react';
+import { Share2, Plus, ShoppingBag } from 'lucide-react';
 // À implémenter
 import { motion } from 'framer-motion'; // Pour les animations
 import { Product } from '@/types/products';
@@ -10,13 +10,13 @@ import MobileNav from '@/components/ui/mobile-nav';
 
 
 const SellerCatalog: React.FC = () => {
-    const [selectedCategory, setSelectedCategory] = useState<string>('all');
+    const [selectedCategory] = useState<string>('all');
     const { data: { data: seller } = {}, isLoading: sellerLoading } = useCurrentSellerQuery('seller');
     const shopId = seller?.shop?.shop_id;
 
     const products = seller?.shop?.products;
 
-    const categories = ['all', ...new Set(products.map((p: any) => p.product_categories))];
+    //const categories = ['all', ...new Set(products.map((p: any) => p.product_categories))];
 
     if (seller?.shop?.level === "1") {
         return (
@@ -85,7 +85,7 @@ const SellerCatalog: React.FC = () => {
 
     const filteredProducts = selectedCategory === 'all'
         ? products
-        : products.filter((p: Product) => p.category === selectedCategory);
+        : null;
     console.log(filteredProducts);
     return (
         <div className="max-w-7xl mx-auto px-4 py-6">
@@ -141,7 +141,7 @@ const SellerCatalog: React.FC = () => {
                                 <span className="text-[#ed7e0f] font-bold">
                                     {product.product_price}
                                 </span>
-                                <span className="text-xs text-gray-500">{product.product_category}</span>
+                                <span className="text-xs text-gray-500">{product?.product_categories[0]?.category_name}</span>
                             </div>
                             <div className="flex gap-2">
                                 <AsyncLink

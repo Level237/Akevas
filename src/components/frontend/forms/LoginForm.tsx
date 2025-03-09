@@ -17,7 +17,7 @@ export default function LoginForm() {
   const s = params.get('s');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [, setErrorMessage] = useState('');
   const [login, { isLoading, isError, error }] = useLoginMutation()
   if (error) {
     console.log(error)

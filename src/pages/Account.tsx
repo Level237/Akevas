@@ -3,7 +3,6 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 
 import {
     Store,
-    Settings,
     User,
     Rocket,
     Bell,

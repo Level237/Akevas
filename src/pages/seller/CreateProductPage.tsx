@@ -37,7 +37,7 @@ const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [city, setCity] = useState('');
-  const { data: { data: getAttributes } = {}, isLoading } = useGetAttributeValuesQuery("1");
+  const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
 
   //console.log(getAttributes)
   const [description, setDescription] = useState('');
@@ -192,7 +192,7 @@ const CreateProductPage: React.FC = () => {
 
   const getFilteredColors = () => {
     if (!getAttributes || !getAttributes[0]) return [];
-    return getAttributes[0].values.filter(color =>
+    return getAttributes[0].values.filter((color: any) =>
       color.value.toLowerCase().includes(colorSearchTerm.toLowerCase()) &&
       !attributes.find(attr => attr.id === getAttributes[0].id)?.values
         .some(v => v.value === color.value)
@@ -201,7 +201,7 @@ const CreateProductPage: React.FC = () => {
 
   const getFilteredSizes = () => {
     if (!getAttributes || !getAttributes[1]) return [];
-    return getAttributes[1].values.filter(size =>
+    return getAttributes[1].values.filter((size: any) =>
       size.value.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
       !attributes.find(attr => attr.id === getAttributes[1].id)?.values.some(v => v.value === size.value)
     );
@@ -210,7 +210,7 @@ const CreateProductPage: React.FC = () => {
 
   const getFilteredWeights = () => {
     if (!getAttributes || !getAttributes[2]) return [];
-    return getAttributes[2].values.filter(size =>
+    return getAttributes[2].values.filter((size: any) =>
       size.value.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
       !attributes.find(attr => attr.id === getAttributes[2].id)?.values.some(v => v.value === size.value)
     );
@@ -711,7 +711,7 @@ const CreateProductPage: React.FC = () => {
                         {/* Suggestions pour les couleurs */}
                         {attribute.name === 'Couleur' && showColorSuggestions && (
                           <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                            {getFilteredColors().map((color) => (
+                            {getFilteredColors().map((color: any) => (
                               <button
                                 key={color.id}
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center"
@@ -728,7 +728,7 @@ const CreateProductPage: React.FC = () => {
                                 {color.value}
                               </button>
                             ))}
-                            {colorSearchTerm && !getFilteredColors().some(c => c.value.toLowerCase() === colorSearchTerm.toLowerCase()) && (
+                            {colorSearchTerm && !getFilteredColors().some((c: any) => c.value.toLowerCase() === colorSearchTerm.toLowerCase()) && (
                               <button
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
                                 onClick={() => {
@@ -746,7 +746,7 @@ const CreateProductPage: React.FC = () => {
                         {/* Suggestions pour les tailles */}
                         {attribute.name === 'Taille' && showSizeSuggestions && (
                           <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                            {getFilteredSizes().map((size) => (
+                            {getFilteredSizes().map((size: any) => (
                               <button
                                 key={size.id}
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50"
@@ -759,7 +759,7 @@ const CreateProductPage: React.FC = () => {
                                 {size.value}
                               </button>
                             ))}
-                            {sizeSearchTerm && !getFilteredSizes().some(s => s.toLowerCase() === sizeSearchTerm.toLowerCase()) && (
+                            {sizeSearchTerm && !getFilteredSizes().some((s: any) => s.toLowerCase() === sizeSearchTerm.toLowerCase()) && (
                               <button
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
                                 onClick={() => {
@@ -777,7 +777,7 @@ const CreateProductPage: React.FC = () => {
                         {/* Suggestions pour les poids */}
                         {attribute.name === 'Poids' && showWeightSuggestions && (
                           <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                            {getFilteredWeights().map((weight) => (
+                            {getFilteredWeights().map((weight: any) => (
                               <button
                                 key={weight}
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50"
@@ -790,7 +790,7 @@ const CreateProductPage: React.FC = () => {
                                 {weight.value}
                               </button>
                             ))}
-                            {weightSearchTerm && !getFilteredWeights().some(w => w.toLowerCase() === weightSearchTerm.toLowerCase()) && (
+                            {weightSearchTerm && !getFilteredWeights().some((w: any) => w.toLowerCase() === weightSearchTerm.toLowerCase()) && (
                               <button
                                 className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
                                 onClick={() => {

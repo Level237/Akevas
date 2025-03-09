@@ -31,7 +31,8 @@ export interface Seller {
     level: string | null,
     cover: string | null,
     orders_count: number | null,
-    total_earnings: number | null
+    total_earnings: number | null,
+    orders: any[] | null
   },
   role_id: number,
 

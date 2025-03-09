@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/index';
 import { useLoginMutation, useNewStoreMutation } from '@/services/auth';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
-import { authTokenChange } from '@/store/authSlice';
 import { removeData } from '@/store/seller/registerSlice';
 import Cookies from 'universal-cookie';
 const steps = [

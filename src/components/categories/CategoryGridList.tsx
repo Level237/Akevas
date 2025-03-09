@@ -60,11 +60,11 @@ const CategoryGridList = React.memo(({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {isLoading
           ? SKELETON_ARRAY.map((_, index) => (
-              <CategorySkeleton key={`skeleton-${index}`} />
-            ))
-          : categories.map((category) => (
-              <CategoryItem key={category.id} category={category} />
-            ))}
+            <CategorySkeleton key={`skeleton-${index}`} />
+          ))
+          : categories.map((category: any) => (
+            <CategoryItem key={category.id} category={category} />
+          ))}
       </div>
     </div>
   );

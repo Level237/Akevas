@@ -128,7 +128,7 @@ const OrdersPage = () => {
                                             <div className="mt-6">
                                                 <h4 className="text-sm font-medium text-gray-900 mb-4">Articles commandés</h4>
                                                 <div className="space-y-4">
-                                                    {order.order_details.map((detail) => (
+                                                    {order.order_details.map((detail: any) => (
                                                         <div key={detail.id} className="flex items-center gap-4">
                                                             <img
                                                                 src={detail.product.product_profile}
