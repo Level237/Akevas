@@ -4,6 +4,7 @@ import { useLoginMutation } from "@/services/auth";
 import { useState } from "react";
 import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
+import { Link } from "react-router-dom";
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('productId');
@@ -54,16 +55,19 @@ export default function LoginForm() {
       </div>
 
       <div className="flex flex-col space-y-6 md:px-16">
-        <div className="space-y-2 flex justify-center items-center ">
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-24"
-          />
-          <h1 className="text-3xl text-center font-semibold tracking-tight">Connexion</h1>
+        <Link to="/">
+          <div className="space-y-2 flex justify-center items-center ">
 
-        </div>
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-24"
+            />
 
+            <h1 className="text-3xl text-center font-semibold tracking-tight">Connexion</h1>
+
+          </div>
+        </Link>
 
 
 
