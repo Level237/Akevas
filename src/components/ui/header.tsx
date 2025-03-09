@@ -112,40 +112,9 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const totalQuantity = useSelector((state: RootState) => state.cart.totalQuantity)
-
-  // Memoize les composants qui peuvent être réutilisés
-  const headerActions = useMemo(() => (
-    <div className="flex items-center gap-4">
-      <button
-
-        className="text-gray-700 hover:text-[#ed7e0f]"
-      >
-        <Search className="w-6 h-6" />
-      </button>
-      <DropdownAccount currentUser={userData}>
-        {!userData && !isLoading && (
-          <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
-            <User className="h-6 w-6" />
-          </div>
-        )}
-        {userData && userData.role_id === 2 && (
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={userData.shop.shop_profile} />
-            <AvatarFallback>{userData.firstName.charAt(0)}</AvatarFallback>
-          </Avatar>
-        )}
-        {userData && (userData.role_id === 1 || userData.role_id === 3) && (
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={userData.profile} />
-            <AvatarFallback>{userData?.userName.charAt(0)}</AvatarFallback>
-          </Avatar>
-        )}
-      </DropdownAccount>
 
 
-    </div>
-  ), [userData, totalQuantity]);
+
 
   return (
     <>
@@ -163,35 +132,35 @@ const Header = () => {
             </button>
 
             {/* Logo */}
-            <AsyncLink to="/dashboard" className="flex-shrink-0">
+            <AsyncLink to="/" className="flex-shrink-0">
               <img src={logo} alt="AKEVAS Delivery" className="h-16 w-auto" />
             </AsyncLink>
 
             {/* Navigation principale du livreur */}
             <nav className="hidden md:flex items-center space-x-6">
               <AsyncLink
-                to="/dashboard"
+                to="/"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
                 Tableau de bord
               </AsyncLink>
               <AsyncLink
-                to="/deliveries"
+                to="/orders"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
-                Mes livraisons
+                Commandes
               </AsyncLink>
               <AsyncLink
-                to="/history"
+                to="/delivery/history"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
                 Historique
               </AsyncLink>
               <AsyncLink
-                to="/earnings"
+                to="/delivery/stats"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
-                Mes gains
+                Statistiques
               </AsyncLink>
             </nav>
 
@@ -250,28 +219,28 @@ const Header = () => {
 
               <nav className="p-4 space-y-4">
                 <AsyncLink
-                  to="/dashboard"
+                  to="/"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Tableau de bord
                 </AsyncLink>
                 <AsyncLink
-                  to="/deliveries"
+                  to="/orders"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Mes livraisons
                 </AsyncLink>
                 <AsyncLink
-                  to="/history"
+                  to="/delivery/history"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Historique
                 </AsyncLink>
                 <AsyncLink
-                  to="/earnings"
+                  to="/delivery/stats"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
-                  Mes gains
+                  Statistiques
                 </AsyncLink>
               </nav>
             </motion.div>
