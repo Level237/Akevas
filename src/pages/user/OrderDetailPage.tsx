@@ -2,13 +2,7 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import {
     Package,
-    Truck,
-    Calendar,
     MapPin,
-    CreditCard,
-    Clock,
-    CheckCircle,
-    AlertCircle
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 

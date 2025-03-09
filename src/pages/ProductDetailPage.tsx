@@ -25,7 +25,7 @@ import CheckoutDrawer from '@/components/ui/CheckoutDrawer';
 
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [selectedImage, setSelectedImage] = useState<number>(0);
   const [selectedTab, setSelectedTab] = useState('description');
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -51,7 +51,7 @@ const ProductDetailPage: React.FC = () => {
   const getAllImages = () => {
     const mainImage = { path: product?.product_profile };
     const productImages = product?.product_images || [];
-    const variantImages = product?.variants?.flatMap(variant => [
+    const variantImages = product?.variants?.flatMap((variant: Variant) => [
       { path: variant.image },
       ...(variant.images || [])
     ]) || [];
@@ -110,9 +110,9 @@ const ProductDetailPage: React.FC = () => {
   const navigateImage = (direction: 'next' | 'prev') => {
     const allImages = getAllImages();
     if (direction === 'next') {
-      setSelectedImage((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+      setSelectedImage((prev: number) => (prev === allImages.length - 1 ? 0 : prev + 1));
     } else {
-      setSelectedImage((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+      setSelectedImage((prev: number) => (prev === 0 ? allImages.length - 1 : prev - 1));
     }
   };
 
@@ -169,7 +169,7 @@ const ProductDetailPage: React.FC = () => {
                         {getAllImages().map((image, idx) => (
                           <button
                             key={idx}
-                            onClick={() => handleImageClick(idx)}
+                            onClick={(e: any) => handleImageClick(e)}
                             onMouseEnter={() => setSelectedImage(idx)}
                             className={`flex-shrink-0 h-14 w-14 rounded-lg overflow-hidden border-2 transition-all duration-200
                               ${selectedImage === idx

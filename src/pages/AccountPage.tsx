@@ -117,15 +117,15 @@ const AccountPage = () => {
                                         key={itemIndex}
                                         to={item.href}
                                         className={`group relative rounded-xl p-6 bg-white shadow-sm hover:shadow-md transition-all ${activeTab === item.label.toLowerCase()
-                                                ? 'ring-2 ring-[#ed7e0f]'
-                                                : ''
+                                            ? 'ring-2 ring-[#ed7e0f]'
+                                            : ''
                                             }`}
-                                        onClick={() => setActiveTab(item.label.toLowerCase())}
+                                        OnClick={() => setActiveTab(item.label.toLowerCase())}
                                     >
                                         <div className="flex items-start gap-4">
                                             <div className={`p-3 rounded-lg ${activeTab === item.label.toLowerCase()
-                                                    ? 'bg-[#ed7e0f] text-white'
-                                                    : 'bg-gray-100 text-gray-600 group-hover:bg-[#ed7e0f]/10'
+                                                ? 'bg-[#ed7e0f] text-white'
+                                                : 'bg-gray-100 text-gray-600 group-hover:bg-[#ed7e0f]/10'
                                                 }`}>
                                                 <item.icon className="w-6 h-6" />
                                             </div>

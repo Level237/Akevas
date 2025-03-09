@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ChevronDown, Filter, Search } from 'lucide-react';
 import TopBar from '@/components/ui/topBar';
 import Header from '@/components/ui/header';
@@ -10,9 +9,6 @@ import ProductListGrid from '@/components/products/ProductListGrid';
 import { useGetCategoryProductsByUrlQuery, useGetCategoryByUrlQuery } from '@/services/guardService';
 const CategoryProductsPage = () => {
     const { url } = useParams<{ url: string }>();
-    const [searchParams] = useSearchParams();
-    const categoryId = searchParams.get("category");
-    const [sortBy, setSortBy] = useState("newest");
 
     // Vous devrez créer ce hook pour récupérer les données de la catégorie
     const { data: categoryData, isLoading } = useGetCategoryProductsByUrlQuery(url);

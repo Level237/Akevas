@@ -12,8 +12,6 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { AppDispatch } from "@/store";
-import { useDispatch } from "react-redux";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCheckIfEmailExistsMutation, useGetQuartersQuery, useGetTownsQuery } from "@/services/guardService";
 import { useState } from "react";
@@ -49,7 +47,6 @@ export default function RegisterForm() {
 
   const [register, { isLoading }] = useRegisterMutation()
   const [checkIfEmailExists] = useCheckIfEmailExistsMutation()
-  const dispatch = useDispatch<AppDispatch>();
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
 

@@ -5,7 +5,6 @@ import { useState, useEffect, useTransition } from 'react';
 import StoreHero from '@/components/frontend/StoreHero'
 import Header from '@/components/ui/header'
 import TopBar from '@/components/ui/topBar'
-import InstallButton from '@/components/InstallButton';
 import StoreStories from '@/components/stores/store-stories'
 import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
@@ -16,7 +15,8 @@ import GenderNavigationMobile from '@/components/categories/GenderNavigationMobi
 import { Shop } from '@/types/shop';
 const Homepage = () => {
   //t [loading, setLoading] = useState(true);
-  const [isPending, startTransition] = useTransition();
+  const [transition, startTransition] = useTransition();
+  console.log(transition)
   const [localShops, setLocalShops] = useState<Shop[]>([])
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
   const { data: { data: shops } = {}, isLoading } = useGetHomeShopsQuery("guard", {

@@ -155,7 +155,7 @@ const CheckoutPage: React.FC = () => {
                     name="deliveryOption"
                     value="pickup"
                     checked={address.deliveryOption === 'pickup'}
-                    onChange={(e) => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
+                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
                     className="mr-2"
                     disabled={!isLocalOrder}
                   />
@@ -171,7 +171,7 @@ const CheckoutPage: React.FC = () => {
                     name="deliveryOption"
                     value="localDelivery"
                     checked={address.deliveryOption === 'localDelivery'}
-                    onChange={(e) => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
+                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
                     className="mr-2"
                     disabled={!isLocalOrder}
                   />
@@ -187,7 +187,7 @@ const CheckoutPage: React.FC = () => {
                     name="deliveryOption"
                     value="remotePickup"
                     checked={address.deliveryOption === 'remotePickup'}
-                    onChange={(e) => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
+                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
                     className="mr-2"
                     disabled={isLocalOrder}
                   />
@@ -203,7 +203,7 @@ const CheckoutPage: React.FC = () => {
                     name="deliveryOption"
                     value="remoteDelivery"
                     checked={address.deliveryOption === 'remoteDelivery'}
-                    onChange={(e) => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
+                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
                     className="mr-2"
                     disabled={isLocalOrder}
                   />

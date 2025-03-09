@@ -116,7 +116,7 @@ const SuccessPage = () => {
                 });
 
                 const imgWidth = 210;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
 
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const imgData = canvas.toDataURL('image/jpeg', 1.0);

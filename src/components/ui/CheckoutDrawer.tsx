@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useCheckAuthQuery } from '@/services/auth';
 
 interface CheckoutDrawerProps {
-    isOpen: boolean;
     onClose: () => void;
     product: any;
     selectedImage: number;
@@ -17,7 +16,6 @@ interface CheckoutDrawerProps {
 }
 
 const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
-    isOpen,
     onClose,
     product,
     selectedImage,
@@ -25,8 +23,8 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
     setQuantity,
     currentInfo,
     getAllImages,
-}) => {
-    const { data, isLoading, isError } = useCheckAuthQuery()
+}: CheckoutDrawerProps) => {
+    const { data } = useCheckAuthQuery()
     const checkOutNavigation = () => {
         if (data?.isAuthenticated) {
             window.location.href = `/checkout?s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}`;

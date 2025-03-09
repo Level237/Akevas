@@ -16,7 +16,7 @@ const StoreCard = ({
   openModal
 }: StoreCardProps) => {
 
-  const [showOverlay, setShowOverlay] = useState(false)
+  const [showOverlay] = useState(false)
 
 
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { useGetRecentOrdersQuery } from '@/services/auth';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link, Loader2, Package } from 'lucide-react';
+import { Loader2, Package } from 'lucide-react';
 import AsyncLink from '@/components/ui/AsyncLink';
 const RecentOrders = () => {
     const { data, isLoading } = useGetRecentOrdersQuery("Auth");

@@ -1,10 +1,10 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Users } from "lucide-react";
-import { Package } from "lucide-react";
+
 import { User } from "@/types/user";
 import { useAdminListCustomersQuery } from "@/services/adminService";
 import { formatDate } from "@/lib/formatDate";

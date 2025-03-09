@@ -21,7 +21,6 @@ import { GuardRoute } from "@/pages/auth/guard-route";
 import CurrentHomeByGenderPage from "@/pages/gender/CurrentHomeByGenderPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import UserDashboardPage from "@/pages/user/DashboardPage";
-import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
 import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
 import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
 import PaymentPage from "@/pages/payment/PaymentPage";
@@ -34,6 +33,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import AdminLoginPage from "@/pages/admin/LoginPage";
 import AccountPage from "@/pages/AccountPage";
 import CategoryProductsPage from "@/pages/category/CategoryProductsPage";
+import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
 export const routes = createBrowserRouter([
   {
     path: '/',

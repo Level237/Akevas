@@ -156,7 +156,7 @@ const CheckoutForm = () => {
   const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [payStripe, { isLoading, error: errorPay }] = usePayStripeMutation();
+  const [payStripe] = usePayStripeMutation();
   const params = new URLSearchParams(window.location.search)
   const s = params.get('s');
   const quarter = params.get('quarter');

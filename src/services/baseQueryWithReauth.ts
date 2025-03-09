@@ -1,4 +1,4 @@
-import { adjustUsedToken, authTokenChange, logoutUser } from "@/store/authSlice";
+import { logoutUser } from "@/store/authSlice";
 import { baseQuery } from "./baseQuery";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { RootState } from "../store";

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
@@ -87,9 +87,7 @@ const Header = () => {
   });
 
   // Memoize les callbacks
-  const handleMenuToggle = useCallback(() => {
-    setUiState(prev => ({ ...prev, isMenuOpen: !prev.isMenuOpen }));
-  }, []);
+
 
   const handleSearchToggle = useCallback(() => {
     setUiState(prev => ({ ...prev, isSearchOpen: !prev.isSearchOpen }));
@@ -483,21 +481,6 @@ const Header = () => {
   );
 };
 
-// Hook personnalisé pour tracer les re-renderings (optionnel)
-const useTraceUpdate = (props: any) => {
-  const prev = useRef(props);
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps: any, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }
-      return ps;
-    }, {});
-    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps);
-    }
-    prev.current = props;
-  });
-};
+
 
 export default React.memo(Header);

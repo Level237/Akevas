@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { Package, Heart, Clock, MapPin, Settings, CreditCard, DollarSign, ShoppingBag } from 'lucide-react';
+import { Package, Clock, DollarSign, ShoppingBag, Settings } from 'lucide-react';
 import { useGetUserStatsQuery } from '@/services/auth';
 import Stats from '@/components/dashboard/user/stats';
 import { useSelector } from 'react-redux';
@@ -43,7 +43,6 @@ const UserDashboardPage = () => {
             <h2 className="text-xl font-semibold mb-6">Actions rapides</h2>
             <div className="space-y-4">
               {[
-                { title: 'Gérer mes paiements', icon: CreditCard, color: 'text-purple-500', link: '/payments' },
                 { title: 'Mon Panier', icon: ShoppingBag, color: 'text-pink-500', link: '/cart' },
                 { title: 'Paramètres du compte', icon: Settings, color: 'text-gray-500', link: '/account' },
               ].map((action, index) => (
