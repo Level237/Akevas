@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Search, X, Menu, Bell } from 'lucide-react'
+import { User, X, Menu, Bell } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -11,8 +11,6 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { useGetUserQuery } from '@/services/auth';
 
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
 
 import { MobileSidebar } from '../delivery/MobileSidebar'
 
@@ -59,7 +57,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Optimiser les queries avec les options RTK Query
-  const { data: { data: seller } = {}, isLoading } = useCurrentSellerQuery('seller', {
+  const { data: { data: seller } = {} } = useCurrentSellerQuery('seller', {
     refetchOnFocus: false,
     refetchOnMountOrArgChange: false,
     refetchOnReconnect: false,
@@ -257,21 +255,6 @@ const Header = () => {
   );
 };
 
-// Hook personnalisé pour tracer les re-renderings (optionnel)
-const useTraceUpdate = (props: any) => {
-  const prev = useRef(props);
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps: any, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }
-      return ps;
-    }, {});
-    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps);
-    }
-    prev.current = props;
-  });
-};
+
 
 export default React.memo(Header);
