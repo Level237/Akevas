@@ -14,18 +14,13 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
 
 
   const menuItems = [
-    { icon: Package, text: "Mes Commandes" },
-    { icon: Package, text: "Mes pièces" },
-    { icon: MessageCircle, text: "Centre de Messagerie" },
-    { icon: CreditCard, text: "Paiement" },
-    { icon: Heart, text: "Mes favoris" },
-    { icon: Ticket, text: "My Coupons" },
+    { icon: Package, text: "Mes Commandes", href: "/orders" },
+    { icon: Package, text: "Mes pièces", href: "/seller/products" },
   ]
 
   const settingsItems = [
-    { text: "AliExpress Business" },
-    { text: "DS Center" },
-    { text: "S'identifier" },
+    { text: "Mon compte", href: "/account" },
+    { text: "S'identifier", href: "/login" },
   ]
 
   const handleMouseEnter = () => {
@@ -57,7 +52,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
             >
               <div className="px-4 py-3 border-b border-gray-100">
                 {!currentUser && <><Link to={"/login"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button></Link>
-                  <Link to={"/register"}><Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button></Link></>}
+                  <Link to={"/seller/guide"}><Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button></Link></>}
                 {currentUser && currentUser.role_id === 2 && <><AsyncLink to={"/shop/" + currentUser.shop.shop_id}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Voir ma boutique</Button></AsyncLink>
                   <AsyncLink to={"/seller/dashboard"}><Button variant="ghost" className="w-full text-sm">Tableau de bord</Button></AsyncLink></>}
                 {currentUser && currentUser.role_id === 4 && <><AsyncLink to={"/delivery/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>
@@ -71,7 +66,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                 {menuItems.map((item, index) => (
                   <motion.a
                     key={index}
-                    href="#"
+                    href={item.href}
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -90,7 +85,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                 {settingsItems.map((item, index) => (
                   <motion.a
                     key={index}
-                    href="#"
+                    href={item.href}
                     className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
