@@ -1,13 +1,33 @@
 
-import { TrendingUp, Package, Timer, DollarSign } from 'lucide-react'
+import { TrendingUp, Package, Timer, DollarSign, Calendar } from 'lucide-react'
 import { useState } from 'react'
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart"
+
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+
 import MobileNav from '@/components/ui/mobile-nav'
-import { useGetStatOverwiewQuery } from '@/services/auth'
+import { useGetStatOverwiewQuery, useGetStatByDayQuery } from '@/services/auth'
 const DeliveryStats = () => {
     const [timeFrame, setTimeFrame] = useState('week')
     const { data, isLoading, error } = useGetStatOverwiewQuery("Auth")
-    console.log(data);
+    const { data: dataByDay, isLoading: isLoadingByDay, error: errorByDay } = useGetStatByDayQuery("Auth")
+    console.log(dataByDay);
     // Simulation des données statistiques (à remplacer par des données réelles)
+
+    const chartData = Object.entries(dataByDay || {}).map(([day, value]) => ({
+        day: day,
+        color: "#e7e7e7",
+        deliveries: value
+    }))
+    const chartConfig: ChartConfig = {
+        data: chartData,
+        xKey: { label: "Jour", icon: Calendar },
+    } as ChartConfig
     const stats = {
         totalDeliveries: data?.total_orders,
         completionRate: 98,
@@ -76,25 +96,22 @@ const DeliveryStats = () => {
                 </div>
 
                 {/* Graphique des livraisons */}
-                <div className="bg-white p-6 rounded-lg shadow-sm">
+                <div className="bg-white p-6 mb-12 rounded-lg shadow-sm">
                     <h3 className="text-lg font-semibold mb-6">Livraisons par jour</h3>
-                    <div className="h-64 flex items-end justify-between gap-2">
-                        {stats.weeklyProgress.map((day) => (
-                            <div key={day.day} className="flex flex-col items-center flex-1">
-                                <div
-                                    className="w-full bg-blue-100 rounded-t"
-                                    style={{ height: `${(day.deliveries / 12) * 100}%` }}
-                                >
-                                    <div
-                                        className="w-full bg-blue-500 rounded-t transition-all duration-300"
-                                        style={{ height: `${(day.deliveries / 12) * 100}%` }}
-                                    />
-                                </div>
-                                <span className="text-sm text-gray-600 mt-2">{day.day}</span>
-                                <span className="text-xs text-gray-500">{day.deliveries}</span>
-                            </div>
-                        ))}
-                    </div>
+                    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                        <BarChart accessibilityLayer data={chartData}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis
+                                dataKey="day"
+                                tickLine={false}
+                                tickMargin={10}
+                                axisLine={false}
+                                tickFormatter={(value) => value.slice(0, 3)}
+                            />
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                            <Bar dataKey="deliveries" fill="#ed7e0f" radius={4} />
+                        </BarChart>
+                    </ChartContainer>
                 </div>
             </div>
             <MobileNav />

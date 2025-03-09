@@ -141,6 +141,10 @@ export const authService = createApi({
         getStatOverwiew: builder.query({
             query: () => "/api/v1/delivery/stats/overview",
             providesTags: ["Auth"]
+        }),
+        getStatByDay: builder.query({
+            query: () => "/api/v1/delivery/stats/by-day",
+            providesTags: ["Auth"]
         })
     })
 })
@@ -164,5 +168,6 @@ export const {
     useTakeOrderMutation,
     useOrderHistoryQuery,
     useCompleteOrderMutation,
-    useGetStatOverwiewQuery
+    useGetStatOverwiewQuery,
+    useGetStatByDayQuery
 } = authService

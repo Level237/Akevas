@@ -1,6 +1,0 @@
-.sample-slider [class^="swiper-button-"]::after {
-    font-size: 30px;
-}
-.sample-slider [class^="swiper-button-"] {
-    width: 5px;
-}

@@ -62,7 +62,7 @@ const OrderDetailPage = () => {
         try {
             // Appel API pour refuser la commande
             // await declineOrder(orderId)
-            navigate('/dashboard')
+            navigate('/')
         } catch (error) {
             console.error('Erreur lors du refus:', error)
         }
