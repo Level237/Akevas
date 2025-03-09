@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useCheckAuthQuery } from '@/services/auth';
 
 interface CheckoutDrawerProps {
+
     onClose: () => void;
     product: any;
     selectedImage: number;
@@ -16,6 +17,7 @@ interface CheckoutDrawerProps {
 }
 
 const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
+
     onClose,
     product,
     selectedImage,

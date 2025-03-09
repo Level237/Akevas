@@ -620,7 +620,7 @@ const ProductDetailPage: React.FC = () => {
       <AnimatePresence>
         {isDrawerOpen && (
           <CheckoutDrawer
-            isOpen={isDrawerOpen}
+
             onClose={() => setIsDrawerOpen(false)}
             product={product}
             selectedImage={selectedImage}
