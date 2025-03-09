@@ -33,10 +33,15 @@ import ListOrdersPage from "@/pages/admin/orders/ListOrdersPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import AdminLoginPage from "@/pages/admin/LoginPage";
 import AccountPage from "@/pages/AccountPage";
+import CategoryProductsPage from "@/pages/category/CategoryProductsPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
     element: <Homepage />
+  },
+  {
+    path: '/c/:url',
+    element: <CategoryProductsPage />
   },
   {
     path: '/login',
