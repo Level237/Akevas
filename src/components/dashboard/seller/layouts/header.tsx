@@ -52,7 +52,7 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
               {sellerData?.shop.level !== "1" && <AsyncLink to='/seller/products'><span className="text-gray-400 cursor-pointer">Produits</span></AsyncLink>}
               {sellerData?.shop.level === "1" && <span className="text-gray-400 cursor-not-allowed">Produits</span>}
 
-              <span className="text-gray-400 cursor-not-allowed">Commandes</span>
+              <AsyncLink to='/orders'><span className="text-gray-400 cursor-pointer">Commandes</span></AsyncLink>
             </nav>
           </div>
 

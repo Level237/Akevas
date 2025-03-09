@@ -28,6 +28,7 @@ import StoreEditorPage from "@/pages/seller/StoreEditorPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import SellerCatalog from "@/pages/SellerCatalog";
 import AccountPage from "@/pages/Account";
+import OrdersPage from "@/pages/seller/OrdersPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -80,6 +81,10 @@ export const routes = createBrowserRouter([
       {
         path: '/seller/create-product',
         element: <CreateProductPage />
+      },
+      {
+        path: "/orders",
+        element: <OrdersPage />
       },
       {
         path: '/seller/pro',
@@ -141,5 +146,6 @@ export const routes = createBrowserRouter([
     path: '/authenticate',
     element: <AuthenticatePage />
   },
+
 
 ]);
