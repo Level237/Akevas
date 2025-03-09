@@ -1,8 +1,9 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
+;
 import Cookies from "universal-cookie";
 
 export const baseQuery = fetchBaseQuery({
-    baseUrl: "https://api.akevas.com",
+    baseUrl: "https://api-akevas.akevas.com",
     credentials: 'include',
     prepareHeaders: (headers) => {
 
