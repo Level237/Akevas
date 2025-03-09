@@ -145,9 +145,15 @@ export const guardService = createApi({
                 method: 'GET'
             })
         }),
-        getCategoryByUrl: builder.query({
+        getCategoryProductsByUrl: builder.query({
             query: (url) => ({
                 url: `/api/product/by-category/${url}`,
+                method: 'GET'
+            })
+        }),
+        getCategoryByUrl: builder.query({
+            query: (url) => ({
+                url: `/api/category/by-url/${url}`,
                 method: 'GET'
             })
         })
@@ -172,5 +178,6 @@ export const {
     useCreateDeliveryMutation,
     useGetAttributeValuesQuery,
     useGetSimilarProductsQuery,
+    useGetCategoryProductsByUrlQuery,
     useGetCategoryByUrlQuery
 } = guardService

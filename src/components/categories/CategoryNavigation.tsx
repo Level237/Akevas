@@ -62,7 +62,7 @@ const CategoryDropdown = React.memo(({
                       {parentCat.children.map((childCat: any) => (
                         <li key={childCat.id}>
                           <AsyncLink
-                            to={`/category/${childCat.category_url}`}
+                            to={`/c/${childCat.category_url}`}
                             className="text-sm text-gray-600 hover:text-orange-500"
                           >
                             {childCat.category_name}
@@ -82,7 +82,7 @@ const CategoryDropdown = React.memo(({
                     {categories.map((item: any) => (
                       <li key={item.id}>
                         <AsyncLink
-                          to={`/category/${item.category_url}`}
+                          to={`/c/${item.category_url}`}
                           className="text-sm text-gray-600 hover:text-orange-500"
                         >
                           {item.category_name} {key}
