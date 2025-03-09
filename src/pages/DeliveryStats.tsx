@@ -1,17 +1,18 @@
-import TopBar from '@/components/ui/topBar'
-import Header from '@/components/ui/header'
+
 import { TrendingUp, Package, Timer, DollarSign } from 'lucide-react'
 import { useState } from 'react'
 import MobileNav from '@/components/ui/mobile-nav'
+import { useGetStatOverwiewQuery } from '@/services/auth'
 const DeliveryStats = () => {
     const [timeFrame, setTimeFrame] = useState('week')
-
+    const { data, isLoading, error } = useGetStatOverwiewQuery("Auth")
+    console.log(data);
     // Simulation des données statistiques (à remplacer par des données réelles)
     const stats = {
-        totalDeliveries: 45,
+        totalDeliveries: data?.total_orders,
         completionRate: 98,
-        averageTime: "25 min",
-        earnings: "1250 €",
+        averageTime: data?.average_duration,
+        earnings: data?.total_earnings,
         weeklyProgress: [
             { day: 'Lun', deliveries: 8 },
             { day: 'Mar', deliveries: 12 },
@@ -37,21 +38,7 @@ const DeliveryStats = () => {
                     </p>
                 </div>
 
-                {/* Sélecteur de période */}
-                <div className="flex gap-4 mb-6">
-                    {['week', 'month', 'year'].map((period) => (
-                        <button
-                            key={period}
-                            onClick={() => setTimeFrame(period)}
-                            className={`px-4 py-2 rounded-lg ${timeFrame === period
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-white text-gray-600'
-                                }`}
-                        >
-                            {period === 'week' ? 'Semaine' : period === 'month' ? 'Mois' : 'Année'}
-                        </button>
-                    ))}
-                </div>
+
 
                 {/* Cartes de statistiques */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
