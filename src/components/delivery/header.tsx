@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MobileNav } from '@/components/dashboard/delivery/mobile-nav'
-import { Truck, Bell } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { User } from '@/types/user'
 import { useLogoutMutation } from '@/services/auth'

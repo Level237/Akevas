@@ -1,6 +1,5 @@
 
 import { TrendingUp, Package, Timer, DollarSign, Calendar } from 'lucide-react'
-import { useState } from 'react'
 import {
     ChartConfig,
     ChartContainer,
@@ -13,9 +12,9 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import MobileNav from '@/components/ui/mobile-nav'
 import { useGetStatOverwiewQuery, useGetStatByDayQuery } from '@/services/auth'
 const DeliveryStats = () => {
-    const [timeFrame, setTimeFrame] = useState('week')
-    const { data, isLoading, error } = useGetStatOverwiewQuery("Auth")
-    const { data: dataByDay, isLoading: isLoadingByDay, error: errorByDay } = useGetStatByDayQuery("Auth")
+
+    const { data } = useGetStatOverwiewQuery("Auth")
+    const { data: dataByDay } = useGetStatByDayQuery("Auth")
     console.log(dataByDay);
     // Simulation des données statistiques (à remplacer par des données réelles)
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+
 import TopBar from '@/components/ui/topBar'
 import Header from '@/components/ui/header'
 import MobileNav from '@/components/ui/mobile-nav'
@@ -7,7 +7,6 @@ import {
     MapPin,
     Phone,
     Mail,
-    Settings,
     LogOut,
     Edit,
     Shield,

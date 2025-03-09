@@ -12,8 +12,8 @@ const HomeAuth = () => {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('all')
-  const { data: ordersCity, isLoading, error } = useGetOrderByTownQuery('Auth')
-  const { data: ordersPreferences, isLoading: isLoadingPreferences, error: errorPreferences } = useGetOrderByPreferencesQuery("Auth")
+  const { data: ordersCity, isLoading } = useGetOrderByTownQuery('Auth')
+  const { data: ordersPreferences, isLoading: isLoadingPreferences } = useGetOrderByPreferencesQuery("Auth")
   const { data: userData } = useGetUserQuery('Auth', {
     refetchOnFocus: false,
     refetchOnMountOrArgChange: false,
@@ -114,7 +114,7 @@ const HomeAuth = () => {
         {/* Liste des commandes */}
         <div className="grid gap-4">
           {isLoading && <IsLoadingComponents isLoading={isLoading} />}
-          {activeTab === 'all' && !isLoading && ordersCity?.map((order) => (
+          {activeTab === 'all' && !isLoading && ordersCity?.map((order: any) => (
             <div
               key={order.id}
               className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"
@@ -145,7 +145,7 @@ const HomeAuth = () => {
           ))}
           {activeTab === "all" && !isLoading && ordersCity?.length === 0 && <div className="text-center text-gray-600">Aucune commande disponible</div>}
           {isLoadingPreferences && <IsLoadingComponents isLoading={isLoadingPreferences} />}
-          {activeTab === 'nearby' && !isLoadingPreferences && ordersPreferences?.map((order) => (
+          {activeTab === 'nearby' && !isLoadingPreferences && ordersPreferences?.map((order: any) => (
             <div
               key={order.id}
               className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"

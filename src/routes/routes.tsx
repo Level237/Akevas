@@ -7,11 +7,8 @@ import DeliveryZonePage from "@/pages/auth/delivery-registration/DeliveryZonePag
 import DocumentsPage from "@/pages/auth/delivery-registration/DocumentsPage";
 import ValidationPage from "@/pages/auth/delivery-registration/ValidationPage";
 import DeliveryGenerationPage from "@/pages/auth/delivery-registration/DeliveryGenerationPage";
-import DeliveryDashboard from "@/pages/delivery/DashboardPage";
-import DeliveriesPage from "@/pages/delivery/DeliveryPage";
 import DeliveryRootDashboard from "@/components/Layouts/DeliveryRootDashboard";
 import { PrivateRoute } from "@/pages/auth/private-route";
-import ShopsPage from "@/pages/ShopsPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import { GuardRoute } from "@/pages/auth/guard-route";
 import DeliveryGuidePage from "@/pages/DeliveryGuidePage";
@@ -102,10 +99,7 @@ export const routes = createBrowserRouter([
     path: '/account',
     element: <Account />
   },
-  {
-    path: 'shops',
-    element: <ShopsPage />
-  },
+
   {
     path: 'notifications',
     element: <NotificationsPage />

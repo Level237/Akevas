@@ -28,7 +28,7 @@ const DeliveryOrders = () => {
 
     const [filterStatus, setFilterStatus] = useState('all')
     const [quarterId, setQuarterId] = useState('0')
-    const { data: ordersCity, isLoading, error } = useGetOrderByTownQuery('Auth')
+    const { data: ordersCity, isLoading } = useGetOrderByTownQuery('Auth')
     const { data: ordersQuarter, isLoading: ordersQuarterLoading } = useGetOrdersByQuarterQuery(quarterId)
 
 

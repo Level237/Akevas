@@ -20,7 +20,7 @@ interface DeliveryReport {
     isOvertime: boolean
 }
 
-const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
+const DeliveryCountdown = ({ orderId }: CountdownProps) => {
     const [timeLeft, setTimeLeft] = useState<number>(0)
     const [isRunning, setIsRunning] = useState<boolean>(false)
     const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
@@ -29,7 +29,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
     const [startTime, setStartTime] = useState<Date | null>(null)
     const [takeOrder, { isLoading: isTakingOrder }] = useTakeOrderMutation()
     const reportRef = useRef<HTMLDivElement>(null)
-    const [completeOrder, { isLoading: isCompletingOrder }] = useCompleteOrderMutation()
+    const [completeOrder] = useCompleteOrderMutation()
 
     useEffect(() => {
         const savedEndTime = localStorage.getItem(`countdown_end_${orderId}`)
@@ -58,7 +58,7 @@ const DeliveryCountdown = ({ orderId, onTimeUp }: CountdownProps) => {
     }, [isRunning])
 
     const startCountdown = async () => {
-        const duration = 10 * 60 // 10 minutes en secondes (pour test)
+        const duration = 60 * 60 // 10 minutes en secondes (pour test)
         const now = new Date()
         const endTime = new Date().getTime() + duration * 1000
 

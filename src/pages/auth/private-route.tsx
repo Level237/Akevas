@@ -3,7 +3,7 @@ import { useCheckAuthQuery } from '@/services/auth'
 
 export const PrivateRoute = () => {
     const location = useLocation()
-    const { data, isLoading, isError } = useCheckAuthQuery()
+    const { data, isLoading } = useCheckAuthQuery()
 
     if (isLoading) {
         return <div>Loading...</div>

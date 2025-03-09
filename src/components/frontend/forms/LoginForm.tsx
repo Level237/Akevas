@@ -16,7 +16,7 @@ export default function LoginForm() {
   const s = params.get('s');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [login, { isLoading, isError, error }] = useLoginMutation()
+  const [login, { isLoading, isError }] = useLoginMutation()
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

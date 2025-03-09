@@ -9,14 +9,12 @@ import AsyncLink from './AsyncLink';
 import DropdownAccount from './dropdown-account';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
-import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 
 import { MobileSidebar } from '../delivery/MobileSidebar'
-import Cookies from 'universal-cookie';
 
 
 const ListItem = React.forwardRef<
@@ -74,7 +72,7 @@ const Header = () => {
     refetchOnReconnect: false,
     pollingInterval: 0,
   });
-  console.log(userDataAuth)
+
   // Memoize userData avec des dépendances plus précises
   const userData = useMemo(() => {
     const roleId = userDataAuth?.role_id;
@@ -165,35 +163,35 @@ const Header = () => {
             </button>
 
             {/* Logo */}
-            <AsyncLink to="/" className="flex-shrink-0">
+            <AsyncLink to="/dashboard" className="flex-shrink-0">
               <img src={logo} alt="AKEVAS Delivery" className="h-16 w-auto" />
             </AsyncLink>
 
             {/* Navigation principale du livreur */}
             <nav className="hidden md:flex items-center space-x-6">
               <AsyncLink
-                to="/"
+                to="/dashboard"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
                 Tableau de bord
               </AsyncLink>
               <AsyncLink
-                to="/orders"
+                to="/deliveries"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
-                Commandes
+                Mes livraisons
               </AsyncLink>
               <AsyncLink
-                to="/delivery/history"
+                to="/history"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
                 Historique
               </AsyncLink>
               <AsyncLink
-                to="/delivery/stats"
+                to="/earnings"
                 className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors"
               >
-                Statistiques
+                Mes gains
               </AsyncLink>
             </nav>
 
@@ -252,28 +250,28 @@ const Header = () => {
 
               <nav className="p-4 space-y-4">
                 <AsyncLink
-                  to="/"
+                  to="/dashboard"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Tableau de bord
                 </AsyncLink>
                 <AsyncLink
-                  to="/orders"
+                  to="/deliveries"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Mes livraisons
                 </AsyncLink>
                 <AsyncLink
-                  to="/delivery/history"
+                  to="/history"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Historique
                 </AsyncLink>
                 <AsyncLink
-                  to="/delivery/stats"
+                  to="/earnings"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
-                  Statistiques
+                  Mes gains
                 </AsyncLink>
               </nav>
             </motion.div>

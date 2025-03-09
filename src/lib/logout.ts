@@ -1,5 +1,4 @@
-import { useDispatch } from "react-redux";
-import { clearUser } from "@/store/authSlice";
+
 import Cookies from "universal-cookie";
 
 export const logoutUser = () => {
