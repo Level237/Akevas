@@ -1,14 +1,14 @@
 import React from 'react';
-import { motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 import logo from "../../assets/logo.png"
 import {
   X,
   LayoutDashboard,
   Package,
   ShoppingCart,
-  Settings,
   HelpCircle,
   ChevronRight,
+  User,
 } from 'lucide-react';
 import AsyncLink from '../ui/AsyncLink';
 
@@ -43,25 +43,29 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
       icon: LayoutDashboard,
       label: "Tableau de bord",
       active: true,
-      disabled: false
+      disabled: false,
+      href: "/seller/dashboard"
     },
     {
       icon: Package,
       label: "Produits",
       active: false,
-      disabled: true
+      disabled: true,
+      href: "/seller/products"
     },
     {
       icon: ShoppingCart,
       label: "Commandes",
       active: false,
-      disabled: true
+      disabled: true,
+      href: "/seller/orders"
     },
     {
-      icon: Settings,
-      label: "Paramètres",
+      icon: User,
+      label: "Mon compte",
       active: false,
-      disabled: true
+      disabled: true,
+      href: "/account"
     },
     {
       icon: HelpCircle,
@@ -84,13 +88,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
         {/* En-tête Sidebar */}
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
-          <AsyncLink to="/" className="flex-shrink-0">
-            <img
-              src={logo}
-              alt="AKEVAS"
-              className="h-20 w-auto"
-            />
-          </AsyncLink>
+            <AsyncLink to="/" className="flex-shrink-0">
+              <img
+                src={logo}
+                alt="AKEVAS"
+                className="h-20 w-auto"
+              />
+            </AsyncLink>
             {isMobile && (
               <button
                 onClick={onClose}
@@ -108,18 +112,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
             {menuItems.map((item, index) => (
               <li key={index}>
                 <a
-                  href="#"
+                  href={item.href}
                   className={`flex items-center px-3 py-2 rounded-lg transition-colors
-                    ${item.active 
-                      ? 'bg-[#ed7e0f]/10 text-[#ed7e0f]' 
-                      : item.disabled 
+                    ${item.active
+                      ? 'bg-[#ed7e0f]/10 text-[#ed7e0f]'
+                      : item.disabled
                         ? 'opacity-50 cursor-not-allowed text-gray-400'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                 >
-                  <item.icon className={`w-5 h-5 ${
-                    item.active ? 'text-[#ed7e0f]' : 'text-gray-400'
-                  }`} />
+                  <item.icon className={`w-5 h-5 ${item.active ? 'text-[#ed7e0f]' : 'text-gray-400'
+                    }`} />
                   <span className="ml-3 font-medium">{item.label}</span>
                   {!item.disabled && (
                     <ChevronRight className="w-4 h-4 ml-auto text-gray-400" />

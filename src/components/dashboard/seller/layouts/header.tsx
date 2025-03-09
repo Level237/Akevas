@@ -1,4 +1,4 @@
-import { LogOut, Menu } from 'lucide-react'
+import { LogOut, Menu, User } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { AvatarImage } from '@radix-ui/react-avatar'
 import { Bell, Settings } from 'lucide-react'
@@ -13,6 +13,7 @@ import AsyncLink from '@/components/ui/AsyncLink'
 import { logoutUser } from '@/lib/logout'
 import logo from '@/assets/favicon.png'
 import { CheckStateSeller } from '@/components/dashboard/seller/CheckStateSeller'
+import { Link } from 'react-router-dom'
 export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isMobile: boolean, setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>, sellerData: Seller | null | undefined }) {
 
 
@@ -36,12 +37,15 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
                 <Menu className="w-6 h-6" />
               </button>
             )}
-            <div className="flex max-sm:hidden items-center">
-              <img src={logo} alt="Espace Vendeur" className="w-16 h-16" />
-              <h1 className="ml-2 text-xl font-semibold text-gray-900">
-                Espace Vendeur
-              </h1>
-            </div>
+            <Link to="/">
+              <div className="flex max-sm:hidden items-center">
+
+                <img src={logo} alt="Espace Vendeur" className="w-16 h-16" />
+                <h1 className="ml-2 text-xl font-semibold text-gray-900">
+                  Espace Vendeur
+                </h1>
+              </div>
+            </Link>
             <nav className="hidden lg:flex space-x-6">
               <AsyncLink to='/'>Accueil</AsyncLink>
               <AsyncLink to='/seller/dashboard'><span className="text-[#ed7e0f] font-medium">Tableau de bord</span></AsyncLink>
@@ -53,14 +57,16 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
-              <Bell className="w-5 h-5" />
-            </button>
-            <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
-              <Settings className="w-5 h-5" />
-            </button>
-            <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
+            <AsyncLink to="/account">
+              <button className="p-2 flex items-center gap-2 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
+                <User className="w-5 h-5" />
+                <span className="hidden sm:block">Mon compte</span>
+              </button>
+            </AsyncLink>
+
+            <button onClick={handleLogout} className="p-2 flex items-center gap-2 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
               <LogOut className="w-5 h-5" />
+              <span className="hidden sm:block">Déconnexion</span>
             </button>
             <div className="flex items-center space-x-3 pl-4 border-l">
               <div className="text-right hidden sm:block">
