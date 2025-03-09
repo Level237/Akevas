@@ -165,7 +165,7 @@ const Header = () => {
             </button>
 
             {/* Logo */}
-            <AsyncLink to="/dashboard" className="flex-shrink-0">
+            <AsyncLink to="/" className="flex-shrink-0">
               <img src={logo} alt="AKEVAS Delivery" className="h-16 w-auto" />
             </AsyncLink>
 
@@ -252,28 +252,28 @@ const Header = () => {
 
               <nav className="p-4 space-y-4">
                 <AsyncLink
-                  to="/dashboard"
+                  to="/"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Tableau de bord
                 </AsyncLink>
                 <AsyncLink
-                  to="/deliveries"
+                  to="/orders"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Mes livraisons
                 </AsyncLink>
                 <AsyncLink
-                  to="/history"
+                  to="/delivery/history"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
                   Historique
                 </AsyncLink>
                 <AsyncLink
-                  to="/earnings"
+                  to="/delivery/stats"
                   className="block px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
                 >
-                  Mes gains
+                  Statistiques
                 </AsyncLink>
               </nav>
             </motion.div>

@@ -2,10 +2,11 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import React, { useState } from "react"
-import { MessageCircle, Package, Heart, CreditCard, Ticket, ChevronRight } from 'lucide-react'
+import { Package, Heart, CreditCard, Ticket, ChevronRight, History, BarChart } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import AsyncLink from "./AsyncLink"
+import { logoutUser } from "@/lib/logout"
 
 
 
@@ -14,18 +15,14 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
 
 
   const menuItems = [
-    { icon: Package, text: "Mes Commandes" },
-    { icon: Package, text: "Mes pièces" },
-    { icon: MessageCircle, text: "Centre de Messagerie" },
-    { icon: CreditCard, text: "Paiement" },
-    { icon: Heart, text: "Mes favoris" },
-    { icon: Ticket, text: "My Coupons" },
+    { icon: Package, text: "Mes Commandes", link: "/orders" },
+    { icon: History, text: "Historique", link: "/delivery/history" },
+    { icon: BarChart, text: "Statistiques", link: "/delivery/stats" },
   ]
 
   const settingsItems = [
-    { text: "AliExpress Business" },
-    { text: "DS Center" },
-    { text: "S'identifier" },
+    { text: "Mon compte", link: "/account" },
+
   ]
 
   const handleMouseEnter = () => {
@@ -58,28 +55,23 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
               <div className="px-4 py-3 border-b border-gray-100">
                 {!currentUser && <><Link to={"/login"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button></Link>
                   <Link to={"/register"}><Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button></Link></>}
-                {currentUser && currentUser.role_id === 2 && <><AsyncLink to={"/shop/" + currentUser.shop.shop_id}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Voir ma boutique</Button></AsyncLink>
-                  <AsyncLink to={"/seller/dashboard"}><Button variant="ghost" className="w-full text-sm">Tableau de bord</Button></AsyncLink></>}
-                {currentUser && currentUser.role_id === 4 && <><AsyncLink to={"/delivery/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>
+
+                {currentUser && currentUser.role_id === 4 && <><AsyncLink to={"/"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>
                   <AsyncLink to={"/account"}><Button variant="ghost" className="w-full text-sm">Mon compte</Button></AsyncLink>
                 </>}
-                {currentUser && currentUser.role_id === 1 && <AsyncLink to={"/admin/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
-                {currentUser && currentUser.role_id === 3 && <AsyncLink to={"/user/dashboard"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Tableau de bord</Button></AsyncLink>}
+
               </div>
 
               <div className="py-2">
                 {menuItems.map((item, index) => (
-                  <motion.a
+                  <Link
                     key={index}
-                    href="#"
+                    to={item.link}
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
                   >
                     <item.icon className="h-4 w-4 mr-3" />
                     {item.text}
-                  </motion.a>
+                  </Link>
                 ))}
               </div>
 
@@ -88,18 +80,18 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                   Réglages
                 </div>
                 {settingsItems.map((item, index) => (
-                  <motion.a
+                  <Link
                     key={index}
-                    href="#"
+                    to={item.link}
                     className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: (menuItems.length + index) * 0.05 }}
                   >
                     {item.text}
                     <ChevronRight className="h-4 w-4 text-gray-400" />
-                  </motion.a>
+                  </Link>
                 ))}
+                <div onClick={() => {
+                  logoutUser()
+                }}><Button variant="ghost" className="w-full mt-5  text-sm">Déconnexion</Button></div>
               </div>
             </motion.div>
           )}
