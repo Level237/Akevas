@@ -212,7 +212,11 @@ const Header = () => {
             </AsyncLink>
 
             <div className="flex-1 flex justify-center">
-              <CategoryNavigation />
+              <React.Profiler id="CategoryNavigation" onRender={(id, phase, actualDuration) => {
+                console.log("CategoryNavigation rendered", id, phase, actualDuration)
+              }}>
+                <CategoryNavigation />
+              </React.Profiler>
             </div>
 
             {headerActions}

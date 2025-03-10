@@ -135,7 +135,11 @@ const Homepage = () => {
           <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette qui offrent des produits de qualité et des services exceptionnels." shops={localShops} isLoading={isLoading} />
         </React.Profiler>
 
-        <PremiumProducts />
+        <React.Profiler id="PremiumProducts" onRender={(id, phase, actualDuration) => {
+          console.log("PremiumProducts rendered", id, phase, actualDuration)
+        }}>
+          <PremiumProducts />
+        </React.Profiler>
         <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
 
       </section>
