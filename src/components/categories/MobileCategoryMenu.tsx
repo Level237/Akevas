@@ -1,7 +1,7 @@
 import AsyncLink from "../ui/AsyncLink";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
-import { useGetCurrentHomeByGenderQuery } from "@/services/guardService";
+import { useGetCurrentHomeByGenderQuery, useGetCategoriesQuery } from "@/services/guardService";
 import { Category } from "@/types/products";
 import { useCallback } from "react";
 import React from "react";
@@ -13,15 +13,15 @@ import { RootState } from '@/store';
 const CategoryGrid = React.memo(({ categories }: { categories: Category[] }) => (
     <div className="grid grid-cols-2 gap-4">
         {categories.map((category: Category) => (
-            <AsyncLink 
-                key={category.id} 
-                to={`/category/${category.category_url}`} 
+            <AsyncLink
+                key={category.id}
+                to={`/category/${category.category_url}`}
                 className="group relative overflow-hidden rounded-xl"
             >
                 <div className="aspect-square overflow-hidden rounded-xl">
-                    <img 
-                        src={category.category_profile} 
-                        alt={category.category_name} 
+                    <img
+                        src={category.category_profile}
+                        alt={category.category_name}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                     />
@@ -40,15 +40,29 @@ const LoadingSpinner = () => (
     </div>
 );
 
-const MobileCategoryMenu = () => {
+const LoadingSkeleton = () => (
+    <div className="p-4 space-y-4">
+        <div className="h-8 bg-gray-200 rounded animate-pulse" />
+        <div className="h-8 bg-gray-200 rounded animate-pulse" />
+        <div className="h-8 bg-gray-200 rounded animate-pulse" />
+    </div>
+);
+
+const MobileCategoryMenu = React.memo(() => {
     const dispatch = useDispatch();
     const { categories, currentGenderId } = useSelector((state: RootState) => state.categories);
-    
-    const {data: {data: currentGender} = {}, isLoading} = useGetCurrentHomeByGenderQuery(currentGenderId, {
+
+    const { data: { data: currentGender } = {}, isLoading } = useGetCurrentHomeByGenderQuery(currentGenderId, {
         skip: !currentGenderId,
         refetchOnMountOrArgChange: false,
         refetchOnFocus: false,
         refetchOnReconnect: false
+    });
+
+    const { data: categoriesData, isLoading: categoriesLoading } = useGetCategoriesQuery(undefined, {
+        refetchOnMountOrArgChange: false,
+        refetchOnFocus: false,
+        refetchOnReconnect: false,
     });
 
     // Mettre à jour le store quand les données arrivent
@@ -67,6 +81,10 @@ const MobileCategoryMenu = () => {
 
     const currentCategories = categories[currentGenderId];
 
+    if (isLoading) {
+        return <LoadingSkeleton />;
+    }
+
     return (
         <div className="overflow-y-auto h-full pb-20">
             <Tabs defaultValue={currentGenderId.toString()} onValueChange={handleTabChange} className="w-full">
@@ -79,7 +97,7 @@ const MobileCategoryMenu = () => {
                     >
                         HOMME
                     </TabsTrigger>
-                    <TabsTrigger 
+                    <TabsTrigger
                         value="2"
                         className={cn(
                             "pb-4 text-base data-[state=active]:text-[#ed7e0f] data-[state=active]:border-b-2 data-[state=active]:border-[#ed7e0f] rounded-none"
@@ -87,7 +105,7 @@ const MobileCategoryMenu = () => {
                     >
                         FEMME
                     </TabsTrigger>
-                    <TabsTrigger 
+                    <TabsTrigger
                         value="3"
                         className={cn(
                             "pb-4 text-base data-[state=active]:text-[#ed7e0f] data-[state=active]:border-b-2 data-[state=active]:border-[#ed7e0f] rounded-none"
@@ -98,7 +116,7 @@ const MobileCategoryMenu = () => {
                 </TabsList>
 
                 <TabsContent value={currentGenderId.toString()} className="mt-0">
-                    {isLoading ? (
+                    {categoriesLoading ? (
                         <LoadingSpinner />
                     ) : (
                         currentCategories && <CategoryGrid categories={currentCategories} />
@@ -107,6 +125,8 @@ const MobileCategoryMenu = () => {
             </Tabs>
         </div>
     );
-};
+});
 
-export default React.memo(MobileCategoryMenu);
+MobileCategoryMenu.displayName = 'MobileCategoryMenu';
+
+export default MobileCategoryMenu;

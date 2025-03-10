@@ -380,38 +380,42 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Menu Mobile Overlay */}
-      <AnimatePresence>
-        {uiState.isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50 lg:hidden"
-            onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: false }))}
-          >
+      <React.Profiler id="CategoryNavigationMobile" onRender={(id, phase, actualDuration) => {
+        console.log("CategoryNavigationMobile rendered", id, phase, actualDuration)
+      }}>
+        {/* Menu Mobile Overlay */}
+        <AnimatePresence>
+          {uiState.isMenuOpen && (
             <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'tween' }}
-              className="absolute top-0 left-0 bottom-0 w-full max-w-sm bg-white"
-              onClick={e => e.stopPropagation()}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 lg:hidden"
+              onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: false }))}
             >
-              {/* Menu Header */}
-              <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="text-lg font-semibold">Menu</h2>
-                <button onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: false }))}>
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+              <motion.div
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'tween' }}
+                className="absolute top-0 left-0 bottom-0 w-full max-w-sm bg-white"
+                onClick={e => e.stopPropagation()}
+              >
+                {/* Menu Header */}
+                <div className="flex items-center justify-between p-4 border-b">
+                  <h2 className="text-lg font-semibold">Menu</h2>
+                  <button onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: false }))}>
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
 
-              {/* Menu Content */}
-              <MobileCategoryMenu />
+                {/* Menu Content */}
+                <MobileCategoryMenu />
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
+      </React.Profiler>
 
       {/* Search Overlay */}
       <AnimatePresence>

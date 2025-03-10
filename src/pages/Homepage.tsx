@@ -140,7 +140,11 @@ const Homepage = () => {
         }}>
           <PremiumProducts />
         </React.Profiler>
-        <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
+        <React.Profiler id="CategoryGridList" onRender={(id, phase, actualDuration) => {
+          console.log("CategoryGridList rendered", id, phase, actualDuration)
+        }}>
+          <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
+        </React.Profiler>
 
       </section>
 
