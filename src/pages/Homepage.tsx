@@ -1,4 +1,4 @@
-import { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 
 
 
@@ -119,14 +119,21 @@ const Homepage = () => {
       <section className='overflow-hidden'>
         <TopBar />
 
-        <Header />
+        <React.Profiler id="Header" onRender={(id, phase, actualDuration) => {
+          console.log("Header rendered", id, phase, actualDuration)
+        }}>
+          <Header />
+        </React.Profiler>
         <GenderNavigationMobile />
         <StoreHero />
 
 
 
-
-        <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette qui offrent des produits de qualité et des services exceptionnels." shops={localShops} isLoading={isLoading} />
+        <React.Profiler id="StoreStories" onRender={(id, phase, actualDuration) => {
+          console.log("StoreStories rendered", id, phase, actualDuration)
+        }}>
+          <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette qui offrent des produits de qualité et des services exceptionnels." shops={localShops} isLoading={isLoading} />
+        </React.Profiler>
 
         <PremiumProducts />
         <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />

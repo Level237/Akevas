@@ -1,15 +1,10 @@
-
-
-
 import { ChevronRight } from 'lucide-react'
 import AsyncLink from '../ui/AsyncLink'
 import SlideFeatureShop from './slide-feature-shop'
 import { Shop } from '@/types/shop'
 import React from 'react'
 
-const StoreStories = ({ title, description, shops, isLoading }: { title: string, description: string, shops: Shop[], isLoading: boolean }) => {
-
-
+const StoreStories = React.memo(({ title, description, shops, isLoading }: { title: string, description: string, shops: Shop[], isLoading: boolean }) => {
 
   return (
     <>
@@ -43,7 +38,9 @@ const StoreStories = ({ title, description, shops, isLoading }: { title: string,
     </>
 
   )
-}
+}, (prevProps, nextProps) => {
+  return prevProps.isLoading === nextProps.isLoading &&
+    prevProps.shops === nextProps.shops;
+});
 
-StoreStories.displayName = 'StoreStories';
-export default React.memo(StoreStories);
+export default StoreStories;

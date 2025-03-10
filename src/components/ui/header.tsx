@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
@@ -73,11 +73,13 @@ const genders = [
 ];
 
 const Header = () => {
-  // Regrouper les états liés dans un seul objet pour réduire les re-renderings
+  // Remplacer useState par useRef pour isScrolled car il n'a pas besoin de déclencher un re-render
+  const isScrolledRef = useRef(false);
+  const headerRef = useRef<HTMLElement>(null);
+
   const [uiState, setUiState] = useState({
     isMenuOpen: false,
     isSearchOpen: false,
-    isScrolled: false,
     showCategories: false
   });
 
@@ -143,12 +145,21 @@ const Header = () => {
     setUiState(prev => ({ ...prev, isMenuOpen: false, isSearchOpen: false }));
   }, [location.pathname]);
 
+  // Optimiser l'effet de scroll
   useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
     const handleScroll = () => {
-      setUiState(prev => ({ ...prev, isScrolled: window.scrollY > 300 }));
+      const shouldBeVisible = window.scrollY > 300;
+      if (isScrolledRef.current !== shouldBeVisible) {
+        isScrolledRef.current = shouldBeVisible;
+        // Manipuler directement le DOM au lieu de déclencher un re-render
+        header.style.transform = shouldBeVisible ? 'translateY(0)' : 'translateY(-100%)';
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -190,8 +201,10 @@ const Header = () => {
   return (
     <>
       {/* Sticky Header */}
-      <header className={`w-full max-sm:hidden bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 ${uiState.isScrolled ? 'translate-y-0' : '-translate-y-full'
-        }`}>
+      <header
+        ref={headerRef}
+        className="w-full max-sm:hidden bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 -translate-y-full"
+      >
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <AsyncLink to="/" className="flex-shrink-0">
@@ -481,6 +494,7 @@ const Header = () => {
   );
 };
 
-
-
-export default React.memo(Header);
+// Optimiser le memo avec une fonction de comparaison
+export default React.memo(Header, (prevProps, nextProps) => {
+  return true; // Le Header n'a pas de props qui changent
+});

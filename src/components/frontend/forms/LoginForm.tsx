@@ -61,7 +61,7 @@ export default function LoginForm() {
             className="h-24"
           />
           <h1 className="text-3xl text-center font-semibold tracking-tight">Connexion</h1>
-
+          <button onClick={() => { throw new Error("This is your first error!"); }}>Break the world</button>
         </div>
 
 
