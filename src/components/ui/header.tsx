@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
@@ -15,7 +15,10 @@ import { useGetUserQuery } from '@/services/auth';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
-import MobileCategoryMenu from '../categories/MobileCategoryMenu';
+
+// Lazy load du MobileCategoryMenu
+const MobileCategoryMenu = lazy(() => import('../categories/MobileCategoryMenu'));
+
 // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
@@ -71,6 +74,125 @@ const genders = [
   { id: 'homme', label: 'HOMME', "url": "homme" },
   { id: 'enfant', label: 'ENFANT', "url": "enfant" },
 ];
+
+const MenuSkeleton = () => (
+  <div className="p-4 space-y-6">
+    {/* Tabs skeleton */}
+    <div className="grid grid-cols-3 gap-4 border-b pb-4">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-8 bg-gray-200 rounded animate-pulse" />
+      ))}
+    </div>
+
+    {/* Grid skeleton */}
+    <div className="grid grid-cols-2 gap-4">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="space-y-2">
+          <div className="aspect-square bg-gray-200 rounded-xl animate-pulse" />
+          <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// Créer un composant séparé pour le menu mobile
+const MobileMenuOverlay = React.memo(({
+  isOpen,
+  onClose
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const [isContentReady, setIsContentReady] = useState(false);
+  const [isFirstRender, setIsFirstRender] = useState(true);
+
+  // Reset tous les états quand le menu se ferme
+  useEffect(() => {
+    if (!isOpen) {
+      setIsContentReady(false);
+      const timer = setTimeout(() => {
+        setIsFirstRender(true);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  const variants = {
+    overlay: {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: { duration: 0.2 }
+      },
+    },
+    menu: {
+      hidden: { x: '-100%' },
+      visible: {
+        x: 0,
+        transition: {
+          type: 'tween',
+          duration: 0.2,
+          ease: 'easeOut'
+        }
+      },
+    }
+  };
+
+  const handleAnimationComplete = () => {
+    if (isOpen && isFirstRender) {
+      setIsContentReady(true);
+      setIsFirstRender(false);
+    }
+  };
+
+  return (
+    <AnimatePresence mode="wait">
+      {isOpen && (
+        <motion.div
+          variants={variants.overlay}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          className="fixed inset-0 bg-black/50 z-50 lg:hidden"
+          onClick={onClose}
+        >
+          <motion.div
+            variants={variants.menu}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            onAnimationComplete={handleAnimationComplete}
+            className="absolute top-0 left-0 bottom-0 w-full max-w-sm bg-white"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Menu Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-semibold">Menu</h2>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Menu Content */}
+            {isContentReady ? (
+              <Suspense fallback={<MenuSkeleton />}>
+                <MobileCategoryMenu key={Date.now()} />
+              </Suspense>
+            ) : (
+              <MenuSkeleton />
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+});
+
+MobileMenuOverlay.displayName = 'MobileMenuOverlay';
 
 const Header = () => {
   // Remplacer useState par useRef pour isScrolled car il n'a pas besoin de déclencher un re-render
@@ -197,6 +319,10 @@ const Header = () => {
 
     </div>
   ), [userData, handleSearchToggle, totalQuantity]);
+
+  const handleCloseMenu = useCallback(() => {
+    setUiState(prev => ({ ...prev, isMenuOpen: false }));
+  }, []);
 
   return (
     <>
@@ -380,42 +506,10 @@ const Header = () => {
         </div>
       </header>
 
-      <React.Profiler id="CategoryNavigationMobile" onRender={(id, phase, actualDuration) => {
-        console.log("CategoryNavigationMobile rendered", id, phase, actualDuration)
-      }}>
-        {/* Menu Mobile Overlay */}
-        <AnimatePresence>
-          {uiState.isMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-50 lg:hidden"
-              onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: false }))}
-            >
-              <motion.div
-                initial={{ x: '-100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '-100%' }}
-                transition={{ type: 'tween' }}
-                className="absolute top-0 left-0 bottom-0 w-full max-w-sm bg-white"
-                onClick={e => e.stopPropagation()}
-              >
-                {/* Menu Header */}
-                <div className="flex items-center justify-between p-4 border-b">
-                  <h2 className="text-lg font-semibold">Menu</h2>
-                  <button onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: false }))}>
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-
-                {/* Menu Content */}
-                <MobileCategoryMenu />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </React.Profiler>
+      <MobileMenuOverlay
+        isOpen={uiState.isMenuOpen}
+        onClose={handleCloseMenu}
+      />
 
       {/* Search Overlay */}
       <AnimatePresence>
