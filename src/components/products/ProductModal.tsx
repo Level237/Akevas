@@ -135,19 +135,13 @@ export default function ProductModal({ product, isOpen, onClose }: { product: Pr
 
       {/* Boutons d'action modernisés */}
       <div className="flex flex-col gap-3">
-        <button
-          onClick={onAddToCart}
-          className="w-full bg-[#6e0a13] text-white px-6 py-3.5 rounded-xl font-medium transition-all transform active:scale-95 hover:bg-[#5d0810] flex items-center justify-center gap-2"
-        >
-          <CreditCard className="w-5 h-5" />
-          Acheter maintenant
-        </button>
+
 
         {!showCartButton ? (
           <button
             onClick={onAddToCart}
             disabled={isLoading}
-            className="w-full bg-white border-2 border-[#ed7e0f] text-[#ed7e0f] px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f] hover:text-white transition-all flex items-center justify-center gap-2"
+            className="w-full bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-all flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent rounded-full">

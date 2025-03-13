@@ -7,7 +7,6 @@ import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
 import AsyncLink from './AsyncLink';
 import DropdownAccount from './dropdown-account';
-import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
@@ -223,43 +222,17 @@ const Header = () => {
   }, []);
 
   // Optimiser les queries avec les options RTK Query
-  const { data: { data: seller } = {}, isLoading } = useCurrentSellerQuery('seller', {
+
+
+  const { data: userData, isLoading } = useGetUserQuery('Auth', {
     refetchOnFocus: false,
     refetchOnMountOrArgChange: false,
     refetchOnReconnect: false,
     pollingInterval: 0,
   });
 
-  const { data: userDataAuth } = useGetUserQuery('Auth', {
-    refetchOnFocus: false,
-    refetchOnMountOrArgChange: false,
-    refetchOnReconnect: false,
-    pollingInterval: 0,
-  });
 
-  // Memoize userData avec des dépendances plus précises
-  const userData = useMemo(() => {
-    const roleId = userDataAuth?.role_id;
 
-    if (!userDataAuth || !roleId) return null;
-
-    if (roleId === 2 && seller) {
-      return seller;
-    }
-    if (roleId === 1 || roleId === 3 || roleId === 4) {
-      return userDataAuth;
-    }
-    return null;
-  }, [userDataAuth?.role_id, seller?.id, userDataAuth?.id]);
-
-  // Pour déboguer, ajoutez un useEffect temporaire pour tracer les changements
-  useEffect(() => {
-    console.log('userData changed because:', {
-      roleId: userDataAuth?.role_id,
-      sellerId: seller?.id,
-      userId: userDataAuth?.id
-    });
-  }, [userDataAuth?.role_id, seller?.id, userDataAuth?.id]);
 
 
   // Optimiser les effets
@@ -302,12 +275,7 @@ const Header = () => {
             <User className="h-6 w-6" />
           </div>
         )}
-        {userData && userData.role_id === 2 && (
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={userData.shop.shop_profile} />
-            <AvatarFallback>{userData.firstName.charAt(0)}</AvatarFallback>
-          </Avatar>
-        )}
+
         {userData && (userData.role_id === 1 || userData.role_id === 3) && (
           <Avatar className="h-6 w-6">
             <AvatarImage src={userData.profile} />
@@ -447,15 +415,7 @@ const Header = () => {
                     <User className="h-7 w-7" />
 
                   </div>}
-                  {userData && userData.role_id === 2 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
 
-                    <Avatar>
-                      <AvatarImage src={userData.shop.shop_profile} />
-                      <AvatarFallback>
-                        {userData.firstName.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>}
                   {userData && (userData.role_id === 1 || userData.role_id === 3 || userData.role_id === 4) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
                     <Avatar>
                       <AvatarImage src={userData.profile} />
@@ -465,11 +425,6 @@ const Header = () => {
                     </Avatar>
                   </div>}
                 </DropdownAccount>
-
-                {userData && userData.role_id === 2 && <AsyncLink to="/seller/pro">
-                  <Button className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
-                </AsyncLink>}
-
                 {!userData && <AsyncLink to="/cart">
 
                   <div

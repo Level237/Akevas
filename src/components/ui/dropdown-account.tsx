@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import React, { useState } from "react"
-import { MessageCircle, Package, Heart, CreditCard, Ticket, ChevronRight } from 'lucide-react'
+import { MessageCircle, Package, Heart, CreditCard, Ticket, ChevronRight, User } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import AsyncLink from "./AsyncLink"
@@ -14,18 +14,14 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
 
 
   const menuItems = [
-    { icon: Package, text: "Mes Commandes" },
-    { icon: Package, text: "Mes pièces" },
-    { icon: MessageCircle, text: "Centre de Messagerie" },
-    { icon: CreditCard, text: "Paiement" },
-    { icon: Heart, text: "Mes favoris" },
-    { icon: Ticket, text: "My Coupons" },
+    { icon: Package, text: "Commandes", link: "/user/orders" },
+    { icon: User, text: "Mon Compte", link: "/account" },
   ]
 
   const settingsItems = [
-    { text: "AliExpress Business" },
-    { text: "DS Center" },
-    { text: "S'identifier" },
+    { text: "Contactez le support" },
+    { text: "Conditions d'utilisation" },
+    { text: "Politique de confidentialité" },
   ]
 
   const handleMouseEnter = () => {
@@ -71,7 +67,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                 {menuItems.map((item, index) => (
                   <motion.a
                     key={index}
-                    href="#"
+                    href={item.link}
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -97,7 +93,6 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                     transition={{ delay: (menuItems.length + index) * 0.05 }}
                   >
                     {item.text}
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
                   </motion.a>
                 ))}
               </div>
