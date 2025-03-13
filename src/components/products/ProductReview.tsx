@@ -1,4 +1,4 @@
-import { useCheckAuthQuery } from "@/services/auth";
+import { useCheckAuthQuery, useMakeReviewMutation } from "@/services/auth";
 import { Star } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -17,15 +17,18 @@ interface Review {
 export function ProductReview(reviews: any) {
     const [rating, setRating] = useState<number>(0);
     const [comment, setComment] = useState<string>("");
-    
+    const [makeReview] = useMakeReviewMutation()
     const { data, isLoading } = useCheckAuthQuery()
     const url=window.location.pathname
-    
+        
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // Logique pour soumettre l'avis
-        console.log({ rating, comment });
+        
+        const res = await makeReview({ formData: { rating, comment }, productId: reviews.productId })
+        setRating(0)
+        setComment("")
     };
 
     // Fonction pour générer l'avatar avec les initiales
@@ -85,14 +88,14 @@ export function ProductReview(reviews: any) {
                             <div className="flex items-start gap-4 mb-4">
                                 <div className="flex-shrink-0">
                                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#ed7e0f] to-[#f4a340] flex items-center justify-center text-white font-medium">
-                                        {getInitials(review.author)}
+                                        {getInitials(review.userName)}
                                     </div>
                                 </div>
                                 <div className="flex-1">
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-medium text-gray-900">{review.author}</h4>
+                                        <h4 className="font-medium text-gray-900">{review.userName}</h4>
                                         <span className="text-sm text-gray-500">
-                                            {new Date(review.date).toLocaleDateString('fr-FR', {
+                                            {new Date(review.created_at).toLocaleDateString('fr-FR', {
                                                 day: 'numeric',
                                                 month: 'long',
                                                 year: 'numeric'

@@ -38,7 +38,7 @@ const ProductDetailPage: React.FC = () => {
   const dispatch = useDispatch();
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
+  const productId = product?.id
   const handleAddToCart = useCallback(async () => {
     setIsLoadingCart(true);
     dispatch(addItem({ product, quantity }));
@@ -534,7 +534,7 @@ const ProductDetailPage: React.FC = () => {
                   )}
 
                   {selectedTab === 'reviews' && (
-                    <ProductReview reviews={product.reviews} />
+                    <ProductReview reviews={product.reviews} productId={productId} />
                   )}
                 </div>
               </div>

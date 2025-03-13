@@ -103,6 +103,14 @@ export const authService = createApi({
         getOrders: builder.query({
             query: () => '/api/v1/list/orders',
             providesTags: ['Auth'],
+        }),
+        makeReview: builder.mutation({
+            query: ({ formData, productId }) => ({
+                url: `/api/v1/make/comment/product/${productId}`,
+                method: "POST",
+                body: formData
+            }),
+            invalidatesTags: ['Auth']
         })
     })
 })
@@ -118,5 +126,6 @@ export const {
     useGetUserStatsQuery,
     useGetRecentOrdersQuery,
     useGetOrderDetailQuery,
-    useGetOrdersQuery
+    useGetOrdersQuery,
+    useMakeReviewMutation
 } = authService
