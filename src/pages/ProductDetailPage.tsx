@@ -534,7 +534,7 @@ const ProductDetailPage: React.FC = () => {
                   )}
 
                   {selectedTab === 'reviews' && (
-                    <ProductReview />
+                    <ProductReview reviews={product.reviews} />
                   )}
                 </div>
               </div>
