@@ -16,6 +16,8 @@ import {
   Menu,
   X,
   LogOut,
+  Star,
+  Stars,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
@@ -27,7 +29,7 @@ const navItems = [
   { icon: Store, label: "Boutiques", href: "/admin/shops" },
   { icon: Users, label: "Clients", href: "/admin/customers" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
-  { icon: BarChart2, label: "Analytics", href: "#" },
+  { icon: Star, label: "Commentaires", href: "/admin/reviews" },
   { icon: Settings, label: "Settings", href: "#" },
   { icon: HelpCircle, label: "Help", href: "#" },
 ]

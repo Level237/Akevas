@@ -34,6 +34,7 @@ import AdminLoginPage from "@/pages/admin/LoginPage";
 import AccountPage from "@/pages/AccountPage";
 import CategoryProductsPage from "@/pages/category/CategoryProductsPage";
 import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
+import ListReviewPage from "@/pages/admin/reviews/ListReviewPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -112,6 +113,10 @@ export const routes = createBrowserRouter([
       }, {
         path: "admin/orders",
         element: <ListOrdersPage />
+      },
+      {
+        path:"admin/reviews",
+        element:<ListReviewPage/>
       }
     ]
   },
