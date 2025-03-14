@@ -38,7 +38,7 @@ const ListReviews=({reviews,isLoading}:{reviews:any,isLoading:boolean})=>{
                         <TableCell>{review.user.phone_number}</TableCell>
                         <TableCell>{review.rating}</TableCell>
                         <TableCell>{review.comment}</TableCell>
-                        <TableCell>{review.is_approved ? <div className="bg-green-500 p-2 text-sm">En ligne</div> : <div className="bg-red-500 p-2">non approuvé</div>}</TableCell>
+                        <TableCell>{review.is_approved ? <div className="bg-green-500 text-white p-1 text-xs rounded">En ligne</div> : <div className="bg-red-500 text-white p-1 text-xs rounded">non approuvé</div>}</TableCell>
                         <TableCell>{review.product.product_name}</TableCell>
                         <TableCell>{formatDate(review.created_at)}</TableCell>
                         <TableCell className="text-right flex items-center">
