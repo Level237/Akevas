@@ -1,3 +1,4 @@
+import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
 import { Clock, Search, TrendingUp, X } from "lucide-react"
 import { useState } from "react";
@@ -8,7 +9,9 @@ export default function SearchResource({open}:{open:()=>void}){
       const [searchState, setSearchState] = useState({
         query: '',
       });
-      console.log(searchState.query)
+
+      const {data,isLoading,error}=useSearchByQueryQuery({query:searchState.query,userId:0})
+      console.log(data)
       const searchHistory = [
         'Robe d\'été fleurie',
         'Nike Air Max',

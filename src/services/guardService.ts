@@ -157,6 +157,12 @@ export const guardService = createApi({
                 method: 'GET'
             })
         }),
+        searchByQuery:builder.query({
+            query:({query,userId})=>({
+                url:`/api/search/${query}/${userId}`,
+                method:"GET"
+            })
+        })
         
     }),
 })
@@ -181,4 +187,5 @@ export const {
     useGetSimilarProductsQuery,
     useGetCategoryProductsByUrlQuery,
     useGetCategoryByUrlQuery,
+    useSearchByQueryQuery
 } = guardService
