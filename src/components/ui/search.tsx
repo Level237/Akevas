@@ -2,13 +2,19 @@ import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
 import { Clock, Search, TrendingUp, X } from "lucide-react"
 import { useState, useEffect, Suspense } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 // Composant pour les résultats de recherche
 const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) => {
+  const navigate=useNavigate()
   if (isLoading) {
     return <SearchSkeleton />;
   }
 
+  const goToShopId=(id:string)=>{
+
+    navigate(`/shop/${id}`)
+  }
   return (
     <div className="space-y-8">
       {/* Boutiques */}
@@ -17,7 +23,7 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
           <h3 className="text-sm font-medium text-gray-500 mb-4">Boutiques</h3>
           <div className="space-y-4">
             {data.shops.map((shop: any) => (
-              <div key={shop.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+              <Link key={shop.shop_id} to={`/shop/${shop.shop_id}`} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
                 <img
                   src={`${shop.shop_profile}`}
                   alt={shop.shop_name}
@@ -27,7 +33,7 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
                   <h4 className="font-medium">{shop.shop_name}</h4>
                   <p className="text-sm text-gray-500">{shop.shop_description}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -39,7 +45,7 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
           <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
           <div className="grid grid-cols-2 gap-4">
             {data.products.map((product: any) => (
-              <div key={product.id} className="bg-gray-50 rounded-lg overflow-hidden">
+              <Link key={product.id} to={`/produit/${product.product_url}`} className="bg-gray-50 rounded-lg overflow-hidden">
                 <img
                   src={`${product.product_profile}`}
                   alt={product.product_name}
@@ -54,7 +60,7 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
                     }).format(parseInt(product.product_price))}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
