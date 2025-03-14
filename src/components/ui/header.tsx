@@ -1,37 +1,25 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search, X, ChevronDown, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
+import { ShoppingCart, User, Search, X, ChevronDown, Menu} from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
 import AsyncLink from './AsyncLink';
 import DropdownAccount from './dropdown-account';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
-import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
+import SearchResource from './search';
 
 // Lazy load du MobileCategoryMenu
 const MobileCategoryMenu = lazy(() => import('../categories/MobileCategoryMenu'));
 
 // Données de démonstration pour l'historique et les suggestions
-const searchHistory = [
-  'Robe d\'été fleurie',
-  'Nike Air Max',
-  'Sac à main cuir',
-  'Montre connectée'
-];
 
-const trendingSearches = [
-  'Sneakers tendance',
-  'Robes de soirée',
-  'Accessoires homme',
-  'Bijoux argent'
-];
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
@@ -58,12 +46,7 @@ const ListItem = React.forwardRef<
   )
 })
 ListItem.displayName = "ListItem"
-const searchCategories = [
-  { id: 'all', label: 'Tous' },
-  { id: 'products', label: 'Produits' },
-  { id: 'stores', label: 'Boutiques' },
-  { id: 'cities', label: 'Villes' },
-]
+
 
 
 
@@ -198,28 +181,17 @@ const Header = () => {
   const isScrolledRef = useRef(false);
   const headerRef = useRef<HTMLElement>(null);
 
+ 
+
   const [uiState, setUiState] = useState({
     isMenuOpen: false,
     isSearchOpen: false,
     showCategories: false
   });
 
-  const [searchState, setSearchState] = useState({
-    query: '',
-    selectedCategory: searchCategories[0]
-  });
-
   // Memoize les callbacks
 
 
-  const handleSearchToggle = useCallback(() => {
-    setUiState(prev => ({ ...prev, isSearchOpen: !prev.isSearchOpen }));
-  }, []);
-
-  const handleCategorySelect = useCallback((category: typeof searchCategories[0]) => {
-    setSearchState(prev => ({ ...prev, selectedCategory: category }));
-    setUiState(prev => ({ ...prev, showCategories: false }));
-  }, []);
 
   // Optimiser les queries avec les options RTK Query
 
@@ -258,6 +230,9 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleSearchToggle = useCallback(() => {
+    setUiState(prev => ({ ...prev, isSearchOpen: !prev.isSearchOpen }));
+  }, []);
   const totalQuantity = useSelector((state: RootState) => state.cart.totalQuantity)
 
   // Memoize les composants qui peuvent être réutilisés
@@ -362,10 +337,10 @@ const Header = () => {
               `}>
                 <div className="relative w-full">
                   <button
-                    onClick={() => setUiState(prev => ({ ...prev, showCategories: !prev.showCategories }))}
+                    
                     className="absolute left-0 top-0 h-full px-2 flex items-center gap-1 text-gray-500 hover:text-gray-700 border-r"
                   >
-                    {searchState.selectedCategory.label}
+                    
                     <ChevronDown className="w-3 h-3" />
                   </button>
                   <input
@@ -379,20 +354,7 @@ const Header = () => {
                   </button>
                 </div>
 
-                {/* Categories Dropdown */}
-                {uiState.showCategories && (
-                  <div className="absolute top-full z-[999999] left-0 w-48 mt-1 bg-white rounded-lg shadow-lg border">
-                    {searchCategories.map((category) => (
-                      <button
-                        key={category.id}
-                        onClick={() => handleCategorySelect(category)}
-                        className="w-full px-4 py-2 text-left hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
-                      >
-                        {category.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
+            
               </div>
 
               {/* Navigation par genre */}
@@ -469,82 +431,7 @@ const Header = () => {
       {/* Search Overlay */}
       <AnimatePresence>
         {uiState.isSearchOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed inset-0 bg-white z-50"
-          >
-            <div className="container mx-auto px-4">
-              {/* Search Header */}
-              <div className="flex items-center gap-4 py-4 border-b">
-                <button onClick={() => setUiState(prev => ({ ...prev, isSearchOpen: false }))}>
-                  <X className="w-6 h-6" />
-                </button>
-
-                <div className="flex-1 relative">
-                  <input
-                    type="text"
-                    value={searchState.query}
-                    onChange={(e) => setSearchState(prev => ({ ...prev, query: e.target.value }))}
-                    placeholder="Rechercher un produit..."
-                    className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ed7e0f]"
-                    autoFocus
-                  />
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                </div>
-              </div>
-
-              {/* Search Content */}
-              <div className="py-6">
-                {searchState.query ? (
-                  <div>
-                    {/* Résultats de recherche en direct ici */}
-                  </div>
-                ) : (
-                  <div className="space-y-8">
-                    {/* Historique de recherche */}
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-4 flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        Recherches récentes
-                      </h3>
-                      <div className="space-y-2">
-                        {searchHistory.map((search, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setSearchState(prev => ({ ...prev, query: search }))}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
-                          >
-                            {search}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Tendances */}
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-4 flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4" />
-                        Tendances
-                      </h3>
-                      <div className="space-y-2">
-                        {trendingSearches.map((search, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setSearchState(prev => ({ ...prev, query: search }))}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
-                          >
-                            {search}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
+          <SearchResource open={handleSearchToggle} />
         )}
       </AnimatePresence>
     </>
