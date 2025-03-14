@@ -196,15 +196,10 @@ const Header = () => {
   // Optimiser les queries avec les options RTK Query
 
 
-  const { data: userData, isLoading } = useGetUserQuery('Auth', {
-    refetchOnFocus: false,
-    refetchOnMountOrArgChange: false,
-    refetchOnReconnect: false,
-    pollingInterval: 0,
-  });
+  const { data: userData, isLoading } = useGetUserQuery('Auth');
 
-
-
+console.log('us')
+console.log(userData)
 
 
   // Optimiser les effets
@@ -245,7 +240,7 @@ const Header = () => {
         <Search className="w-6 h-6" />
       </button>
       <DropdownAccount currentUser={userData}>
-        {!userData && !isLoading && (
+        {!userData && (
           <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
             <User className="h-6 w-6" />
           </div>
@@ -272,7 +267,7 @@ const Header = () => {
       {/* Sticky Header */}
       <header
         ref={headerRef}
-        className="w-full max-sm:hidden bg-white border-b z-50 fixed top-0 left-0 transition-all duration-300 -translate-y-full"
+        className="w-full max-sm:hidden bg-white border-b z-50  fixed top-0 left-0 transition-all duration-300 -translate-y-full"
       >
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
@@ -294,7 +289,7 @@ const Header = () => {
       </header>
 
       {/* Main Header */}
-      <header className="w-full z-50 bg-white border-b max-sm:sticky top-0">
+      <header className="w-full  z-50 bg-white border-b max-sm:sticky top-0">
         <div className="container hidden max-sm:block mx-16 py-3 max-sm:mx-auto px-4">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Menu Burger (Mobile) */}

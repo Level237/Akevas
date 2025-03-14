@@ -116,14 +116,11 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
-      <section className='overflow-hidden'>
+      <section className=''>
         <TopBar />
 
-        <React.Profiler id="Header" onRender={(id, phase, actualDuration) => {
-          console.log("Header rendered", id, phase, actualDuration)
-        }}>
           <Header />
-        </React.Profiler>
+    
         <GenderNavigationMobile />
         <StoreHero />
 
