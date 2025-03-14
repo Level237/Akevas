@@ -37,7 +37,7 @@ const ListFeedback=({feedbacks,isLoading}:{feedbacks:any,isLoading:boolean})=>{
                         </Avatar> {feedback.user.firstName}</TableCell>
                         <TableCell>{feedback.user.phone_number}</TableCell>
                         <TableCell>{feedback.message}</TableCell>
-                        <TableCell>{feedback.status ? <div className="bg-green-500 text-white p-1 text-xs rounded">traité</div> : <div className="bg-red-500 text-white p-1 text-xs rounded">non traité</div>}</TableCell>
+                        <TableCell>{feedback.status===1 ? <div className="bg-green-500 text-white p-1 text-xs rounded">traité</div> : <div className="bg-red-500 text-white p-1 text-xs rounded">non traité</div>}</TableCell>
                         <TableCell>{formatDate(feedback.created_at)}</TableCell>
                         <TableCell className="text-right flex items-center">
                         
