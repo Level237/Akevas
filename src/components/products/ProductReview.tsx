@@ -1,19 +1,12 @@
 import { useCheckAuthQuery, useMakeReviewMutation } from "@/services/auth";
-import { Loader, Loader2, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+
 import { Button } from "../ui/button";
 import { redirectToLogin } from "@/lib/redirectToLogin";
 import { useGetListReviewsQuery } from "@/services/auth";
 
-// Type pour un commentaire
-interface Review {
-    id: number;
-    author: string;
-    rating: number;
-    comment: string;
-    date: string;
-}
+
 
 export function ProductReview(reviews: any) {
     const [rating, setRating] = useState<number>(0);
@@ -32,7 +25,7 @@ export function ProductReview(reviews: any) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Logique pour soumettre l'avis
+     
        
         if(comment===""){
             return;
@@ -51,7 +44,7 @@ export function ProductReview(reviews: any) {
     };
 
     return (
-        <div className="space-y-8 mx-auto max-w-4xl px-4 max-sm:px-0 max-sm:mb-12">
+        <div className="space-y-8 mx-auto max-sm:max-w-full max-w-4xl px-4 max-sm:px-0 max-sm:mb-12">
             {/* Résumé des avis */}
 
             {reviews?.reviews?.length > 0 && (
