@@ -65,17 +65,20 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
               <LogOut className="w-5 h-5" />
               <span className="hidden sm:block">Déconnexion</span>
             </button>
-            <div className="flex items-center space-x-3 pl-4 border-l">
+            <div className="flex items-center space-x-3 pl-3 border-l">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-gray-900">{sellerData?.shop.shop_name}</p>
                 <CheckStateSeller state={sellerData?.shop.state || null} />
 
               </div>
-              <div className="h-8 w-8  rounded-full flex items-center justify-center">
-                <Avatar>
-                  <AvatarImage src={sellerData?.shop.shop_profile || ""} />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
+              <div className="h-8 w-8 object-cover   rounded-full flex items-center justify-center">
+              <Avatar className=''>
+                     
+                      <AvatarFallback>
+                        {sellerData?.firstName.charAt(0)}
+                      </AvatarFallback>
+                      <AvatarImage className='object-cover z-[100] ' src={sellerData?.shop.shop_profile || ""} />
+                    </Avatar>
               </div>
             </div>
           </div>

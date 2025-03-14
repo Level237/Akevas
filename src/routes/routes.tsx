@@ -87,7 +87,7 @@ export const routes = createBrowserRouter([
         element: <StoreBoostPage />
       },
       {
-        path:'/seller/update-shop',
+        path:'/seller/update-docs',
         element:<UpdateShopPage/>
       },
       {

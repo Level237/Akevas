@@ -23,10 +23,10 @@ const FeedbackRejected = ({feedbacks,isLoading}:{feedbacks:any,isLoading:boolean
         </div>
           <div className="flex justify-end">
           <Link
-          to={`/seller/update-shop`}
+          to={`/seller/update-docs`}
          className="  bg-rose-600 p-2 rounded-lg hover:bg-rose-700 text-white"
        >
-         Mettre à jour votre boutique
+         Mettre à jour vos documents
        </Link>
           </div>
        

@@ -27,12 +27,20 @@ export const sellerService=createApi({
         getProducts:builder.query({
                 query:()=>'/api/v1/seller/products',
                 providesTags:['seller']
-        })
+        }),
+        updateDocs:builder.mutation({
+                query:(formData)=>({
+                    url:"/api/v1/update/docs",
+                    method:'PATCH',
+                    body:formData
+                })
+            })
         
 })
 })
 export const {
 useCurrentSellerQuery,
 useAddProductMutation,
-useGetProductsQuery
+useGetProductsQuery,
+useUpdateDocsMutation
 }=sellerService

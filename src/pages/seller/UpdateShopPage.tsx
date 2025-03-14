@@ -1,24 +1,18 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Upload, Store, UserSquare2, ImageIcon } from "lucide-react";
+import { Upload, UserSquare2, ImageIcon, X, PenSquare } from "lucide-react";
 import { motion } from "framer-motion";
+import { useCurrentSellerQuery, useUpdateDocsMutation } from "@/services/sellerService";
+import { SellerResponse } from "@/types/seller";
+import IsLoadingComponents from "@/components/ui/isLoadingComponents";
+
 
 const UpdateShopPage = () => {
+  const {data: { data: sellerData } = {},isLoading} = useCurrentSellerQuery<SellerResponse>('seller');
+  const [updateDocs]=useUpdateDocsMutation()
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
-    shop_name: "",
-    shop_description: "",
-    shop_gender: "",
     shop_logo: null,
     identity_card_in_front: null,
     identity_card_in_back: null,
@@ -34,12 +28,32 @@ const UpdateShopPage = () => {
     }
   };
 
+  const handleRemoveFile = (field: string) => {
+    setFormData({
+      ...formData,
+      [field]: null,
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
-    // Implement your update logic here
+    const formDataObjet = new FormData();
+    
+    // Only append if the file exists
+    if (formData.shop_logo) formDataObjet.append("shop_profile", formData.shop_logo);
+    if (formData.identity_card_in_front) formDataObjet.append("identity_card_in_front", formData.identity_card_in_front);
+    if (formData.identity_card_in_back) formDataObjet.append("identity_card_in_back", formData.identity_card_in_back);
+    if (formData.identity_card_with_the_person) formDataObjet.append("identity_card_with_the_person", formData.identity_card_with_the_person);
+    
+    await updateDocs(formData)
     setTimeout(() => setUploading(false), 2000);
+    window.location.href="/seller/dashboard"
   };
+
+  if (isLoading) {
+    return <IsLoadingComponents isLoading={isLoading} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -50,9 +64,9 @@ const UpdateShopPage = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Mise à jour de votre boutique</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Mise à jour de vos documents</h1>
             <p className="mt-2 text-gray-600">
-              Complétez les informations ci-dessous pour mettre à jour votre boutique
+              Mettez à jour vos documents pour validation
             </p>
           </div>
 
@@ -68,7 +82,7 @@ const UpdateShopPage = () => {
                 <div className="flex justify-center">
                   <div className="relative w-40 h-40">
                     <div
-                      className="w-full h-full border-2 border-dashed rounded-xl p-4 hover:border-gray-400 transition-colors flex flex-col items-center justify-center cursor-pointer"
+                      className="w-full h-full border-2 border-dashed rounded-xl p-4 hover:border-gray-400 transition-colors flex flex-col items-center justify-center cursor-pointer relative"
                     >
                       <input
                         type="file"
@@ -77,12 +91,33 @@ const UpdateShopPage = () => {
                         accept="image/*"
                       />
                       {formData.shop_logo ? (
-                        <div className="text-center">
+                        <div className="text-center relative w-full h-full">
                           <img
                             src={URL.createObjectURL(formData.shop_logo)}
                             alt="Logo preview"
                             className="w-full h-full object-cover rounded-lg"
                           />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveFile('shop_logo')}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : sellerData?.shop.shop_profile ? (
+                        <div className="text-center relative w-full h-full">
+                          <img
+                            src={sellerData.shop.shop_profile}
+                            alt="Logo actuel"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                          <label
+                            htmlFor="shop_logo_input"
+                            className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white rounded-full p-1 hover:bg-[#ed7e0f]/90 transition-colors cursor-pointer"
+                          >
+                            <PenSquare className="w-4 h-4" />
+                          </label>
                         </div>
                       ) : (
                         <div className="text-center">
@@ -92,57 +127,13 @@ const UpdateShopPage = () => {
                         </div>
                       )}
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Informations de base */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-                  <Store className="w-5 h-5" />
-                  <h2>Informations de la boutique</h2>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nom de la boutique
-                    </label>
-                    <Input
-                      placeholder="Nom de votre boutique"
-                      value={formData.shop_name}
-                      onChange={(e) => setFormData({ ...formData, shop_name: e.target.value })}
+                    <input
+                      id="shop_logo_input"
+                      type="file"
+                      className="hidden"
+                      onChange={handleFileUpload('shop_logo')}
+                      accept="image/*"
                     />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Description
-                    </label>
-                    <Textarea
-                      placeholder="Décrivez votre boutique..."
-                      value={formData.shop_description}
-                      onChange={(e) => setFormData({ ...formData, shop_description: e.target.value })}
-                      className="h-32"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Genre principal
-                    </label>
-                    <Select
-                      onValueChange={(value) => setFormData({ ...formData, shop_gender: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez le genre" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="homme">Homme</SelectItem>
-                        <SelectItem value="femme">Femme</SelectItem>
-                        <SelectItem value="mixte">Mixte</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
                 </div>
               </div>
@@ -158,15 +149,18 @@ const UpdateShopPage = () => {
                   {[
                     {
                       label: "Carte d'identité (Recto)",
-                      field: "identity_card_in_front" as const,
+                      field: "identity_card_in_front",
+                      currentImage: sellerData?.identity_card_in_front,
                     },
                     {
                       label: "Carte d'identité (Verso)",
-                      field: "identity_card_in_back" as const,
+                      field: "identity_card_in_back",
+                      currentImage: sellerData?.identity_card_in_back,
                     },
                     {
                       label: "Photo avec la carte",
-                      field: "identity_card_with_the_person" as const,
+                      field: "identity_card_with_the_person",
+                      currentImage: sellerData?.identity_card_with_the_person,
                     },
                   ].map((item) => (
                     <div
@@ -174,18 +168,47 @@ const UpdateShopPage = () => {
                       className="relative border-2 border-dashed rounded-lg p-4 hover:border-gray-400 transition-colors"
                     >
                       <input
+                        id={`${item.field}_input`}
                         type="file"
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        className="hidden"
                         onChange={handleFileUpload(item.field)}
                         accept="image/*"
                       />
-                      <div className="text-center">
-                        <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                        <div className="mt-2">
-                          <p className="text-sm text-gray-500">{item.label}</p>
-                        </div>
-                        {formData[item.field] && (
-                          <p className="text-xs text-green-600 mt-2">Fichier sélectionné</p>
+                      <div className="text-center min-h-[120px] flex flex-col items-center justify-center">
+                        {formData[item.field] ? (
+                          <div className="relative w-full">
+                            <img
+                              src={URL.createObjectURL(formData[item.field])}
+                              alt={item.label}
+                              className="w-full h-[120px] object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFile(item.field)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : item.currentImage ? (
+                          <div className="relative w-full">
+                            <img
+                              src={item.currentImage}
+                              alt={item.label}
+                              className="w-full h-[120px] object-cover rounded-lg"
+                            />
+                            <label
+                              htmlFor={`${item.field}_input`}
+                              className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white rounded-full p-1 hover:bg-[#ed7e0f]/90 transition-colors cursor-pointer"
+                            >
+                              <PenSquare className="w-4 h-4" />
+                            </label>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="h-8 w-8 text-gray-400" />
+                            <p className="text-sm text-gray-500 mt-2">{item.label}</p>
+                          </>
                         )}
                       </div>
                     </div>
@@ -199,7 +222,7 @@ const UpdateShopPage = () => {
                   className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white"
                   disabled={uploading}
                 >
-                  {uploading ? "Mise à jour en cours..." : "Mettre à jour la boutique"}
+                  {uploading ? "Mise à jour en cours..." : "Mettre à jour les documents"}
                 </Button>
               </div>
             </Card>
