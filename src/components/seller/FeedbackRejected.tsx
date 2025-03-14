@@ -1,11 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
-interface FeedbackRejectedProps {
-  feedbacks: any[];
-  onUpdate: () => void;
-}
 
 const FeedbackRejected = ({feedbacks,isLoading}:{feedbacks:any,isLoading:boolean}) => {
   return (
@@ -25,12 +22,12 @@ const FeedbackRejected = ({feedbacks,isLoading}:{feedbacks:any,isLoading:boolean
           ))}
         </div>
           <div className="flex justify-end">
-          <Button 
-         
-         className="  bg-rose-600 hover:bg-rose-700 text-white"
+          <Link
+          to={`/seller/update-shop`}
+         className="  bg-rose-600 p-2 rounded-lg hover:bg-rose-700 text-white"
        >
          Mettre à jour votre boutique
-       </Button>
+       </Link>
           </div>
        
       </div>
