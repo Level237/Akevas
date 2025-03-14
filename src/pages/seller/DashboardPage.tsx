@@ -18,13 +18,14 @@ import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 import VisibilityShop from '@/components/seller/level/Two/VisibilityShop';
 import TitleOverview from '../../components/seller/level/Two/TitleOverview';
 import StatisticsOverview from '@/components/seller/level/Two/StatisticsOverview';
+import FeedbackRejected from '@/components/seller/FeedbackRejected';
 
 const DashboardPage = () => {
 
   const {data: { data: sellerData } = {},isLoading}=useCurrentSellerQuery<SellerResponse>('seller')
-  
+  console.log(sellerData)
   const storeStatus = sellerData?.shop.state;
-
+  
   const getStatusContent = () => {
     switch (storeStatus) {
       case "0":
@@ -115,7 +116,7 @@ const DashboardPage = () => {
               </div>
             </Card>
             }
-          
+            {sellerData?.shop.state==="2" && <FeedbackRejected feedbacks={sellerData.feedbacks} isLoading={isLoading}/>}
           </motion.div>
           {sellerData?.shop.level === "2" && (
             <TitleOverview 

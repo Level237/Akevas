@@ -14,6 +14,7 @@ export interface Seller {
   identity_card_with_the_person: string | null,
   email: string
   avatar: string,
+  feedbacks:any[] | null,
   shop: {
     shop_id: string | null,
     shop_name: string | null,
