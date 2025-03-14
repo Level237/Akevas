@@ -1,5 +1,5 @@
 import { useCheckAuthQuery, useMakeReviewMutation } from "@/services/auth";
-import { Loader, Loader2, Star } from "lucide-react";
+import { Loader, Loader2, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
@@ -23,7 +23,12 @@ export function ProductReview(reviews: any) {
     const {data:reviewsData,isLoading:isLoadingReviews}=useGetListReviewsQuery(reviews.productId)
     const url=window.location.pathname
     const [loading,setLoading]=useState(false)
-    console.log(reviewsData)
+    const [showAllReviews, setShowAllReviews] = useState(false);
+    const REVIEWS_TO_SHOW = 5;
+
+    const visibleReviews = showAllReviews 
+        ? reviewsData 
+        : reviewsData?.slice(0, REVIEWS_TO_SHOW);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,7 +51,7 @@ export function ProductReview(reviews: any) {
     };
 
     return (
-        <div className="space-y-8 mx-auto max-w-4xl px-4">
+        <div className="space-y-8 mx-auto max-w-4xl px-4 max-sm:px-0 max-sm:mb-12">
             {/* Résumé des avis */}
 
             {reviews?.reviews?.length > 0 && (
@@ -92,7 +97,7 @@ export function ProductReview(reviews: any) {
                         <p className="text-gray-400 text-sm mt-1">Soyez le premier à donner votre avis !</p>
                     </div>
                         }   
-                    {!isLoadingReviews && reviewsData.map((review: any) => (
+                    {!isLoadingReviews && visibleReviews?.map((review: any) => (
                         <div key={review.id} className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow">
                             <div className="flex items-start gap-4 mb-4">
                                 <div className="flex-shrink-0">
@@ -125,6 +130,23 @@ export function ProductReview(reviews: any) {
                         </div>
                     ))
                     }
+
+                {/* Bouton Voir plus/moins */}
+                {!isLoadingReviews && reviewsData?.length > REVIEWS_TO_SHOW && (
+                    <button
+                        onClick={() => setShowAllReviews(!showAllReviews)}
+                        className="w-full group flex items-center justify-center gap-2 py-4 px-6 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-300 text-gray-600 hover:text-gray-900"
+                    >
+                        <span className="font-medium">
+                            {showAllReviews ? 'Voir moins' : `Voir tous les avis (${reviewsData.length})`}
+                        </span>
+                        {showAllReviews ? (
+                            <ChevronUp className="w-5 h-5 transition-transform group-hover:-translate-y-0.5" />
+                        ) : (
+                            <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-0.5" />
+                        )}
+                    </button>
+                )}
             </div>
 
             {/* Formulaire d'avis */}
