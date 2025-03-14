@@ -111,6 +111,13 @@ export const authService = createApi({
                 body: formData
             }),
             invalidatesTags: ['Auth']
+        }),
+        getListReviews:builder.query({
+            query:(productId)=>({
+                url:`/api/list/reviews/${productId}`,
+                method:'GET'
+            }),
+            providesTags: ['Auth'],
         })
     })
 })
@@ -127,5 +134,6 @@ export const {
     useGetRecentOrdersQuery,
     useGetOrderDetailQuery,
     useGetOrdersQuery,
-    useMakeReviewMutation
+    useMakeReviewMutation,
+    useGetListReviewsQuery
 } = authService

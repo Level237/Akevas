@@ -156,7 +156,8 @@ export const guardService = createApi({
                 url: `/api/category/by-url/${url}`,
                 method: 'GET'
             })
-        })
+        }),
+        
     }),
 })
 export const {
@@ -179,5 +180,5 @@ export const {
     useGetAttributeValuesQuery,
     useGetSimilarProductsQuery,
     useGetCategoryProductsByUrlQuery,
-    useGetCategoryByUrlQuery
+    useGetCategoryByUrlQuery,
 } = guardService

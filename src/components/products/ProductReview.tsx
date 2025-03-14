@@ -1,9 +1,10 @@
 import { useCheckAuthQuery, useMakeReviewMutation } from "@/services/auth";
-import { Star } from "lucide-react";
+import { Loader, Loader2, Star } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { redirectToLogin } from "@/lib/redirectToLogin";
+import { useGetListReviewsQuery } from "@/services/auth";
 
 // Type pour un commentaire
 interface Review {
@@ -19,16 +20,24 @@ export function ProductReview(reviews: any) {
     const [comment, setComment] = useState<string>("");
     const [makeReview] = useMakeReviewMutation()
     const { data, isLoading } = useCheckAuthQuery()
+    const {data:reviewsData,isLoading:isLoadingReviews}=useGetListReviewsQuery(reviews.productId)
     const url=window.location.pathname
-        
+    const [loading,setLoading]=useState(false)
+    console.log(reviewsData)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // Logique pour soumettre l'avis
-        
-        const res = await makeReview({ formData: { rating, comment }, productId: reviews.productId })
+       
+        if(comment===""){
+            return;
+        }
+        setLoading(true)
+        await new Promise(resolve=>setTimeout(resolve,2000))
+        await makeReview({ formData: { rating, comment }, productId: reviews.productId })
         setRating(0)
         setComment("")
+        setLoading(false)
     };
 
     // Fonction pour générer l'avatar avec les initiales
@@ -72,7 +81,7 @@ export function ProductReview(reviews: any) {
 
             {/* Liste des avis */}
             <div className="space-y-6">
-                {reviews?.reviews?.length === 0 ? (
+                {!isLoadingReviews && reviewsData?.length === 0 && 
                     <div className="text-center py-12 bg-gray-50 rounded-xl">
                         <div className="text-gray-400 mb-2">
                             <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -82,8 +91,8 @@ export function ProductReview(reviews: any) {
                         <p className="text-gray-600 font-medium">Aucun commentaire disponible</p>
                         <p className="text-gray-400 text-sm mt-1">Soyez le premier à donner votre avis !</p>
                     </div>
-                ) : (
-                    reviews.reviews.map((review: any) => (
+                        }   
+                    {!isLoadingReviews && reviewsData.map((review: any) => (
                         <div key={review.id} className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow">
                             <div className="flex items-start gap-4 mb-4">
                                 <div className="flex-shrink-0">
@@ -115,7 +124,7 @@ export function ProductReview(reviews: any) {
                             </div>
                         </div>
                     ))
-                )}
+                    }
             </div>
 
             {/* Formulaire d'avis */}
@@ -154,7 +163,7 @@ export function ProductReview(reviews: any) {
                         type="submit"
                         className="w-full bg-[#ed7e0f] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
                     >
-                        Publier mon avis
+                        {loading ? <div className="flex items-center justify-center gap-2"> <h2>En Cours  </h2> <Loader2 className='w-4 h-4 animate-spin' /></div> : <span>Publier mon avis</span>}
                     </button>
                 </form>
             </div>
