@@ -2,10 +2,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
-import { Check, Edit, Trash2, Users, X } from "lucide-react";
+import { Check, Edit, Eye, Trash2, Users, X } from "lucide-react";
 
 import { formatDate } from "@/lib/formatDate";
 import { useAdminListReviewsQuery } from "@/services/adminService";
+import { Link } from "react-router-dom";
 
 
 const ListReviews=({reviews,isLoading}:{reviews:any,isLoading:boolean})=>{
@@ -40,13 +41,13 @@ const ListReviews=({reviews,isLoading}:{reviews:any,isLoading:boolean})=>{
                         <TableCell>{review.is_approved ? <div className="bg-green-500 p-2 text-sm">En ligne</div> : <div className="bg-red-500 p-2">non approuvé</div>}</TableCell>
                         <TableCell>{review.product.product_name}</TableCell>
                         <TableCell>{formatDate(review.created_at)}</TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right flex items-center">
                             <Button variant="ghost" size="icon" className="mr-2">
-                                {review.is_approved ? <Check className="h-4 w-4"/>:<X className="h-4 w-4" />}
+                                {review.is_approved ? <X className="h-4 text-red-500 w-4"/>:<Check className="h-4 text-green-500 w-4" />}
                             </Button>
-                            <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600">
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <Link to={`/produit/${review.product.product_url}`} className="text-red-500 hover:text-red-600">
+                                <Eye className="h-4 w-4" />
+                            </Link>
                         </TableCell>
                     </TableRow>
                 ))}

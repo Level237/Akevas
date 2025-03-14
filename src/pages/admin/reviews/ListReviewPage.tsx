@@ -12,7 +12,7 @@ export default function ListReviewPage(){
         <>
                 <main className="p-4 md:p-6 mt-16">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Products</h1>
+                <h1 className="text-2xl font-bold">Commentaires</h1>
                
             </div>
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
