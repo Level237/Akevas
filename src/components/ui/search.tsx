@@ -1,7 +1,108 @@
 import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
 import { Clock, Search, TrendingUp, X } from "lucide-react"
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+
+// Composant pour les résultats de recherche
+const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) => {
+  if (isLoading) {
+    return <SearchSkeleton />;
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Boutiques */}
+      {data?.shops && data.shops.length > 0 && (
+        <div>
+          <h3 className="text-sm font-medium text-gray-500 mb-4">Boutiques</h3>
+          <div className="space-y-4">
+            {data.shops.map((shop: any) => (
+              <div key={shop.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                <img
+                  src={`${shop.shop_profile}`}
+                  alt={shop.shop_name}
+                  className="w-16 h-16 object-cover rounded-lg"
+                />
+                <div>
+                  <h4 className="font-medium">{shop.shop_name}</h4>
+                  <p className="text-sm text-gray-500">{shop.shop_description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Produits */}
+      {data?.products && data.products.length > 0 && (
+        <div>
+          <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {data.products.map((product: any) => (
+              <div key={product.id} className="bg-gray-50 rounded-lg overflow-hidden">
+                <img
+                  src={`${product.product_profile}`}
+                  alt={product.product_name}
+                  className="w-full h-32 object-cover"
+                />
+                <div className="p-4">
+                  <h4 className="font-medium">{product.product_name}</h4>
+                  <p className="text-sm text-gray-500">
+                    {new Intl.NumberFormat('fr-FR', {
+                      style: 'currency',
+                      currency: 'XAF'
+                    }).format(parseInt(product.product_price))}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(!data?.shops?.length && !data?.products?.length) && !isLoading && (
+        <div className="text-center text-gray-500 py-8">
+          Aucun résultat trouvé
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Composant pour le skeleton
+const SearchSkeleton = () => (
+  <div className="space-y-8">
+    <div>
+      <h3 className="text-sm font-medium text-gray-500 mb-4">Boutiques</h3>
+      <div className="space-y-4">
+        {[1, 2].map((i) => (
+          <div key={i} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg animate-pulse">
+            <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+            <div className="space-y-2 flex-1">
+              <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
+      <div className="grid grid-cols-2 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="p-4 bg-gray-50 rounded-lg animate-pulse">
+            <div className="w-full h-32 bg-gray-200 rounded-lg mb-2"></div>
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 export default function SearchResource({open}:{open:()=>void}){
   
@@ -10,7 +111,25 @@ export default function SearchResource({open}:{open:()=>void}){
         query: '',
       });
 
-      const {data,isLoading,error}=useSearchByQueryQuery({query:searchState.query,userId:0})
+      // État séparé pour la requête debounced
+      const [debouncedQuery, setDebouncedQuery] = useState(searchState.query);
+
+      // Effet pour gérer le debounce
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          setDebouncedQuery(searchState.query);
+        }, 400); // Attendre 400ms après la dernière frappe
+
+        return () => {
+          clearTimeout(timer);
+        };
+      }, [searchState.query]);
+
+      // Utiliser debouncedQuery au lieu de searchState.query
+      const {data, isLoading, error} = useSearchByQueryQuery(
+        {query: debouncedQuery, userId: 0},
+        { skip: debouncedQuery === '' } // Skip la requête si la recherche est vide
+      );
       console.log(data)
       const searchHistory = [
         'Robe d\'été fleurie',
@@ -34,7 +153,7 @@ export default function SearchResource({open}:{open:()=>void}){
             exit={{ opacity: 0, y: -50 }}
             className="fixed inset-0 bg-white z-50"
           >
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 h-full flex flex-col">
               {/* Search Header */}
               <div className="flex items-center gap-4 py-4 border-b">
                 <button onClick={open}>
@@ -54,102 +173,12 @@ export default function SearchResource({open}:{open:()=>void}){
                 </div>
               </div>
 
-              {/* Search Content */}
-              <div className="py-6">
+              {/* Search Content avec défilement */}
+              <div className="flex-1 overflow-y-auto py-6">
                 {searchState.query ? (
-                  <div className="space-y-8">
-                    {isLoading ? (
-                      <div className="space-y-8">
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500 mb-4">Boutiques</h3>
-                          <div className="space-y-4">
-                            {[1, 2].map((i) => (
-                              <div key={i} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg animate-pulse">
-                                <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-                                <div className="space-y-2 flex-1">
-                                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
-                          <div className="grid grid-cols-2 gap-4">
-                            {[1, 2, 3, 4].map((i) => (
-                              <div key={i} className="p-4 bg-gray-50 rounded-lg animate-pulse">
-                                <div className="w-full h-32 bg-gray-200 rounded-lg mb-2"></div>
-                                <div className="space-y-2">
-                                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                                  <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-8">
-                        {/* Boutiques */}
-                        {data?.shops && data.shops.length > 0 && (
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500 mb-4">Boutiques</h3>
-                            <div className="space-y-4">
-                              {data.shops.map((shop:any) => (
-                                <div key={shop.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                                  <img
-                                    src={`${shop.shop_profile}`}
-                                    alt={shop.shop_name}
-                                    className="w-16 h-16 object-cover rounded-lg"
-                                  />
-                                  <div>
-                                    <h4 className="font-medium">{shop.shop_name}</h4>
-                                    <p className="text-sm text-gray-500">{shop.shop_description}</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Produits */}
-                        {data?.products && data.products.length > 0 && (
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                              {data.products.map((product:any) => (
-                                <div key={product.id} className="bg-gray-50 rounded-lg overflow-hidden">
-                                  <img
-                                    src={`${product.product_profile}`}
-                                    alt={product.product_name}
-                                    className="w-full h-32 object-cover"
-                                  />
-                                  <div className="p-4">
-                                    <h4 className="font-medium">{product.product_name}</h4>
-                                    <p className="text-sm text-gray-500">
-                                      {new Intl.NumberFormat('fr-FR', {
-                                        style: 'currency',
-                                        currency: 'XAF'
-                                      }).format(parseInt(product.product_price))}
-                                    </p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Message si aucun résultat */}
-                        {(!data?.shops?.length && !data?.products?.length) && !isLoading && (
-                          <div className="text-center text-gray-500 py-8">
-                            Aucun résultat trouvé pour "{searchState.query}"
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <Suspense fallback={<SearchSkeleton />}>
+                    <SearchResults data={data} isLoading={isLoading} />
+                  </Suspense>
                 ) : (
                   <div className="space-y-8">
                     {/* Historique de recherche */}
