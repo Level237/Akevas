@@ -2,7 +2,9 @@ import { useConfirmOrNotShopMutation, useGetSellerQuery } from '@/services/admin
 import { Seller } from '@/types/seller';
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { useState } from 'react'
 import { Check, X, MapPin, Phone, Mail, Globe} from "lucide-react"
 import { useNavigate, useParams } from 'react-router-dom';
 import { CheckStateSeller } from './list-sellers';
@@ -17,9 +19,11 @@ interface DetailSellerProps{
 
 export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
   const [confirmOrNotShop, {isLoading:isConfirm}] = useConfirmOrNotShopMutation();
-  //const [stateSeller,setSeller]=useState(null)
+  const [openRejectDialog, setOpenRejectDialog] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  
   const navigate=useNavigate()
-  const confirm = async (state: string) => {
+  const confirm = async (state: string, reason?: string) => {
     if (state === "1") {
       const data = {
         state: state,
@@ -35,20 +39,29 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
       
           navigate("/admin/shops")
       
-    }else{
-       const data = {
-        state: state,
+    
+    }
+  }
+
+  const decline=async()=>{
+    if (rejectReason.trim()) {
+
+      const data = {
+        state: "2",
         isPublished: false,
         isSeller:false,
-        shop_level:"1"
+        shop_level:"1",
+        user_id:shop.id,
+        message: rejectReason
       };
-     await confirmOrNotShop({
+      const res=await confirmOrNotShop({
         shop_id: shop.shop.shop_id,
         formData: data
       });
+      console.log(res)
+      setOpenRejectDialog(false);
+      navigate("/admin/shops")
       
-      
-          navigate("/admin/shops")
     }
   }
   return (
@@ -66,7 +79,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
           <div><div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold">Détails de la boutique</h1>
       <div className="space-x-2 max-sm:flex max-sm:flex-col max-sm:gap-4">
-        {shop.shop.state!=="2"  && shop.shop.state!=="1" && <Button disabled={isConfirm}  onClick={()=>confirm("2")}  variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
+        {shop.shop.state!=="2"  && shop.shop.state!=="1" && <Button disabled={isConfirm}  onClick={()=>setOpenRejectDialog(true)} variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
           <X className="mr-2 h-4 w-4" /> Rejeter
         </Button>}
         
@@ -76,7 +89,39 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
                 </div>: <><Check className="mr-2 h-4 w-4" /> Approuver</>}
           
         </Button>}
-        
+        <Dialog open={openRejectDialog} onOpenChange={setOpenRejectDialog}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Rejeter la boutique</DialogTitle>
+                <DialogDescription>
+                  Veuillez expliquer le motif du rejet de cette boutique. Cette information sera envoyée au vendeur.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Textarea
+                  placeholder="Saisissez le motif du rejet..."
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setOpenRejectDialog(false)}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => decline()}
+                  disabled={!rejectReason.trim()}
+                >
+                  Confirmer le rejet
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
       </div>
     </div>
      <div className="grid gap-6 md:grid-cols-3">
