@@ -14,8 +14,7 @@ const ListReviews=({reviews,isLoading}:{reviews:any,isLoading:boolean})=>{
 
     const handleDeclineOrAccept=async(reviewId:number,status:number)=>{
 
-        const res=await declineOrValidate({reviewId:reviewId,status:status})
-        console.log(res)
+        await declineOrValidate({reviewId:reviewId,status:status})
     }
     return (
         <div>
