@@ -18,6 +18,7 @@ import {
   LogOut,
   Star,
   Stars,
+  MessageCircle,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
@@ -30,7 +31,7 @@ const navItems = [
   { icon: Users, label: "Clients", href: "/admin/customers" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { icon: Star, label: "Commentaires", href: "/admin/reviews" },
-  { icon: Settings, label: "Settings", href: "#" },
+  { icon: MessageCircle, label: "Feedbacks", href: "/admin/feedbacks" },
   { icon: HelpCircle, label: "Help", href: "#" },
 ]
 
