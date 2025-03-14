@@ -5,12 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Check, Edit, Eye, Trash2, Users, X } from "lucide-react";
 
 import { formatDate } from "@/lib/formatDate";
-import { useAdminListReviewsQuery } from "@/services/adminService";
+import { useAdminListReviewsQuery, useDeclineOrValidateMutation } from "@/services/adminService";
 import { Link } from "react-router-dom";
 
 
 const ListReviews=({reviews,isLoading}:{reviews:any,isLoading:boolean})=>{
+    const [declineOrValidate]=useDeclineOrValidateMutation()
 
+    const handleDeclineOrAccept=async(reviewId:number,status:number)=>{
+
+        const res=await declineOrValidate({reviewId:reviewId,status:status})
+        console.log(res)
+    }
     return (
         <div>
         <Table>
@@ -42,9 +48,11 @@ const ListReviews=({reviews,isLoading}:{reviews:any,isLoading:boolean})=>{
                         <TableCell>{review.product.product_name}</TableCell>
                         <TableCell>{formatDate(review.created_at)}</TableCell>
                         <TableCell className="text-right flex items-center">
-                            <Button variant="ghost" size="icon" className="mr-2">
-                                {review.is_approved ? <X className="h-4 text-red-500 w-4"/>:<Check className="h-4 text-green-500 w-4" />}
-                            </Button>
+                        {review.is_approved ? <Button onClick={()=>handleDeclineOrAccept(review.id,0)} variant="ghost" size="icon" className="mr-2">
+                                <X  className="h-4 text-red-500 w-4"/>
+                            </Button> : <Button onClick={()=>handleDeclineOrAccept(review.id,1)} variant="ghost" size="icon" className="mr-2">
+                                <Check  className="h-4 text-green-500 w-4" />
+                            </Button>}
                             <Link to={`/produit/${review.product.product_url}`} className="text-red-500 hover:text-red-600">
                                 <Eye className="h-4 w-4" />
                             </Link>
