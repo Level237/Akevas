@@ -2,19 +2,15 @@ import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
 import { Clock, Search, TrendingUp, X } from "lucide-react"
 import { useState, useEffect, Suspense } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 
 // Composant pour les résultats de recherche
 const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) => {
-  const navigate=useNavigate()
   if (isLoading) {
     return <SearchSkeleton />;
   }
 
-  const goToShopId=(id:string)=>{
-
-    navigate(`/shop/${id}`)
-  }
+  
   return (
     <div className="space-y-8">
       {/* Boutiques */}
