@@ -31,7 +31,7 @@ export const sellerService=createApi({
         updateDocs:builder.mutation({
                 query:(formData)=>({
                     url:"/api/v1/update/docs",
-                    method:'PATCH',
+                    method:'POST',
                     body:formData
                 })
             })

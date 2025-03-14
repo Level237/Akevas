@@ -1,5 +1,5 @@
 
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Clock,
   AlertCircle,
@@ -19,11 +19,12 @@ import VisibilityShop from '@/components/seller/level/Two/VisibilityShop';
 import TitleOverview from '../../components/seller/level/Two/TitleOverview';
 import StatisticsOverview from '@/components/seller/level/Two/StatisticsOverview';
 import FeedbackRejected from '@/components/seller/FeedbackRejected';
+import { useState } from 'react';
 
 const DashboardPage = () => {
 
   const {data: { data: sellerData } = {},isLoading}=useCurrentSellerQuery<SellerResponse>('seller')
-  console.log(sellerData)
+  const [message, setMessage] = useState(sessionStorage.getItem('message') || '');
   const storeStatus = sellerData?.shop.state;
   
   const getStatusContent = () => {
@@ -62,12 +63,40 @@ const DashboardPage = () => {
   };
 
   const status = getStatusContent();
-
+  const handleCloseMessage = () => {
+    sessionStorage.removeItem('message');
+    setMessage('');
+  };
   return (
     
       <div className=" transition-all duration-300">
         <main className="max-w-7xl mx-auto px-4 py-8">
           {/* Carte de statut */}
+          <AnimatePresence>
+          {message && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="mb-6"
+            >
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span className="text-sm font-medium">{message}</span>
+                  </div>
+                  <button
+                    onClick={handleCloseMessage}
+                    className="text-green-600 hover:text-green-800 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -116,6 +145,7 @@ const DashboardPage = () => {
               </div>
             </Card>
             }
+
             {sellerData?.shop.state==="2" && <FeedbackRejected feedbacks={sellerData.feedbacks} isLoading={isLoading}/>}
           </motion.div>
           {sellerData?.shop.level === "2" && (

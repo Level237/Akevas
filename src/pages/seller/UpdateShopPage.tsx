@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, UserSquare2, ImageIcon, X, PenSquare } from "lucide-react";
+import { Upload, UserSquare2, ImageIcon, X, PenSquare} from "lucide-react";
 import { motion } from "framer-motion";
 import { useCurrentSellerQuery, useUpdateDocsMutation } from "@/services/sellerService";
 import { SellerResponse } from "@/types/seller";
@@ -18,6 +18,7 @@ const UpdateShopPage = () => {
     identity_card_in_back: null,
     identity_card_with_the_person: null,
   });
+  
 
   const handleFileUpload = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -39,17 +40,21 @@ const UpdateShopPage = () => {
     e.preventDefault();
     setUploading(true);
     const formDataObjet = new FormData();
-    
+    console.log(formData)
     // Only append if the file exists
     if (formData.shop_logo) formDataObjet.append("shop_profile", formData.shop_logo);
     if (formData.identity_card_in_front) formDataObjet.append("identity_card_in_front", formData.identity_card_in_front);
     if (formData.identity_card_in_back) formDataObjet.append("identity_card_in_back", formData.identity_card_in_back);
     if (formData.identity_card_with_the_person) formDataObjet.append("identity_card_with_the_person", formData.identity_card_with_the_person);
-    
-    await updateDocs(formData)
+    console.log(formDataObjet.get('shop_profile'))
+    const res=await updateDocs(formDataObjet)
+    console.log(res)
     setTimeout(() => setUploading(false), 2000);
+    sessionStorage.setItem("message","Vous aviez modifié vos documents avec success patientez nous traitons vos données pour confirmer votre boutique")
     window.location.href="/seller/dashboard"
   };
+
+
 
   if (isLoading) {
     return <IsLoadingComponents isLoading={isLoading} />;
@@ -58,6 +63,8 @@ const UpdateShopPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
+
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
