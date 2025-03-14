@@ -131,6 +131,20 @@ const ProductDetailPage: React.FC = () => {
       <Header />
 
       <main className="">
+        {/* Cas où le produit n'est pas trouvé */}
+        {!isLoading && !product && (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Produit non trouvé</h2>
+            <p className="text-gray-600 mb-8">Le produit que vous recherchez n'existe pas ou a été supprimé.</p>
+            <AsyncLink
+              to="/shops"
+              className="bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors"
+            >
+              Découvrir nos boutiques
+            </AsyncLink>
+          </div>
+        )}
+
         {/* Fil d'Ariane */}
         <nav className="flex max-sm:mx-9 items-center text-sm text-gray-500 mb-8">
           <a href="/" className="hover:text-gray-900">Accueil</a>
