@@ -117,14 +117,14 @@ export default function ProductListOverview({ products, isLoading }: { products:
                 </td>
                 <td className="px-4 py-4">
                   <div className="flex items-center gap-2">
-                    <AsyncLink to={`/produit/${product.product_url}`}>
+                    <a target='blank' href={`https://dev.akevas.com/produit/${product.product_url}`}>
                       <button
                         className="p-2 hover:bg-gray-100 rounded-lg"
                         title="Voir"
                       >
                         <Eye className="w-5 h-5 text-gray-600" />
                       </button>
-                    </AsyncLink>
+                    </a>
                     <button
                       className="p-2 hover:bg-gray-100 rounded-lg"
                       title="Modifier"
