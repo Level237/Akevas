@@ -160,7 +160,7 @@ const ShopsPage = () => {
                   </div>
                   <div className="flex items-center gap-1 text-yellow-400">
                     <Star className="w-5 h-5 fill-current" />
-                    <span className="font-semibold text-gray-900">12</span>
+                    <span className="font-semibold text-gray-900">{shop.review_average}</span>
                   </div>
                 </div>
 
