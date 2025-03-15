@@ -22,6 +22,8 @@ export interface Seller {
     categories:Category[] | null,
     shop_profile:string | null,
     products_count:number | null,
+    review_average:number | null,
+    reviewCount:number | null,
     products:Product[] | null,
     isPublished:boolean | null,
     images:Image[] | null,

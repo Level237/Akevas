@@ -8,6 +8,8 @@ export interface Shop {
     shop_description: string;
     shop_profile: string;
     shop_key: string;
+    review_average:number | null,
+    reviewCount:number | null,
     products_count: number;
     products: Product[];
     town: string;

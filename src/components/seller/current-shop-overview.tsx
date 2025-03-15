@@ -43,7 +43,7 @@ interface StoreCategory {
 }
 export default function CurrentShopOverView({shop}:{shop:Seller}) {
   
-
+  console.log(shop)
   const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews' | 'categories'>('products');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -137,8 +137,8 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
               <div className="flex items-center gap-6 text-gray-200">
                 <div className="flex items-center">
                   <Star className="w-5 h-5 text-yellow-400 mr-1" />
-                  <span className="font-medium">{store.rating}</span>
-                  <span className="ml-1">({store.reviewCount} avis)</span>
+                  <span className="font-medium">{shop.shop.review_average}</span>
+                  <span className="ml-1">({shop.shop.reviewCount} avis)</span>
                 </div>
                 <div className="flex items-center">
                   <Package className="w-5 h-5 mr-1" />

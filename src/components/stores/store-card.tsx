@@ -63,7 +63,7 @@ const StoreCard = ({
           <div className="bg-white/10 backdrop-blur-md rounded-lg p-3">
             <div className="flex items-center gap-2">
               <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-              <span className="text-white font-medium">{12}</span>
+              <span className="text-white font-medium">{shop.review_average}</span>
             </div>
             <p className="text-xs text-gray-300 mt-1">Note moyenne</p>
           </div>
