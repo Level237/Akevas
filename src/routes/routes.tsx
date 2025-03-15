@@ -116,7 +116,7 @@ export const routes = createBrowserRouter([
         element: <ListOrdersPage />
       },
       {
-        path:"admin/reviews",
+        path:"admin/reviews/products",
         element:<ListReviewPage/>
       },
       {

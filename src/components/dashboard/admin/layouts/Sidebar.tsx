@@ -1,5 +1,3 @@
-
-
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -19,10 +17,13 @@ import {
   Star,
   Stars,
   MessageCircle,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
 import { logoutUser } from "@/lib/logout"
+
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
@@ -30,16 +31,33 @@ const navItems = [
   { icon: Store, label: "Boutiques", href: "/admin/shops" },
   { icon: Users, label: "Clients", href: "/admin/customers" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
-  { icon: Star, label: "Commentaires", href: "/admin/reviews" },
+  { 
+    icon: Star, 
+    label: "Commentaires", 
+    href: "#",
+    subItems: [
+      { label: "Produits", href: "/admin/reviews/products" },
+      { label: "Boutiques", href: "/admin/reviews/shops" },
+    ]
+  },
   { icon: MessageCircle, label: "Feedbacks", href: "/admin/feedbacks" },
   { icon: HelpCircle, label: "Help", href: "#" },
 ]
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [expandedItems, setExpandedItems] = useState<string[]>([])
   const [logout] = useLogoutMutation()
 
   const { pathname } = useLocation()
+
+  const toggleSubmenu = (href: string) => {
+    setExpandedItems(prev => 
+      prev.includes(href) 
+        ? prev.filter(item => item !== href)
+        : [...prev, href]
+    )
+  }
 
   const handleLogout = async () => {
     await logout('Auth');
@@ -75,19 +93,57 @@ export function Sidebar() {
 
           <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn(
-                  "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                  pathname === item.href
-                    ? "bg-[#ed7e0f]/10 text-[#ed7e0f]"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+              <div key={item.href}>
+                <div
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer",
+                    pathname === item.href
+                      ? "bg-[#ed7e0f]/10 text-[#ed7e0f]"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                  )}
+                  onClick={() => {
+                    if (item.subItems) {
+                      toggleSubmenu(item.href)
+                    }
+                  }}
+                >
+                  <Link
+                    to={item.href}
+                    className="flex items-center space-x-3 flex-1"
+                    onClick={(e) => {
+                      if (item.subItems) {
+                        e.preventDefault()
+                      }
+                    }}
+                  >
+                    <item.icon className={cn("h-5 w-5", pathname === item.href ? "text-[#ed7e0f]" : "text-gray-400")} />
+                    <span>{item.label}</span>
+                  </Link>
+                  {item.subItems && (
+                    expandedItems.includes(item.href) 
+                      ? <ChevronUp className="h-4 w-4 text-gray-500" />
+                      : <ChevronDown className="h-4 w-4 text-gray-500" />
+                  )}
+                </div>
+                {item.subItems && expandedItems.includes(item.href) && (
+                  <div className="ml-8 mt-1 space-y-1">
+                    {item.subItems.map((subItem) => (
+                      <Link
+                        key={subItem.href}
+                        to={subItem.href}
+                        className={cn(
+                          "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors",
+                          pathname === subItem.href
+                            ? "bg-[#ed7e0f]/10 text-[#ed7e0f]"
+                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+                        )}
+                      >
+                        <span>{subItem.label}</span>
+                      </Link>
+                    ))}
+                  </div>
                 )}
-              >
-                <item.icon className={cn("h-5 w-5", pathname === item.href ? "text-[#ed7e0f]" : "text-gray-400")} />
-                <span>{item.label}</span>
-              </Link>
+              </div>
             ))}
           </nav>
 
