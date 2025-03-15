@@ -118,7 +118,15 @@ export const authService = createApi({
                 method:'GET'
             }),
             providesTags: ['Auth'],
-        })
+        }),
+        makeReviewShop:builder.mutation({
+            query: ({ formData, shopId }) => ({
+                url: `/api/v1/make/comment/shop/${shopId}`,
+                method: "POST",
+                body: formData
+            }),
+            invalidatesTags: ['Auth']
+        }),
     })
 })
 
@@ -135,5 +143,6 @@ export const {
     useGetOrderDetailQuery,
     useGetOrdersQuery,
     useMakeReviewMutation,
-    useGetListReviewsQuery
+    useGetListReviewsQuery,
+    useMakeReviewShopMutation
 } = authService

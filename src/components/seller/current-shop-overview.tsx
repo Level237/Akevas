@@ -308,7 +308,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
         )}
 
         {activeTab === 'reviews' && (
-            <ShopReviews/>
+            <ShopReviews shopId={shop?.shop?.shop_id}/>
         )}
       </div>
          <main className="max-w-7xl  max-sm:hidden mx-auto px-4 py-8">
@@ -591,7 +591,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
               ))}
             </div>}
             {activeTab === 'reviews' && (
-              <ShopReviews/>
+             <ShopReviews shopId={shop?.shop?.shop_id}/>
         )}
           </div>
         </div>
