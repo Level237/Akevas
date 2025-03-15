@@ -119,6 +119,13 @@ export const authService = createApi({
             }),
             providesTags: ['Auth'],
         }),
+        getListShopReviews:builder.query({
+            query:(shopId)=>({
+                url:`/api/list/reviews/shop/${shopId}`,
+                method:'GET'
+            }),
+            providesTags: ['Auth'],
+        }),
         makeReviewShop:builder.mutation({
             query: ({ formData, shopId }) => ({
                 url: `/api/v1/make/comment/shop/${shopId}`,
@@ -144,5 +151,6 @@ export const {
     useGetOrdersQuery,
     useMakeReviewMutation,
     useGetListReviewsQuery,
-    useMakeReviewShopMutation
+    useMakeReviewShopMutation,
+    useGetListShopReviewsQuery
 } = authService
