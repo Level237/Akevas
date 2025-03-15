@@ -1,6 +1,6 @@
 import { redirectToLogin } from "@/lib/redirectToLogin";
-import { useCheckAuthQuery, useMakeReviewShopMutation } from "@/services/auth";
-import { Star } from "lucide-react";
+import { useCheckAuthQuery, useGetListShopReviewsQuery, useMakeReviewShopMutation } from "@/services/auth";
+import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 
@@ -42,6 +42,16 @@ const ShopReviews=({shopId}:{shopId:string | null})=>{
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data, isLoading } = useCheckAuthQuery()
     const [makeReviewShop]=useMakeReviewShopMutation()
+    const [showAllReviews, setShowAllReviews] = useState(false);
+    const REVIEWS_TO_SHOW = 5;
+    const {data:reviewsData,isLoading:isLoadingReviews}=useGetListShopReviewsQuery(shopId)
+    console.log(reviewsData)
+    const getInitials = (name: string) => {
+        return name.split(' ')[0][0].toUpperCase();
+    };
+    const visibleReviews = showAllReviews 
+        ? reviewsData 
+        : reviewsData?.slice(0, REVIEWS_TO_SHOW);
     const url=window.location.pathname
   const handleSubmitRating = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,33 +81,67 @@ const ShopReviews=({shopId}:{shopId:string | null})=>{
             <div className="text-sm text-gray-600">Recommandent</div>
           </div>
         </div>
+        {!isLoadingReviews && reviewsData?.length === 0 && 
+                    <div className="text-center py-12 bg-gray-50 rounded-xl">
+                        <div className="text-gray-400 mb-2">
+                            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                        </div>
+                        <p className="text-gray-600 font-medium">Aucun commentaire disponible</p>
+                        <p className="text-gray-400 text-sm mt-1">Soyez le premier à donner votre avis !</p>
+                    </div>
+                        }
+                           {!isLoadingReviews && visibleReviews?.map((review: any) => (
+                        <div key={review.id} className="bg-white p-6 mb-4 rounded-xl shadow-sm border hover:shadow-md transition-shadow">
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className="flex-shrink-0">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#ed7e0f] to-[#f4a340] flex items-center justify-center text-white font-medium">
+                                        {getInitials(review.userName)}
+                                    </div>
+                                </div>
+                                <div className="flex-1">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="font-medium text-gray-900">{review.userName}</h4>
+                                        <span className="text-sm text-gray-500">
+                                            {new Date(review.created_at).toLocaleDateString('fr-FR', {
+                                                day: 'numeric',
+                                                month: 'long',
+                                                year: 'numeric'
+                                            })}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center text-yellow-400 mt-1">
+                                        {Array.from({ length: 5 }).map((_, i) => (
+                                            <Star 
+                                                key={i} 
+                                                className={`w-4 h-4 ${i < review.rating ? 'fill-current' : 'stroke-current fill-none'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                    <p className="text-gray-600 mt-3">{review.comment}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                    }
+                      {/* Bouton Voir plus/moins */}
+                {!isLoadingReviews && reviewsData?.length > REVIEWS_TO_SHOW && (
+                    <button
+                        onClick={() => setShowAllReviews(!showAllReviews)}
+                        className="w-full group flex items-center justify-center gap-2 py-4 px-6 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-300 text-gray-600 hover:text-gray-900"
+                    >
+                        <span className="font-medium">
+                            {showAllReviews ? 'Voir moins' : `Voir tous les avis (${reviewsData.length})`}
+                        </span>
+                        {showAllReviews ? (
+                            <ChevronUp className="w-5 h-5 transition-transform group-hover:-translate-y-0.5" />
+                        ) : (
+                            <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-0.5" />
+                        )}
+                    </button>
+                )}
 
-        {/* Liste des avis */}
-        <div className="space-y-6 mb-8">
-          {/* Exemple d'avis */}
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gray-200"></div>
-              <div>
-                <h3 className="font-medium">John Doe</h3>
-                <div className="flex items-center gap-2">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`w-4 h-4 ${
-                          star <= 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-500">il y a 2 jours</span>
-                </div>
-              </div>
-            </div>
-            <p className="text-gray-600">Excellent service, je recommande vivement !</p>
-          </div>
-        </div>
 
         {/* Formulaire d'avis */}
         {!isLoading && data?.isAuthenticated === true ? (
