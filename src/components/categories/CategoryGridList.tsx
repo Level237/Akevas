@@ -19,19 +19,17 @@ const CategoryItem = React.memo(({ category }: { category: Category }) => (
       <img
         src={category.category_profile}
         alt={category.category_name}
-        className="w-full h-full object-cover transition-transform group-hover:scale-105 opacity-0"
-        loading="lazy"
-        decoding="async"
-        fetchPriority="low"
-        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
-        onLoad={(e) => {
-          const img = e.target as HTMLImageElement;
-          img.classList.remove('opacity-0');
-          img.classList.add('opacity-100');
-        }}
-        style={{ transition: 'opacity 0.3s ease-in-out' }}
+        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+     
+        width={400}
+        height={400}
+        sizes="(max-width: 768px) 50vw, 25vw"
+        
       />
-      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
+      <div 
+        className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"
+        style={{ willChange: 'background-color' }} 
+      />
       <div className="absolute bottom-4 left-4 text-white">
         <h3 className="text-xl font-semibold">{category.category_name}</h3>
       </div>
