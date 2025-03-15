@@ -101,7 +101,15 @@ export const adminService = createApi({
         adminListShopReviews:builder.query({
             query:()=>'/api/v1/admin/list/shop/reviews',
             providesTags:['admin']
-        })
+        }),
+        declineOrValidateShopReview:builder.mutation({
+            query:({reviewId,status})=>({
+                url:`/api/v1/decline/or/validate/shop/review/${reviewId}/${status}`,
+                method:"POST",
+                
+            }),
+            invalidatesTags:['admin']
+        }),
     })
 })
 
@@ -124,5 +132,6 @@ export const {
     useAdminListReviewsQuery,
     useDeclineOrValidateMutation,
     useAdminListFeedbackQuery,
-    useAdminListShopReviewsQuery
+    useAdminListShopReviewsQuery,
+    useDeclineOrValidateShopReviewMutation
 } = adminService

@@ -5,16 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Check, Edit, Eye, Trash2, Users, X } from "lucide-react";
 
 import { formatDate } from "@/lib/formatDate";
-import { useAdminListReviewsQuery, useAdminListShopReviewsQuery, useDeclineOrValidateMutation } from "@/services/adminService";
+import {  useAdminListShopReviewsQuery, useDeclineOrValidateShopReviewMutation } from "@/services/adminService";
 import { Link } from "react-router-dom";
 
 
 const ListShopReviews=({reviews,isLoading}:{reviews:any,isLoading:boolean})=>{
-    const [declineOrValidate]=useDeclineOrValidateMutation()
+    const [declineOrValidateShopReview]=useDeclineOrValidateShopReviewMutation()
 
     const handleDeclineOrAccept=async(reviewId:number,status:number)=>{
 
-        await declineOrValidate({reviewId:reviewId,status:status})
+        await declineOrValidateShopReview({reviewId:reviewId,status:status})
     }
     return (
         <div>
