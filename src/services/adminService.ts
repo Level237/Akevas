@@ -97,6 +97,10 @@ export const adminService = createApi({
         adminListFeedback:builder.query({
             query:()=>"/api/v1/admin/list/feedbacks",
             providesTags:['admin']
+        }),
+        adminListShopReviews:builder.query({
+            query:()=>'/api/v1/admin/list/shop/reviews',
+            providesTags:['admin']
         })
     })
 })
@@ -119,5 +123,6 @@ export const {
     useAdminDeliveryStatsQuery,
     useAdminListReviewsQuery,
     useDeclineOrValidateMutation,
-    useAdminListFeedbackQuery
+    useAdminListFeedbackQuery,
+    useAdminListShopReviewsQuery
 } = adminService
