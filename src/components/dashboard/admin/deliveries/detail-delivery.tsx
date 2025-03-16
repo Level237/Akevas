@@ -5,7 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Check, X, Phone, Mail, Globe } from "lucide-react"
 import { useNavigate, useParams } from 'react-router-dom';
 import { Quarter, Delivery } from '@/types/delivery';
-
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Textarea } from '@/components/ui/textarea';
 
 
 
@@ -16,11 +18,14 @@ interface DetailDeliveryProps {
 
 export default function DetailDelivery({ delivery, isLoading }: DetailDeliveryProps) {
   const [confirmOrNotDelivery, { isLoading: isConfirm }] = useConfirmOrNotDeliveryMutation();
+  const [openRejectDialog, setOpenRejectDialog] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
   const navigate = useNavigate()
   const confirm = async (state: string) => {
     if (state === "1") {
       const data = {
         isDelivery: 1,
+        message:rejectReason
       };
 
 
@@ -32,17 +37,25 @@ export default function DetailDelivery({ delivery, isLoading }: DetailDeliveryPr
 
       navigate("/admin/delivery")
 
-    } else {
+    }
+  }
+
+
+  const decline=async()=>{
+    if (rejectReason.trim()) {
+
       const data = {
         isDelivery: 0,
+        message:rejectReason
       };
       await confirmOrNotDelivery({
         delivery_id: delivery.id,
         formData: data
       });
-
-
+     
+      setOpenRejectDialog(false);
       navigate("/admin/delivery")
+      
     }
   }
   return (
@@ -60,7 +73,7 @@ export default function DetailDelivery({ delivery, isLoading }: DetailDeliveryPr
         <div><div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Détails de la boutique</h1>
           <div className="space-x-2 max-sm:flex max-sm:flex-col max-sm:gap-4">
-            <Button disabled={isConfirm} onClick={() => confirm("2")} variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
+            <Button disabled={isConfirm}  onClick={()=>setOpenRejectDialog(true)} variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
               <X className="mr-2 h-4 w-4" /> Rejeter
             </Button>
 
@@ -70,7 +83,39 @@ export default function DetailDelivery({ delivery, isLoading }: DetailDeliveryPr
               </div> : <><Check className="mr-2 h-4 w-4" /> Approuver</>}
 
             </Button>
-
+            <Dialog open={openRejectDialog} onOpenChange={setOpenRejectDialog}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Rejeter le livreur</DialogTitle>
+                <DialogDescription>
+                  Veuillez expliquer le motif du rejet de ce livreur. Cette information sera envoyée au livreur.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Textarea
+                  placeholder="Saisissez le motif du rejet..."
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setOpenRejectDialog(false)}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => decline()}
+                  disabled={!rejectReason.trim()}
+                >
+                  Confirmer le rejet
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           </div>
         </div>
           <div className="grid gap-6 md:grid-cols-3">

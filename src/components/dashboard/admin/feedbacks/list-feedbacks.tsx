@@ -22,6 +22,7 @@ const ListFeedback=({feedbacks,isLoading}:{feedbacks:any,isLoading:boolean})=>{
                     <TableHead>Utilisateur</TableHead>
                     <TableHead>Téléphone</TableHead>
                     <TableHead>Message</TableHead>
+                    <TableHead>Type</TableHead>
                     <TableHead>Statut</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -37,15 +38,18 @@ const ListFeedback=({feedbacks,isLoading}:{feedbacks:any,isLoading:boolean})=>{
                         </Avatar> {feedback.user.firstName}</TableCell>
                         <TableCell>{feedback.user.phone_number}</TableCell>
                         <TableCell>{feedback.message}</TableCell>
+                        <TableCell>{feedback.role===2 && <div>Vendeur</div>}{feedback.role===4 && <div>Livreur</div>}</TableCell>
                         <TableCell>{feedback.status===1 ? <div className="bg-green-500 text-white p-1 text-xs rounded">traité</div> : <div className="bg-red-500 text-white p-1 text-xs rounded">non traité</div>}</TableCell>
                         <TableCell>{formatDate(feedback.created_at)}</TableCell>
                         <TableCell className="text-right flex items-center">
-                        
-                            <Link to={`/admin/shops/${feedback.shop.id}`}> <Button variant="ghost" size="sm">
+                        {feedback.role===2 &&  <Link to={`/admin/shops/${feedback.shop.id}`}> <Button variant="ghost" size="sm">
                   <ExternalLink className="mr-2 h-4 w-4" />
-                 
+                        
                   Visualiser
-                </Button></Link>
+                </Button></Link>}
+                {feedback.role===4 &&  <Link to={`/admin/delivery/${feedback.user.id}`}> <Button variant="ghost" size="sm">
+                <ExternalLink className="mr-2 h-4 w-4" />  Visualiser
+                </Button></Link>}
                         </TableCell>
                     </TableRow>
                 ))}
