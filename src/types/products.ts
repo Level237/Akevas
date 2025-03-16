@@ -12,6 +12,8 @@ export interface Product {
     product_url: string,
     shop_created_at: string,
     shop_id: string,
+    review_average:number | null,
+    reviewCount:number | null,
     product_images: Image[],
     product_categories: Category[],
     residence: string,

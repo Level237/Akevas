@@ -217,7 +217,7 @@ export default function ProductModal({ product, isOpen, onClose }: { product: Pr
                     <div className="flex items-center gap-3">
                       <div className="flex items-center bg-gray-50 px-3 py-1 rounded-full">
                         <Star className="w-4 h-4 text-yellow-400" />
-                        <span className="ml-1 font-medium">4.5</span>
+                        <span className="ml-1 font-medium">{product.review_average}</span>
                       </div>
                       <span className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
                         Premium
