@@ -19,6 +19,7 @@ import OrderDetailPage from "@/pages/OrderDetailPage";
 import DeliveryOrders from "@/pages/DeliveryOrders";
 import Account from "@/pages/Account";
 import DeliveryCountDownPage from "@/pages/DeliveryCountDownPage";
+import UpdateDocuments from "@/components/UpdateDocuments";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -85,6 +86,10 @@ export const routes = createBrowserRouter([
       {
         path: '/orders',
         element: <DeliveryOrders />
+      },
+      {
+        path:'/update-docs',
+        element:<UpdateDocuments/>
       }
 
     ]

@@ -1,4 +1,3 @@
-
 import { createApi } from "@reduxjs/toolkit/query/react"
 import { baseQueryWithReauth } from "./baseQueryWithReauth";
 
@@ -145,7 +144,14 @@ export const authService = createApi({
         getStatByDay: builder.query({
             query: () => "/api/v1/delivery/stats/by-day",
             providesTags: ["Auth"]
-        })
+        }),
+        updateDocuments: builder.mutation({
+            query: (formData) => ({
+                url: '/update-documents',
+                method: 'POST',
+                body: formData,
+            }),
+        }),
     })
 })
 
@@ -169,5 +175,6 @@ export const {
     useOrderHistoryQuery,
     useCompleteOrderMutation,
     useGetStatOverwiewQuery,
-    useGetStatByDayQuery
+    useGetStatByDayQuery,
+    useUpdateDocumentsMutation
 } = authService
