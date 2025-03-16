@@ -21,9 +21,7 @@ const CategoryItem = React.memo(({ category }: { category: Category }) => (
         alt={category.category_name}
         className="w-full h-full object-cover transition-transform group-hover:scale-105"
      
-        width={400}
-        height={400}
-        sizes="(max-width: 768px) 50vw, 25vw"
+          
         
       />
       <div 

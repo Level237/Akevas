@@ -129,7 +129,7 @@ const Homepage = () => {
         <React.Profiler id="StoreStories" onRender={(id, phase, actualDuration) => {
           console.log("StoreStories rendered", id, phase, actualDuration)
         }}>
-          <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette qui offrent des produits de qualité et des services exceptionnels." shops={localShops} isLoading={isLoading} />
+          <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={isLoading} />
         </React.Profiler>
 
         <React.Profiler id="PremiumProducts" onRender={(id, phase, actualDuration) => {

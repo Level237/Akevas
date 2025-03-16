@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, MapPin, Package, Clock, Shield, Search,Heart, Users } from 'lucide-react';
 import Header from '@/components/ui/header';
@@ -22,11 +22,20 @@ const ShopsPage = () => {
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'premium'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('rating');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
-  const {data:{data:shops}={},isLoading,isError}=useGetAllShopsQuery('guard')
-
+  //const [currentPage, setCurrentPage] = useState(3);
+  const params = new URLSearchParams(window.location.search);
+  const currentPage=params.get("page")  || "1";
+  const [totalPages, setTotalPages] = useState(0);
+  const {data:{shopList,totalPagesResponse}={},isLoading,isError}=useGetAllShopsQuery(currentPage)
+  
 
   // Filter and sort shops
-  
+  useEffect(() => {
+    if (totalPagesResponse) {
+      console.log(totalPagesResponse)
+      setTotalPages(totalPagesResponse);
+    }
+  }, [totalPagesResponse]);
 
   
 
@@ -105,7 +114,7 @@ const ShopsPage = () => {
 
         {/* Shops Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {!isLoading && !isError && shops.map((shop:Shop) => (
+          {!isLoading && !isError && shopList?.map((shop:Shop) => (
             <motion.div
               key={shop.shop_id}
               initial={{ opacity: 0, y: 20 }}
@@ -212,11 +221,64 @@ const ShopsPage = () => {
                     <Heart className="w-4 h-4" />
                   </Button>
                 </div>
+
               </div>
             </motion.div>
           ))}
+          
         </div>
+        <div className="flex items-center justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
+                    {parseInt(currentPage) > 1 && (
+                        <button 
+                          onClick={() => window.location.href=`/shops?page=${parseInt(currentPage) - 1}`}
+                            className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                        >
+                            Précédent
+                        </button>
+                    )}
+                    
+                    <div className="flex items-center gap-1">
+                        {Array.from({ length: totalPages }, (_, index) => {
+                            const pageNumber = index + 1;
+                            
+                            // Afficher seulement les pages proches de la page courante
+                            if (
+                                pageNumber === 1 ||
+                                pageNumber === totalPages ||
+                                (pageNumber >= parseInt(currentPage) - 2 && pageNumber <= parseInt(currentPage) + 2)
+                            ) {
+                                return (
+                                    <button
+                                        key={pageNumber}
+                                        onClick={() => window.location.href=`/shops?page=${pageNumber}`}
+                                        className={`w-10 h-10 rounded-lg ${
+                                            parseInt(currentPage) === parseInt(pageNumber)
+                                                ? 'bg-[#ed7e0f] text-white'
+                                                : 'bg-white hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        {pageNumber}
+                                    </button>
+                                );
+                            } else if (
+                                pageNumber === parseInt(currentPage) - 3 ||
+                                pageNumber === parseInt(currentPage) + 3
+                            ) {
+                                return <span key={pageNumber}>...</span>;
+                            }
+                            return null;
+                        })}
+                    </div>
 
+                    {parseInt(currentPage) < totalPages && (
+                        <button
+                        onClick={() => window.location.href=`/shops?page=${parseInt(currentPage) + 1}`}
+                            className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                        >
+                            Suivant
+                        </button>
+                    )}
+                </div>
       </main>
     </div>
   );

@@ -2,6 +2,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react"
 import { baseQueryNotAuth } from "./baseQueryNotAuth";
 import { Product } from "@/types/products";
+import { Shop } from "@/types/shop";
 
 
 
@@ -85,9 +86,15 @@ export const guardService = createApi({
             providesTags: ['guard'],
         }),
         getAllShops: builder.query({
-            query: () => ({
-                url: `/api/all/shops`,
+            query: (page) => ({
+                url: `/api/all/shops?page=${page}`,
                 method: "GET",
+            }),
+            transformResponse: (response: { data: Shop[], meta: { last_page: number, current_page: number, total: number } }) => ({
+                shopList: response.data,
+                totalPagesResponse: response.meta.last_page,
+                currentPageResponse: response.meta.current_page,
+                totalShopsResponse: response.meta.total,
             }),
             providesTags: ['guard'],
         }),
