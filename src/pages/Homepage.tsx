@@ -13,6 +13,7 @@ import { useGetCategoriesWithParentIdNullQuery, useGetHomeShopsQuery } from '@/s
 import CategoryGridList from '@/components/categories/CategoryGridList';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 import { Shop } from '@/types/shop';
+import InstallButton from '@/components/InstallButton';
 const Homepage = () => {
   //t [loading, setLoading] = useState(true);
   const [transition, startTransition] = useTransition();
@@ -144,7 +145,7 @@ const Homepage = () => {
         </React.Profiler>
 
       </section>
-
+        <InstallButton/>
       <MobileNav />
       <FeaturedShopModal
         isOpen={showFeaturedShop}

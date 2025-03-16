@@ -2,7 +2,7 @@ import { sentryVitePlugin } from "@sentry/vite-plugin";
 import path from "path"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
-//import { VitePWA } from "vite-plugin-pwa";
+import { VitePWA } from "vite-plugin-pwa";
 
 export const manifestForPlugIn = {
   registerType: 'autoUpdate' as const,
@@ -15,6 +15,8 @@ export const manifestForPlugIn = {
     name: "Akevas",
     short_name: "Akevas",
     description: "Akevas",
+    "start_url": "/index.html",
+    "display": "standalone",
     icons: [{
       src: '/favicon.png',
       sizes: '192x192',
@@ -52,7 +54,7 @@ export default defineConfig({
   plugins: [react(), sentryVitePlugin({
     org: "freelancer-tru",
     project: "javascript-react"
-  })],
+  }),VitePWA(manifestForPlugIn)],
 
   resolve: {
     alias: {

@@ -84,7 +84,7 @@ const InstallButton: React.FC = () => {
     if (isInPwa) return null;
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-[#6e0a13] p-4 flex justify-between items-center z-50">
+        <div className="fixed bottom-0 max-sm:bottom-16 left-0 right-0 bg-[#6e0a13] p-4 flex justify-between items-center z-50">
             <div className="text-white">
                 <p className="font-medium">
                     {isInstalled ? "Accédez à l'application installée" : "Installez notre application"}
