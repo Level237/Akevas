@@ -29,9 +29,8 @@ const UpdateDocuments = () => {
   const [loading, setLoading] = useState(false)
 
   const documentLabels = {
-    identity_card_in_front: "Carte d'identité (Recto)",
-    identity_card_in_back: "Carte d'identité (Verso)",
-    identity_card_with_the_person: "Photo avec la carte d'identité",
+    identity_card_in_front: "Carte d'identité",
+    identity_card_with_the_person: "Photo de vous avec la carte d'identité",
     drivers_license: "Permis de conduire",
     vehicle_image: "Photo du véhicule"
   }
