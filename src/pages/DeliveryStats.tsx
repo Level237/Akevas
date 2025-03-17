@@ -105,7 +105,7 @@ const DeliveryStats = () => {
                                 tickLine={false}
                                 tickMargin={10}
                                 axisLine={false}
-                                tickFormatter={(value) => value.slice(0, 3)}
+                                tickFormatter={(value:any) => value.slice(0, 3)}
                             />
                             <ChartTooltip content={<ChartTooltipContent />} />
                             <Bar dataKey="deliveries" fill="#ed7e0f" radius={4} />
