@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Upload, X, Check } from 'lucide-react'
+import { Upload, X } from 'lucide-react'
 import { useGetUserQuery, useUpdateDocumentsMutation } from '@/services/auth'
 
 type DocumentKeys = 'identity_card_in_front' | 'identity_card_with_the_person' | 'drivers_license' | 'vehicle_image';
