@@ -2,6 +2,15 @@ import { useState } from 'react'
 import { Upload, X, Check } from 'lucide-react'
 import { useGetUserQuery, useUpdateDocumentsMutation } from '@/services/auth'
 
+type DocumentKeys = 'identity_card_in_front' | 'identity_card_with_the_person' | 'drivers_license' | 'vehicle_image';
+
+const documentLabels: Record<DocumentKeys, string> = {
+  identity_card_in_front: "Carte d'identité",
+  identity_card_with_the_person: "Photo de vous avec la carte d'identité",
+  drivers_license: "Permis de conduire",
+  vehicle_image: "Photo du véhicule"
+}
+
 const UpdateDocuments = () => {
   const [updateDocuments] = useUpdateDocumentsMutation()
   const { data: userData } = useGetUserQuery('Auth', {
@@ -28,14 +37,7 @@ const UpdateDocuments = () => {
   })
   const [loading, setLoading] = useState(false)
 
-  const documentLabels = {
-    identity_card_in_front: "Carte d'identité",
-    identity_card_with_the_person: "Photo de vous avec la carte d'identité",
-    drivers_license: "Permis de conduire",
-    vehicle_image: "Photo du véhicule"
-  }
-
-  const handleFileChange = (e, documentType) => {
+  const handleFileChange = (e:any, documentType:any) => {
     const file = e.target.files[0]
     if (file) {
       setDocuments(prev => ({
@@ -52,7 +54,7 @@ const UpdateDocuments = () => {
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault()
     setLoading(true)
 
@@ -73,7 +75,7 @@ const UpdateDocuments = () => {
     }
   }
 
-  const removeFile = (documentType) => {
+  const removeFile = (documentType:any) => {
     setDocuments(prev => ({
       ...prev,
       [documentType]: null
@@ -106,7 +108,7 @@ const UpdateDocuments = () => {
           <div key={key} className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="font-medium mb-4">{label}</h3>
             
-            {!preview[key] ? (
+            {!preview[key as DocumentKeys] ? (
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
                 <label className="flex flex-col items-center cursor-pointer">
                   <Upload className="w-8 h-8 text-gray-400 mb-2" />
@@ -124,7 +126,7 @@ const UpdateDocuments = () => {
             ) : (
               <div className="relative">
                 <img
-                  src={preview[key]}
+                  src={preview[key as DocumentKeys]}
                   alt={label}
                   className="w-full h-48 object-cover rounded-lg"
                 />
