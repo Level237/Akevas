@@ -4,15 +4,7 @@ import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 
-interface StoreReview {
-    id: string;
-    userId: string;
-    userName: string;
-    userImage: string;
-    date: string;
-    rating: number;
-    comment: string;
-  }
+
 
 const ShopReviews=({shopId}:{shopId:string | null})=>{
 
