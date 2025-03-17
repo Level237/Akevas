@@ -147,7 +147,7 @@ export const authService = createApi({
         }),
         updateDocuments: builder.mutation({
             query: (formData) => ({
-                url: '/update-documents',
+                url: '/api/v1/delivery/update/docs',
                 method: 'POST',
                 body: formData,
             }),

@@ -23,14 +23,12 @@ const UpdateDocuments = () => {
   console.log(userData)
   const [documents, setDocuments] = useState({
     identity_card_in_front: null,
-    identity_card_in_back: null,
     identity_card_with_the_person: null,
     drivers_license: null,
     vehicle_image: null
   })
   const [preview, setPreview] = useState({
     identity_card_in_front: userData?.identity_card_in_front || null,
-    identity_card_in_back: userData?.identity_card_in_back || null,
     identity_card_with_the_person: userData?.identity_card_with_the_person || null,
     drivers_license: userData?.drivers_license || null,
     vehicle_image: userData?.vehicle?.vehicle_image || null
@@ -66,8 +64,10 @@ const UpdateDocuments = () => {
         }
       })
 
-      await updateDocuments(formData).unwrap()
-      // Redirection ou message de succès
+      await updateDocuments(formData)
+      setTimeout(() => setLoading(false), 2000);
+    sessionStorage.setItem("message","Vous aviez modifié vos documents avec success patientez nous traitons vos données pour confirmer votre compte")
+    window.location.href="/"
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error)
     } finally {

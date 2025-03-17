@@ -1,9 +1,10 @@
-import { Search, MapPin, Clock, Package, RefreshCw } from 'lucide-react'
+import { Search, MapPin, Clock, Package, RefreshCw, CheckCircle2, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useGetOrderByTownQuery, useGetOrderByPreferencesQuery, useGetUserQuery } from '@/services/auth'
 import { formatDate } from '@/lib/formatDate'
 import IsLoadingComponents from './ui/isLoadingComponents'
+import { motion,AnimatePresence } from 'framer-motion'
 
 
 const HomeAuth = () => {
@@ -14,6 +15,7 @@ const HomeAuth = () => {
   const [activeTab, setActiveTab] = useState('all')
   const { data: ordersCity, isLoading } = useGetOrderByTownQuery('Auth')
   const { data: ordersPreferences, isLoading: isLoadingPreferences } = useGetOrderByPreferencesQuery("Auth")
+  const [message, setMessage] = useState(sessionStorage.getItem('message') || '');
   const { data: userData } = useGetUserQuery('Auth', {
     refetchOnFocus: false,
     refetchOnMountOrArgChange: false,
@@ -21,7 +23,37 @@ const HomeAuth = () => {
     pollingInterval: 0,
   });
 
+  const handleCloseMessage = () => {
+    sessionStorage.removeItem('message');
+    setMessage('');
+  };
   return <div>        <div className="max-w-7xl mx-auto px-4 py-6">
+
+<AnimatePresence>
+          {message && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="mb-6"
+            >
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span className="text-sm font-medium">{message}</span>
+                  </div>
+                  <button
+                    onClick={handleCloseMessage}
+                    className="text-green-600 hover:text-green-800 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
     {userData?.feedbacks && userData?.isDelivery === 0 && (
       <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 rounded-lg p-6 mb-8">
         <div className="flex flex-col items-center text-center space-y-4">
