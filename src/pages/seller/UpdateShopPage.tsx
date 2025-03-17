@@ -7,12 +7,13 @@ import { useCurrentSellerQuery, useUpdateDocsMutation } from "@/services/sellerS
 import { SellerResponse } from "@/types/seller";
 import IsLoadingComponents from "@/components/ui/isLoadingComponents";
 
+type FormDataKeys = 'shop_logo' | 'identity_card_in_front' | 'identity_card_in_back' | 'identity_card_with_the_person';
 
 const UpdateShopPage = () => {
   const {data: { data: sellerData } = {},isLoading} = useCurrentSellerQuery<SellerResponse>('seller');
   const [updateDocs]=useUpdateDocsMutation()
   const [uploading, setUploading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Record<FormDataKeys, File | null>>({
     shop_logo: null,
     identity_card_in_front: null,
     identity_card_in_back: null,
@@ -156,17 +157,17 @@ const UpdateShopPage = () => {
                   {[
                     {
                       label: "Carte d'identité (Recto)",
-                      field: "identity_card_in_front",
+                      field: "identity_card_in_front" as FormDataKeys,
                       currentImage: sellerData?.identity_card_in_front,
                     },
                     {
                       label: "Carte d'identité (Verso)",
-                      field: "identity_card_in_back",
+                      field: "identity_card_in_back" as FormDataKeys,
                       currentImage: sellerData?.identity_card_in_back,
                     },
                     {
                       label: "Photo avec la carte",
-                      field: "identity_card_with_the_person",
+                      field: "identity_card_with_the_person" as FormDataKeys,
                       currentImage: sellerData?.identity_card_with_the_person,
                     },
                   ].map((item) => (
@@ -185,7 +186,7 @@ const UpdateShopPage = () => {
                         {formData[item.field] ? (
                           <div className="relative w-full">
                             <img
-                              src={URL.createObjectURL(formData[item.field])}
+                              src={URL.createObjectURL(formData[item.field] as Blob)}
                               alt={item.label}
                               className="w-full h-[120px] object-cover rounded-lg"
                             />
