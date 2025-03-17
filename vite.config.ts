@@ -1,4 +1,4 @@
-import { sentryVitePlugin } from "@sentry/vite-plugin";
+
 import path from "path"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
@@ -15,8 +15,6 @@ export const manifestForPlugIn = {
     name: "Akevas",
     short_name: "Akevas",
     description: "Akevas",
-    "start_url": "/index.html",
-    "display": "standalone",
     icons: [{
       src: '/favicon.png',
       sizes: '192x192',
@@ -51,10 +49,7 @@ export const manifestForPlugIn = {
   }
 }
 export default defineConfig({
-  plugins: [react(), sentryVitePlugin({
-    org: "freelancer-tru",
-    project: "javascript-react"
-  }),VitePWA(manifestForPlugIn)],
+  plugins: [react(),VitePWA(manifestForPlugIn)],
 
   resolve: {
     alias: {
