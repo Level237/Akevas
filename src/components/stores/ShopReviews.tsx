@@ -14,26 +14,6 @@ interface StoreReview {
     comment: string;
   }
 
-const reviews: StoreReview[] = [
-    {
-      id: 'review-1',
-      userId: 'user-1',
-      userName: 'John Doe',
-      userImage: 'https://picsum.photos/200/300',
-      date: '2024-03-12',
-      rating: 5,
-      comment: 'Très bonne boutique ! Les produits sont de qualité et les prix sont raisonnables.'
-    },
-    {
-      id: 'review-2',
-      userId: 'user-2',
-      userName: 'Jane Doe',
-      userImage: 'https://picsum.photos/200/301',
-      date: '2024-03-15',
-      rating: 4,
-      comment: 'Boutique sympa, mais les délais de livraison sont un peu longs.'
-    }
-  ];
 const ShopReviews=({shopId}:{shopId:string | null})=>{
 
     const [rating, setRating] = useState<number>(0);

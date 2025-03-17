@@ -1,29 +1,20 @@
-import { useState } from 'react';
+
 import Header from '@/components/ui/header';
 import { Link, ScrollRestoration, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileNav from '@/components/ui/mobile-nav';
 import CurrentShopOverView, { CurrentShopOverViewSkeleton } from '@/components/seller/current-shop-overview';
 import { useGetShopQuery } from '@/services/guardService';
-import { Star } from 'lucide-react';
+
 
 const StorePage: React.FC = () => {
   const { id } = useParams();
   const { data: { data: shop } = {}, isLoading } = useGetShopQuery(id);
-  const [rating, setRating] = useState<number>(0);
-  const [hoveredRating, setHoveredRating] = useState<number>(0);
-  const [comment, setComment] = useState<string>('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+ 
+  
 
-  const handleSubmitRating = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    // Ici, ajoutez la logique pour envoyer la note à votre API
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulation d'appel API
-    setIsSubmitting(false);
-    setRating(0);
-    setComment('');
-  };
+
+ 
 
   return (
     <div className="min-h-screen bg-gray-50">

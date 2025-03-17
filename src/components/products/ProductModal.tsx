@@ -2,7 +2,7 @@ import { Product } from "@/types/products";
 import { useState, useCallback, memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { Minus, Plus, ShoppingCart, Star, X, Eye, CreditCard } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Star, X, Eye } from "lucide-react";
 
 import AsyncLink from "../ui/AsyncLink";
 import { useDispatch } from "react-redux";

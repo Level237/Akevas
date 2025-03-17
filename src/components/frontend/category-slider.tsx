@@ -3,7 +3,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { Link } from "react-router-dom"
-import Slider from "react-slick"
 
 interface Category {
   title: string

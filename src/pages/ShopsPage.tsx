@@ -252,7 +252,7 @@ const ShopsPage = () => {
                                         key={pageNumber}
                                         onClick={() => window.location.href=`/shops?page=${pageNumber}`}
                                         className={`w-10 h-10 rounded-lg ${
-                                            parseInt(currentPage) === parseInt(pageNumber)
+                                            parseInt(currentPage) === pageNumber
                                                 ? 'bg-[#ed7e0f] text-white'
                                                 : 'bg-white hover:bg-gray-50'
                                         }`}

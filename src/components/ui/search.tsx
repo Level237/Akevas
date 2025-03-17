@@ -128,11 +128,10 @@ export default function SearchResource({open}:{open:()=>void}){
       }, [searchState.query]);
 
       // Utiliser debouncedQuery au lieu de searchState.query
-      const {data, isLoading, error} = useSearchByQueryQuery(
+      const {data, isLoading} = useSearchByQueryQuery(
         {query: debouncedQuery, userId: 0},
         { skip: debouncedQuery === '' } // Skip la requête si la recherche est vide
       );
-      console.log(data)
       const searchHistory = [
         'Robe d\'été fleurie',
         'Nike Air Max',

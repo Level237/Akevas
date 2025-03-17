@@ -2,10 +2,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
-import { Check, Edit, ExternalLink, Eye, Trash2, Users, X } from "lucide-react";
+import {  ExternalLink,Users } from "lucide-react";
 
 import { formatDate } from "@/lib/formatDate";
-import { useAdminListFeedbackQuery, useAdminListReviewsQuery, useDeclineOrValidateMutation } from "@/services/adminService";
+import { useAdminListFeedbackQuery } from "@/services/adminService";
 import { Link } from "react-router-dom";
 
 
@@ -66,8 +66,8 @@ const ListFeedback=({feedbacks,isLoading}:{feedbacks:any,isLoading:boolean})=>{
 }
 
 const ListFeedbackContainer=()=>{
-    const {data,isLoading,error}=useAdminListFeedbackQuery("admin")
-    console.log(data)
+    const {data,isLoading}=useAdminListFeedbackQuery("admin")
+  
     return <ListFeedback feedbacks={data} isLoading={isLoading} />
 }
 

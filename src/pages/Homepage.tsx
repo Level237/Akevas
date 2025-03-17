@@ -1,7 +1,4 @@
-import React, { useState, useEffect, useTransition } from 'react';
-
-
-
+import { useState, useEffect, useTransition } from 'react';
 import StoreHero from '@/components/frontend/StoreHero'
 import Header from '@/components/ui/header'
 import TopBar from '@/components/ui/topBar'
@@ -127,22 +124,17 @@ const Homepage = () => {
 
 
 
-        <React.Profiler id="StoreStories" onRender={(id, phase, actualDuration) => {
-          console.log("StoreStories rendered", id, phase, actualDuration)
-        }}>
+       
           <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={isLoading} />
-        </React.Profiler>
+        
 
-        <React.Profiler id="PremiumProducts" onRender={(id, phase, actualDuration) => {
-          console.log("PremiumProducts rendered", id, phase, actualDuration)
-        }}>
+        
+        
           <PremiumProducts />
-        </React.Profiler>
-        <React.Profiler id="CategoryGridList" onRender={(id, phase, actualDuration) => {
-          console.log("CategoryGridList rendered", id, phase, actualDuration)
-        }}>
+        
+        
           <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
-        </React.Profiler>
+        
 
       </section>
         <InstallButton/>

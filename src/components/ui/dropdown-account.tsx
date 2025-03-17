@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import React, { useState } from "react"
-import { MessageCircle, Package, Heart, CreditCard, Ticket, ChevronRight, User } from 'lucide-react'
+import { Package, User } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import AsyncLink from "./AsyncLink"

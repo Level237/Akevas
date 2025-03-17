@@ -434,6 +434,6 @@ console.log(userData)
 };
 
 // Optimiser le memo avec une fonction de comparaison
-export default React.memo(Header, (prevProps, nextProps) => {
+export default React.memo(Header, () => {
   return true; // Le Header n'a pas de props qui changent
 });

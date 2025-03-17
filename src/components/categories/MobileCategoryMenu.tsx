@@ -59,7 +59,7 @@ const MobileCategoryMenu = React.memo(() => {
         refetchOnReconnect: false
     });
 
-    const { data: categoriesData, isLoading: categoriesLoading } = useGetCategoriesQuery(undefined, {
+    const {  isLoading: categoriesLoading } = useGetCategoriesQuery(undefined, {
         refetchOnMountOrArgChange: false,
         refetchOnFocus: false,
         refetchOnReconnect: false,

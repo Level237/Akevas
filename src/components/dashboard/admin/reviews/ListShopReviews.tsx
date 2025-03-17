@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
-import { Check, Edit, Eye, Trash2, Users, X } from "lucide-react";
+import { Check,Eye, Users, X } from "lucide-react";
 
 import { formatDate } from "@/lib/formatDate";
 import {  useAdminListShopReviewsQuery, useDeclineOrValidateShopReviewMutation } from "@/services/adminService";

@@ -23,7 +23,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
   const [rejectReason, setRejectReason] = useState('');
   
   const navigate=useNavigate()
-  const confirm = async (state: string, reason?: string) => {
+  const confirm = async (state: string) => {
     if (state === "1") {
       const data = {
         state: state,
