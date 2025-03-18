@@ -54,7 +54,7 @@ const HomeAuth = () => {
             </motion.div>
           )}
         </AnimatePresence>
-    {userData?.feedbacks && userData?.isDelivery === 0 && (
+    {userData?.feedbacks && message && userData?.isDelivery === 0 && (
       <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 rounded-lg p-6 mb-8">
         <div className="flex flex-col items-center text-center space-y-4">
           <h2 className="text-2xl font-bold text-gray-800">Documents à mettre à jour</h2>
@@ -70,7 +70,7 @@ const HomeAuth = () => {
         </div>
       </div>
     )}
-    {!userData?.feedbacks && userData?.isDelivery === 0 && (
+    {userData?.isDelivery === 0 && (
       <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 rounded-lg p-6 mb-8">
         <div className="flex flex-col items-center text-center space-y-4">
           <div className="relative">
