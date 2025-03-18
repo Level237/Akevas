@@ -11,8 +11,8 @@ import MobileNav from '@/components/ui/mobile-nav';
 import { useGetAllShopsQuery } from '@/services/guardService';
 import { Category } from '@/types/products';
 import { Shop } from '@/types/shop';
-
-
+import { FixedSizeGrid } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 type SortOption = 'rating' | 'products' | 'followers' | 'newest';
 type CategoryFilter = 'all' | 'mode' | 'accessoires' | 'beaute';
@@ -389,30 +389,38 @@ const ShopsPage = () => {
     });
   }, [shopList, searchQuery, categoryFilter, selectedFilter, sortBy]);
 
-  // Ajouter la gestion du scroll virtualisé
-  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 12 });
+  // Calculer le nombre de colonnes en fonction de la largeur de l'écran
+  const getColumnCount = (width: number) => {
+    if (width >= 1024) return 3; // lg breakpoint
+    return 1;
+  };
 
-  useEffect(() => {
-    const handleScroll = throttle(() => {
-      const scrollPosition = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      
-      if (scrollPosition + windowHeight > documentHeight - 1000) {
-        setVisibleRange(prev => ({
-          start: prev.start,
-          end: Math.min(prev.end + 6, filteredShops.length)
-        }));
-      }
-    }, 100);
+  // Ajouter des constantes pour les espacements
+  const GRID_GAP = 24; // Espacement entre les éléments en pixels
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [filteredShops.length]);
+  // Composant Cell modifié pour inclure les marges
+  const Cell = ({ columnIndex, rowIndex, style, data }: any) => {
+    const { items, columnCount } = data;
+    const index = rowIndex * columnCount + columnIndex;
+    if (index >= items.length) return null;
 
-  const visibleShops = useMemo(() => {
-    return filteredShops.slice(visibleRange.start, visibleRange.end);
-  }, [filteredShops, visibleRange]);
+    const shop = items[index];
+    
+    // Ajuster le style pour inclure les marges
+    const adjustedStyle = {
+      ...style,
+      left: Number(style.left) + GRID_GAP,
+      top: Number(style.top) + GRID_GAP,
+      width: Number(style.width) - GRID_GAP,
+      height: Number(style.height) - GRID_GAP,
+    };
+
+    return (
+      <div style={adjustedStyle}>
+        <ShopCard shop={shop} />
+      </div>
+    );
+  };
 
   // Memoize pagination handler
   const handlePageChange = useCallback((pageNumber: number) => {
@@ -452,7 +460,7 @@ const ShopsPage = () => {
         />
 
         {/* Shops Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="h-[800px]">
           {isLoading && (
             Array(6).fill(null).map((_, index) => (
               <ShopCardSkeleton key={`skeleton-${index}`} />
@@ -461,14 +469,41 @@ const ShopsPage = () => {
           
           {isError && <ErrorMessage />}
 
-          {!isLoading && !isError && visibleShops.map((shop: Shop) => (
-            <ShopCard key={shop.shop_id} shop={shop} />
-          ))}
+          {!isLoading && !isError && (
+            <AutoSizer>
+              {({ height, width }) => {
+                const columnCount = getColumnCount(width);
+                const rowCount = Math.ceil(filteredShops.length / columnCount);
+                const columnWidth = (width / columnCount);
+                const rowHeight = 500;
+
+                return (
+                  <div style={{ padding: `${GRID_GAP/2}px 0`, width: '100%', height: '100vh'}}>
+                    <FixedSizeGrid
+                      columnCount={columnCount}
+                      columnWidth={columnWidth}
+                      height={1000} // Ajuster la hauteur pour le padding
+                      rowCount={rowCount}
+                      rowHeight={rowHeight}
+                      width={width}
+                      style={{padding: `${GRID_GAP/2}px 0`,overflow: 'hidden'}}
+                      itemData={{
+                        items: filteredShops,
+                        columnCount
+                      }}
+                    >
+                      {Cell}
+                    </FixedSizeGrid>
+                  </div>
+                );
+              }}
+            </AutoSizer>
+          )}
         </div>
 
         {/* Pagination */}
         {!isLoading && !isError && (
-          <div className="flex items-center justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
+          <div className="flex items-center mt-72 justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
             {parseInt(currentPage) > 1 && (
                 <button 
                   onClick={() => handlePageChange(parseInt(currentPage) - 1)}
@@ -525,17 +560,5 @@ const ShopsPage = () => {
     </div>
   );
 };
-
-// Fonction utilitaire pour le throttle
-function throttle(func: Function, limit: number) {
-  let inThrottle: boolean;
-  return function(...args: any[]) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
-    }
-  };
-}
 
 export default memo(ShopsPage);
