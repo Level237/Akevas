@@ -39,7 +39,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                             <TableCell className={`${order.status === "0" ? "text-red-500" : "text-green-500"}`}>
                                 <span className="capitalize font-bold">{order.status === "0" ? "En attente" : "Livré"}</span>
                             </TableCell>
-                            <TableCell>{order.residence}</TableCell>
+                            <TableCell>{order.quarter_delivery}</TableCell>
                             <TableCell className="text-right">
                                 <Button variant="ghost" size="icon" className="mr-2">
                                     <Edit className="h-4 w-4" />
