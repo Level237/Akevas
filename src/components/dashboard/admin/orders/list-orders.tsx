@@ -20,6 +20,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                         <TableHead>Prix total</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Lieu de livraison</TableHead>
+                        <TableHead>Numéro du livreur</TableHead>
                         <TableHead>Actions</TableHead>
                     </TableRow>
                 </TableHeader>
