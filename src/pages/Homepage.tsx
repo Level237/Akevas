@@ -137,7 +137,7 @@ const Homepage = () => {
         
 
       </section>
-        <InstallButton/>
+       
       <MobileNav />
       <FeaturedShopModal
         isOpen={showFeaturedShop}
