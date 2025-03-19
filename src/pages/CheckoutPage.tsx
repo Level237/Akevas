@@ -9,11 +9,12 @@ import { ScrollRestoration } from 'react-router-dom';
 import { getProductIdsFromUrl } from '@/lib/getProductIdFromUrl';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { useGetUserQuery } from '@/services/auth';
+import { useGetUserQuery, useInitProductPaymentMutation } from '@/services/auth';
 import { useNavigate } from 'react-router-dom';
 import { useGetQuartersQuery } from '@/services/guardService';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import notchpay from '@/assets/notchpay.png';
 type PaymentMethod = 'card' | 'orange' | 'momo';
 type DeliveryOption = 'pickup' | 'localDelivery' | 'remotePickup' | 'remoteDelivery';
 
@@ -46,7 +47,7 @@ const CheckoutPage: React.FC = () => {
 
   const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
-
+  const [initPayment] = useInitProductPaymentMutation();
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);
 
   console.log(filteredQuarters)
@@ -86,46 +87,53 @@ const CheckoutPage: React.FC = () => {
     setAddress(prev => ({ ...prev, [name]: value }));
   };
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
   const handlePayment = () => {
-    // Implémenter la logique de paiement ici
-
-    if (address.deliveryOption === 'localDelivery') {
-      if (quarter === '') {
-        alert('Veuillez choisir un quartier de livraison');
-        return;
-      }
+    if (address.deliveryOption === 'localDelivery' && quarter === '') {
+      alert('Veuillez choisir un quartier de livraison');
+      return;
     }
+    setShowConfirmModal(true);
+  };
+
+  const confirmPayment = async() => {
     let productsPayments;
-    if (s === '1') {
-      productsPayments = cartItems.map(item => {
-        return {
-          product_id: item.product.id,
-          quantity: item.quantity,
-          price: item.product.product_price,
-          name: item.product.product_name
-        }
-
-
-      });
+    setIsLoading(true);
+    if (s === '1' && selectedPayment === "card") {
+      productsPayments = cartItems.map(item => ({
+        product_id: item.product.id,
+        quantity: item.quantity,
+        price: item.product.product_price,
+        name: item.product.product_name
+      }));
       sessionStorage.setItem('productsPayments', JSON.stringify(productsPayments));
       sessionStorage.setItem('total', total.toString());
       sessionStorage.setItem('shipping', shipping.toString());
       sessionStorage.setItem('paymentMethod', selectedPayment);
-      setIsLoading(true);
-      setTimeout(() => {
+    }else if (s === '0') {
+      const response = await initPayment("Auth");
+      
+      if(response.data.status === "Accepted"){
+        
+        window.location.href = response.data.authorization_url;
         setIsLoading(false);
-        navigate(`/payment?s=1&method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}&quarter=${quarter}`)
-      }, 1000);
-    } else if (s === "0") {
-      setIsLoading(true);
-      setTimeout(() => {
+      }else{
         setIsLoading(false);
-        navigate(`/payment?s=0&method=${selectedPayment}&total=${total}&shipping=${shipping}&productId=${productId}&quantity=${quantity}&name=${name}&price=${price}&quarter=${quarter}`)
-      }, 1000);
+        alert("Une erreur est survenue lors de l'initialisation du paiement");
+      }
     }
-
-
+    //setIsLoading(true);
+    //setTimeout(() => {
+      //setIsLoading(false);
+      //if (s === '1') {
+        //navigate(`/payment?s=1&method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}&quarter=${quarter}`);
+      //} else {
+        //navigate(`/payment?s=0&method=${selectedPayment}&total=${total}&shipping=${shipping}&productId=${productId}&quantity=${quantity}&name=${name}&price=${price}&quarter=${quarter}`);
+      //}
+    //}, 1000);
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -157,7 +165,7 @@ const CheckoutPage: React.FC = () => {
                     checked={address.deliveryOption === 'pickup'}
                     onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
                     className="mr-2"
-                    disabled={!isLocalOrder}
+                   
                   />
                   <label htmlFor="pickup" className={`${!isLocalOrder ? 'text-gray-400' : ''}`}>
                     Récupérer en magasin (0 XAF)
@@ -173,7 +181,7 @@ const CheckoutPage: React.FC = () => {
                     checked={address.deliveryOption === 'localDelivery'}
                     onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
                     className="mr-2"
-                    disabled={!isLocalOrder}
+                    
                   />
                   <label htmlFor="localDelivery" className={`${!isLocalOrder ? 'text-gray-400' : ''}`}>
                     Livraison en ville (1 500 XAF)
@@ -189,7 +197,7 @@ const CheckoutPage: React.FC = () => {
                     checked={address.deliveryOption === 'remotePickup'}
                     onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
                     className="mr-2"
-                    disabled={isLocalOrder}
+                    
                   />
                   <label htmlFor="remotePickup" className={`${isLocalOrder ? 'text-gray-400' : ''}`}>
                     Expédition au magasin de votre ville (2 500 XAF)
@@ -205,7 +213,7 @@ const CheckoutPage: React.FC = () => {
                     checked={address.deliveryOption === 'remoteDelivery'}
                     onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
                     className="mr-2"
-                    disabled={isLocalOrder}
+                    
                   />
                   <label htmlFor="remoteDelivery" className={`${isLocalOrder ? 'text-gray-400' : ''}`}>
                     Expédition et livraison à domicile (3 500 XAF)
@@ -320,12 +328,12 @@ const CheckoutPage: React.FC = () => {
                     }`}
                 >
                   <img
-                    src="/images/orange-money.png"
+                    src={notchpay}
                     alt="Orange Money"
                     className="h-12 object-contain mb-4"
                   />
-                  <h3 className="font-medium text-center">Orange Money</h3>
-                  <p className="text-sm text-gray-500 text-center">Paiement mobile</p>
+                  <h3 className="font-medium text-center">NotchPay Payment </h3>
+                  <p className="text-sm text-gray-500 text-center">Orange Money/MTN Mobile Money</p>
                   {selectedPayment === 'orange' && (
                     <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
@@ -426,6 +434,60 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <h2 className="text-xl font-semibold mb-4">Résumé de la commande</h2>
+            
+            <div className="space-y-4 mb-6">
+              <div className="border-b pb-2">
+                <p className="font-medium">Informations client</p>
+                <p>Nom: {userDataAuth?.userName || userDataAuth?.firstName}</p>
+                <p>Téléphone: {userDataAuth?.phone_number}</p>
+                <p>Ville: {userDataAuth?.residence}</p>
+              </div>
+
+              <div className="border-b pb-2">
+                <p className="font-medium">Mode de livraison</p>
+                <p>{address.deliveryOption === 'pickup' ? 'Récupération en magasin' :
+                    address.deliveryOption === 'localDelivery' ? `Livraison à ${quarter}` :
+                    address.deliveryOption === 'remotePickup' ? 'Expédition au magasin' :
+                    'Expédition et livraison à domicile'
+                }</p>
+                <p>Frais de livraison: {shipping} FCFA</p>
+              </div>
+
+              <div className="border-b pb-2">
+                <p className="font-medium">Mode de paiement</p>
+                <p>{selectedPayment === 'card' ? 'Carte bancaire' :
+                    selectedPayment === 'orange' ? 'NotchPay Payment' :
+                    'Mobile Money'
+                }</p>
+              </div>
+
+              <div>
+                <p className="font-medium">Montant total: {total} FCFA</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmPayment}
+                className="flex-1 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80"
+              >
+                {isLoading ? 'Traitement...' : 'Confirmer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

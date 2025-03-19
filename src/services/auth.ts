@@ -135,9 +135,10 @@ export const authService = createApi({
             invalidatesTags: ['Auth']
         }),
         initProductPayment:builder.mutation({
-            query:({productId})=>({
+            query:(body)=>({
                 url:`/api/v1/init/payment/buy/product`,
-                method:'POST'
+                method:'POST',
+                body:body
             }),
             invalidatesTags:['Auth']
         })
@@ -159,5 +160,6 @@ export const {
     useMakeReviewMutation,
     useGetListReviewsQuery,
     useMakeReviewShopMutation,
-    useGetListShopReviewsQuery
+    useGetListShopReviewsQuery,
+    useInitProductPaymentMutation
 } = authService
