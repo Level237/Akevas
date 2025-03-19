@@ -99,11 +99,10 @@ export default function SucessPaymentPage(){
   const price = params.get('price');
   const status=params.get('status');
   const shipping = params.get('shipping') || "";
-  const [statePayment, {isLoading, isError, error}] = useStatePaymentMutation();
+  const [statePayment] = useStatePaymentMutation();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
     const [isDownloading, setIsDownloading] = useState(false);
     const { data: user } = useGetUserQuery('Auth');
-    const [isView, setIsView] = useState(false);
     const processed = params.get('processed');
   useEffect(() => {
     const handlePayment = async () => {
