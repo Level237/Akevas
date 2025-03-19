@@ -134,6 +134,13 @@ export const authService = createApi({
             }),
             invalidatesTags: ['Auth']
         }),
+        initProductPayment:builder.mutation({
+            query:({productId})=>({
+                url:`/api/v1/init/payment/buy/product`,
+                method:'POST'
+            }),
+            invalidatesTags:['Auth']
+        })
     })
 })
 
