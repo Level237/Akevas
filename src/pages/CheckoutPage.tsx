@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Truck,
   Shield,
+  Loader2,
 } from 'lucide-react';
 import card from '@/assets/visa.png';
 import Header from '@/components/ui/header';
@@ -503,7 +504,7 @@ const CheckoutPage: React.FC = () => {
                 onClick={confirmPayment}
                 className="flex-1 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80"
               >
-                {isLoading ? 'Traitement...' : 'Confirmer'}
+                {isLoading ? <div className='flex items-center gap-2'><Loader2 className="w-4 h-4 animate-spin" /> Traitement...</div> : 'Confirmer'}
               </button>
             </div>
           </div>

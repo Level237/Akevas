@@ -141,6 +141,13 @@ export const authService = createApi({
                 body:body
             }),
             invalidatesTags:['Auth']
+        }),
+        statePayment:builder.mutation({
+            query:(body)=>({
+                url:`/api/v1/success/payment`,
+                method:'POST',
+                body:body
+            }),
         })
     })
 })
@@ -161,5 +168,6 @@ export const {
     useGetListReviewsQuery,
     useMakeReviewShopMutation,
     useGetListShopReviewsQuery,
-    useInitProductPaymentMutation
+    useInitProductPaymentMutation,
+    useStatePaymentMutation
 } = authService

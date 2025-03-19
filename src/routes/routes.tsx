@@ -37,6 +37,7 @@ import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
 import ListReviewPage from "@/pages/admin/reviews/ListReviewPage";
 import ListFeedbackPage from "@/pages/admin/feedbacks/ListFeedbackPage";
 import ListShopReviewPage from "@/pages/admin/reviews/ListShopReviewPage";
+import SucessPaymentPage from "@/pages/payment/notchpay/SucessPaymentPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -167,6 +168,9 @@ export const routes = createBrowserRouter([
       }, {
         path: 'account',
         element: <AccountPage />
+      },{
+        path:'/checkout/state',
+        element:<SucessPaymentPage/>
       }
     ]
   }
