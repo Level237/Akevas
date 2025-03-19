@@ -134,7 +134,7 @@ const CheckoutPage: React.FC = () => {
         formData.append("shipping",shipping.toString());
         formData.append("paymentMethod",selectedPayment);
       const response = await initPayment(formData);
-      
+      console.log(response)
       if(response.data.status === "Accepted"){
         
         window.location.href = response.data.authorization_url;
