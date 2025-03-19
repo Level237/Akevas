@@ -112,7 +112,28 @@ const CheckoutPage: React.FC = () => {
       sessionStorage.setItem('shipping', shipping.toString());
       sessionStorage.setItem('paymentMethod', selectedPayment);
     }else if (s === '0') {
-      const response = await initPayment("Auth");
+      const formData=new FormData();
+        if(productId){
+          formData.append("productId",productId);
+        }
+        if(quantity){
+          formData.append("quantity",quantity);
+        }
+        if(name){
+          formData.append("name",name);
+        }
+        if(price){
+          formData.append("price",price);
+        }
+        if(total){
+          formData.append("total",total.toString());
+        }
+        if(quarter){
+          formData.append("quarter",quarter);
+        }
+        formData.append("shipping",shipping.toString());
+        formData.append("paymentMethod",selectedPayment);
+      const response = await initPayment(formData);
       
       if(response.data.status === "Accepted"){
         
