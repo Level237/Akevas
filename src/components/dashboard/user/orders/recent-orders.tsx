@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Package } from 'lucide-react';
 import AsyncLink from '@/components/ui/AsyncLink';
 const RecentOrders = () => {
-    const { data, isLoading } = useGetRecentOrdersQuery("Auth");
+    const { data, isLoading,error } = useGetRecentOrdersQuery("Auth");
+    console.log(error)
     return (
         <div>
             <Card className="p-6">
