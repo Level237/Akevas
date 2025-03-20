@@ -40,17 +40,11 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
     ), []);
 
     const renderShops = useMemo(() => {
-        return !isLoading ? shops.map((shop: Shop) => (
-            <SwiperSlide key={shop.shop_id}>
-                <motion.div
-                    className="snap-start"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                >
+        return !isLoading ? shops.map((shop: Shop, index: number) => (
+            <SwiperSlide key={shop.shop_id} virtualIndex={index}>
+               
                     <StoreCard shop={shop} openModal={() => { setIsModalOpen(true); setShopId(shop.shop_id) }} />
-                </motion.div>
+                
             </SwiperSlide>
         )) : renderSkeletons;
     }, [shops, isLoading]);
@@ -61,8 +55,10 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
             <div className="swiper-button-next" style={{ right: '10px' }}><ArrowRight /></div>
             <Swiper
                 modules={[Navigation, Pagination, Autoplay]}
+               
                 spaceBetween={1}
                 slidesPerView={1}
+                effect="slide"
                 navigation={{
                     nextEl: '.swiper-button-next',
                     prevEl: '.swiper-button-prev'
@@ -74,11 +70,11 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
                     1024: { slidesPerView: 4 },
                 }}
                 style={{ width: '100%', height: '450px' }}
-                className="project-slider"
+                
             >
-                <AnimatePresence>
+                
                     {renderShops}
-                </AnimatePresence>
+                
             </Swiper>
             <div className="flex justify-center items-center">
                 <AnimatePresence>
