@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense } from 'react';
 import { useGetCategoriesWithParentIdNullQuery, useGetCategoriesWithParentIdQuery } from '@/services/guardService';
 
 import { ChevronDown, Sparkle } from 'lucide-react';
@@ -40,10 +40,13 @@ const CategoryDropdown = React.memo(({
 
   return (
     <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ 
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1]
+      }}
       className="fixed left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
     >
       <div className="container mx-auto">
@@ -136,8 +139,8 @@ const CategoryDropdown = React.memo(({
 
 CategoryDropdown.displayName = 'CategoryDropdown';
 
-// Composant principal optimisé
-export const CategoryNavigation = () => {
+// Séparation du contenu principal dans un composant distinct
+const CategoryNavigationContent = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(0);
 
   const {
@@ -210,6 +213,15 @@ export const CategoryNavigation = () => {
   );
 };
 
-// Exporter un composant mémoïsé
+// Composant principal avec Suspense
+export const CategoryNavigation = () => {
+  return (
+    <Suspense fallback={<LoadingSkeleton />}>
+      <CategoryNavigationContent />
+    </Suspense>
+  );
+};
+
+// Export du composant mémoïsé
 export default React.memo(CategoryNavigation);
 
