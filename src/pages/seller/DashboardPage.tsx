@@ -26,7 +26,7 @@ const DashboardPage = () => {
   const {data: { data: sellerData } = {},isLoading}=useCurrentSellerQuery<SellerResponse>('seller')
   const [message, setMessage] = useState(sessionStorage.getItem('message') || '');
   const storeStatus = sellerData?.shop.state;
-  
+  console.log(sellerData)
   const getStatusContent = () => {
     switch (storeStatus) {
       case "0":

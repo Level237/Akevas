@@ -29,7 +29,7 @@ interface ProductVariant {
   variant_name: string;
   attribute_value_id: number[];
   price: number;
-  image: File | null;
+  images: File[];
 }
 
 
@@ -168,24 +168,24 @@ const CreateProductPage: React.FC = () => {
       variant_name: combo.name,
       attribute_value_id: combo.ids,
       price: Number(price) || 0,
-      image: null
+      images: []
     }));
 
     setVariants(newVariants);
   };
 
-  const handleVariantImageUpload = (variantId: string, file: File) => {
+  const handleVariantImageUpload = (variantId: string, files: FileList) => {
     setVariants(variants.map(variant =>
       variant.id === variantId
-        ? { ...variant, image: file }
+        ? { ...variant, images: [...variant.images, ...Array.from(files)] }
         : variant
     ));
   };
 
-  const removeVariantImage = (variantId: string) => {
+  const removeVariantImage = (variantId: string, imageIndex: number) => {
     setVariants(variants.map(variant =>
       variant.id === variantId
-        ? { ...variant, image: null }
+        ? { ...variant, images: variant.images.filter((_, idx) => idx !== imageIndex) }
         : variant
     ));
   };
@@ -268,14 +268,13 @@ const CreateProductPage: React.FC = () => {
     // Validation des variants si des attributs sont sélectionnés
     const hasSelectedAttributes = attributes.some(attr => attr.values.length > 0);
     if (hasSelectedAttributes) {
-      // Vérifier que chaque variant a tous les champs requis
       const invalidVariants = variants.some(variant =>
-        !variant.image ||
+        variant.images.length === 0 ||
         !variant.price
       );
 
       if (invalidVariants) {
-        alert("Veuillez remplir tous les champs (image, prix, stock) pour chaque variante");
+        alert("Veuillez remplir tous les champs (images, prix) pour chaque variante");
         return;
       }
     }
@@ -304,16 +303,16 @@ const CreateProductPage: React.FC = () => {
           variant_name: variant.variant_name,
           attribute_value_id: variant.attribute_value_id,
           price: variant.price,
-          image: null
+          images: []
         }));
 
         formData.append('variants', JSON.stringify(variantsData));
 
         // Ajouter les images des variants séparément
-        variants.forEach((variant, index) => {
-          if (variant.image) {
-            formData.append(`variant_images[${index}]`, variant.image);
-          }
+        variants.forEach((variant, variantIndex) => {
+          variant.images.forEach((image, imageIndex) => {
+            formData.append(`variant_images[${variantIndex}][${imageIndex}]`, image);
+          });
         });
         console.log(variantsData)
       }
@@ -841,7 +840,7 @@ const CreateProductPage: React.FC = () => {
                             {variant.variant_name}
                           </span>
                         </div>
-                        <div className="grid grid-cols-2 gap-8">
+                        <div className="space-y-4">
                           <div>
                             <label className="block text-xs text-gray-500 mb-1">Prix unitaire</label>
                             <input
@@ -858,41 +857,38 @@ const CreateProductPage: React.FC = () => {
                             />
                           </div>
 
-                          {/* Section image simplifiée */}
-                          <div className="flex flex-row items-center">
-                            <label className="block text-xs text-gray-500 ">Image de la variante</label>
-                            <div className="flex">
-                              {variant.image ? (
-                                <div className="relative group w-16 h-16">
+                          <div className="flex flex-col">
+                            <label className="block text-xs text-gray-500 mb-2">Images de la variante</label>
+                            <div className="flex flex-wrap gap-2">
+                              {variant.images.map((image, imageIndex) => (
+                                <div key={imageIndex} className="relative group w-16 h-16">
                                   <img
-                                    src={URL.createObjectURL(variant.image)}
-                                    alt={`Variante ${variant.id}`}
+                                    src={URL.createObjectURL(image)}
+                                    alt={`Variante ${variant.id} image ${imageIndex + 1}`}
                                     className="w-full h-full object-cover rounded-lg"
                                   />
                                   <button
                                     type="button"
-                                    onClick={() => removeVariantImage(variant.id)}
+                                    onClick={() => removeVariantImage(variant.id, imageIndex)}
                                     className="absolute top-1 right-1 p-1 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                                   >
                                     <X className="w-3 h-3" />
                                   </button>
                                 </div>
-                              ) : (
-                                <label className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50">
-                                  <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={(e) => e.target.files?.[0] && handleVariantImageUpload(variant.id, e.target.files[0])}
-                                  />
-                                  <Plus className="w-5 h-5 text-gray-400" />
-                                </label>
-                              )}
+                              ))}
+                              <label className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50">
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  accept="image/*"
+                                  multiple
+                                  onChange={(e) => e.target.files && handleVariantImageUpload(variant.id, e.target.files)}
+                                />
+                                <Plus className="w-5 h-5 text-gray-400" />
+                              </label>
                             </div>
                           </div>
-
                         </div>
-
                       </div>
                     ))}
                   </div>
