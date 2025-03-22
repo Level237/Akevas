@@ -87,7 +87,7 @@ const ProductDetailPage: React.FC = () => {
     setSelectedVariant(variant);
     
     // Réinitialiser l'index de l'image sélectionnée à 0 pour afficher l'image principale de la variante
-    setSelectedImage(0);
+    setSelectedImage(1);
   };
 
   // Modifier le gestionnaire de clic sur l'image principale
