@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "preinstall": "npx only-allow pnpm",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -26,6 +27,7 @@
     "@reduxjs/toolkit": "^2.5.1",
     "@sentry/vite-plugin": "^3.2.2",
     "@stripe/react-stripe-js": "^3.1.1",
+    "@stripe/stripe-js": "^6.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
