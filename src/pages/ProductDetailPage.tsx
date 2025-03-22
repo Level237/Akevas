@@ -50,13 +50,16 @@ const ProductDetailPage: React.FC = () => {
   }, [dispatch, product, quantity]);
   // Helper function to get all images
   const getAllImages = () => {
+    if (selectedVariant) {
+      // Si une variante est sélectionnée, retourner ses images
+      const variantMainImage = { path: selectedVariant.image };
+      const variantImages = selectedVariant.images?.[0] || [];
+      return [variantMainImage, ...variantImages];
+    }
+    
+    // Sinon, retourner les images du produit principal
     const mainImage = { path: product?.product_profile };
     const productImages = product?.product_images || [];
-    const variantImages = product?.variants?.flatMap((variant: Variant) => [
-      { path: variant.image },
-      ...(variant.images || [])
-    ]) || [];
-
     return [mainImage, ...productImages];
   };
   console.log(product?.variants[0].images[0][1])
@@ -82,12 +85,9 @@ const ProductDetailPage: React.FC = () => {
   // Modifier le gestionnaire de sélection de variant
   const handleVariantSelect = (variant: Variant) => {
     setSelectedVariant(variant);
-    // Trouver l'index de l'image du variant dans la liste complète des images
-    const allImages = getAllImages();
-    const variantImageIndex = allImages.findIndex(img => img.path === variant.image);
-    if (variantImageIndex !== -1) {
-      setSelectedImage(variantImageIndex);
-    }
+    
+    // Réinitialiser l'index de l'image sélectionnée à 0 pour afficher l'image principale de la variante
+    setSelectedImage(0);
   };
 
   // Modifier le gestionnaire de clic sur l'image principale
@@ -99,11 +99,14 @@ const ProductDetailPage: React.FC = () => {
       return;
     }
 
-    // Si on est sur l'image principale, réinitialiser les informations du produit
+    // Si on clique sur une image de la liste des images du produit principal
     const allImages = getAllImages();
-    if (allImages[selectedImage]?.path === product?.product_profile) {
-      setSelectedVariant(null);
-      setSelectedImage(0); // Retour à la première image
+    const currentImage = allImages[selectedImage];
+    
+    // Si l'image cliquée est une image du produit principal et qu'une variante est sélectionnée
+    if (selectedVariant && currentImage?.path === product?.product_profile) {
+      setSelectedVariant(null); // Désélectionner la variante
+      setSelectedImage(0); // Revenir à la première image du produit
     }
   };
 
