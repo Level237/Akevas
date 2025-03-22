@@ -137,9 +137,11 @@ const CheckoutPage: React.FC = () => {
       const response = await initPayment(formData);
       console.log(response)
       if(response.data.status === "Accepted"){
-        
+        setTimeout(() => {
+          setIsLoading(true);
+        }, 1000);
         window.location.href = response.data.authorization_url;
-        setIsLoading(false);
+        
       }else{
         setIsLoading(false);
         alert("Une erreur est survenue lors de l'initialisation du paiement");
@@ -190,7 +192,7 @@ const CheckoutPage: React.FC = () => {
                    
                   />
                   <label htmlFor="pickup" className={`${!isLocalOrder ? 'text-gray-400' : ''}`}>
-                    Récupérer en magasin (0 XAF)
+                    Récupérer en magasin de {productLocation} (0 XAF)
                   </label>
                 </div>
 
@@ -206,7 +208,7 @@ const CheckoutPage: React.FC = () => {
                     
                   />
                   <label htmlFor="localDelivery" className={`${!isLocalOrder ? 'text-gray-400' : ''}`}>
-                    Livraison en ville (1 500 XAF)
+                    Livraison à domicile {quarter} (1 500 XAF)
                   </label>
                 </div>
 
@@ -456,55 +458,70 @@ const CheckoutPage: React.FC = () => {
 
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <h2 className="text-xl font-semibold mb-4">Résumé de la commande</h2>
-            
-            <div className="space-y-4 mb-6">
-              <div className="border-b pb-2">
-                <p className="font-medium">Informations client</p>
-                <p>Nom: {userDataAuth?.userName || userDataAuth?.firstName}</p>
-                <p>Téléphone: {userDataAuth?.phone_number}</p>
-                <p>Ville: {userDataAuth?.residence}</p>
-              </div>
-
-              <div className="border-b pb-2">
-                <p className="font-medium">Mode de livraison</p>
-                <p>{address.deliveryOption === 'pickup' ? 'Récupération en magasin' :
-                    address.deliveryOption === 'localDelivery' ? `Livraison à ${quarter}` :
-                    address.deliveryOption === 'remotePickup' ? 'Expédition au magasin' :
-                    'Expédition et livraison à domicile'
-                }</p>
-                <p>Frais de livraison: {shipping} FCFA</p>
-              </div>
-
-              <div className="border-b pb-2">
-                <p className="font-medium">Mode de paiement</p>
-                <p>{selectedPayment === 'card' ? 'Carte bancaire' :
-                    selectedPayment === 'orange' ? 'NotchPay Payment' :
-                    'Mobile Money'
-                }</p>
-              </div>
-
-              <div>
-                <p className="font-medium">Montant total: {total} FCFA</p>
+          {isLoading ? (
+            <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 flex flex-col items-center">
+              <div className="w-16 h-16 border-4 border-gray-200 border-t-[#ed7e0f] rounded-full animate-spin mb-6"></div>
+              <div className="flex flex-col items-center gap-2">
+                <h3 className="text-xl font-semibold text-gray-900">Veuillez patienter</h3>
+                <p className="text-gray-500 text-center">Votre paiement est en cours de vérification...</p>
+                <div className="mt-4 flex gap-2 items-center text-[#ed7e0f]">
+                  <span className="w-2 h-2 bg-[#ed7e0f] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                  <span className="w-2 h-2 bg-[#ed7e0f] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                  <span className="w-2 h-2 bg-[#ed7e0f] rounded-full animate-bounce"></span>
+                </div>
               </div>
             </div>
+          ) : (
+            <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+              <h2 className="text-xl font-semibold mb-4">Résumé de la commande</h2>
+              
+              <div className="space-y-4 mb-6">
+                <div className="border-b pb-2">
+                  <p className="font-medium">Informations client</p>
+                  <p>Nom: {userDataAuth?.userName || userDataAuth?.firstName}</p>
+                  <p>Téléphone: {userDataAuth?.phone_number}</p>
+                  <p>Ville: {userDataAuth?.residence}</p>
+                </div>
 
-            <div className="flex gap-4">
-              <button
-                onClick={() => setShowConfirmModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={confirmPayment}
-                className="flex-1 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80"
-              >
-                {isLoading ? <div className='flex items-center gap-2'><Loader2 className="w-4 h-4 animate-spin" /> Traitement...</div> : 'Confirmer'}
-              </button>
+                <div className="border-b pb-2">
+                  <p className="font-medium">Mode de livraison</p>
+                  <p>{address.deliveryOption === 'pickup' ? 'Récupération en magasin' :
+                      address.deliveryOption === 'localDelivery' ? `Livraison à ${quarter}` :
+                      address.deliveryOption === 'remotePickup' ? 'Expédition au magasin' :
+                      'Expédition et livraison à domicile'
+                  }</p>
+                  <p>Frais de livraison: {shipping} FCFA</p>
+                </div>
+
+                <div className="border-b pb-2">
+                  <p className="font-medium">Mode de paiement</p>
+                  <p>{selectedPayment === 'card' ? 'Carte bancaire' :
+                      selectedPayment === 'orange' ? 'NotchPay Payment' :
+                      'Mobile Money'
+                  }</p>
+                </div>
+
+                <div>
+                  <p className="font-medium">Montant total: {total} FCFA</p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={confirmPayment}
+                  className="flex-1 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80"
+                >
+                  {isLoading ? <div className='flex items-center gap-2'><Loader2 className="w-4 h-4 animate-spin" /> Traitement...</div> : 'Confirmer'}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
