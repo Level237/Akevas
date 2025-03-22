@@ -42,7 +42,7 @@ const ProductDetailPage: React.FC = () => {
   const handleAddToCart = useCallback(async () => {
     setIsLoadingCart(true);
     dispatch(addItem({ product, quantity }));
-
+    
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     setIsLoadingCart(false);
@@ -57,9 +57,9 @@ const ProductDetailPage: React.FC = () => {
       ...(variant.images || [])
     ]) || [];
 
-    return [mainImage, ...productImages, ...variantImages];
+    return [mainImage, ...productImages];
   };
-
+  console.log(product?.variants[0].images[0][1])
   // Helper function to get current price and images
   const getCurrentProductInfo = () => {
     if (selectedVariant) {
@@ -309,7 +309,7 @@ const ProductDetailPage: React.FC = () => {
                                 : 'border-gray-200 hover:border-gray-300'}`}
                           >
                             <img
-                              src={variant.image}
+                              src={variant?.images[0][0]?.path}
                               alt={variant.variant_name}
                               className="w-12 h-12 rounded-lg object-cover"
                             />
