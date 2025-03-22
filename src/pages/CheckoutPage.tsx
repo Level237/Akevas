@@ -100,7 +100,7 @@ const CheckoutPage: React.FC = () => {
 
   const confirmPayment = async() => {
     let productsPayments;
-    setIsLoading(true);
+    
     if (s === '1' && selectedPayment === "card") {
       productsPayments = cartItems.map(item => ({
         product_id: item.product.id,
@@ -134,18 +134,9 @@ const CheckoutPage: React.FC = () => {
         }
         formData.append("shipping",shipping.toString());
         formData.append("paymentMethod",selectedPayment);
-      const response = await initPayment(formData);
-      console.log(response)
-      if(response.data.status === "Accepted"){
-        setTimeout(() => {
-          setIsLoading(true);
-        }, 1000);
-        window.location.href = response.data.authorization_url;
-        
-      }else{
-        setIsLoading(false);
-        alert("Une erreur est survenue lors de l'initialisation du paiement");
-      }
+      //const response = await initPayment(formData);
+     
+     
     }
     //setIsLoading(true);
     //setTimeout(() => {
