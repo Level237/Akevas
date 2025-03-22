@@ -220,50 +220,7 @@ const CreateProductPage: React.FC = () => {
     e.preventDefault();
 
     // Validation des champs requis
-    if (!name.trim()) {
-      alert("Le nom du produit est requis");
-      return;
-    }
-
-    if (!price || Number(price) <= 0) {
-      alert("Le prix doit être supérieur à 0");
-      return;
-    }
-
-    if (!stock || Number(stock) <= 0) {
-      alert("Le stock doit être supérieur à 0");
-      return;
-    }
-
-    if (gender === 0) {
-      alert("Le genre du produit est requis");
-      return;
-    }
-
-    if (selectedCategories.length === 0) {
-      alert("Veuillez sélectionner au moins une catégorie");
-      return;
-    }
-
-    if (selectedSubCategories.length === 0) {
-      alert("Veuillez sélectionner au moins une sous-catégorie");
-      return;
-    }
-
-    if (!city) {
-      alert("La ville cible est requise");
-      return;
-    }
-
-    if (!whatsappNumber.trim()) {
-      alert("Le numéro WhatsApp est requis");
-      return;
-    }
-
-    if (!featuredImage) {
-      alert("Une photo mise en avant est requise");
-      return;
-    }
+   
 
     // Validation des variants si des attributs sont sélectionnés
     const hasSelectedAttributes = attributes.some(attr => attr.values.length > 0);
@@ -311,15 +268,19 @@ const CreateProductPage: React.FC = () => {
         // Ajouter les images des variants séparément
         variants.forEach((variant, variantIndex) => {
           variant.images.forEach((image, imageIndex) => {
+            
             formData.append(`variant_images[${variantIndex}][${imageIndex}]`, image);
+            
           });
         });
-        console.log(variantsData)
+        console.log('Variant Images in FormData:', {
+          variantData: variantsData,
+          formDataEntries: Array.from(formData.entries())
+            .filter(entry => entry[0].startsWith('variant_images'))
+        });
       }
 
-      const response = await addProduct(formData);
-      console.log(response)
-      navigate('/seller/products')
+      
     } catch (error) {
       console.log(error)
     }
