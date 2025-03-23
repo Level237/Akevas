@@ -129,6 +129,7 @@ const CheckoutPage: React.FC = () => {
         if(total){
           formData.append("total",total.toString());
         }
+        formData.append("s","0");
         if(quarter){
           formData.append("quarter",quarter);
         }

@@ -90,7 +90,7 @@ interface OrderDetails {
 }
 export default function SucessPaymentPage(){
     const params = new URLSearchParams(window.location.search)
-  const s = params.get('s');
+  const source = params.get('source');
   const quarter = params.get('quarter');
   const productId = params.get('productId');
   const quantity = params.get('quantity');
@@ -108,14 +108,26 @@ export default function SucessPaymentPage(){
     const handlePayment = async () => {
       if (status === 'complete') {
         try {
-          const formData = {
-            productId: productId,
-            quantity: quantity,
-            amount: total,
-            price: price,
-            quarter_delivery: quarter,
-            shipping: shipping,
-          };
+            let formData;
+            if(source=="0"){
+                formData = {
+                    productId: productId,
+                    quantity: quantity,
+                    amount: total,
+                    price: price,
+                    quarter_delivery: quarter,
+                    shipping: shipping,
+                  };
+            }else{
+                formData = {
+                    productsPayments: JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
+                    amount: sessionStorage.getItem('total'),
+                    quarter_delivery: quarter,
+                    shipping: sessionStorage.getItem('shipping'),
+                    price: price
+                  }
+            }
+          
           if(!processed){  // Vérifie si la commande n'a pas déjà été traitée
             const response = await statePayment(formData);
             if (response.data.success) {
