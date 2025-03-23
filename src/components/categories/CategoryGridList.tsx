@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FixedSizeGrid } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import React from 'react';
+import { motion } from 'framer-motion';
 
 // Hook personnalisé pour l'intersection observer
 const useIntersectionObserver = (ref: React.RefObject<HTMLElement>, options = {}) => {
-  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [isIntersecting, setIsIntersecting] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       setIsIntersecting(entry.isIntersecting);
     }, options);
@@ -26,24 +25,21 @@ const useIntersectionObserver = (ref: React.RefObject<HTMLElement>, options = {}
   return isIntersecting;
 };
 
-// Composant pour l'image lazy-loadée
+// Composant pour l'image lazy-loadée modifié
 const LazyImage = React.memo(({ src, alt, className }: { src: string; alt: string; className: string }) => {
-  const imgRef = useRef<HTMLDivElement>(null);
-  const isVisible = useIntersectionObserver(imgRef);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   return (
-    <div ref={imgRef} className={`relative ${className}`}>
-      {isVisible && (
-        <img
-          src={src}
-          alt={alt}
-          className={`w-full h-full object-cover transition-all duration-300 ${
-            isLoaded ? 'opacity-100 group-hover:scale-105' : 'opacity-0'
-          }`}
-          onLoad={() => setIsLoaded(true)}
-        />
-      )}
+    <div className={`relative ${className}`}>
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className={`w-full h-full object-cover transition-all duration-300 ${
+          isLoaded ? 'opacity-100 group-hover:scale-105' : 'opacity-0'
+        }`}
+        onLoad={() => setIsLoaded(true)}
+      />
       {!isLoaded && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse" />
       )}
@@ -64,25 +60,6 @@ const CategorySkeleton = React.memo(() => (
 
 CategorySkeleton.displayName = 'CategorySkeleton';
 
-// Composant de catégorie individuelle mémorisé
-const CategoryItem = React.memo(({ category, style }: { category: Category; style: React.CSSProperties }) => (
-  <div className="group cursor-pointer" style={style}>
-    <div className="relative overflow-hidden rounded-lg aspect-square mx-3">
-      <LazyImage
-        src={category.category_profile}
-        alt={category.category_name}
-        className="w-full h-full"
-      />
-      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-      <div className="absolute bottom-4 left-4 text-white">
-        <h3 className="text-xl font-semibold">{category.category_name}</h3>
-      </div>
-    </div>
-  </div>
-));
-
-CategoryItem.displayName = 'CategoryItem';
-
 interface Category {
   category_name: string;
   category_profile: string;
@@ -90,8 +67,49 @@ interface Category {
   id: string | number;
 }
 
+const CategoryItem = React.memo(({ category }: { category: Category }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="group cursor-pointer"
+    style={{
+      willChange: 'transform',
+      transform: 'translateZ(0)',
+    }}
+  >
+    <div 
+      className="relative overflow-hidden rounded-lg aspect-square"
+      style={{
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+      }}
+    >
+      <img
+        src={category.category_profile}
+        alt={category.category_name}
+        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        loading="lazy"
+        decoding="async"
+        style={{
+          willChange: 'transform',
+          transform: 'translateZ(0)',
+        }}
+      />
+      <div 
+        className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ willChange: 'opacity' }}
+      />
+      <div className="absolute bottom-4 left-4 text-white">
+        <h3 className="text-xl font-semibold">{category.category_name}</h3>
+      </div>
+    </div>
+  </motion.div>
+));
+
+CategoryItem.displayName = 'CategoryItem';
+
 const CategoryGridList = React.memo(({
-  categories,
+  categories = [],
   isLoading,
   title
 }: {
@@ -99,44 +117,53 @@ const CategoryGridList = React.memo(({
   isLoading: boolean;
   title: string;
 }) => {
-  const COLUMN_WIDTH = 300;
-  const ROW_HEIGHT = 300;
-  const SKELETON_ARRAY = Array(8).fill(0);
-
-  const Cell = React.useCallback(({ columnIndex, rowIndex, style }: any) => {
-    const index = rowIndex * 4 + columnIndex;
-    if (isLoading) {
-      return <CategorySkeleton key={`skeleton-${index}`} />;
-    }
-    if (index >= categories.length) return null;
-    return <CategoryItem key={categories[index].id} category={categories[index]} style={style} />;
-  }, [categories, isLoading]);
+  if (isLoading) {
+    return (
+      <div 
+        className="container mx-auto px-4 py-8"
+        style={{
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+        }}
+      >
+        <h2 className="text-2xl font-bold mb-8">{title}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array(12).fill(0).map((_, i) => (
+            <div 
+              key={i} 
+              className="aspect-square rounded-lg bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div 
+      className="container mx-auto px-4 py-8"
+      style={{
+        transform: 'translateZ(0)',
+        willChange: 'transform',
+        perspective: '1000px',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+      }}
+    >
       <h2 className="text-2xl font-bold mb-8">{title}</h2>
-      <div style={{ height: 'calc(100vh - 200px)' }}>
-        <AutoSizer>
-          {({ height, width }) => {
-            const columnCount = Math.floor(width / COLUMN_WIDTH) || 1;
-            const rowCount = Math.ceil(
-              (isLoading ? SKELETON_ARRAY.length : categories.length) / columnCount
-            );
-
-            return (
-              <FixedSizeGrid
-                columnCount={columnCount}
-                columnWidth={width / columnCount}
-                height={650}
-                rowCount={rowCount}
-                rowHeight={ROW_HEIGHT}
-                width={width}
-              >
-                {Cell}
-              </FixedSizeGrid>
-            );
-          }}
-        </AutoSizer>
+      <div 
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        style={{
+          willChange: 'transform',
+          transform: 'translateZ(0)',
+        }}
+      >
+        {categories.map((category) => (
+          <CategoryItem
+            key={category.id}
+            category={category}
+          />
+        ))}
       </div>
     </div>
   );
