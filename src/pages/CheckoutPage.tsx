@@ -134,19 +134,26 @@ const CheckoutPage: React.FC = () => {
         }
         formData.append("shipping",shipping.toString());
         formData.append("paymentMethod",selectedPayment);
-      //const response = await initPayment(formData);
-     
+      const response = await initPayment(formData);
+      if(response.data.status === "Accepted"){
+        
+        window.location.href = response.data.authorization_url;
+        setIsLoading(false);
+      }else{
+        setIsLoading(false);
+        alert("Une erreur est survenue lors de l'initialisation du paiement");
+      }
      
     }
-    //setIsLoading(true);
-    //setTimeout(() => {
-      //setIsLoading(false);
-      //if (s === '1') {
-        //navigate(`/payment?s=1&method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}&quarter=${quarter}`);
-      //} else {
-        //navigate(`/payment?s=0&method=${selectedPayment}&total=${total}&shipping=${shipping}&productId=${productId}&quantity=${quantity}&name=${name}&price=${price}&quarter=${quarter}`);
-      //}
-    //}, 1000);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      if (s === '1') {
+        navigate(`/payment?s=1&method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}&quarter=${quarter}`);
+      } else {
+        navigate(`/payment?s=0&method=${selectedPayment}&total=${total}&shipping=${shipping}&productId=${productId}&quantity=${quantity}&name=${name}&price=${price}&quarter=${quarter}`);
+      }
+    }, 1000);
   };
   
 
