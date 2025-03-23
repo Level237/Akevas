@@ -55,7 +55,7 @@ export default function StoreHero() {
      <section className="flex flex-col w-[25%] max-sm:w-full h-96 gap-4">
         <section style={{ backgroundImage:`url(${delivery})`,backgroundPosition:"top",backgroundSize:"cover",backgroundRepeat:"no-repeat" }} className="w-full rounded-3xl  h-full relative">
        
-<div className="absolute bottom-0 h-48 pt-3 rounded-b-3xl  flex flex-col items-center w-full p-1 z-10 bg-orange-500 text-white">
+<div className="absolute bottom-0 h-48 pt-3 rounded-b-3xl  flex flex-col items-center w-full p-1 z-10 bg-[#ed7e0f] text-white">
 <div className="p-6 text-center">
          <motion.h2 
            initial={{ opacity: 0, y: 20 }}
