@@ -4,7 +4,10 @@
 
 Welcome to Akevas, a dynamic online marketplace built with React.js! Akevas serves as a platform for various online shops, facilitating easy navigation and encouraging seamless transactions between buyers and sellers. Our mission is to create a user-friendly shopping experience while providing shop owners with the tools they need to manage their stores effectively.
 
-![image](https://github.com/user-attachments/assets/3b8ae905-ad63-4476-94bb-3348e967ac17)
+
+
+![image](https://github.com/user-attachments/assets/ee4b0221-44d0-443a-af70-2bc76991bfa7)
+
 
 
 ## Features
