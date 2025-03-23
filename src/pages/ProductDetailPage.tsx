@@ -62,7 +62,7 @@ const ProductDetailPage: React.FC = () => {
     const productImages = product?.product_images || [];
     return [mainImage, ...productImages];
   };
-  console.log(product?.variants[0].images[0][1])
+ 
   // Helper function to get current price and images
   const getCurrentProductInfo = () => {
     if (selectedVariant) {

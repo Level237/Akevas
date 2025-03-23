@@ -72,9 +72,9 @@ const CheckoutPage: React.FC = () => {
     remotePickup: 2500,
     remoteDelivery: 3500
   };
-  console.log(userDataAuth)
+  
   const isLocalOrder = userDataAuth?.residence?.toLowerCase() === productLocation?.toLowerCase();
-
+  const otherLocation = productLocation === "Yaoundé" ? "Douala" : "Yaoundé";
   const getDeliveryFee = () => {
     return deliveryFees[address.deliveryOption];
   };
@@ -133,6 +133,7 @@ const CheckoutPage: React.FC = () => {
         if(quarter){
           formData.append("quarter",quarter);
         }
+        formData.append("address",address.address);
         formData.append("shipping",shipping.toString());
         formData.append("paymentMethod",selectedPayment);
       const response = await initPayment(formData);
@@ -223,7 +224,7 @@ const CheckoutPage: React.FC = () => {
                     
                   />
                   <label htmlFor="remotePickup" className={`${isLocalOrder ? 'text-gray-400' : ''}`}>
-                    Expédition au magasin de votre ville (2 500 XAF)
+                    Expédition au magasin Akevas de {otherLocation} (2 500 XAF)
                   </label>
                 </div>
 
@@ -239,13 +240,14 @@ const CheckoutPage: React.FC = () => {
                     
                   />
                   <label htmlFor="remoteDelivery" className={`${isLocalOrder ? 'text-gray-400' : ''}`}>
-                    Expédition et livraison à domicile (3 500 XAF)
+                    Expédition et livraison à domicile dans la ville de {otherLocation} (3 500 XAF)
                   </label>
                 </div>
               </div>
 
               {address.deliveryOption === 'localDelivery' && (
-                <div className="space-y-2 mb-6">
+                <>
+                                <div className="space-y-2 mb-6">
                   <Label htmlFor="street">Choisir un quartier de livraison</Label>
                   <Select
                     name="quarter"
@@ -272,7 +274,27 @@ const CheckoutPage: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                </>
+
               )}
+
+              {
+                (address.deliveryOption === "remoteDelivery" || address.deliveryOption === "localDelivery") && (
+                  <div className="col-span-2 mb-8">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Adresse de livraison (mentionnez les details de votre adresse de livraison)
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={address.address}
+                    onChange={handleAddressChange}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                  />
+                </div>
+                )
+              }
               <div className="space-y-4 mb-6">
                 <div className="col-span-2 sm:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">

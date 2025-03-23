@@ -29,6 +29,7 @@ const Homepage = () => {
   console.log(shops)
 
   useEffect(() => {
+    
     if (shops) {
       startTransition(() => {
         setLocalShops(shops);
