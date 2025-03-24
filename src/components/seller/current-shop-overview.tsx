@@ -121,7 +121,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
             <div className="w-32 h-32 rounded-xl overflow-hidden border-4 border-white">
               <img
                 src={shop.shop.shop_profile || null || undefined}
-                alt={store.name}
+                alt={shop.shop.shop_name || ''}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -160,7 +160,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
        <div className="relative hidden max-sm:block h-[300px] lg:h-[400px]">
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${store?.coverImage || '/default-cover.jpg'})` }}
+          style={{ backgroundImage: `url(${shop.shop.images?.[0]?.path || '/default-cover.jpg'})` }}
         />
         <div className="absolute inset-0 bg-black/50" />
         
