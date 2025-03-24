@@ -17,10 +17,50 @@ interface DetailSellerProps{
     isLoading:boolean
 }
 
+// Ajout du composant ImageViewer
+const ImageViewer = ({ src, onClose }: { src: string; onClose: () => void }) => {
+  if (!src || src === "/placeholder.svg") return null;
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }}
+    >
+      <div className="relative w-full h-full flex items-center justify-center p-4">
+        <button 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-4 right-4 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 z-10"
+        >
+          <X className="h-6 w-6" />
+        </button>
+        <img
+          src={src}
+          alt="Image en plein écran"
+          className="max-w-full max-h-[90vh] object-contain"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
 export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
   const [confirmOrNotShop, {isLoading:isConfirm}] = useConfirmOrNotShopMutation();
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+ 
   
   const navigate=useNavigate()
   const confirm = async (state: string) => {
@@ -64,6 +104,13 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
       
     }
   }
+
+  const handleImageClick = (imageSrc: string | undefined) => {
+    if (imageSrc && imageSrc !== "/placeholder.svg") {
+      setSelectedImage(imageSrc);
+    }
+  };
+
   return (
        <>
         {isLoading &&
@@ -131,13 +178,20 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
           <CardDescription>Nom de la boutique visible : <span className='font-bold text-black'>{shop?.shop.shop_key}</span> </CardDescription>
         </CardHeader>
         <CardContent>
+          {selectedImage && (
+            <ImageViewer 
+              src={selectedImage} 
+              onClose={() => setSelectedImage(null)} 
+            />
+          )}
           <div className="mb-6">
             <img
               src={shop?.shop.shop_profile || "/placeholder.svg"}
               alt={shop?.shop.shop_name || ""}
               width={800}
               height={400}
-              className="w-full h-64 object-cover rounded-lg"
+              className="w-full h-64 object-cover rounded-lg cursor-pointer"
+              onClick={() => handleImageClick(shop?.shop.shop_profile || "")}
             />
           </div>
           <h2 className='text-xl font-semibold mb-4'>Galerie de la boutique</h2>
@@ -150,22 +204,29 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
                 alt={`${shop.shop.shop_name} gallery image ${index + 1}`}
                 width={200}
                 height={200}
-                className="w-full h-32 object-cover rounded-lg"
+                className="w-full h-32 object-cover rounded-lg cursor-pointer"
+                onClick={() => handleImageClick(img.path)}
               />
             ))}
           </div>
           <h2 className='text-xl font-semibold mb-4'>Document personnel du vendeur</h2>
           <div className='grid grid-cols-3 gap-4'>
-            <div>
-              <img src={shop?.identity_card_in_front || "/placeholder.svg"} alt={shop?.shop.shop_name || ""} width={200} height={200} className="w-full h-32 object-cover rounded-lg" />
-            </div>
-            <div>
-              <img src={shop?.identity_card_in_back || "/placeholder.svg"} alt={shop?.shop.shop_name || ""} width={200} height={200} className="w-full h-32 object-cover rounded-lg" />
-            </div>
-            <div>
-              <img src={shop?.identity_card_with_the_person || "/placeholder.svg"} alt={shop?.shop.shop_name || ""} width={200} height={200} className="w-full h-32 object-cover rounded-lg" />
-            </div>
-
+            {[
+              shop?.identity_card_in_front,
+              shop?.identity_card_in_back,
+              shop?.identity_card_with_the_person
+            ].map((src, index) => (
+              <div key={index}>
+                <img
+                  src={src || "/placeholder.svg"}
+                  alt={shop?.shop.shop_name || ""}
+                  width={200}
+                  height={200}
+                  className="w-full h-32 object-cover rounded-lg cursor-pointer"
+                  onClick={() => handleImageClick(src || "")}
+                />
+              </div>
+            ))}
           </div>
           <div className="space-y-4">
             <h2 className="text-xl font-semibold mt-6">À propos de {shop?.shop.shop_name}</h2>
