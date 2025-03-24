@@ -26,6 +26,7 @@ export interface Seller {
     reviewCount:number | null,
     products:Product[] | null,
     isPublished:boolean | null,
+    orders_count:number | null,
     images:Image[] | null,
     town:string | null,
     quarter:string | null,

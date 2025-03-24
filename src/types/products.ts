@@ -34,6 +34,7 @@ export type Variant = {
 export type Category = {
     id: string,
     category_name: string,
+    products_count: number | null,
     category_url: string,
     category_profile: string,
     category_description: string,

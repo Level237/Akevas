@@ -1,29 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-// Hook personnalisé pour l'intersection observer
-const useIntersectionObserver = (ref: React.RefObject<HTMLElement>, options = {}) => {
-  const [isIntersecting, setIsIntersecting] = React.useState(false);
 
-  React.useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsIntersecting(entry.isIntersecting);
-    }, options);
-
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [ref, options]);
-
-  return isIntersecting;
-};
 
 // Composant pour l'image lazy-loadée modifié
 const LazyImage = React.memo(({ src, alt, className }: { src: string; alt: string; className: string }) => {

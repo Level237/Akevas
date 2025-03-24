@@ -327,7 +327,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-3 border-t">
                     <span className="text-gray-500">Ventes totales</span>
-                    <span className="font-medium">{store.stats.totalSales}</span>
+                    <span className="font-medium">{shop?.shop?.orders_count}</span>
                   </div>
                   <div className="flex items-center justify-between py-3 border-t">
                     <span className="text-gray-500">Délai de livraison</span>
@@ -375,7 +375,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                       }`}
                     >
                       <span>{category.category_name}</span>
-                      <span className="text-sm">(12)</span>
+                      <span className="text-sm">({category.products_count})</span>
                     </button>
                   ))}
                 </div>
