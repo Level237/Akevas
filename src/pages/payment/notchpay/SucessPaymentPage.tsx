@@ -77,6 +77,7 @@ interface OrderDetails {
     orderDate: string;
     amount: number;
     shipping: string;
+    address: string;
     products: Array<{
         name: string;
         quantity: number;
@@ -99,6 +100,7 @@ export default function SucessPaymentPage(){
   const price = params.get('price');
   const status=params.get('status');
   const shipping = params.get('shipping') || "";
+  const address = params.get('address') || "";
   const [statePayment] = useStatePaymentMutation();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
     const [isDownloading, setIsDownloading] = useState(false);
@@ -117,6 +119,7 @@ export default function SucessPaymentPage(){
                     price: price,
                     quarter_delivery: quarter,
                     shipping: shipping,
+                    address: address
                   };
             }else{
                 formData = {
@@ -124,7 +127,8 @@ export default function SucessPaymentPage(){
                     amount: sessionStorage.getItem('total'),
                     quarter_delivery: quarter,
                     shipping: sessionStorage.getItem('shipping'),
-                    price: price
+                    price: price,
+                    address: address
                   }
             }
           
@@ -144,7 +148,8 @@ export default function SucessPaymentPage(){
                 quarter_delivery: quarter,
                 productId: productId,
                 quantity: quantity ? parseInt(quantity) : null,
-                name: name
+                name: name,
+                address: address
               });
             }
           }
@@ -233,6 +238,7 @@ if (!orderDetails) return <div>Chargement...</div>;
                         <p className='max-sm:text-sm'>Date: {new Date(orderDetails.orderDate).toLocaleDateString()}</p>
                         <p className='max-sm:text-sm'>Statut: Payé</p>
                         <p className='max-sm:text-sm'>Quartier de livraison: {orderDetails.quarter_delivery === "" ? "Dans les locaux akevas" : orderDetails.quarter_delivery}</p>
+                        {orderDetails.address && <p className='max-sm:text-sm'>Adresse de livraison: {orderDetails.address}</p>}
                     </div>
                 </div>
             </div>

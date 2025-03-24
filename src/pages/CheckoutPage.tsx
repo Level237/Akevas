@@ -38,7 +38,7 @@ const CheckoutPage: React.FC = () => {
   const residence = params.get('residence');
   const totalPrice = params.get('price');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
-
+  console.log(selectedPayment)
   const { data: userDataAuth } = useGetUserQuery('Auth');
   const productIds = getProductIdsFromUrl();
   const productId = params.get('productId');
@@ -100,7 +100,7 @@ const CheckoutPage: React.FC = () => {
 
   const confirmPayment = async() => {
     let productsPayments;
-    
+    setIsLoading(true);
     if (s === '1' && selectedPayment === "card") {
       productsPayments = cartItems.map(item => ({
         product_id: item.product.id,
@@ -148,14 +148,7 @@ const CheckoutPage: React.FC = () => {
      
     }
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      if (s === '1') {
-        navigate(`/payment?s=1&method=${selectedPayment}&total=${total}&shipping=${shipping}&productIds=${productIds}&quarter=${quarter}`);
-      } else {
-        navigate(`/payment?s=0&method=${selectedPayment}&total=${total}&shipping=${shipping}&productId=${productId}&quantity=${quantity}&name=${name}&price=${price}&quarter=${quarter}`);
-      }
-    }, 1000);
+    
   };
   
 
