@@ -46,7 +46,7 @@ const CheckoutPage: React.FC = () => {
   const [initPayment] = useInitProductPaymentMutation();
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);
 
-  console.log(filteredQuarters)
+ 
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
     phone: '',
@@ -70,6 +70,7 @@ const CheckoutPage: React.FC = () => {
   
   const isLocalOrder = userDataAuth?.residence?.toLowerCase() === productLocation?.toLowerCase();
   const otherLocation = productLocation === "Yaoundé" ? "Douala" : "Yaoundé";
+  const filterOtherLocation=quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === otherLocation);
   const getDeliveryFee = () => {
     return deliveryFees[address.deliveryOption];
   };
@@ -288,7 +289,37 @@ const CheckoutPage: React.FC = () => {
                 </>
 
               )}
-
+{
+                address.deliveryOption === "remoteDelivery" && (
+                  <div className="space-y-2 mb-6">
+                  <Label htmlFor="street">Choisir un quartier de livraison</Label>
+                  <Select
+                    name="quarter"
+                    value={quarter}
+                    disabled={quartersLoading}
+                    onValueChange={(value) => setQuarter(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un quartier" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {quartersLoading ? (
+                        <SelectItem value="loading">Chargement des quartiers...</SelectItem>
+                      ) : (
+                        filterOtherLocation?.map((quarter: { id: string, quarter_name: string }) => (
+                          <SelectItem key={quarter.id} value={quarter.quarter_name}>
+                            {quarter.quarter_name}
+                          </SelectItem>
+                        ))
+                      )}
+                      {filterOtherLocation?.length === 0 && (
+                        <SelectItem value="no-quarters">Aucun quartier trouvé,veuillez verifier votre ville</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                )
+              }
               {
                 (address.deliveryOption === "remoteDelivery" || address.deliveryOption === "localDelivery") && (
                   <div className="col-span-2 mb-8">
@@ -305,6 +336,7 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 )
               }
+              
               <div className="space-y-4 mb-6">
                 <div className="col-span-2 sm:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
