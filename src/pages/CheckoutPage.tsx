@@ -35,7 +35,6 @@ const CheckoutPage: React.FC = () => {
   const residence = params.get('residence');
   const totalPrice = params.get('price');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
-  console.log(selectedPayment)
   const { data: userDataAuth } = useGetUserQuery('Auth');
   const productId = params.get('productId');
   const quantity = params.get('quantity');
@@ -78,7 +77,8 @@ const CheckoutPage: React.FC = () => {
   const subtotal = cartItems.reduce((sum, item) => sum + parseInt(item.product.product_price) * item.quantity, 0);
   const shipping = getDeliveryFee();
   const total = s == "1" ? subtotal + shipping : parseInt(totalPrice || '0') + shipping;
-
+  const totalQuantity=cartItems.reduce((sum, item) => sum + parseInt(item.quantity.toString()), 0);
+ console.log(totalQuantity)
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAddress(prev => ({ ...prev, [name]: value }));
@@ -96,6 +96,7 @@ const CheckoutPage: React.FC = () => {
 
   const confirmPayment = async() => {
     let productsPayments;
+    const formData=new FormData();
     setIsLoading(true);
     if (s === '1') {
       productsPayments = cartItems.map(item => ({
@@ -108,8 +109,28 @@ const CheckoutPage: React.FC = () => {
       sessionStorage.setItem('total', total.toString());
       sessionStorage.setItem('shipping', shipping.toString());
       sessionStorage.setItem('paymentMethod', selectedPayment);
+
+      formData.append("s","1");
+      if(quarter){
+        formData.append("quarter",quarter);
+      }
+      if(totalQuantity){
+        formData.append("quantity",totalQuantity.toString());
+      }
+      formData.append("address",address.address);
+      formData.append("shipping",shipping.toString());
+      formData.append("paymentMethod",selectedPayment);
+      const response = await initPayment(formData);
+      console.log(response)
+      if(response.data.status === "Accepted"){
+        window.location.href = response.data.authorization_url;
+        setIsLoading(false);
+      }else{
+        setIsLoading(false);
+        alert("Une erreur est survenue lors de l'initialisation du paiement");
+      }
     }else if (s === '0') {
-      const formData=new FormData();
+      
         if(productId){
           formData.append("productId",productId);
         }

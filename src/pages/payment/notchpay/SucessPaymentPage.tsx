@@ -127,7 +127,6 @@ export default function SucessPaymentPage(){
                     amount: sessionStorage.getItem('total'),
                     quarter_delivery: quarter,
                     shipping: sessionStorage.getItem('shipping'),
-                    price: price,
                     address: address
                   }
             }
@@ -138,7 +137,7 @@ export default function SucessPaymentPage(){
               // Ajouter le paramètre processed à l'URL
               params.set('processed', 'true');
               window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
-              
+              if(source=="0"){
               setOrderDetails({
                 orderId: response.data.order.id,
                 orderDate: new Date().toISOString(),
@@ -151,7 +150,23 @@ export default function SucessPaymentPage(){
                 name: name,
                 address: address
               });
+            }else{
+                setOrderDetails({
+                    orderId: response.data.order.id,
+                    orderDate: new Date().toISOString(),
+                    price: response.data.order.total ? response.data.order.total : null,
+                    products:JSON.parse(sessionStorage.getItem('productsPayments') || '[]'),
+                    shipping: response.data.order.fee_of_shipping ? response.data.order.fee_of_shipping : null,
+                    quarter_delivery: quarter,
+                    productId: productId,
+                    amount: response.data.order.total ? response.data.order.total : null,
+                    quantity: quantity ? parseInt(quantity) : null,
+                    name: null,
+                    address: address
+                })
             }
+        
+        }
           }
 
         } catch (error) {
