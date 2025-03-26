@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import {
-  Truck,
+
   Shield,
   Loader2,
 } from 'lucide-react';
 import card from '@/assets/visa.png';
 import Header from '@/components/ui/header';
 import { ScrollRestoration } from 'react-router-dom';
-import { getProductIdsFromUrl } from '@/lib/getProductIdFromUrl';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useGetUserQuery, useInitProductPaymentMutation } from '@/services/auth';
-import { useNavigate } from 'react-router-dom';
 import { useGetQuartersQuery } from '@/services/guardService';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
@@ -29,7 +27,6 @@ interface DeliveryAddress {
 }
 
 const CheckoutPage: React.FC = () => {
-  const navigate = useNavigate();
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('card');
   const [quarter, setQuarter] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +37,6 @@ const CheckoutPage: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
   console.log(selectedPayment)
   const { data: userDataAuth } = useGetUserQuery('Auth');
-  const productIds = getProductIdsFromUrl();
   const productId = params.get('productId');
   const quantity = params.get('quantity');
   const price = params.get('price');
@@ -101,7 +97,7 @@ const CheckoutPage: React.FC = () => {
   const confirmPayment = async() => {
     let productsPayments;
     setIsLoading(true);
-    if (s === '1' && selectedPayment === "card") {
+    if (s === '1') {
       productsPayments = cartItems.map(item => ({
         product_id: item.product.id,
         quantity: item.quantity,
