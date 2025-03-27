@@ -55,6 +55,15 @@ export default {
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
 				}
+			},
+			animation: {
+				'loading': 'loading 1.5s ease-in-out infinite',
+			},
+			keyframes: {
+				loading: {
+					'0%': { transform: 'translateX(-100%)' },
+					'100%': { transform: 'translateX(100%)' }
+				}
 			}
 		}
 	},

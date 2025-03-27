@@ -11,107 +11,45 @@ import CategoryGridList from '@/components/categories/CategoryGridList';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 import { Shop } from '@/types/shop';
 import InstallButton from '@/components/InstallButton';
+import PageLoader from '@/components/ui/PageLoader';
+
 const Homepage = () => {
-  //t [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(true);
   const [transition, startTransition] = useTransition();
-  console.log(transition)
   const [localShops, setLocalShops] = useState<Shop[]>([])
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
-  const { data: { data: shops } = {}, isLoading } = useGetHomeShopsQuery("guard", {
-
+  const { data: { data: shops } = {}, isLoading: shopsLoading } = useGetHomeShopsQuery("guard", {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   })
-  const { data: { data: categories } = {}, isLoading: isLoadingCategories } = useGetCategoriesWithParentIdNullQuery("guard", {
+  const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   })
   console.log(shops)
 
   useEffect(() => {
-    
     if (shops) {
       startTransition(() => {
         setLocalShops(shops);
-
-      })
+      });
     }
-  }, [shops])
+  }, [shops]);
+
   useEffect(() => {
-    // Simulate loading delay 
-    //const timer = setTimeout(() => {
-    //setLoading(false);
-    //}, 4000);
+    // Vérifier si toutes les données sont chargées
+    if (!shopsLoading && !categoriesLoading) {
+      // Ajouter un petit délai pour assurer une transition fluide
+      const timer = setTimeout(() => {
+        setPageLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [shopsLoading, categoriesLoading]);
 
-    //return () => clearTimeout(timer);
-  }, []);
-
-
-
-
-  //if (loading) {
-  //  return (
-  //    <div className="flex flex-col">
-  //      {/* Hero Section Skeleton */}
-  //      <div className="mb-12">
-  //        <Skeleton className="py-8 w-full" />
-  //      </div>
-  //      {/* Header */}
-  //      <div className='flex mx-16 items-center justify-between gap-4'>
-  //        <Skeleton className="w-16 h-16 rounded-full" />
-  //        <Skeleton className=" h-14 w-96 pr-12" />
-  //        <Skeleton className="h-8 w-48" />
-  //        </div>
-
-  {/* Hero Skeleton */ }
-  //<div className='flex items-start mt-28 gap-4 mx-16 h-[30rem]'>
-  //  <Skeleton className="w-[75%] rounded-3xl  relative h-96" />
-  //  <Skeleton className="flex w-[25%] h-96 gap-4" />
-  //</div>
-  {/* Categories Skeleton */ }
-  //<div className="mb-12 ">
-  //  <Skeleton className="h-8 w-48 mb-6" />
-  //  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-  //    {[1, 2, 3, 4, 5, 6].map((item) => (
-  //      <Skeleton key={item} className="h-24 w-full rounded-xl" />
-  //    ))}
-  //  </div>
-  //</div>
-
-  {/* Featured Products Skeleton */ }
-  //<div className="mb-12">
-  //  <Skeleton className="h-8 w-48 mb-6" />
-  //  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-  //    {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-  //      <div key={item} className="space-y-4">
-  //        <Skeleton className="h-64 w-full rounded-xl" />
-  //        <Skeleton className="h-4 w-3/4" />
-  //<Skeleton className="h-4 w-1/2" />
-  //<Skeleton className="h-8 w-32" />
-  //</div>
-  //))}
-  //</div>
-  //</div>
-
-  {/* Featured Stores Skeleton */ }
-  //<div>
-  //  <Skeleton className="h-8 w-48 mb-6" />
-  //  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  //    {[1, 2, 3].map((item) => (
-  //      <div key={item} className="space-y-4">
-  //        <Skeleton className="h-40 w-full rounded-xl" />
-  //        <Skeleton className="h-16 w-16 rounded-full -mt-8 ml-6" />
-  //        <div className="space-y-2">
-  //          <Skeleton className="h-4 w-3/4" />
-  //          <Skeleton className="h-4 w-1/2" />
-  //        </div>
-  //</div>
-  //))}
-  //</div>
-  //</div>
-  //</div>
-  //);
-  //}
+  if (pageLoading) {
+    return <PageLoader />;
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
@@ -126,7 +64,7 @@ const Homepage = () => {
 
 
        
-          <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={isLoading} />
+          <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={shopsLoading} />
         
 
         
@@ -134,7 +72,7 @@ const Homepage = () => {
           <PremiumProducts />
         
         
-          
+          <CategoryGridList categories={categories} isLoading={categoriesLoading} title={`Navigation par catégorie`} />
         
 
       </section>
