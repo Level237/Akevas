@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 
@@ -95,7 +95,29 @@ const CategoryGridList = React.memo(({
   isLoading: boolean;
   title: string;
 }) => {
-  if (isLoading) {
+  const [loadedCategories, setLoadedCategories] = useState<Category[]>([]);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      // Précharger toutes les images
+      const imagePromises = categories.map(category => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = category.category_profile;
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+        });
+      });
+
+      Promise.all(imagePromises).then(() => {
+        setLoadedCategories(categories);
+        setImagesLoaded(true);
+      });
+    }
+  }, [categories]);
+
+  if (isLoading || !imagesLoaded) {
     return (
       <div 
         className="container mx-auto px-4 py-8"
@@ -129,20 +151,23 @@ const CategoryGridList = React.memo(({
       }}
     >
       <h2 className="text-2xl font-bold mb-8">{title}</h2>
-      <div 
+      <motion.div 
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
         style={{
           willChange: 'transform',
           transform: 'translateZ(0)',
         }}
       >
-        {categories.map((category) => (
+        {loadedCategories.map((category) => (
           <CategoryItem
             key={category.id}
             category={category}
           />
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 });
