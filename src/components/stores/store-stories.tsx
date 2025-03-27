@@ -26,7 +26,7 @@ const StoreStories = React.memo(({ title, description, shops, isLoading }: { tit
 
           <SlideFeatureShop shops={shops} isLoading={isLoading} />
           <AsyncLink
-            to="/stores"
+            to="/shops"
             className="flex md:hidden text-white items-center  justify-center mt-6 text-sm hover:underline"
           >
             Voir toutes les boutiques
