@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useGetUserQuery, useStatePaymentMutation } from "@/services/auth";
 import jsPDF from "jspdf";
+import { QRCodeCanvas } from "qrcode.react";
 import html2canvas from "html2canvas";
 import styled from "styled-components";
 import logo from "@/assets/logo.png";
@@ -227,6 +228,7 @@ if (!orderDetails) return <div>Chargement...</div>;
             <p className="text-gray-600">
                 Merci pour votre commande. Un email de confirmation vous a été envoyé.
             </p>
+            <QRCodeCanvas value={JSON.stringify(orderDetails)} />
         </SuccessCard>
 
         <Receipt id="receipt">
