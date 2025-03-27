@@ -228,7 +228,7 @@ if (!orderDetails) return <div>Chargement...</div>;
             <p className="text-gray-600">
                 Merci pour votre commande. Un email de confirmation vous a été envoyé.
             </p>
-            <QRCodeCanvas value={JSON.stringify(orderDetails)} />
+            
         </SuccessCard>
 
         <Receipt id="receipt">
@@ -299,6 +299,9 @@ if (!orderDetails) return <div>Chargement...</div>;
                     <span>Total</span>
                     <span>{orderDetails.price} XAF</span>
                 </div>
+            </div>
+            <div className="flex justify-center">
+                <QRCodeCanvas value={JSON.stringify(orderDetails)} />
             </div>
         </Receipt>
 
