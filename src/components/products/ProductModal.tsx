@@ -25,7 +25,7 @@ interface ActionButtonsProps {
   product: Product;
 }
 
-export default function ProductModal({ product, isOpen, onClose }: { product: Product, isOpen: boolean, onClose: () => void }) {
+const ProductModal=({ product, isOpen, onClose }: { product: Product, isOpen: boolean, onClose: () => void }) => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -271,3 +271,5 @@ export default function ProductModal({ product, isOpen, onClose }: { product: Pr
     </AnimatePresence>
   );
 };
+
+export default memo(ProductModal);

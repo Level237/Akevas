@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, memo } from 'react'
 import { Product } from '@/types/products'
 import { motion } from 'framer-motion'
 import { Heart, Star, ShoppingCart } from 'lucide-react'
@@ -18,7 +18,7 @@ const useIntersectionObserver = (ref: React.RefObject<HTMLElement>, options = {}
     const currentRef = ref.current;
     if (currentRef) {
       observer.observe(currentRef);
-    }
+      }
 
     return () => {
       if (currentRef) {
@@ -55,7 +55,7 @@ const LazyImage = ({ src, alt, className }: { src: string; alt: string; classNam
   );
 };
 
-export default function ProductListGrid({ products = [], isLoading }: { products: Product[], isLoading: boolean }) {
+const ProductListGrid=({ products = [], isLoading }: { products: Product[], isLoading: boolean }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Si products est undefined ou null, on utilise un tableau vide
@@ -177,3 +177,5 @@ export default function ProductListGrid({ products = [], isLoading }: { products
     </section>
   );
 }
+
+export default memo(ProductListGrid);

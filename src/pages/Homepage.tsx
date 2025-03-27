@@ -134,7 +134,7 @@ const Homepage = () => {
           <PremiumProducts />
         
         
-          <CategoryGridList categories={categories} isLoading={isLoadingCategories} title={`Navigation par catégorie`} />
+          
         
 
       </section>
