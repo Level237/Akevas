@@ -9,7 +9,7 @@ import { sellerService } from "@/services/sellerService";
 import cartSlice from "./cartSlice";
 import deliverySlice from "./delivery/deliverySlice";
 import categorySlice from "./features/categorySlice";
-
+import loadingSlice from "./features/loadingSlice";
 export const store = configureStore({
     reducer: {
         [authSlice.name]: authSlice.reducer,
@@ -17,6 +17,7 @@ export const store = configureStore({
         [cartSlice.name]: cartSlice.reducer,
         [checkTokenService.reducerPath]: checkTokenService.reducer,
         [registerSlice.name]: registerSlice.reducer,
+        [loadingSlice.name]: loadingSlice.reducer,
         [guardService.reducerPath]: guardService.reducer,
         [adminService.reducerPath]: adminService.reducer,
         [sellerService.reducerPath]: sellerService.reducer,

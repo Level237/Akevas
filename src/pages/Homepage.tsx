@@ -12,9 +12,14 @@ import GenderNavigationMobile from '@/components/categories/GenderNavigationMobi
 import { Shop } from '@/types/shop';
 import InstallButton from '@/components/InstallButton';
 import PageLoader from '@/components/ui/PageLoader';
+import { useDispatch, useSelector } from 'react-redux';
+import { setInitialLoading } from '@/store/features/loadingSlice';
+import { RootState } from '@/store';
+
 
 const Homepage = () => {
-  const [pageLoading, setPageLoading] = useState(true);
+  const dispatch = useDispatch();
+  const isInitialLoading = useSelector((state: RootState) => state.loading.isInitialLoading);
   const [transition, startTransition] = useTransition();
   const [localShops, setLocalShops] = useState<Shop[]>([])
   const [showFeaturedShop, setShowFeaturedShop] = useState(false);
@@ -37,17 +42,16 @@ const Homepage = () => {
   }, [shops]);
 
   useEffect(() => {
-    // Vérifier si toutes les données sont chargées
     if (!shopsLoading && !categoriesLoading) {
-      // Ajouter un petit délai pour assurer une transition fluide
+      // Ajouter un petit délai pour une transition fluide
       const timer = setTimeout(() => {
-        setPageLoading(false);
+        dispatch(setInitialLoading(false));
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [shopsLoading, categoriesLoading]);
+  }, [shopsLoading, categoriesLoading, dispatch]);
 
-  if (pageLoading) {
+  if (isInitialLoading) {
     return <PageLoader />;
   }
 
