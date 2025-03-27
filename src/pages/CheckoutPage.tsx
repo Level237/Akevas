@@ -460,7 +460,7 @@ const CheckoutPage: React.FC = () => {
 
               {/* Articles */}
               <div className="space-y-4 mb-6">
-                {cartItems.map((item) => (
+                {s == "1" && cartItems.map((item) => (
                   <div key={item.product.id} className="flex gap-4">
                     <img
                       src={item.product.product_profile}
