@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
-import {  ExternalLink,Users } from "lucide-react";
+import {  ExternalLink,MessageCircle } from "lucide-react";
 
 import { formatDate } from "@/lib/formatDate";
 import { useAdminListFeedbackQuery } from "@/services/adminService";
@@ -57,8 +57,8 @@ const ListFeedback=({feedbacks,isLoading}:{feedbacks:any,isLoading:boolean})=>{
         </Table>
         {!isLoading && feedbacks?.length === 0 && (
             <div className="text-center py-12">
-                <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-500">Aucun Commentaire trouvé</p>
+                <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-500">Aucun Feedback trouvé</p>
             </div>
         )}
     </div>
