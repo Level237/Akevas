@@ -40,7 +40,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                             <TableCell className={`${order.status === "0" ? "text-red-500" : "text-green-500"}`}>
                                 <span className="capitalize font-bold">{order.status === "0" ? "En attente" : "Livré"}</span>
                             </TableCell>
-                            <TableCell>{order.quarter_delivery}</TableCell>
+                            <TableCell>{order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}</TableCell>
                             <TableCell className="text-right">
                                 <Button variant="ghost" size="icon" className="mr-2">
                                     <Edit className="h-4 w-4" />
@@ -67,5 +67,6 @@ export default React.memo(ListOrders);
 
 export function ListOrdersContainer() {
     const { data: orders, isLoading } = useAdminListOrdersQuery('admin')
+    console.log(orders)
     return <ListOrders orders={orders} isLoading={isLoading} />
 }

@@ -102,7 +102,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                         <div className="mt-4 flex flex-wrap items-center gap-4">
                           <div className="flex items-center gap-1">
                             <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                            <span className="text-lg">4.8</span>
+                            <span className="text-lg">{shop.shop.review_average}</span>
                           </div>
                           <span className="text-white/60">•</span>
                           <span className="text-white/90">
