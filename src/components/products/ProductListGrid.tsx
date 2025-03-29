@@ -3,8 +3,7 @@ import { Product } from '@/types/products'
 import { motion } from 'framer-motion'
 import { Heart, Star, ShoppingCart } from 'lucide-react'
 import ProductModal from './ProductModal'
-import { FixedSizeGrid as Grid } from 'react-window'
-import AutoSizer from 'react-virtualized-auto-sizer'
+
 
 // Hook personnalisé pour l'intersection observer
 const useIntersectionObserver = (ref: React.RefObject<HTMLElement>, options = {}) => {
@@ -30,24 +29,20 @@ const useIntersectionObserver = (ref: React.RefObject<HTMLElement>, options = {}
   return isIntersecting;
 };
 
-// Composant pour l'image lazy-loadée
+// Composant pour l'image (sans lazy loading)
 const LazyImage = ({ src, alt, className }: { src: string; alt: string; className: string }) => {
-  const imgRef = useRef<HTMLDivElement>(null);
-  const isVisible = useIntersectionObserver(imgRef);
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
-    <div ref={imgRef} className={`relative ${className}`}>
-      {isVisible && (
-        <img
-          src={src}
-          alt={alt}
-          className={`w-full h-full object-cover transform transition-all duration-300 ${
-            isLoaded ? 'opacity-1' : 'opacity-1'
-          } ${isLoaded ? 'group-hover:scale-105' : ''}`}
-          onLoad={() => setIsLoaded(true)}
-        />
-      )}
+    <div className={`relative ${className}`}>
+      <img
+        src={src}
+        alt={alt}
+        className={`w-full h-full object-cover transform transition-all duration-300 ${
+          isLoaded ? 'opacity-1' : 'opacity-1'
+        } ${isLoaded ? 'group-hover:scale-105' : ''}`}
+        onLoad={() => setIsLoaded(true)}
+      />
       {!isLoaded && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse" />
       )}
