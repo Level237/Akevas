@@ -50,7 +50,7 @@ const SimilarProducts = ({ similarProducts, isLoadingSimilarProducts }: { simila
                                                 <Star className="w-3 h-3 text-yellow-400 fill-current" />
                                                 <span>{product.review_average}</span>
                                                 <span className="mx-0.5">•</span>
-                                                <span>{Math.floor(Math.random() * 1000)}+ vendus</span>
+                                                <span>{product.count_seller} vendus</span>
                                             </div>
                                         </div>
                                     </AsyncLink>
