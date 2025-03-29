@@ -413,10 +413,7 @@ const ProductDetailPage: React.FC = () => {
                       </div>
 
                       {/* Prix de livraison */}
-                      <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50">
-                        <span className="text-gray-600">Frais de livraison</span>
-                        <span className="font-medium">XAF52,692</span>
-                      </div>
+                      
 
                       {/* Sécurité */}
                       <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">

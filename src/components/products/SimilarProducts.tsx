@@ -48,7 +48,7 @@ const SimilarProducts = ({ similarProducts, isLoadingSimilarProducts }: { simila
 
                                             <div className="flex items-center gap-1 text-xs text-gray-500">
                                                 <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                                                <span>4.8</span>
+                                                <span>{product.review_average}</span>
                                                 <span className="mx-0.5">•</span>
                                                 <span>{Math.floor(Math.random() * 1000)}+ vendus</span>
                                             </div>

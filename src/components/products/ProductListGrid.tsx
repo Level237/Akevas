@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, memo } from 'react'
+import { useState, useEffect,memo } from 'react'
 import { Product } from '@/types/products'
 import { motion } from 'framer-motion'
 import { Heart, Star, ShoppingCart } from 'lucide-react'
@@ -94,7 +94,7 @@ const ProductListGrid=({ products = [], isLoading }: { products: Product[], isLo
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center">
                       <Star className="w-4 h-4 text-yellow-400" />
-                      <span className="ml-1 text-sm text-gray-600">3</span>
+                      <span className="ml-1 text-sm text-gray-600">{product.review_average}</span>
                     </div>
                     <span className="text-sm text-gray-500">
                       Boutique: {product.shop_key}
