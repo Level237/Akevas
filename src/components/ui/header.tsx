@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search, X, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
+import { User, Search, X, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -11,9 +11,6 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
-
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
 // Données de démonstration pour l'historique et les suggestions
@@ -141,7 +138,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const totalQuantity = useSelector((state: RootState) => state.cart.totalQuantity)
+
 
   // Memoize les composants qui peuvent être réutilisés
   const headerActions = useMemo(() => (
@@ -174,7 +171,7 @@ const Header = () => {
 
 
     </div>
-  ), [userData, handleSearchToggle, totalQuantity]);
+  ), [userData, handleSearchToggle]);
 
   return (
     <>
@@ -269,31 +266,9 @@ const Header = () => {
                   <Button className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
                 </AsyncLink>}
 
-                {!userData && <AsyncLink to="/cart">
+                
 
-                  <div
-
-                    className="relative text-gray-700 hover:text-[#ed7e0f]"
-                  >
-                    <ShoppingCart className="w-6 h-6" />
-                    <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {totalQuantity}
-                    </span>
-                  </div>
-                </AsyncLink>}
-
-                {userData && (userData.role_id === 1 || userData.role_id === 3) && <AsyncLink to="/cart">
-
-                  <div
-
-                    className="relative text-gray-700 hover:text-[#ed7e0f]"
-                  >
-                    <ShoppingCart className="w-6 h-6" />
-                    <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {totalQuantity}
-                    </span>
-                  </div>
-                </AsyncLink>}
+                  
               </div>
             </div>
           </div>
