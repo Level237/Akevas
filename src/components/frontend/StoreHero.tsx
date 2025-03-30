@@ -16,10 +16,10 @@ export default function StoreHero() {
     productImages = [
       data[0].shop_profile,
       data[1].shop_profile,
-      data[0].shop_profile,
-      data[0].shop_profile,
-      data[0].shop_profile,
-      data[0].shop_profile,
+      data[2].shop_profile,
+      data[3].shop_profile,
+      data[4].shop_profile,
+      data[5].shop_profile,
     ];
   }
   
