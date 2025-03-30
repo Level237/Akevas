@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import delivery from "../../assets/delivery-slider.png"
 import sellerImage from "../../assets/seller.png"
-
+import marketplace from "../../assets/marketplace.jpg"
 export default function StoreHero() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -144,44 +144,51 @@ export default function StoreHero() {
         </div>
       </motion.section>
      <section className="flex flex-col w-[25%] max-sm:w-full h-96 gap-4">
-        <section style={{ backgroundImage:`url(${delivery})`,backgroundPosition:"top",backgroundSize:"cover",backgroundRepeat:"no-repeat" }} className="w-full rounded-3xl  h-full relative">
-       
-<div className="absolute bottom-0 h-48 pt-3 rounded-b-3xl  flex flex-col items-center w-full p-1 z-10 bg-[#ed7e0f] text-white">
-<div className="p-6 text-center">
-         <motion.h2 
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ delay: 0.3 }}
-           className="text-2xl font-bold text-white mb-2"
-         >
-           Devenir Livreur
-         </motion.h2>
-         <motion.p 
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ delay: 0.5 }}
-           className="text-gray-200 text-sm mb-4"
-         >
-           Rejoignez notre équipe de livraison et gagnez en flexibilité
-         </motion.p>
-         <motion.button 
-           whileHover={{ scale: 1.05 }}
-           whileTap={{ scale: 0.95 }}
-           className="bg-white text-[#ed7e0f] px-4 py-2 rounded-full font-semibold w-full hover:bg-orange-600 transition-colors"
-         >
-           Devenir livreur
-         </motion.button>
-       </div>
-<div>
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="w-full bg-black  rounded-3xl h-full relative group overflow-hidden"
+        >
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#ed7e0f]/30 to-[#ed7e0f] z-0"/>
+          
+          {/* Background with parallax effect */}
+          <motion.div 
+            className="absolute inset-0 w-full h-full"
+            style={{
+              backgroundImage: `url(${marketplace})`,
+              backgroundPosition: "center",
+              backgroundSize: "cover",
+              backgroundRepeat: "no-repeat",
+            }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.8 }}
+          />
 
-</div>
 
+          {/* Content container */}
+          <div className="absolute -bottom-3 w-full p-6 z-20 backdrop-blur-lg  rounded-b-3xl">
+            <div className="text-center">
+             
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="text-white/90 text-sm mb-4 leading-relaxed"
+              >
+                Découvrez notre marketplace de boutiques
+              </motion.p>
+              <motion.button 
+                className=" bg-white text-black px-6 py-3 rounded-full font-semibold w-full 
+                           shadow-lg hover:shadow-xl text-sm transition-all duration-300"
+              >
+                En savoir plus
+              </motion.button>
+            </div>
           </div>
-
-        </section>
-     
-
-     </section>
+        </motion.section>
+      </section>
 
      {/* Section Livreur */}
     
