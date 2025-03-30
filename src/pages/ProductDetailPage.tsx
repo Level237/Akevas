@@ -349,7 +349,7 @@ const ProductDetailPage: React.FC = () => {
                       <span className="ml-1 font-medium">4.8</span>
                       <span className="ml-1 text-gray-500">(128 avis)</span>
                     </div>
-                    <div className="text-gray-500">1250+ vendus</div>
+                    <div className="text-gray-500">{product.count_seller} vendus</div>
                     <div className="text-gray-500">Code: {product.shop_key}</div>
                   </div>
 

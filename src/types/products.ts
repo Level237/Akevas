@@ -21,6 +21,7 @@ export interface Product {
     product_variants: string[] | null,
     variants: Variant[] | null,
     status: boolean,
+    count_seller:string,
     created_at: string,
 }
 
@@ -38,6 +39,7 @@ export type Category = {
     category_url: string,
     category_profile: string,
     category_description: string,
+    
     category_parent_id: string,
     category_created_at: string,
 }
