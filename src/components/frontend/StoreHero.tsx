@@ -4,19 +4,25 @@ import delivery from "../../assets/delivery-slider.png"
 import sellerImage from "../../assets/seller.png"
 import marketplace from "../../assets/marketplace.jpg"
 import dress from "../../assets/dress.jpg"
+import { useGetProfileShopQuery } from "@/services/guardService";
 // Ajoutez ces images ou utilisez vos propres images de produits
-const productImages = [
-  dress,
-  "/products/product2.jpg",
-  "/products/product3.jpg",
-  "/products/product4.jpg",
-  "/products/product5.jpg",
-  "/products/product6.jpg",
-];
+
 
 export default function StoreHero() {
   const [currentSlide, setCurrentSlide] = useState(0);
-
+  const {data,isLoading}=useGetProfileShopQuery('guard')
+  let productImages;
+  if(!isLoading){
+    productImages = [
+      data[0].shop_profile,
+      data[1].shop_profile,
+      data[0].shop_profile,
+      data[0].shop_profile,
+      data[0].shop_profile,
+      data[0].shop_profile,
+    ];
+  }
+  
   const slides = [
     {
       title: "Devenez Vendeur",
