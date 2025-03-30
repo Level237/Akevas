@@ -346,8 +346,8 @@ const ProductDetailPage: React.FC = () => {
                   <div className="flex items-center gap-6 py-4 border-b">
                     <div className="flex items-center">
                       <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                      <span className="ml-1 font-medium">4.8</span>
-                      <span className="ml-1 text-gray-500">(128 avis)</span>
+                      <span className="ml-1 font-medium">{product.review_average}</span>
+                      <span className="ml-1 text-gray-500">({product.reviewCount} avis)</span>
                     </div>
                     <div className="text-gray-500">{product.count_seller} vendus</div>
                     <div className="text-gray-500">Code: {product.shop_key}</div>
