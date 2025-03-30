@@ -286,9 +286,14 @@ const ProductDetailPage: React.FC = () => {
                     <span className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
                       Premium
                     </span>
-                    <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+                    {product.product_quantity > 0 ? <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
                       En stock
-                    </span>
+                      
+                    </span> : <span className="px-3 py-1 text-sm font-medium bg-red-100 text-red-800 rounded-full">
+                      Rupture de stock
+                      
+                    </span>}
+                    
                   </div>
 
                   <h1 className="text-2xl font-bold text-gray-900">{product.product_name}</h1>
