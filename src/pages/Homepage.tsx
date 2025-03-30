@@ -22,7 +22,7 @@ const Homepage = () => {
   const isInitialLoading = useSelector((state: RootState) => state.loading.isInitialLoading);
   const [transition, startTransition] = useTransition();
   const [localShops, setLocalShops] = useState<Shop[]>([])
-  const [showFeaturedShop, setShowFeaturedShop] = useState(false);
+  const [showFeaturedShop, setShowFeaturedShop] = useState(true);
   const { data: { data: shops } = {}, isLoading: shopsLoading } = useGetHomeShopsQuery("guard", {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30

@@ -40,158 +40,152 @@ const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ isOpen, onClose }
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999999]"
+            className="fixed inset-0 bg-black/40 backdrop-blur-md z-[99999999]"
             onClick={onClose}
           />
 
-          {/* Modal */}
-          <div className="fixed inset-0 flex items-center justify-center z-[99999999]">
+          <div className="fixed inset-0 flex items-center justify-center z-[99999999] p-4">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", duration: 0.5 }}
-              className="fixed left-1/2 max-md:inset-x-0 right-1/2 inset-0 top-[5%] z-[999] h-[86%] mx-auto max-w-6xl overflow-hidden rounded-2xl bg-white shadow-2xl md:inset-x-auto"
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="w-full max-w-3xl mx-auto bg-white rounded-[2rem] overflow-hidden shadow-2xl relative"
             >
-              <div className="grid max-sm:flex max-sm:flex-col md:grid-cols-2 h-full">
-                {/* Left Column - Cover and Products */}
-                <div className="relative h-full bg-gray-100">
-                  {/* Cover Image */}
-                  <div className="relative max-h-[100%] h-[100%]">
-                    <img
-                      src={featuredShop.coverImage}
-                      alt={featuredShop.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-                    
-                    {featuredShop.isPremium && (
-                      <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full flex items-center gap-1">
-                          <Shield className="w-4 h-4" />
-                          Boutique Premium
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Featured Products */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm p-6">
-                    <h3 className="text-white font-medium mb-4">Produits populaires</h3>
-                    <div className="grid grid-cols-4 gap-4">
-                      {featuredShop.featuredProducts.map((product) => (
-                        <div key={product.id} className="group cursor-pointer">
-                          <div className="relative aspect-square rounded-lg overflow-hidden">
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
-                          </div>
-                          <div className="mt-2">
-                            <p className="text-white text-sm truncate">{product.name}</p>
-                            <p className="text-white/80 text-sm font-medium">{product.price}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column - Shop Info */}
-                <div className="p-8 overflow-y-auto">
+              <div className="flex flex-col md:flex-row h-full">
+                {/* Left Column - Shop Identity */}
+                <div className="md:w-[45%] relative bg-gradient-to-br from-[#ed7e0f]/10 to-orange-50 p-8">
                   {/* Close Button */}
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 max-sm:bg-white rounded-full hover:bg-gray-100 transition-colors"
+                    className="absolute top-4 right-4 p-2 bg-black/5 hover:bg-black/10 rounded-full transition-colors"
                   >
                     <X className="w-5 h-5" />
-                  </button>
+                  </motion.button>
 
-                  {/* Shop Header */}
-                  <div className="flex items-start gap-4 mb-6">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden">
+                  {/* Shop Logo and Basic Info */}
+                  <div className="flex flex-col items-center text-center pt-8">
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl mb-6"
+                    >
                       <img
                         src={featuredShop.logo}
                         alt={featuredShop.name}
                         className="w-full h-full object-cover"
                       />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-3"
+                    >
+                      <div className="flex items-center justify-center gap-2">
                         <h2 className="text-2xl font-bold text-gray-900">
                           {featuredShop.name}
                         </h2>
                         <BadgeCheck className="w-6 h-6 text-[#ed7e0f]" />
                       </div>
-                      <div className="flex items-center text-gray-500 mt-1">
+
+                      <div className="flex items-center justify-center text-gray-600">
                         <MapPin className="w-4 h-4 mr-1" />
                         {featuredShop.location}
                       </div>
-                    </div>
+
+                      {featuredShop.isPremium && (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-gradient-to-r from-amber-100 to-amber-200 text-amber-900 rounded-full">
+                          <Shield className="w-3.5 h-3.5" />
+                          Premium
+                        </span>
+                      )}
+                    </motion.div>
                   </div>
 
-                  {/* Rating and Stats */}
-                  <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 rounded-xl mb-6">
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-yellow-400 mb-1">
-                        <Star className="w-5 h-5 fill-current" />
-                        <span className="text-lg font-bold text-gray-900">{featuredShop.rating}</span>
-                      </div>
-                      <p className="text-xs text-gray-500">Note</p>
+                  {/* Rating Card */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="mt-8 bg-white rounded-2xl p-4 shadow-sm"
+                  >
+                    <div className="flex items-center justify-center gap-2 text-yellow-500 mb-2">
+                      <Star className="w-5 h-5 fill-current" />
+                      <span className="text-2xl font-bold text-gray-900">{featuredShop.rating}</span>
                     </div>
-                    <div className="text-center border-l border-gray-200">
-                      <p className="font-semibold">{featuredShop.productsCount}</p>
-                      <p className="text-xs text-gray-500">Produits</p>
+                    <p className="text-sm text-gray-500 text-center">Note moyenne</p>
+                  </motion.div>
+                </div>
+
+                {/* Right Column - Shop Details */}
+                <div className="md:w-[55%] p-8 bg-white">
+                  {/* Stats Grid */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="grid grid-cols-3 gap-4 mb-8"
+                  >
+                    <div className="text-center p-4 rounded-2xl bg-gray-50">
+                      <p className="text-lg font-bold text-gray-900">{featuredShop.followers}</p>
+                      <p className="text-sm text-gray-500">Followers</p>
                     </div>
-                    <div className="text-center border-l border-gray-200">
-                      <p className="font-semibold">{featuredShop.followers}</p>
-                      <p className="text-xs text-gray-500">Followers</p>
+                    <div className="text-center p-4 rounded-2xl bg-gray-50">
+                      <p className="text-lg font-bold text-gray-900">{featuredShop.productsCount}</p>
+                      <p className="text-sm text-gray-500">Produits</p>
                     </div>
-                    <div className="text-center border-l border-gray-200">
-                      <p className="font-semibold">{featuredShop.stats.satisfactionRate}</p>
-                      <p className="text-xs text-gray-500">Satisfaction</p>
+                    <div className="text-center p-4 rounded-2xl bg-gray-50">
+                      <p className="text-lg font-bold text-gray-900">{featuredShop.stats.satisfactionRate}</p>
+                      <p className="text-sm text-gray-500">Satisfaction</p>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Description */}
-                  <p className="text-gray-600 mb-6">
-                    {featuredShop.description}
-                  </p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">À propos</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {featuredShop.description}
+                    </p>
+                  </motion.div>
 
-                  {/* Categories */}
-                  <div className="flex flex-wrap gap-2 mb-8">
-                    {featuredShop.categories.map((category, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 text-sm font-medium bg-gray-100 text-gray-600 rounded-full"
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* CTA */}
-                  <div className="flex items-center gap-3">
+                  {/* CTA Buttons */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="flex items-center gap-3 mt-8"
+                  >
                     <AsyncLink to={`/stores/${featuredShop.id}`} className="flex-1">
                       <Button 
                         size="lg"
-                        className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-lg group"
+                        className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white group relative overflow-hidden"
                       >
-                        Visiter la boutique
-                        <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                        <span className="relative z-10 flex items-center justify-center">
+                          Visiter la boutique
+                          <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </span>
                       </Button>
                     </AsyncLink>
-                    <Button variant="outline" size="icon" className="h-12 w-12">
-                      <Heart className="w-5 h-5" />
-                    </Button>
-                  </div>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-12 w-12 border-2 hover:bg-pink-50 group"
+                      >
+                        <Heart className="w-5 h-5 group-hover:text-pink-500 transition-colors" />
+                      </Button>
+                    </motion.div>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>
