@@ -26,7 +26,7 @@ export default function StoreHero() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-    }, 5000); // Change slide every 5 seconds
+    }, 8000); // Augmenté à 8 secondes
 
     return () => clearInterval(timer);
   }, []);
@@ -34,14 +34,20 @@ export default function StoreHero() {
   return (
     <section className="flex max-sm:flex-col items-start max-sm:mx-2 max-sm:mt-6 gap-4 mx-16 h-[30rem]">
       <motion.section className="w-[75%] max-sm:hidden rounded-3xl relative h-96 overflow-hidden">
+        <motion.div
+          className={`absolute inset-0 ${slides[currentSlide].bgColor}`}
+          initial={false}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        />
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.5 }}
-            className={`w-full h-full ${slides[currentSlide].bgColor}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="w-full h-full relative"
             style={{
               backgroundImage: `url(${slides[currentSlide].image})`,
               backgroundPosition: "right",
@@ -54,6 +60,7 @@ export default function StoreHero() {
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
                   className="text-4xl font-bold text-white mb-4"
                 >
                   {slides[currentSlide].title}
@@ -61,6 +68,7 @@ export default function StoreHero() {
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
                   className="text-gray-200 mb-6"
                 >
                   {slides[currentSlide].description}
@@ -68,6 +76,9 @@ export default function StoreHero() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
                   className="bg-white text-[#ed7e0f] px-6 py-3 rounded-full font-semibold w-fit hover:bg-gray-100 transition-colors"
                 >
                   {slides[currentSlide].buttonText}
