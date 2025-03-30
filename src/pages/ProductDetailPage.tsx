@@ -409,7 +409,7 @@ const ProductDetailPage: React.FC = () => {
                       {/* Livraison */}
                       <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
                         <Truck className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">Livraison: 7-15 jours</span>
+                        <span className="text-gray-600">Livraison: 1-3 jours</span>
                       </div>
 
                       {/* Prix de livraison */}
