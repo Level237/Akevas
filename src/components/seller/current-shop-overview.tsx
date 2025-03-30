@@ -21,6 +21,7 @@ import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import ShopReviews from '../stores/ShopReviews';
+import AsyncLink from '../ui/AsyncLink';
 
 
 interface StoreProduct {
@@ -534,9 +535,9 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                           <span className="text-lg font-bold text-gray-900">
                             {product.product_price} FCFA
                           </span>
-                          <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
+                          <AsyncLink to={`/produit/${product.product_url}`} className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
                             Voir
-                          </button>
+                          </AsyncLink>
                         </div>
                       </div>
                     </>
