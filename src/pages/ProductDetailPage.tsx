@@ -52,9 +52,9 @@ const ProductDetailPage: React.FC = () => {
   const getAllImages = () => {
     if (selectedVariant) {
       // Si une variante est sélectionnée, retourner ses images
-      const variantMainImage = { path: selectedVariant.image };
+     
       const variantImages = selectedVariant.images?.[0] || [];
-      return [variantMainImage, ...variantImages];
+      return [...variantImages];
     }
     
     // Sinon, retourner les images du produit principal
@@ -87,7 +87,7 @@ const ProductDetailPage: React.FC = () => {
     setSelectedVariant(variant);
     
     // Réinitialiser l'index de l'image sélectionnée à 0 pour afficher l'image principale de la variante
-    setSelectedImage(1);
+    setSelectedImage(0);
   };
 
   // Modifier le gestionnaire de clic sur l'image principale
