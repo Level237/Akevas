@@ -169,6 +169,12 @@ export const guardService = createApi({
                 url:`/api/search/${query}/${userId}`,
                 method:"GET"
             })
+        }),
+        getProfileShop:builder.query({
+            query:()=>({
+                url:'/api/get/profile/shop',
+                method:"GET"
+            })
         })
         
     }),
@@ -194,5 +200,6 @@ export const {
     useGetSimilarProductsQuery,
     useGetCategoryProductsByUrlQuery,
     useGetCategoryByUrlQuery,
-    useSearchByQueryQuery
+    useSearchByQueryQuery,
+    useGetProfileShopQuery
 } = guardService

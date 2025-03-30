@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 import delivery from "../../assets/delivery-slider.png"
 import sellerImage from "../../assets/seller.png"
 import marketplace from "../../assets/marketplace.jpg"
-
+import dress from "../../assets/dress.jpg"
 // Ajoutez ces images ou utilisez vos propres images de produits
 const productImages = [
-  "/products/product1.jpg",
+  dress,
   "/products/product2.jpg",
   "/products/product3.jpg",
   "/products/product4.jpg",
