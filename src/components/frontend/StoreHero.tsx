@@ -3,6 +3,17 @@ import { useState, useEffect } from "react";
 import delivery from "../../assets/delivery-slider.png"
 import sellerImage from "../../assets/seller.png"
 import marketplace from "../../assets/marketplace.jpg"
+
+// Ajoutez ces images ou utilisez vos propres images de produits
+const productImages = [
+  "/products/product1.jpg",
+  "/products/product2.jpg",
+  "/products/product3.jpg",
+  "/products/product4.jpg",
+  "/products/product5.jpg",
+  "/products/product6.jpg",
+];
+
 export default function StoreHero() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -20,13 +31,20 @@ export default function StoreHero() {
       buttonText: "Devenir livreur",
       image: delivery,
       bgColor: "bg-[#ed7e0f]"
+    },
+    {
+      title: "Découvrez Notre Marketplace",
+      description: "Des milliers de produits de qualité à portée de clic",
+      buttonText: "Explorer les boutiques",
+      isMarketplace: true,
+      bgColor: "bg-gradient-to-r from-orange-800 to-[#ed7e0f]"
     }
   ];
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-    }, 8000); // Augmenté à 8 secondes
+      setCurrentSlide((prev) => (prev >= 2 ? 0 : prev + 1));
+    }, 8000);
 
     return () => clearInterval(timer);
   }, []);
@@ -48,43 +66,104 @@ export default function StoreHero() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="w-full h-full relative"
-            style={{
-              backgroundImage: `url(${slides[currentSlide].image})`,
-              backgroundPosition: "right",
-              backgroundSize: "contain",
-              backgroundRepeat: "no-repeat",
-            }}
           >
-            <div className="flex h-full">
-              <div className="w-3/5 p-10 flex flex-col justify-center">
-                <motion.h1
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="text-4xl font-bold text-white mb-4"
-                >
-                  {slides[currentSlide].title}
-                </motion.h1>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                  className="text-gray-200 mb-6"
-                >
-                  {slides[currentSlide].description}
-                </motion.p>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  className="bg-white text-[#ed7e0f] px-6 py-3 rounded-full font-semibold w-fit hover:bg-gray-100 transition-colors"
-                >
-                  {slides[currentSlide].buttonText}
-                </motion.button>
+            {slides[currentSlide].isMarketplace ? (
+              <div className="flex h-full">
+                <div className="w-1/2 p-10 flex flex-col justify-center">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="text-4xl font-bold text-white mb-4"
+                  >
+                    {slides[currentSlide].title}
+                  </motion.h1>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    className="text-gray-200 mb-6"
+                  >
+                    {slides[currentSlide].description}
+                  </motion.p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className="bg-white text-[#ed7e0f] px-6 py-3 rounded-full font-semibold w-fit hover:bg-gray-100 transition-colors"
+                  >
+                    {slides[currentSlide].buttonText}
+                  </motion.button>
+                </div>
+                <div className="w-1/2 relative h-full flex items-center justify-center pr-6">
+                  <motion.div 
+                    className="grid grid-cols-3 gap-4 p-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                  >
+                    {productImages.map((img, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                        className="relative overflow-hidden rounded-lg aspect-square shadow-lg"
+                      >
+                        <motion.img
+                          src={img}
+                          alt={`Product ${index + 1}`}
+                          className="w-full h-full object-cover"
+                          whileHover={{ 
+                            scale: 1.1,
+                            transition: { duration: 0.3 }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent hover:opacity-0 transition-opacity duration-300" />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex h-full" style={{
+                backgroundImage: `url(${slides[currentSlide].image})`,
+                backgroundPosition: "right",
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+              }}>
+                <div className="w-3/5 p-10 flex flex-col justify-center">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="text-4xl font-bold text-white mb-4"
+                  >
+                    {slides[currentSlide].title}
+                  </motion.h1>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    className="text-gray-200 mb-6"
+                  >
+                    {slides[currentSlide].description}
+                  </motion.p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className="bg-white text-[#ed7e0f] px-6 py-3 rounded-full font-semibold w-fit hover:bg-gray-100 transition-colors"
+                  >
+                    {slides[currentSlide].buttonText}
+                  </motion.button>
+                </div>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
         
