@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import delivery from "../../assets/delivery-slider.png"
 import sellerImage from "../../assets/seller.png"
 import marketplace from "../../assets/marketplace.jpg"
-import dress from "../../assets/dress.jpg"
 import { useGetProfileShopQuery } from "@/services/guardService";
 // Ajoutez ces images ou utilisez vos propres images de produits
 
@@ -29,6 +28,7 @@ export default function StoreHero() {
       description: "Lancez votre boutique en ligne et développez votre business avec nous",
       buttonText: "Créer mon compte vendeur",
       image: sellerImage,
+      href:"https://seller.akevas.com/seller/guide",
       bgColor: "bg-orange-800"
     },
     {
@@ -36,6 +36,7 @@ export default function StoreHero() {
       description: "Rejoignez notre équipe de livraison et gagnez en flexibilité",
       buttonText: "Devenir livreur",
       image: delivery,
+      href:"https://delivery.akevas.com/delivery/guide",
       bgColor: "bg-[#ed7e0f]"
     },
     {
@@ -43,6 +44,7 @@ export default function StoreHero() {
       description: "Des milliers de produits de qualité à portée de clic",
       buttonText: "Explorer les boutiques",
       isMarketplace: true,
+      href:"/shops",
       bgColor: "bg-gradient-to-r from-orange-800 to-[#ed7e0f]"
     }
   ];
@@ -92,16 +94,19 @@ export default function StoreHero() {
                   >
                     {slides[currentSlide].description}
                   </motion.p>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <motion.a
+                  href={slides[currentSlide].href}
+                   
+                    
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6 }}
                     className="bg-white text-[#ed7e0f] px-6 py-3 rounded-full font-semibold w-fit hover:bg-gray-100 transition-colors"
                   >
+                   
                     {slides[currentSlide].buttonText}
-                  </motion.button>
+                  
+                  </motion.a>
                 </div>
                 <div className="w-1/2 relative h-full flex items-center justify-center pr-6">
                   <motion.div 
@@ -157,16 +162,18 @@ export default function StoreHero() {
                   >
                     {slides[currentSlide].description}
                   </motion.p>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <motion.a
+                  href={slides[currentSlide].href}
+                  target="_blank"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6 }}
                     className="bg-white text-[#ed7e0f] px-6 py-3 rounded-full font-semibold w-fit hover:bg-gray-100 transition-colors"
                   >
+                   
                     {slides[currentSlide].buttonText}
-                  </motion.button>
+                  
+                  </motion.a>
                 </div>
               </div>
             )}
