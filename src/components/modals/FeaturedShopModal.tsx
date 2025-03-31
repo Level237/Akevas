@@ -147,13 +147,13 @@ const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ onClose }) => {
                   <div className="mb-6">
                     <h3 className="text-sm font-medium text-gray-900 mb-3">Catégories</h3>
                     <div className="grid grid-cols-4 gap-2">
-                      {featuredShop.categories.map((category, index) => (
+                      {shop.categories.map((category, index) => (
                         <div
                           key={index}
                           className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer"
                         >
                         
-                          <span className="text-sm text-gray-600 group-hover:text-gray-900">{category}</span>
+                          <span className="text-sm text-gray-600 group-hover:text-gray-900">{category.category_name}</span>
                         </div>
                       ))}
                     </div>
