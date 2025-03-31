@@ -4,6 +4,7 @@ import { X, Star, MapPin, BadgeCheck, Shield, Heart, ChevronRight } from 'lucide
 import { Button } from '../ui/button';
 import AsyncLink from '../ui/AsyncLink';
 import img from "../../assets/dress.jpg";
+import { useGetModalShopQuery } from '@/services/guardService';
 
 interface FeaturedShopModalProps {
   onClose: () => void;
@@ -36,6 +37,7 @@ const featuredShop = {
 
 const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ onClose }) => {
   const [shouldShow, setShouldShow] = useState(false);
+  const {data:shop,isLoading}=useGetModalShopQuery('guard')
 
   useEffect(() => {
     setShouldShow(true);
@@ -43,7 +45,7 @@ const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ onClose }) => {
 
   return (
     <AnimatePresence>
-      {shouldShow && (
+      {shouldShow && !isLoading && (
         <>
           <motion.div
             initial={{ opacity: 0 }}
@@ -68,7 +70,7 @@ const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ onClose }) => {
                   {/* Cover Image */}
                   <div className="h-64 md:h-full relative">
                     <img
-                      src={featuredShop.coverImage}
+                      src={shop.cover.path}
                       alt="Cover"
                       className="w-full h-full object-cover"
                     />
@@ -80,7 +82,7 @@ const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ onClose }) => {
                     <div className="flex items-start gap-4">
                       <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white/30 shadow-lg">
                         <img
-                          src={featuredShop.logo}
+                          src={shop.shop_profile}
                           alt={featuredShop.name}
                           className="w-full h-full object-cover"
                         />
@@ -88,18 +90,18 @@ const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ onClose }) => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h2 className="text-xl font-semibold text-white">
-                            {featuredShop.name}
+                            {shop.shop_key}
                           </h2>
                           <BadgeCheck className="w-5 h-5 text-[#ed7e0f]" />
                         </div>
                         <div className="flex items-center gap-3 text-white/90 text-sm">
                           <div className="flex items-center gap-1">
                             <MapPin className="w-4 h-4" />
-                            {featuredShop.location}
+                            {shop.town},{shop.quarter}
                           </div>
                           <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full">
                             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            {featuredShop.rating}
+                            {shop.review_average}
                           </div>
                         </div>
                       </div>
@@ -131,7 +133,7 @@ const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ onClose }) => {
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     {[
                       { label: "Followers", value: featuredShop.followers },
-                      { label: "Produits", value: featuredShop.productsCount },
+                      { label: "Produits", value: shop.products_count },
                       { label: "Satisfaction", value: featuredShop.stats.satisfactionRate }
                     ].map((stat, index) => (
                       <div key={index} className="text-center p-3 rounded-xl bg-gray-50">
@@ -161,13 +163,13 @@ const FeaturedShopModal: React.FC<FeaturedShopModalProps> = ({ onClose }) => {
                   <div className="mb-6">
                     <h3 className="text-sm font-medium text-gray-900 mb-2">Description</h3>
                     <p className="text-sm text-gray-600 leading-relaxed">
-                      {featuredShop.description}
+                      {shop.shop_description}
                     </p>
                   </div>
 
                   {/* Actions */}
                   <div className="flex items-center gap-3">
-                    <AsyncLink to={`/stores/${featuredShop.id}`}>
+                    <AsyncLink to={`/shop/${shop.id}`}>
                       <Button 
                         size="lg"
                         className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white group px-6"
