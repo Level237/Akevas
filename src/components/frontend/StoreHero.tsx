@@ -110,7 +110,7 @@ export default function StoreHero() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
                   >
-                    {productImages.map((img, index) => (
+                    {productImages && productImages.map((img, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, scale: 0.8 }}
