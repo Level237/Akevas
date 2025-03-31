@@ -1,11 +1,52 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import delivery from "../../assets/delivery-slider.png"
 import sellerImage from "../../assets/seller.png"
 import marketplace from "../../assets/marketplace.jpg"
 import { useGetProfileShopQuery } from "@/services/guardService";
 // Ajoutez ces images ou utilisez vos propres images de produits
 
+// Créer des composants séparés pour une meilleure réutilisabilité
+const SlideControls = memo(({ slides, currentSlide, setCurrentSlide }:{slides:any,currentSlide:any,setCurrentSlide:any}) => (
+  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+    {slides.map((_:any, index:any) => (
+      <button
+        key={index}
+        onClick={() => setCurrentSlide(index)}
+        className={`w-2 h-2 rounded-full transition-all ${
+          currentSlide === index ? "bg-white w-6" : "bg-white/50"
+        }`}
+      />
+    ))}
+  </div>
+));
+
+const ProductGrid = memo(({ productImages }:{productImages:any}) => (
+  <motion.div 
+    className="grid grid-cols-3 gap-4 p-4"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.8, delay: 0.4 }}
+  >
+    {productImages?.map((img:any, index:any) => (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+        className="relative overflow-hidden rounded-lg aspect-square shadow-lg"
+      >
+        <img
+          src={img}
+          alt={`Product ${index + 1}`}
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent hover:opacity-0 transition-opacity duration-300" />
+      </motion.div>
+    ))}
+  </motion.div>
+));
 
 export default function StoreHero() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -22,7 +63,8 @@ export default function StoreHero() {
     ];
   }
   
-  const slides = [
+  // Memoize slides data
+  const slides = useMemo(() => [
     {
       title: "Devenez Vendeur",
       description: "Lancez votre boutique en ligne et développez votre business avec nous",
@@ -47,7 +89,7 @@ export default function StoreHero() {
       href:"/shops",
       bgColor: "bg-gradient-to-r from-orange-800 to-[#ed7e0f]"
     }
-  ];
+  ], []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -109,33 +151,7 @@ export default function StoreHero() {
                   </motion.a>
                 </div>
                 <div className="w-1/2 relative h-full flex items-center justify-center pr-6">
-                  <motion.div 
-                    className="grid grid-cols-3 gap-4 p-4"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                  >
-                    {productImages && productImages.map((img, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="relative overflow-hidden rounded-lg aspect-square shadow-lg"
-                      >
-                        <motion.img
-                          src={img}
-                          alt={`Product ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          whileHover={{ 
-                            scale: 1.1,
-                            transition: { duration: 0.3 }
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent hover:opacity-0 transition-opacity duration-300" />
-                      </motion.div>
-                    ))}
-                  </motion.div>
+                  <ProductGrid productImages={productImages} />
                 </div>
               </div>
             ) : (
@@ -181,17 +197,7 @@ export default function StoreHero() {
         </AnimatePresence>
         
         {/* Slider Controls */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                currentSlide === index ? "bg-white w-6" : "bg-white/50"
-              }`}
-            />
-          ))}
-        </div>
+        <SlideControls slides={slides} currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} />
       </motion.section>
  
       <motion.section 
