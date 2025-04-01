@@ -375,15 +375,12 @@ const ShopsPage = () => {
       const matchesCategory = categoryFilter === 'all' || 
                             shop.categories.some(cat => cat.category_name.toLowerCase() === categoryFilter);
       const matchesFilter = selectedFilter === 'all' || 
-                          (selectedFilter === 'premium' && shop.is_premium);
+                          (selectedFilter === 'premium' && "");
       
       return matchesSearch && matchesCategory && matchesFilter;
-    }).sort((a, b) => {
+    }).sort(() => {
       switch (sortBy) {
-        case 'rating': return b.review_average - a.review_average;
-        case 'products': return b.products.length - a.products.length;
-        case 'followers': return b.followers - a.followers;
-        case 'newest': return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+       
         default: return 0;
       }
     });
@@ -471,7 +468,7 @@ const ShopsPage = () => {
 
           {!isLoading && !isError && (
             <AutoSizer>
-              {({ height, width }) => {
+              {({ width }) => {
                 const columnCount = getColumnCount(width);
                 const rowCount = Math.ceil(filteredShops.length / columnCount);
                 const columnWidth = (width / columnCount);

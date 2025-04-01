@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { useGetCurrentHomeByGenderQuery, useGetCategoriesQuery } from "@/services/guardService";
 import { Category } from "@/types/products";
-import { useCallback, useRef, useState } from "react";
+import { useCallback,useState } from "react";
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategories, setCurrentGenderId } from '@/store/features/categorySlice';
@@ -35,11 +35,7 @@ const CategoryGrid = React.memo(({ categories }: { categories: Category[] }) => 
     </div>
 ));
 
-const LoadingSpinner = () => (
-    <div className="flex justify-center items-center h-40">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ed7e0f]"></div>
-    </div>
-);
+
 
 const LoadingSkeleton = () => (
     <div className="grid grid-cols-2 gap-4">
@@ -54,7 +50,7 @@ const LoadingSkeleton = () => (
 const MobileCategoryMenu = React.memo(() => {
     const dispatch = useDispatch();
     const { categories, currentGenderId } = useSelector((state: RootState) => state.categories);
-    const timeoutRef = useRef<NodeJS.Timeout>();
+    
     const [isTabChanging, setIsTabChanging] = useState(false);
 
     const { data: { data: currentGender } = {}, isLoading } = useGetCurrentHomeByGenderQuery(currentGenderId, {

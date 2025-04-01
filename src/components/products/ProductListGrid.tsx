@@ -1,33 +1,11 @@
-import { useState, useEffect,memo } from 'react'
+import { useState, memo } from 'react'
 import { Product } from '@/types/products'
 import { motion } from 'framer-motion'
 import { Heart, Star, ShoppingCart } from 'lucide-react'
 import ProductModal from './ProductModal'
 
 
-// Hook personnalisé pour l'intersection observer
-const useIntersectionObserver = (ref: React.RefObject<HTMLElement>, options = {}) => {
-  const [isIntersecting, setIsIntersecting] = useState(false);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsIntersecting(entry.isIntersecting);
-    }, options);
-
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-      }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [ref, options]);
-
-  return isIntersecting;
-};
 
 // Composant pour l'image (sans lazy loading)
 const LazyImage = ({ src, alt, className }: { src: string; alt: string; className: string }) => {

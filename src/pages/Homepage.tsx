@@ -10,7 +10,7 @@ import { useGetCategoriesWithParentIdNullQuery, useGetHomeShopsQuery } from '@/s
 import CategoryGridList from '@/components/categories/CategoryGridList';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 import { Shop } from '@/types/shop';
-import InstallButton from '@/components/InstallButton';
+
 import PageLoader from '@/components/ui/PageLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { setInitialLoading } from '@/store/features/loadingSlice';
@@ -22,6 +22,7 @@ const Homepage = () => {
   const dispatch = useDispatch();
   const isInitialLoading = useSelector((state: RootState) => state.loading.isInitialLoading);
   const [transition, startTransition] = useTransition();
+  console.log(transition)
   const [localShops, setLocalShops] = useState<Shop[]>([])
   const [shouldShow, setShouldShow] = useState(false);
   const { data: { data: shops } = {}, isLoading: shopsLoading } = useGetHomeShopsQuery("guard", {

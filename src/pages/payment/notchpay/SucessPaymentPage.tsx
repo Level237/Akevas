@@ -142,14 +142,15 @@ export default function SucessPaymentPage(){
               setOrderDetails({
                 orderId: response.data.order.id,
                 orderDate: new Date().toISOString(),
-                price: total ? parseFloat(total) : null,
-                amount: price ? parseFloat(price) : null,
+                price: total ? parseFloat(total) : 0,
+                amount: price ? parseFloat(price) : 0,
                 shipping: shipping.toString(),
                 quarter_delivery: quarter,
                 productId: productId,
                 quantity: quantity ? parseInt(quantity) : null,
                 name: name,
-                address: address
+                address: address,
+                products: null
               });
             }else{
                 setOrderDetails({
@@ -289,7 +290,7 @@ if (!orderDetails) return <div>Chargement...</div>;
             <div className="border-t pt-4">
                 <div className="flex justify-between mb-2">
                     <span>Sous-total</span>
-                    <span>{parseInt(orderDetails.amount) - parseInt(orderDetails.shipping)} XAF</span>
+                    <span>{Number(orderDetails.amount) - Number(orderDetails.shipping)} XAF</span>
                 </div>
                 <div className="flex justify-between mb-2">
                     <span>Frais de livraison</span>

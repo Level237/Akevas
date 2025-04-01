@@ -317,7 +317,7 @@ const ProductDetailPage: React.FC = () => {
                                 : 'border-gray-200 hover:border-gray-300'}`}
                           >
                             <img
-                              src={variant?.images[0][0]?.path}
+                              src={variant?.images[0][0]?.path }
                               alt={variant.variant_name}
                               className="w-12 h-12 rounded-lg object-cover"
                             />
