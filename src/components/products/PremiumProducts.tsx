@@ -44,7 +44,7 @@ const PremiumProducts: React.FC = () => {
 
   return (
     <section className="pt-24 max-sm:pt-12 max-sm:pb-12 bg-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader />
         <ProductListGrid
           products={memoizedProducts}
