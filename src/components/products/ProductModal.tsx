@@ -60,7 +60,7 @@ const ProductModal=({ product, isOpen, onClose }: { product: Product, isOpen: bo
   // 2. Extraire les composants qui peuvent changer fréquemment
   const ImageGallery = memo(({ product, selectedImage, onImageSelect }: ImageGalleryProps) => (
     <div className="bg-gray-50 p-8">
-      <div className="relative aspect-square rounded-xl overflow-hidden mb-4 shadow-lg">
+      <div className="relative aspect-square max-sm:max-h-[200px] max-sm:w-full rounded-xl overflow-hidden mb-4 shadow-lg">
         <img
           src={selectedImage === null ? product.product_profile : product.product_images[selectedImage].path}
           alt={product.product_name}
@@ -87,7 +87,7 @@ const ProductModal=({ product, isOpen, onClose }: { product: Product, isOpen: bo
         {product.product_images.map((image, idx) => (
           <button
             key={idx}
-            className={`aspect-square rounded-lg overflow-hidden border-2 shadow-sm hover:shadow-md transition-all
+            className={`aspect-square rounded-lg max-sm:w-16 max-sm:h-16 overflow-hidden border-2 shadow-sm hover:shadow-md transition-all
               ${selectedImage === idx ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20' : 'border-transparent'}`}
             onClick={() => onImageSelect(idx)}
           >
@@ -203,15 +203,16 @@ const ProductModal=({ product, isOpen, onClose }: { product: Product, isOpen: bo
                   </button>
 
                   {/* En-tête produit */}
-                  <div className="mb-8">
-                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                  <div className="mb-2 max-sm:-mt-4">
+                    <div className="flex items-center max-sm:hidden gap-2 text-sm text-gray-600 mb-3">
                       <span className="px-3 py-1 bg-gray-100 rounded-full">{product.product_categories[0].category_name}</span>
                       <span className="px-3 py-1 bg-gray-100 rounded-full">Code: {product.shop_key}</span>
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-3">
                       {product.product_name}
                     </h2>
-                    <div className="flex items-center gap-3">
+                    <div className="flex max-sm:flex-row items-center gap-3">
+                   
                       <div className="flex items-center bg-gray-50 px-3 py-1 rounded-full">
                         <Star className="w-4 h-4 text-yellow-400" />
                         <span className="ml-1 font-medium">{product.review_average}</span>
@@ -219,6 +220,7 @@ const ProductModal=({ product, isOpen, onClose }: { product: Product, isOpen: bo
                       <span className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
                         Premium
                       </span>
+                      
                     </div>
                   </div>
 
@@ -229,7 +231,7 @@ const ProductModal=({ product, isOpen, onClose }: { product: Product, isOpen: bo
                         {product.product_price} FCFA
                       </span>
                     </div>
-                    <p className="text-gray-600 leading-relaxed line-clamp-3">
+                    <p className="text-gray-600 max-sm:hidden leading-relaxed line-clamp-3">
                       {product.product_description}
                     </p>
                   </div>
