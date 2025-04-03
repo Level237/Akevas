@@ -95,7 +95,7 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
       {/* Boutons de navigation repositionnés */}
 
       <div className='flex justify-between mb-4 items-start'>
-        <h2 className='text-2xl font-bold text-gray-900'>
+        <h2 className='text-2xl hidden max-sm:block font-bold text-gray-900'>
           Produits Premium
         </h2>
         <div className="md:hidden flex justify-end gap-2 px-4 mb-4">
@@ -148,8 +148,9 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
         style={{ x: dragX }}
         whileTap={{ cursor: "grabbing" }}
         className="
-          flex flex-row gap-4 overflow-x-hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
+          flex flex-row gap-4 overflow-x-hidden overflow-y-hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
           pb-4 md:pb-0 px-4
+          max-sm:gap-0
           snap-x snap-mandatory md:snap-none
           touch-pan-x
           overscroll-x-contain
@@ -163,71 +164,58 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
           safeProducts.map((product) => (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              whileHover={{ scale: isDragging ? 1 : 1.02 }}
-              whileTap={{ scale: isDragging ? 0.98 : 1 }}
-              className="
-                flex-shrink-0
-                w-[280px] md:w-full
-                snap-start
-                transition-transform duration-200
-              "
+              className="m-3 max-sm:w-[280px] transition-transform duration-200  snap-start flex-shrink-0 max-sm:w-full"
             >
               <div
                 onClick={() => setSelectedProduct(product)}
-                className="group cursor-pointer bg-white rounded-3xl shadow-lg hover:shadow-2xl  duration-300 
-                 border-gray-100"
+                className="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow overflow-hidden"
               >
-                <div className="relative aspect-[4/3]">
+                <div className="relative aspect-square max-sm:aspect-[4/3]">
                   <LazyImage
                     src={product.product_profile}
                     alt={product.product_name}
                     className="w-full h-full"
                   />
-                  <div className="absolute top-4 right-4 flex flex-col gap-2">
-                    <button className="p-3 rounded-full bg-white/90 text-gray-900 hover:bg-white 
-                     duration-300 shadow-md">
+                  <div className="absolute top-4 right-4">
+                    <button className="p-2 rounded-full bg-white/90 text-gray-900 hover:bg-white transition-colors">
                       <Heart className="w-5 h-5" />
-                    </button>
-                    <button className="p-3 rounded-full bg-white/90 text-gray-900 hover:bg-white  
-                    transition-all duration-300 shadow-md">
-                      <ShoppingCart className="w-5 h-5" />
                     </button>
                   </div>
                   <div className="absolute top-4 left-4">
-                    <span className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-amber-200 to-yellow-400 
-                    text-amber-900 rounded-full shadow-md">
+                    <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
                       Premium
                     </span>
                   </div>
                 </div>
 
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-gray-500">
-                      Boutique: {product.shop_key}
-                    </span>
-                    <div className="flex items-center bg-gray-50 px-2 py-1 rounded-full">
-                      <Star className="w-4 h-4 text-yellow-400" />
-                      <span className="ml-1 text-sm font-medium text-gray-600">{product.review_average}</span>
-                    </div>
-                  </div>
-                  
-                  <h3 className="font-semibold text-xl text-gray-900 mb-3 truncate">
+                <div className="p-4">
+                  <h3 className="font-medium text-gray-900 mb-1 truncate">
                     {product.product_name}
                   </h3>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900">
-                      {product.product_price} FCFA
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-400" />
+                      <span className="ml-1 text-sm text-gray-600">{product.review_average}</span>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      Boutique: {product.shop_key}
                     </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-lg font-bold text-gray-900">
+                        {product.product_price} FCFA
+                      </span>
+                    </div>
+                    <button className="p-2 rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors">
+                      <ShoppingCart className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               </div>
             </motion.div>
           ))
+      
         ) : (
           Array(8).fill(0).map((_, index) => (
             <motion.div
