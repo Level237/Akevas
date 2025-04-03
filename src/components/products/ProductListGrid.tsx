@@ -1,7 +1,7 @@
-import { useState, memo } from 'react'
+import { useState, memo, useRef} from 'react'
 import { Product } from '@/types/products'
-import { motion } from 'framer-motion'
-import { Heart, Star, ShoppingCart } from 'lucide-react'
+import { motion, useMotionValue,useAnimation, PanInfo } from 'framer-motion'
+import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react'
 import ProductModal from './ProductModal'
 
 
@@ -18,7 +18,7 @@ const LazyImage = ({ src, alt, className }: { src: string; alt: string; classNam
         alt={alt}
         className={`w-full h-full object-cover transform transition-all duration-300 ${
           isLoaded ? 'opacity-1' : 'opacity-1'
-        } ${isLoaded ? 'group-hover:scale-105' : ''}`}
+        } ${isLoaded ? '' : ''}`}
         onLoad={() => setIsLoaded(true)}
       />
       {!isLoaded && (
@@ -28,65 +28,194 @@ const LazyImage = ({ src, alt, className }: { src: string; alt: string; classNam
   );
 };
 
-const ProductListGrid=({ products = [], isLoading }: { products: Product[], isLoading: boolean }) => {
+const ProductListGrid = ({ products = [], isLoading }: { products: Product[], isLoading: boolean }) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-  // Si products est undefined ou null, on utilise un tableau vide
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragX = useMotionValue(0);
+  const controls = useAnimation();
   const safeProducts = products || [];
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    if (scrollContainerRef.current) {
+      e.preventDefault();
+    }
+  };
+
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    const velocity = info.velocity.x;
+    const offset = info.offset.x;
+    
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const cardWidth = 280 + 16;
+
+      // Défilement basé sur la vélocité du swipe
+      if (Math.abs(velocity) > 500) {
+        const direction = velocity < 0 ? 1 : -1;
+        container.scrollBy({
+          left: cardWidth * direction,
+          behavior: 'smooth'
+        });
+      } 
+      // Défilement basé sur la distance du swipe
+      else if (Math.abs(offset) > 50) {
+        const direction = offset < 0 ? 1 : -1;
+        container.scrollBy({
+          left: cardWidth * direction,
+          behavior: 'smooth'
+        });
+      }
+    }
+
+    controls.start({ x: 0 });
+    setIsDragging(false);
+  };
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const cardWidth = 280 + 16;
+      const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
+      
+      container.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
-    <section className="min-h-screen w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <section className="min-h-screen w-full relative">
+      {/* Boutons de navigation repositionnés */}
+      <div className="md:hidden flex justify-end gap-2 px-4 mb-4">
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            scroll('left');
+          }}
+          className="
+            p-3 rounded-xl bg-white shadow-lg
+            transition-all duration-300
+            hover:shadow-xl hover:scale-105
+            active:scale-95
+            border border-gray-100
+            flex items-center justify-center
+            group
+          "
+        >
+          <ChevronLeft className="w-5 h-5 text-gray-700 group-hover:text-gray-900 transition-colors" />
+        </button>
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            scroll('right');
+          }}
+          className="
+            p-3 rounded-xl bg-white shadow-lg
+            transition-all duration-300
+            hover:shadow-xl hover:scale-105
+            active:scale-95
+            border border-gray-100
+            flex items-center justify-center
+            group
+          "
+        >
+          <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-gray-900 transition-colors" />
+        </button>
+      </div>
+
+      <motion.div 
+        ref={scrollContainerRef}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.3}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={handleDragEnd}
+        animate={controls}
+        style={{ x: dragX }}
+        whileTap={{ cursor: "grabbing" }}
+        className="
+          flex flex-row gap-4 overflow-x-hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
+          pb-4 md:pb-0 px-4
+          snap-x snap-mandatory md:snap-none
+          touch-pan-x
+          overscroll-x-contain
+          cursor-grab
+          isolate
+          overflow-x-auto scrollbar-hide
+          transition-all duration-300 ease-out
+        "
+      >
         {!isLoading ? (
           safeProducts.map((product) => (
             <motion.div
               key={product.id}
-              className="m-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              whileHover={{ scale: isDragging ? 1 : 1.02 }}
+              whileTap={{ scale: isDragging ? 0.98 : 1 }}
+              className="
+                flex-shrink-0
+                w-[280px] md:w-full
+                snap-start
+                transition-transform duration-200
+              "
             >
               <div
                 onClick={() => setSelectedProduct(product)}
-                className="group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow overflow-hidden"
+                className="group cursor-pointer bg-white rounded-3xl shadow-lg hover:shadow-2xl  duration-300 
+                 border-gray-100"
               >
-                <div className="relative aspect-square">
+                <div className="relative aspect-[4/3]">
                   <LazyImage
                     src={product.product_profile}
                     alt={product.product_name}
                     className="w-full h-full"
                   />
-                  <div className="absolute top-4 right-4">
-                    <button className="p-2 rounded-full bg-white/90 text-gray-900 hover:bg-white transition-colors">
+                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                    <button className="p-3 rounded-full bg-white/90 text-gray-900 hover:bg-white 
+                     duration-300 shadow-md">
                       <Heart className="w-5 h-5" />
+                    </button>
+                    <button className="p-3 rounded-full bg-white/90 text-gray-900 hover:bg-white  
+                    transition-all duration-300 shadow-md">
+                      <ShoppingCart className="w-5 h-5" />
                     </button>
                   </div>
                   <div className="absolute top-4 left-4">
-                    <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
+                    <span className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-amber-200 to-yellow-400 
+                    text-amber-900 rounded-full shadow-md">
                       Premium
                     </span>
                   </div>
                 </div>
 
-                <div className="p-4">
-                  <h3 className="font-medium text-gray-900 mb-1 truncate">
-                    {product.product_name}
-                  </h3>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-400" />
-                      <span className="ml-1 text-sm text-gray-600">{product.review_average}</span>
-                    </div>
-                    <span className="text-sm text-gray-500">
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-500">
                       Boutique: {product.shop_key}
                     </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-lg font-bold text-gray-900">
-                        {product.product_price} FCFA
-                      </span>
+                    <div className="flex items-center bg-gray-50 px-2 py-1 rounded-full">
+                      <Star className="w-4 h-4 text-yellow-400" />
+                      <span className="ml-1 text-sm font-medium text-gray-600">{product.review_average}</span>
                     </div>
-                    <button className="p-2 rounded-lg bg-gray-100 text-gray-900 hover:bg-gray-200 transition-colors">
-                      <ShoppingCart className="w-5 h-5" />
-                    </button>
+                  </div>
+                  
+                  <h3 className="font-semibold text-xl text-gray-900 mb-3 truncate">
+                    {product.product_name}
+                  </h3>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-gray-900">
+                      {product.product_price} FCFA
+                    </span>
                   </div>
                 </div>
               </div>
@@ -94,10 +223,21 @@ const ProductListGrid=({ products = [], isLoading }: { products: Product[], isLo
           ))
         ) : (
           Array(8).fill(0).map((_, index) => (
-            <div key={index} className="animate-pulse bg-gray-200 rounded-2xl aspect-square" />
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              
+              className="
+                flex-shrink-0
+                w-[280px] md:w-full
+                snap-start
+                aspect-[4/3] animate-pulse bg-gradient-to-r from-gray-200 to-gray-300 
+                rounded-3xl shadow-lg
+              "
+            />
           ))
         )}
-      </div>
+      </motion.div>
 
       {selectedProduct && (
         <ProductModal
