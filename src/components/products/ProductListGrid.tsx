@@ -93,7 +93,12 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
   return (
     <section className="min-h-screen w-full relative">
       {/* Boutons de navigation repositionnés */}
-      <div className="md:hidden flex justify-end gap-2 px-4 mb-4">
+
+      <div className='flex justify-between mb-4 items-start'>
+        <h2 className='text-2xl font-bold text-gray-900'>
+          Produits Premium
+        </h2>
+        <div className="md:hidden flex justify-end gap-2 px-4 mb-4">
         <button 
           onClick={(e) => {
             e.stopPropagation();
@@ -129,6 +134,8 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
           <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-gray-900 transition-colors" />
         </button>
       </div>
+      </div>
+
 
       <motion.div 
         ref={scrollContainerRef}

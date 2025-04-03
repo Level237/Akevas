@@ -6,7 +6,7 @@ import ProductListGrid from './ProductListGrid';
 
 // Extraire l'en-tête dans un composant séparé mémoïsé
 const SectionHeader = React.memo(() => (
-  <div className="flex justify-between items-baseline mb-6">
+  <div className="flex max-sm:hidden justify-between items-baseline mb-6">
     <div>
       <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-black">
         Produits Premium
