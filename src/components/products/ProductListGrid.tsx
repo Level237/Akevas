@@ -1,7 +1,7 @@
 import { useState, memo, useRef} from 'react'
 import { Product } from '@/types/products'
 import { motion, useMotionValue,useAnimation, PanInfo } from 'framer-motion'
-import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import ProductModal from './ProductModal'
 
 
@@ -91,13 +91,17 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
   };
 
   return (
-    <section className="min-h-screen w-full relative">
+    <section className="min-h-screen max-sm:min-h-[100%] w-full relative">
       {/* Boutons de navigation repositionnés */}
 
       <div className='flex justify-between mb-4 items-start'>
+        <div className='flex items-start flex-col'>
         <h2 className='text-2xl hidden max-sm:block font-bold text-gray-900'>
           Produits Premium
         </h2>
+        
+        </div>
+        
         <div className="md:hidden flex justify-end gap-2 px-4 mb-4">
         <button 
           onClick={(e) => {

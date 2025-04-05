@@ -59,7 +59,7 @@ const ProductModal=({ product, isOpen, onClose }: { product: Product, isOpen: bo
 
   // 2. Extraire les composants qui peuvent changer fréquemment
   const ImageGallery = memo(({ product, selectedImage, onImageSelect }: ImageGalleryProps) => (
-    <div className="bg-gray-50 p-8">
+    <div className="bg-gray-50 p-8 ">
       <div className="relative aspect-square max-sm:max-h-[200px] max-sm:w-full rounded-xl overflow-hidden mb-4 shadow-lg">
         <img
           src={selectedImage === null ? product.product_profile : product.product_images[selectedImage].path}
