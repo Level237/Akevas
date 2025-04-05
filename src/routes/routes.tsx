@@ -29,6 +29,7 @@ import SellerCatalog from "@/pages/SellerCatalog";
 import AccountPage from "@/pages/Account";
 import OrdersPage from "@/pages/seller/OrdersPage";
 import UpdateShopPage from "@/pages/seller/UpdateShopPage";
+import CheckoutPage from "@/pages/seller/CheckoutPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -58,6 +59,10 @@ export const routes = createBrowserRouter([
   {
     path: '/seller-registration/seller-type',
     element: <SellerTypePage />
+  },
+  {
+    path: '/checkout',
+    element: <CheckoutPage />
   },
   {
     path: '/seller-registration/address-info',
