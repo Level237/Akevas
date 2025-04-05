@@ -12,6 +12,7 @@ export default function LoginForm() {
   const price = params.get('price');
   const name = params.get('name');
   const residence = params.get('residence');
+  const plan = params.get('plan');
 
   const redirectUrl = params.get('redirect');
   const s = params.get('s');
@@ -32,13 +33,20 @@ export default function LoginForm() {
       cookies.set('tokenSeller', userData.data.access_token, { path: '/', secure: true });
       cookies.set('refreshTokenSeller', userData.data.refresh_token, { path: '/', secure: true });
 
-
       if (redirectUrl) {
-        if (s === '1') {
-          window.location.href = redirectUrl + `?s=${s}`
-        } else {
-          window.location.href = redirectUrl + `?s=${s}&productId=${productId}&quantity=${quantity}&price=${price}&name=${name}&residence=${residence}`
-        }
+        const redirectParams = new URLSearchParams();
+        
+        if (s) redirectParams.append('s', s);
+        if (productId) redirectParams.append('productId', productId);
+        if (quantity) redirectParams.append('quantity', quantity);
+        if (price) redirectParams.append('price', price);
+        if (name) redirectParams.append('name', name);
+        if (residence) redirectParams.append('residence', residence);
+        if (plan) redirectParams.append('plan', plan);
+
+        const finalRedirectUrl = `${redirectUrl}${redirectParams.toString() ? '?' + redirectParams.toString() : ''}`;
+        
+        window.location.href = finalRedirectUrl;
       } else {
         setPhone('')
         setPassword('')
