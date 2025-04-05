@@ -11,6 +11,7 @@ import {
   Phone,
   Store
 } from 'lucide-react';
+import { useCheckAuthQuery } from '@/services/auth';
 
 
 interface BoostPlan {
@@ -25,9 +26,12 @@ interface BoostPlan {
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // À connecter avec votre système d'auth
+  const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card'); // À connecter avec votre système d'auth
+  const { data, isLoading } = useCheckAuthQuery()
 
+  if (isLoading) {
+    return <div>Loading...</div>
+}
   const plans: BoostPlan[] = [
     {
       id: 'starter',
@@ -76,14 +80,16 @@ const StoreBoostPage: React.FC = () => {
   const handlePlanSelection = (planId: string) => {
     setSelectedPlan(planId);
     
-    if (!isAuthenticated) {
+    if (data?.isAuthenticated === true ) {
       // Redirection vers login avec les paramètres
+      navigate(`/checkout?plan=${planId}`);
+    }else{
       navigate(`/login?redirect=/checkout&plan=${planId}`);
       return;
     }
 
     // Redirection vers checkout si authentifié
-    navigate(`/checkout?plan=${planId}`);
+   
   };
 
   const handleBoost = () => {
