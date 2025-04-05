@@ -164,7 +164,7 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
           safeProducts.map((product) => (
             <motion.div
               key={product.id}
-              className="m-3 max-sm:w-[280px] transition-transform duration-200  snap-start flex-shrink-0 max-sm:w-full"
+              className="m-3 max-sm:w-[275px] transition-transform duration-200  snap-start flex-shrink-0 max-sm:w-full"
             >
               <div
                 onClick={() => setSelectedProduct(product)}

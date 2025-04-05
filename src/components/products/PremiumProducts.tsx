@@ -43,7 +43,7 @@ const PremiumProducts: React.FC = () => {
   const memoizedProducts = useMemo(() => products, [products]);
 
   return (
-    <section className="pt-24 max-sm:pt-12 max-sm:pb-12 bg-gray-200">
+    <section className="pt-24 max-sm:pt-12  bg-gray-200">
       <div className="max-w-8xl mx-auto px-4 max-sm:pr-0 sm:px-6 lg:px-8">
         <SectionHeader />
         <ProductListGrid
