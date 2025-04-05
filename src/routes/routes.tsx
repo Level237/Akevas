@@ -35,6 +35,10 @@ export const routes = createBrowserRouter([
     element: <Homepage />
   },
   {
+    path: '/seller/pro',
+    element: <StoreBoostPage />
+  },
+  {
     path: '/login',
     element: <GuardRoute><LoginPage /></GuardRoute>
   },
@@ -82,10 +86,7 @@ export const routes = createBrowserRouter([
         path: "/orders",
         element: <OrdersPage />
       },
-      {
-        path: '/seller/pro',
-        element: <StoreBoostPage />
-      },
+      
       {
         path:'/seller/update-docs',
         element:<UpdateShopPage/>

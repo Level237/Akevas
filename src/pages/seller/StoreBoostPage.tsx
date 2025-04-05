@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   Check,
   Star,
@@ -7,7 +8,8 @@ import {
   Zap,
   Award,
   CreditCard,
-  Phone
+  Phone,
+  Store
 } from 'lucide-react';
 
 
@@ -21,8 +23,10 @@ interface BoostPlan {
 }
 
 const StoreBoostPage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // À connecter avec votre système d'auth
 
   const plans: BoostPlan[] = [
     {
@@ -69,6 +73,19 @@ const StoreBoostPage: React.FC = () => {
     }
   ];
 
+  const handlePlanSelection = (planId: string) => {
+    setSelectedPlan(planId);
+    
+    if (!isAuthenticated) {
+      // Redirection vers login avec les paramètres
+      navigate(`/login?redirect=/checkout&plan=${planId}`);
+      return;
+    }
+
+    // Redirection vers checkout si authentifié
+    navigate(`/checkout?plan=${planId}`);
+  };
+
   const handleBoost = () => {
     if (!selectedPlan) return;
     // Implémenter la logique de boost ici
@@ -76,48 +93,52 @@ const StoreBoostPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <main className="max-w-7xl mx-auto px-4 py-12">
+        {/* Hero Section avec animation */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-5xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#ed7e0f] to-orange-600">
             Boostez votre visibilité
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Augmentez vos ventes en rendant votre boutique plus visible auprès de millions d'acheteurs potentiels
           </p>
-        </div>
+        </motion.div>
 
-        {/* Plans de boost */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {plans.map((plan) => (
+        {/* Plans de boost avec nouveau design */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {plans.map((plan, index) => (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`relative bg-white rounded-2xl shadow-sm overflow-hidden ${
+              transition={{ delay: index * 0.1 }}
+              className={`group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 ${
                 plan.recommended ? 'ring-2 ring-[#ed7e0f]' : ''
               }`}
             >
               {plan.recommended && (
-                <div className="absolute top-0 right-0 bg-[#ed7e0f] text-white px-4 py-1 text-sm font-medium rounded-bl-lg">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white px-6 py-2 text-sm font-medium rounded-full">
                   Recommandé
                 </div>
               )}
 
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
                   {plan.name}
                 </h3>
-                <div className="flex items-baseline mb-4">
-                  <span className="text-4xl font-bold">{plan.price} €</span>
+                <div className="flex items-baseline mb-6">
+                  <span className="text-5xl font-bold text-[#ed7e0f]">{plan.price} €</span>
                   <span className="text-gray-500 ml-2">/ {plan.duration}</span>
                 </div>
 
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-2">
+                    <li key={index} className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-[#ed7e0f] flex-shrink-0 mt-0.5" />
                       <span className="text-gray-600">{feature}</span>
                     </li>
@@ -125,14 +146,14 @@ const StoreBoostPage: React.FC = () => {
                 </ul>
 
                 <button
-                  onClick={() => setSelectedPlan(plan.id)}
-                  className={`w-full py-3 px-6 rounded-xl font-medium transition-colors ${
-                    selectedPlan === plan.id
-                      ? 'bg-[#ed7e0f] text-white'
-                      : 'bg-orange-100 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white'
-                  }`}
+                  onClick={() => handlePlanSelection(plan.id)}
+                  className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                    ${plan.recommended 
+                      ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
+                      : 'bg-orange-50 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white'
+                    }`}
                 >
-                  Sélectionner
+                  Sélectionner ce plan
                 </button>
               </div>
             </motion.div>
@@ -214,7 +235,12 @@ const StoreBoostPage: React.FC = () => {
         )}
 
         {/* Avantages du boost */}
-        <div className="mt-16">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mt-20"
+        >
           <h2 className="text-2xl font-bold text-center mb-8">
             Pourquoi booster votre boutique ?
           </h2>
@@ -260,7 +286,7 @@ const StoreBoostPage: React.FC = () => {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </main>
     </div>
   );
