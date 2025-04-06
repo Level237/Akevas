@@ -9,21 +9,12 @@ import {
   Award,
   CreditCard,
   Phone,
-  Store
 } from 'lucide-react';
 import { useCheckAuthQuery } from '@/services/auth';
 import { useGetSubscriptionQuery } from '@/services/guardService';
-import AsyncLink from '@/components/ui/AsyncLink';
+import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 
 
-interface BoostPlan {
-  id: string;
-  name: string;
-  price: number;
-  duration: string;
-  features: string[];
-  recommended?: boolean;
-}
 
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
@@ -33,52 +24,9 @@ const StoreBoostPage: React.FC = () => {
   const {data:subscription,isLoading:isLoadingSubscription} = useGetSubscriptionQuery("guard")
   console.log(subscription)
   if (isLoading || isLoadingSubscription) {
-    return <div>Loading...</div>
+    return <div className='flex justify-center items-center h-screen'><IsLoadingComponents isLoading={isLoading || isLoadingSubscription}/></div>
 }
-  const plans: BoostPlan[] = [
-    {
-      id: 'starter',
-      name: 'Starter',
-      price: 9.99,
-      duration: '7 jours',
-      features: [
-        'Mise en avant dans les résultats de recherche',
-        'Badge "Boutique en vedette"',
-        'Analytics basiques',
-        'Support par email'
-      ]
-    },
-    {
-      id: 'pro',
-      name: 'Pro',
-      price: 29.99,
-      duration: '30 jours',
-      recommended: true,
-      features: [
-        'Tous les avantages Starter',
-        'Placement premium dans les résultats',
-        'Badge "Boutique Pro"',
-        'Analytics avancés',
-        'Support prioritaire',
-        'Posts promotionnels hebdomadaires'
-      ]
-    },
-    {
-      id: 'premium',
-      name: 'Premium',
-      price: 99.99,
-      duration: '90 jours',
-      features: [
-        'Tous les avantages Pro',
-        'Placement #1 garanti',
-        'Badge "Boutique Premium"',
-        'Analytics en temps réel',
-        'Support dédié 24/7',
-        'Posts promotionnels quotidiens',
-        'Accès aux événements exclusifs'
-      ]
-    }
-  ];
+
 
   const handlePlanSelection = (planId: string) => {
     setSelectedPlan(planId);
@@ -154,8 +102,8 @@ const StoreBoostPage: React.FC = () => {
                   ))}
                 </ul>
 
-                <AsyncLink
-                  to={`/checkout?plan=${plan.id}`}
+                <button
+                  onClick={() => handlePlanSelection(plan.id)}
                   className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
                     ${plan.recommended 
                       ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
@@ -163,7 +111,7 @@ const StoreBoostPage: React.FC = () => {
                     }`}
                 >
                   Sélectionner ce plan
-                </AsyncLink>
+                </button>
               </div>
             </motion.div>
           ))}
