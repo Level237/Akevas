@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useCheckAuthQuery } from '@/services/auth';
 import { useGetSubscriptionQuery } from '@/services/guardService';
+import AsyncLink from '@/components/ui/AsyncLink';
 
 
 interface BoostPlan {
@@ -153,8 +154,8 @@ const StoreBoostPage: React.FC = () => {
                   ))}
                 </ul>
 
-                <button
-                  onClick={() => handlePlanSelection(plan.id)}
+                <AsyncLink
+                  to={`/checkout?plan=${plan.id}`}
                   className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
                     ${plan.recommended 
                       ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
@@ -162,7 +163,7 @@ const StoreBoostPage: React.FC = () => {
                     }`}
                 >
                   Sélectionner ce plan
-                </button>
+                </AsyncLink>
               </div>
             </motion.div>
           ))}

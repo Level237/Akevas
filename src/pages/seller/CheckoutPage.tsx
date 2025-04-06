@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+
 import { 
   Store, 
   User, 
@@ -73,9 +73,8 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div 
+        
         className="max-w-4xl mx-auto"
       >
         {/* En-tête */}
@@ -88,10 +87,8 @@ const CheckoutPage: React.FC = () => {
           {/* Détails de la commande */}
           <div className="md:col-span-7 space-y-6">
             {/* Résumé du plan */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
+            <div 
+            
               className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
             >
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -114,13 +111,11 @@ const CheckoutPage: React.FC = () => {
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Informations du vendeur */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+            <div 
+          
               className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
             >
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -150,14 +145,12 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Section paiement */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
+          <div 
+            
             className="md:col-span-5"
           >
             <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 sticky top-6">
@@ -206,9 +199,9 @@ const CheckoutPage: React.FC = () => {
                 )}
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
