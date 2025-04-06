@@ -144,6 +144,13 @@ export const guardService = createApi({
                 url: `/api/similar/products/${id}`,
                 method: 'GET'
             })
+        }),
+        getSubscription:builder.query({
+            query:()=>({
+                url:'/api/list/subscriptions',
+                method:'GET'
+            }),
+            providesTags:['guard']
         })
     }),
 })
@@ -165,5 +172,6 @@ export const {
     useGetAllProductsQuery,
     useCreateDeliveryMutation,
     useGetAttributeValuesQuery,
-    useGetSimilarProductsQuery
+    useGetSimilarProductsQuery,
+    useGetSubscriptionQuery
 } = guardService

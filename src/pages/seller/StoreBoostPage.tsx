@@ -12,6 +12,7 @@ import {
   Store
 } from 'lucide-react';
 import { useCheckAuthQuery } from '@/services/auth';
+import { useGetSubscriptionQuery } from '@/services/guardService';
 
 
 interface BoostPlan {
@@ -28,8 +29,9 @@ const StoreBoostPage: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card'); // À connecter avec votre système d'auth
   const { data, isLoading } = useCheckAuthQuery()
-
-  if (isLoading) {
+  const {data:subscription,isLoading:isLoadingSubscription} = useGetSubscriptionQuery("guard")
+  console.log(subscription)
+  if (isLoading || isLoadingSubscription) {
     return <div>Loading...</div>
 }
   const plans: BoostPlan[] = [
@@ -117,17 +119,17 @@ const StoreBoostPage: React.FC = () => {
 
         {/* Plans de boost avec nouveau design */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {plans.map((plan, index) => (
+          {!isLoadingSubscription && subscription.map((plan:any, index:any) => (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className={`group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 ${
-                plan.recommended ? 'ring-2 ring-[#ed7e0f]' : ''
+                plan.id===2 ? 'ring-2 ring-[#ed7e0f]' : ''
               }`}
             >
-              {plan.recommended && (
+              {plan.id===2 && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white px-6 py-2 text-sm font-medium rounded-full">
                   Recommandé
                 </div>
@@ -135,18 +137,18 @@ const StoreBoostPage: React.FC = () => {
 
               <div className="p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  {plan.name}
+                  {plan.subscription_name}
                 </h3>
                 <div className="flex items-baseline mb-6">
-                  <span className="text-5xl font-bold text-[#ed7e0f]">{plan.price} €</span>
-                  <span className="text-gray-500 ml-2">/ {plan.duration}</span>
+                  <span className="text-5xl font-bold text-[#ed7e0f]">{plan.subscription_price} XAF</span>
+                  <span className="text-gray-500 ml-2">/ {plan.subscription_duration}</span>
                 </div>
 
                 <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, index) => (
+                  {plan.descriptions.map((feature:any, index:any) => (
                     <li key={index} className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-[#ed7e0f] flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-600">{feature}</span>
+                      <span className="text-gray-600">{feature.description_name}</span>
                     </li>
                   ))}
                 </ul>
