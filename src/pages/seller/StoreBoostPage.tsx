@@ -38,8 +38,6 @@ const StoreBoostPage: React.FC = () => {
       navigate(`/login?redirect=/checkout&plan=${planId}`);
       return;
     }
-
-    // Redirection vers checkout si authentifié
    
   };
 

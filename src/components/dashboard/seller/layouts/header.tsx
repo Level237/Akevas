@@ -1,4 +1,4 @@
-import { LogOut, Menu, User } from 'lucide-react'
+import { LogOut, Menu, User, Zap } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { AvatarImage } from '@radix-ui/react-avatar'
 import React from 'react'
@@ -68,8 +68,10 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
             <div className="flex items-center space-x-3 pl-3 border-l">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-gray-900">{sellerData?.shop.shop_name}</p>
-                <CheckStateSeller state={sellerData?.shop.state || null} />
-
+                {sellerData?.shop.state !=="1" && <CheckStateSeller state={sellerData?.shop.state || null} />}
+                <p className="text-md text-[#ed7e0f] flex items-center gap-1 font-medium">
+                  0 <Zap className='w-4 h-4 fill-[#ed7e0f]/40' />
+                </p>
               </div>
               <div className="h-8 w-8 object-cover   rounded-full flex items-center justify-center">
               <Avatar className=''>
