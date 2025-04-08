@@ -74,7 +74,7 @@ const DashboardPage = () => {
       <div className=" transition-all duration-300">
         <main className="max-w-7xl mx-auto px-4 py-8">
           {/* Ajout du CTA Recharger votre compte */}
-          {parseInt(sellerData?.shop.level || "0") > 2 && (
+          {parseInt(sellerData?.shop.level || "0") > 1 && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}

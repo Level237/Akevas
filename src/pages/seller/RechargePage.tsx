@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion} from 'framer-motion';
 import { Coins, CreditCard, Shield, Zap, X, Settings } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -15,9 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const creditPackages = [
-  { id: 1, credits: 100, price: 29.99, popular: false },
-  { id: 2, credits: 250, price: 59.99, popular: true },
-  { id: 3, credits: 500, price: 99.99, popular: false },
+  { id: 1, credits: 500, price: 500, popular: false },
+  { id: 2, credits: 5000, price: 5000, popular: true },
+  { id: 3, credits: 10000, price: 10000, popular: false },
 ];
 
 export default function RechargePage() {
@@ -144,7 +144,7 @@ export default function RechargePage() {
                   {pkg.credits} crédits
                 </div>
                 <div className="text-3xl font-bold text-[#ed7e0f]">
-                  {pkg.price}€
+                  {pkg.price} XAF
                 </div>
               </div>
 
