@@ -1,4 +1,3 @@
-
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Clock,
@@ -9,11 +8,14 @@ import {
   Lock,
   X,
   Check,
+  Plus,
+  Coins,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
+import AsyncLink from '@/components/ui/AsyncLink';
 
 import VisibilityShop from '@/components/seller/level/Two/VisibilityShop';
 import TitleOverview from '../../components/seller/level/Two/TitleOverview';
@@ -71,7 +73,53 @@ const DashboardPage = () => {
     
       <div className=" transition-all duration-300">
         <main className="max-w-7xl mx-auto px-4 py-8">
-          {/* Carte de statut */}
+          {/* Ajout du CTA Recharger votre compte */}
+          {parseInt(sellerData?.shop.level || "0") > 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <div className="bg-gradient-to-r from-[#ed7e0f] to-[#f4a340] rounded-2xl p-6 shadow-lg relative overflow-hidden">
+                {/* Cercles décoratifs en arrière-plan */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+                
+                <div className="flex items-center justify-between relative z-10">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-xl">
+                        <Coins className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-white">
+                        Démarrez votre activité maintenant !
+                      </h3>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-white/90">
+                        Rechargez votre compte pour accéder à tous les avantages vendeur
+                      </p>
+                      <div className="flex gap-2 text-white/80 text-sm">
+                        <span className="flex items-center gap-1">
+                          <Check className="w-4 h-4" /> Vente illimitée
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Check className="w-4 h-4" /> Support prioritaire
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <AsyncLink to="/recharge">
+                    <button className="flex items-center gap-2 bg-white text-[#ed7e0f] px-6 py-3 rounded-xl hover:bg-white/90 transition-all duration-300 font-medium shadow-md hover:shadow-xl transform hover:-translate-y-0.5">
+                      <Plus className="w-5 h-5" />
+                      Recharger maintenant
+                    </button>
+                  </AsyncLink>
+                </div>
+              </div>
+            </motion.div>
+          )}
           <AnimatePresence>
           {message && (
             <motion.div
