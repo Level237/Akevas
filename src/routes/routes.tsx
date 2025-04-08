@@ -30,6 +30,7 @@ import AccountPage from "@/pages/Account";
 import OrdersPage from "@/pages/seller/OrdersPage";
 import UpdateShopPage from "@/pages/seller/UpdateShopPage";
 import CheckoutPage from "@/pages/seller/CheckoutPage";
+import RechargePage from "@/pages/seller/RechargePage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -91,7 +92,10 @@ export const routes = createBrowserRouter([
         path: "/orders",
         element: <OrdersPage />
       },
-      
+      {
+        path: '/recharge',
+        element: <RechargePage />
+      },
       {
         path:'/seller/update-docs',
         element:<UpdateShopPage/>

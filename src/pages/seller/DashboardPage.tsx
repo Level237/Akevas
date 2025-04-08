@@ -101,10 +101,10 @@ const DashboardPage = () => {
                       </p>
                       <div className="flex gap-2 text-white/80 text-sm">
                         <span className="flex items-center gap-1">
-                          <Check className="w-4 h-4" /> Vente illimitée
+                          <Check className="w-4 h-4" /> Boostage de votre boutique
                         </span>
                         <span className="flex items-center gap-1">
-                          <Check className="w-4 h-4" /> Support prioritaire
+                          <Check className="w-4 h-4" /> Boostage de vos produits
                         </span>
                       </div>
                     </div>
