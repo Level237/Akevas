@@ -29,8 +29,9 @@ import SellerCatalog from "@/pages/SellerCatalog";
 import AccountPage from "@/pages/Account";
 import OrdersPage from "@/pages/seller/OrdersPage";
 import UpdateShopPage from "@/pages/seller/UpdateShopPage";
-import CheckoutPage from "@/pages/seller/CheckoutPage";
+import CheckoutBoostPage from "@/pages/seller/CheckoutBoostPage";
 import RechargePage from "@/pages/seller/RechargePage";
+import CheckoutRechargePage from "@/pages/seller/CheckoutPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -62,8 +63,12 @@ export const routes = createBrowserRouter([
     element: <SellerTypePage />
   },
   {
-    path: '/checkout',
-    element: <CheckoutPage />
+    path: '/checkout/boost',
+    element: <CheckoutBoostPage />
+  },
+  {
+    path: '/checkout/recharge',
+    element: <CheckoutRechargePage />
   },
   {
     path: '/seller-registration/address-info',

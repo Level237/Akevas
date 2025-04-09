@@ -1,6 +1,6 @@
 import { motion} from 'framer-motion';
 import { Coins, CreditCard, Shield, Zap, X, Settings } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
+import { useNavigate } from 'react-router-dom';
 const creditPackages = [
   { id: 1, credits: 500, price: 500, popular: false },
   { id: 2, credits: 5000, price: 5000, popular: true },
@@ -24,15 +24,15 @@ export default function RechargePage() {
   const [selectedPackage, setSelectedPackage] = useState<number | null>(2);
   const [customCredits, setCustomCredits] = useState<number | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
-
-  const calculatePrice = (credits: number | null) => {
+  const navigate = useNavigate();
+  const calculatePrice = useCallback((credits: number | null) => {
     if (credits === null || credits <= 0) return "0.00";
     const numCredits = Number(credits);
     // Prix dégressif selon le nombre de crédits
     if (numCredits >= 1000) return (numCredits * 0.15).toFixed(2);
     if (numCredits >= 500) return (numCredits * 0.18).toFixed(2);
     return (numCredits * 0.20).toFixed(2);
-  };
+  }, []);
 
   const getPricePerCredit = (credits: number | null) => {
     if (credits === null || credits <= 0) return "0.00";
@@ -265,7 +265,7 @@ export default function RechargePage() {
             animate={{ opacity: 1 }}
             className="mt-12 text-center"
           >
-            <Button size="lg" className="bg-[#ed7e0f] hover:bg-[#d97100] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+            <Button onClick={() => navigate(`/checkout/recharge?plan=${selectedPackage}`)} size="lg" className="bg-[#ed7e0f] hover:bg-[#d97100] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
               Procéder au paiement ({creditPackages.find(p => p.id === selectedPackage)?.credits} crédits)
             </Button>
           </motion.div>
