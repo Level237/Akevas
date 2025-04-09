@@ -41,14 +41,23 @@ export default function CheckoutRechargePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-100 py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+    <div className="relative min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center overflow-hidden">
+      
+      <div 
+        aria-hidden="true" 
+        className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-40"
+      >
+        <div className="blur-[150px] h-64 bg-gradient-to-br from-[#FFDDBB] to-[#FFAA77] "></div>
+        <div className="blur-[150px] h-80 bg-gradient-to-r from-[#FFEDD5] to-[#FED7AA] "></div>
+      </div>
+      
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
+        className="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/30"
       >
-        <div className="p-8 bg-gradient-to-b from-orange-50 to-white border-b border-orange-100">
+        <div className="p-8 border-b border-orange-100/50">
            <h1 className="text-center text-2xl font-bold text-gray-800 mb-6 tracking-tight">
              Recharger vos crédits
            </h1>
@@ -77,7 +86,7 @@ export default function CheckoutRechargePage() {
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className={cn(
-                "py-3 text-base border-gray-300 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/30 transition-shadow duration-200",
+                "py-3 text-base bg-white/70 border-gray-300 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/30 transition-shadow duration-200",
                  !isPhoneNumberValid && phoneNumber.length > 0 ? 'border-red-400 focus:ring-red-400/30' : ''
               )}
               required
@@ -103,7 +112,7 @@ export default function CheckoutRechargePage() {
               <Lock className="w-5 h-5 transition-transform duration-300 group-hover:rotate-[-10deg]" />
             )}
             <span>
-              {isProcessing ? 'Vérification...' : `Payer ${price.toFixed(2)}€`}
+              {isProcessing ? 'Vérification...' : `Payer ${price.toFixed(2)} XAF`}
             </span>
              {!isProcessing && <ArrowRight className="w-5 h-5 ml-1 transition-transform duration-300 group-hover:translate-x-1"/>}
           </Button>
