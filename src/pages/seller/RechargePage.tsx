@@ -248,6 +248,7 @@ export default function RechargePage() {
                  </DialogClose>
                  <Button
                    type="button"
+                   onClick={() => navigate(`/checkout/recharge?credits=${customCredits}`)}
                    className="bg-[#ed7e0f] hover:bg-[#d97100]"
                    disabled={!customCredits || customCredits <= 0}
                  >
