@@ -265,7 +265,7 @@ export default function RechargePage() {
             animate={{ opacity: 1 }}
             className="mt-12 text-center"
           >
-            <Button onClick={() => navigate(`/checkout/recharge?plan=${selectedPackage}`)} size="lg" className="bg-[#ed7e0f] hover:bg-[#d97100] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+            <Button onClick={() => navigate(`/checkout/recharge?credits=${creditPackages.find(p => p.id === selectedPackage)?.credits}`)} size="lg" className="bg-[#ed7e0f] hover:bg-[#d97100] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
               Procéder au paiement ({creditPackages.find(p => p.id === selectedPackage)?.credits} crédits)
             </Button>
           </motion.div>

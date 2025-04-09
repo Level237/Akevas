@@ -22,8 +22,9 @@ const NotchPayDisplay = () => (
 );
 
 export default function CheckoutRechargePage() {
-  const [credits] = useState<number>(250);
-  const [price] = useState<number>(59.99);
+  const params = new URLSearchParams(window.location.search);;
+  const credits = parseInt(params.get('credits') || '0');
+  const [price] = useState<number>(credits);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
@@ -57,7 +58,7 @@ export default function CheckoutRechargePage() {
            </div>
            <div className="flex justify-between items-baseline border-t border-dashed border-gray-300 pt-3 mt-3">
              <span className="text-lg font-semibold text-gray-700">Total</span>
-             <span className="text-3xl font-bold text-[#ed7e0f]">{price.toFixed(2)}€</span>
+             <span className="text-3xl font-bold text-[#ed7e0f]">{price.toFixed(2)} XAF</span>
            </div>
         </div>
 
