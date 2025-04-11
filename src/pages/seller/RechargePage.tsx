@@ -141,7 +141,7 @@ export default function RechargePage() {
 
               <div className="text-center mb-6">
                 <div className="text-2xl font-bold text-gray-900 mb-2">
-                  {pkg.credits} crédits
+                  {pkg.credits} coins
                 </div>
                 <div className="text-3xl font-bold text-[#ed7e0f]">
                   {pkg.price} XAF
@@ -193,14 +193,14 @@ export default function RechargePage() {
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold text-gray-900">Personnalisez votre forfait</DialogTitle>
                 <DialogDescription>
-                  Entrez le nombre de crédits que vous souhaitez acheter.
+                  Entrez le nombre de coins que vous souhaitez acheter.
                 </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-6 py-4">
                 <div>
                   <label htmlFor="custom-credits" className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre de crédits souhaités
+                    Nombre de coins souhaités
                   </label>
                   <div className="relative">
                     <Input
@@ -220,9 +220,9 @@ export default function RechargePage() {
 
                 <div className="bg-gray-50 rounded-xl p-4 space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Prix par crédit</span>
+                    <span className="text-sm text-gray-600">Prix par coins</span>
                     <span className="text-sm font-medium">
-                      {getPricePerCredit(customCredits)}€
+                      {getPricePerCredit(customCredits)} XAF
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -234,7 +234,7 @@ export default function RechargePage() {
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                       className="text-lg font-bold text-[#ed7e0f]"
                     >
-                      {calculatePrice(customCredits)}€
+                      {calculatePrice(customCredits)} XAF
                     </motion.span>
                   </div>
                 </div>
@@ -267,7 +267,7 @@ export default function RechargePage() {
             className="mt-12 text-center"
           >
             <Button onClick={() => navigate(`/checkout/recharge?credits=${creditPackages.find(p => p.id === selectedPackage)?.credits}`)} size="lg" className="bg-[#ed7e0f] hover:bg-[#d97100] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
-              Procéder au paiement ({creditPackages.find(p => p.id === selectedPackage)?.credits} crédits)
+              Procéder au paiement ({creditPackages.find(p => p.id === selectedPackage)?.credits} coins)
             </Button>
           </motion.div>
         )}

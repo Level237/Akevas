@@ -59,10 +59,10 @@ export default function CheckoutRechargePage() {
       >
         <div className="p-8 border-b border-orange-100/50">
            <h1 className="text-center text-2xl font-bold text-gray-800 mb-6 tracking-tight">
-             Recharger vos crédits
+             Recharger vos coins
            </h1>
            <div className="flex justify-between items-baseline mb-2">
-             <span className="text-gray-600 text-sm">Nombre de crédits</span>
+             <span className="text-gray-600 text-sm">Nombre de coins</span>
              <span className="font-semibold text-gray-800">{credits}</span>
            </div>
            <div className="flex justify-between items-baseline border-t border-dashed border-gray-300 pt-3 mt-3">
