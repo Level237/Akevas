@@ -70,7 +70,7 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
                 <p className="text-sm font-medium text-gray-900">{sellerData?.shop.shop_name}</p>
                 {sellerData?.shop.state !=="1" && <CheckStateSeller state={sellerData?.shop.state || null} />}
                 <p className="text-md text-[#ed7e0f] flex items-center gap-1 font-medium">
-                  0 <Coins className="w-4 h-4 text-[#ed7e0f]" />
+                  {sellerData?.shop.coins} <Coins className="w-4 h-4 text-[#ed7e0f]" />
                 </p>
               </div>
               <div className="h-8 w-8 object-cover   rounded-full flex items-center justify-center">
