@@ -21,6 +21,7 @@ const StoreBoostPage: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card'); // À connecter avec votre système d'auth
   const { data, isLoading } = useCheckAuthQuery()
+  const [isLoadingBoost,setIsLoadingBoost] = useState(false)
   const {data:subscription,isLoading:isLoadingSubscription} = useGetSubscriptionQuery("guard")
   console.log(subscription)
   if (isLoading || isLoadingSubscription) {
@@ -30,10 +31,14 @@ const StoreBoostPage: React.FC = () => {
 
   const handlePlanSelection = (planId: string) => {
     setSelectedPlan(planId);
-    
+    setIsLoadingBoost(true)
     if (data?.isAuthenticated === true ) {
       // Redirection vers login avec les paramètres
-      navigate(`/checkout?plan=${planId}`);
+      setTimeout(() => {
+        navigate(`/checkout/boost?plan=${planId}`);
+        setIsLoadingBoost(false)
+      }, 1000);
+     
     }else{
       navigate(`/login?redirect=/checkout&plan=${planId}`);
       return;
@@ -108,86 +113,14 @@ const StoreBoostPage: React.FC = () => {
                       : 'bg-orange-50 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white'
                     }`}
                 >
-                  Sélectionner ce plan
+                  {isLoadingBoost && plan.id===selectedPlan ? <div className='flex justify-center items-center'>En cours de traitement...</div> : 'Sélectionner ce plan'}
                 </button>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Section de paiement */}
-        {selectedPlan && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm p-6"
-          >
-            <h2 className="text-xl font-semibold mb-6">Méthode de paiement</h2>
-
-            <div className="space-y-4 mb-6">
-              {/* Carte bancaire */}
-              <div
-                onClick={() => setSelectedPayment('card')}
-                className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer ${
-                  selectedPayment === 'card' ? 'border-[#ed7e0f] bg-orange-50' : ''
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <CreditCard className="w-6 h-6 text-[#ed7e0f]" />
-                  <span>Carte bancaire</span>
-                </div>
-                <Check
-                  className={`w-5 h-5 ${
-                    selectedPayment === 'card' ? 'text-[#ed7e0f]' : 'invisible'
-                  }`}
-                />
-              </div>
-
-              {/* Orange Money */}
-              <div
-                onClick={() => setSelectedPayment('orange')}
-                className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer ${
-                  selectedPayment === 'orange' ? 'border-[#ed7e0f] bg-orange-50' : ''
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <Phone className="w-6 h-6 text-[#ed7e0f]" />
-                  <span>Orange Money</span>
-                </div>
-                <Check
-                  className={`w-5 h-5 ${
-                    selectedPayment === 'orange' ? 'text-[#ed7e0f]' : 'invisible'
-                  }`}
-                />
-              </div>
-
-              {/* Mobile Money */}
-              <div
-                onClick={() => setSelectedPayment('momo')}
-                className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer ${
-                  selectedPayment === 'momo' ? 'border-[#ed7e0f] bg-orange-50' : ''
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <Phone className="w-6 h-6 text-[#ed7e0f]" />
-                  <span>Mobile Money</span>
-                </div>
-                <Check
-                  className={`w-5 h-5 ${
-                    selectedPayment === 'momo' ? 'text-[#ed7e0f]' : 'invisible'
-                  }`}
-                />
-              </div>
-            </div>
-
-            <button
-              onClick={handleBoost}
-              className="w-full bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
-            >
-              Booster ma boutique
-            </button>
-          </motion.div>
-        )}
+    
 
         {/* Avantages du boost */}
         <motion.div 
