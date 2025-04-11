@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -7,43 +7,48 @@ import {
   TrendingUp,
   Zap,
   Award,
-  CreditCard,
-  Phone,
+  AlertCircle,
 } from 'lucide-react';
 import { useCheckAuthQuery } from '@/services/auth';
 import { useGetSubscriptionQuery } from '@/services/guardService';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
-
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from '@/components/ui/button';
+import { useCurrentSellerQuery } from '@/services/sellerService';
+import { SellerResponse } from '@/types/seller';
 
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card'); // À connecter avec votre système d'auth
-  const { data, isLoading } = useCheckAuthQuery()
-  const [isLoadingBoost,setIsLoadingBoost] = useState(false)
-  const {data:subscription,isLoading:isLoadingSubscription} = useGetSubscriptionQuery("guard")
-  console.log(subscription)
+  const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card');
+  const { data, isLoading } = useCheckAuthQuery();
+  const [isLoadingBoost, setIsLoadingBoost] = useState(false);
+  const { data: subscription, isLoading: isLoadingSubscription } = useGetSubscriptionQuery("guard");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {data: { data: sellerData }= {},isLoading:isLoadingSeller}=useCurrentSellerQuery<SellerResponse>('seller')
+  const userCoins = sellerData?.shop.coins;
+  
   if (isLoading || isLoadingSubscription) {
-    return <div className='flex justify-center items-center h-screen'><IsLoadingComponents isLoading={isLoading || isLoadingSubscription}/></div>
-}
+    return <div className='flex justify-center items-center h-screen'><IsLoadingComponents isLoading={isLoading || isLoadingSubscription} /></div>
+  }
 
-
-  const handlePlanSelection = (planId: string) => {
+  const handlePlanSelection = (planId: string, planPrice: number) => {
+    if (!isLoadingSeller ) {
+      if(userCoins !==null && sellerData?.shop?.coins !==undefined && parseInt(sellerData.shop.coins) < planPrice) {
+        setIsModalOpen(true);
+        return;
+      }
+    }
     setSelectedPlan(planId);
-    setIsLoadingBoost(true)
-    if (data?.isAuthenticated === true ) {
-      // Redirection vers login avec les paramètres
+    setIsLoadingBoost(true);
+    if (data?.isAuthenticated === true) {
       setTimeout(() => {
         navigate(`/checkout/boost?plan=${planId}`);
-        setIsLoadingBoost(false)
+        setIsLoadingBoost(false);
       }, 1000);
-     
-    }else{
+    } else {
       navigate(`/login?redirect=/checkout&plan=${planId}`);
-      return;
     }
-   
   };
 
   const handleBoost = () => {
@@ -106,7 +111,7 @@ const StoreBoostPage: React.FC = () => {
                 </ul>
 
                 <button
-                  onClick={() => handlePlanSelection(plan.id)}
+                  onClick={() => handlePlanSelection(plan.id, plan.subscription_price)}
                   className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
                     ${plan.recommended 
                       ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
@@ -120,7 +125,28 @@ const StoreBoostPage: React.FC = () => {
           ))}
         </div>
 
-    
+        {/* Modal pour coins insuffisants */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertCircle className="w-6 h-6 text-red-600" />
+                Coins insuffisants
+              </DialogTitle>
+              <DialogDescription>
+                Vous n'avez pas assez de coins pour sélectionner ce plan. Veuillez recharger votre compte.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="secondary">Annuler</Button>
+              </DialogClose>
+              <Button onClick={() => navigate('/recharge')} className="bg-[#ed7e0f] hover:bg-[#d97100]">
+                Recharger votre compte
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Avantages du boost */}
         <motion.div 
