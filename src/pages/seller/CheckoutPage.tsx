@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Lock, ShoppingCart, Smartphone, Shield, ArrowRight } from 'lucide-react';
+import { Phone, Lock, ShoppingCart, Smartphone, Shield, ArrowRight, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import notchPayLogo from '@/assets/notchpay.png';
 import { cn } from "@/lib/utils";
+import { useNavigate } from 'react-router-dom';
 
 const NotchPayDisplay = () => (
     <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-orange-50 via-white to-orange-50 border border-orange-100 shadow-sm">
@@ -22,7 +23,8 @@ const NotchPayDisplay = () => (
 );
 
 export default function CheckoutRechargePage() {
-  const params = new URLSearchParams(window.location.search);;
+  const navigate = useNavigate();
+  const params = new URLSearchParams(window.location.search);
   const credits = parseInt(params.get('credits') || '0');
   const [price] = useState<number>(credits);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
@@ -42,6 +44,19 @@ export default function CheckoutRechargePage() {
 
   return (
     <div className="relative min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center overflow-hidden">
+      <motion.button
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        whileHover={{ 
+          scale: 1.05,
+          backgroundColor: 'rgba(255, 255, 255, 0.95)'
+        }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate('/recharge')}
+        className="fixed top-6 left-6 z-50 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl border border-orange-100 transition-all duration-300 group"
+      >
+        <X className="w-5 h-5 text-gray-600 group-hover:text-[#ed7e0f] transition-colors" />
+      </motion.button>
       
       <div 
         aria-hidden="true" 
