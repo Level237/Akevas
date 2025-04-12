@@ -212,7 +212,7 @@ export default function ConfirmationPage() {
           </div>
 
           <Button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/seller/dashboard')}
             variant="ghost"
             className="w-full py-6 rounded-xl flex items-center justify-center gap-2 text-gray-600 hover:bg-gray-50"
           >
