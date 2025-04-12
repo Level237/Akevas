@@ -43,7 +43,7 @@ export const routes = createBrowserRouter([
     element: <StoreBoostPage />
   },
   {
-    path: '/seller/confirmation',
+    path: '/coins/confirmation',
     element: <ConfirmationPage />
   },
   {

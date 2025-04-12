@@ -11,8 +11,10 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import confetti from 'canvas-confetti'; // n'oubliez pas d'installer: npm install canvas-confetti
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 interface TransactionDetails {
   transactionId: string;
@@ -26,10 +28,12 @@ interface TransactionDetails {
 export default function ConfirmationPage() {
   const navigate = useNavigate();
   const [isDownloading, setIsDownloading] = useState(false);
+  const ticketRef = useRef<HTMLDivElement>(null);
+  const [transactionId] = useState(() => "TRX" + Math.random().toString(36).substr(2, 9).toUpperCase());
 
   // Simuler les détails de la transaction (à remplacer par vos données réelles)
   const transaction: TransactionDetails = {
-    transactionId: "TRX" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+    transactionId,
     amount: 5000,
     coins: 250,
     date: new Date().toLocaleDateString(),
@@ -46,13 +50,34 @@ export default function ConfirmationPage() {
     });
   });
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    if (!ticketRef.current) return;
+    
     setIsDownloading(true);
-    // Simulation du téléchargement
-    setTimeout(() => {
+    try {
+      const canvas = await html2canvas(ticketRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save(`recu-${transaction.transactionId}.pdf`);
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error);
+    } finally {
       setIsDownloading(false);
-      // Logique de téléchargement du reçu
-    }, 2000);
+    }
   };
 
   return (
@@ -73,6 +98,7 @@ export default function ConfirmationPage() {
 
         {/* Ticket/Reçu */}
         <motion.div
+          ref={ticketRef}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
