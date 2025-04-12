@@ -34,7 +34,15 @@ export const sellerService=createApi({
                     method:'POST',
                     body:formData
                 })
-            })
+            }),
+            initCoinPayment:builder.mutation({
+                query:(body)=>({
+                    url:`/api/v1/init/payment/coins`,
+                    method:'POST',
+                    body:body
+                }),
+                invalidatesTags:['seller']
+            }),
         
 })
 })
@@ -42,5 +50,6 @@ export const {
 useCurrentSellerQuery,
 useAddProductMutation,
 useGetProductsQuery,
-useUpdateDocsMutation
+useUpdateDocsMutation,
+useInitCoinPaymentMutation
 }=sellerService
