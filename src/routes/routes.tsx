@@ -32,6 +32,7 @@ import UpdateShopPage from "@/pages/seller/UpdateShopPage";
 import CheckoutBoostPage from "@/pages/seller/CheckoutBoostPage";
 import RechargePage from "@/pages/seller/RechargePage";
 import CheckoutRechargePage from "@/pages/seller/CheckoutPage";
+import ConfirmationPage from "@/pages/seller/ConfirmationPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -40,6 +41,10 @@ export const routes = createBrowserRouter([
   {
     path: '/seller/pro',
     element: <StoreBoostPage />
+  },
+  {
+    path: '/seller/confirmation',
+    element: <ConfirmationPage />
   },
   {
     path: '/login',
