@@ -7,8 +7,10 @@ import { Label } from '@/components/ui/label';
 import notchPayLogo from '@/assets/notchpay.png';
 import { cn } from "@/lib/utils";
 import { useNavigate } from 'react-router-dom';
-
+import { useInitCoinPaymentMutation } from '@/services/sellerService';
 const NotchPayDisplay = () => (
+
+ 
     <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-orange-50 via-white to-orange-50 border border-orange-100 shadow-sm">
         <div className="flex items-center gap-3">
             <img
@@ -29,17 +31,25 @@ export default function CheckoutRechargePage() {
   const [price] = useState<number>(credits);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-
+  const [initCoinPayment] = useInitCoinPaymentMutation();
   const isPhoneNumberValid = /^\+?[0-9]{7,}$/.test(phoneNumber.replace(/\s+/g, ''));
 
-  const handlePayment = () => {
+  const handlePayment = async() => {
+    const formData = {
+     coins:credits,
+     phone_number:phoneNumber
+    }
+    const response = await initCoinPayment(formData);
     if (!isPhoneNumberValid || isProcessing) return;
     setIsProcessing(true);
     console.log("Initiating NotchPay payment with phone:", phoneNumber);
-    setTimeout(() => {
+    console.log(response)
+    if(response.data.redirect_to){
+      window.location.href = response.data.redirect_to;
+    }else{
       setIsProcessing(false);
-      console.log("Payment simulation complete");
-    }, 2500);
+      alert("Une erreur est survenue lors de l'initialisation du paiement");
+    }
   };
 
   return (
