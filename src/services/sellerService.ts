@@ -43,6 +43,12 @@ export const sellerService=createApi({
                 }),
                 invalidatesTags:['seller']
             }),
+            verifyCoinPayment:builder.query({
+                query:($ref)=>({
+                    url:`/api/get/payment/status/${$ref}`,
+                    method:'GET',
+                })
+            })
         
 })
 })

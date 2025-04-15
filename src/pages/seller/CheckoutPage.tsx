@@ -44,8 +44,8 @@ export default function CheckoutRechargePage() {
     setIsProcessing(true);
     console.log("Initiating NotchPay payment with phone:", phoneNumber);
     console.log(response)
-    if(response.data.redirect_to){
-      window.location.href = response.data.redirect_to;
+    if(response.data.status === "Accepted"){
+      window.location.href = response.data.authorization_url;
     }else{
       setIsProcessing(false);
       alert("Une erreur est survenue lors de l'initialisation du paiement");
