@@ -69,7 +69,7 @@ export default function MobileMoneyPaymentPage() {
   // Listen for payment verification updates
   useEffect(() => {
     if (!verificationData) return;
-    
+    console.log(verificationData.status)
     if (verificationData.status === 'success') {
       setPaymentStatus('success');
       setMessage("Paiement confirmé! Redirection vers votre compte...");
@@ -77,7 +77,7 @@ export default function MobileMoneyPaymentPage() {
       
       // Redirect after success
       const timer = window.setTimeout(() => {
-        navigate('/seller/confirmation');
+        //navigate('/seller/confirmation');
       }, 3000);
       timersRef.current.push(timer);
       

@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Check,
@@ -8,6 +8,7 @@ import {
   Zap,
   Award,
   AlertCircle,
+  Coins
 } from 'lucide-react';
 import { useCheckAuthQuery } from '@/services/auth';
 import { useGetSubscriptionQuery } from '@/services/guardService';
@@ -16,17 +17,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
+import { Input } from '@/components/ui/input';
 
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedPlanDetails, setSelectedPlanDetails] = useState<any>(null);
   const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card');
-  const { data, isLoading } = useCheckAuthQuery();
   const [isLoadingBoost, setIsLoadingBoost] = useState(false);
-  const { data: subscription, isLoading: isLoadingSubscription } = useGetSubscriptionQuery("guard");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [phone, setPhone] = useState('');
+  const { data, isLoading } = useCheckAuthQuery();
+  const { data: subscription, isLoading: isLoadingSubscription } = useGetSubscriptionQuery("guard");
   const {data: { data: sellerData }= {},isLoading:isLoadingSeller}=useCurrentSellerQuery<SellerResponse>('seller')
   const userCoins = sellerData?.shop.coins;
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   if (isLoading || isLoadingSubscription) {
     return <div className='flex justify-center items-center h-screen'><IsLoadingComponents isLoading={isLoading || isLoadingSubscription} /></div>
@@ -39,16 +45,10 @@ const StoreBoostPage: React.FC = () => {
         return;
       }
     }
+    const plan = subscription.find((p:any) => p.id === planId);
     setSelectedPlan(planId);
-    setIsLoadingBoost(true);
-    if (data?.isAuthenticated === true) {
-      setTimeout(() => {
-        navigate(`/checkout/boost?plan=${planId}`);
-        setIsLoadingBoost(false);
-      }, 1000);
-    } else {
-      navigate(`/login?redirect=/checkout&plan=${planId}`);
-    }
+    setSelectedPlanDetails(plan);
+    setIsDrawerOpen(true);
   };
 
   const handleBoost = () => {
@@ -148,6 +148,93 @@ const StoreBoostPage: React.FC = () => {
           </DialogContent>
         </Dialog>
 
+        {/* MODAL DE PAIEMENT MODERNE */}
+        <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
+          <DialogContent
+            className="max-w-lg w-full rounded-t-3xl fixed bottom-0 left-1/2 -translate-x-1/2 mb-0 p-0 overflow-hidden shadow-2xl border-0"
+            style={{ borderRadius: '2rem 2rem 0 0', marginBottom: 0 }}
+          >
+            <div className="bg-gradient-to-r from-[#ed7e0f]/10 to-orange-100 p-6 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-900">Détails du paiement</h3>
+                <DialogClose asChild>
+                  <button className="p-2 rounded-full hover:bg-orange-50 transition">
+                    <AlertCircle className="w-5 h-5 text-gray-400" />
+                  </button>
+                </DialogClose>
+              </div>
+              {selectedPlanDetails && (
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Plan</span>
+                    <span className="font-semibold">{selectedPlanDetails.subscription_name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Durée</span>
+                    <span className="font-semibold">{selectedPlanDetails.subscription_duration}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Prix</span>
+                    <span className="font-bold text-[#ed7e0f]">{selectedPlanDetails.subscription_price} XAF</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Moyen de paiement</label>
+                <div className="flex gap-3">
+                  <Button
+                    variant={selectedPayment === 'card' ? 'default' : 'outline'}
+                    className={`flex-1 ${selectedPayment === 'card' ? 'bg-[#ed7e0f] text-white' : ''}`}
+                    onClick={() => setSelectedPayment('card')}
+                  >
+                    Carte Bancaire
+                  </Button>
+                  <Button
+                    variant={selectedPayment === 'orange' ? 'default' : 'outline'}
+                    className={`flex-1 ${selectedPayment === 'orange' ? 'bg-[#ed7e0f] text-white' : ''}`}
+                    onClick={() => setSelectedPayment('orange')}
+                  >
+                    Orange Money
+                  </Button>
+                  <Button
+                    variant={selectedPayment === 'momo' ? 'default' : 'outline'}
+                    className={`flex-1 ${selectedPayment === 'momo' ? 'bg-[#ed7e0f] text-white' : ''}`}
+                    onClick={() => setSelectedPayment('momo')}
+                  >
+                    MoMo
+                  </Button>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Numéro de téléphone</label>
+                <Input
+                  type="tel"
+                  placeholder="Ex: 6 99 99 99 99"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  className="py-3 text-base bg-white/80 border-gray-300 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/30"
+                />
+              </div>
+
+              <DialogFooter className="mt-6">
+                <Button
+                  className="w-full bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => {
+                    setIsPaymentModalOpen(false);
+                    // Ici tu peux lancer la logique de paiement selon le moyen choisi
+                    // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=${selectedPayment}&phone=${phone}`);
+                  }}
+                  disabled={!phone || phone.length < 8}
+                >
+                  Continuer
+                </Button>
+              </DialogFooter>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Avantages du boost */}
         <motion.div 
           initial={{ opacity: 0 }}
@@ -202,6 +289,84 @@ const StoreBoostPage: React.FC = () => {
           </div>
         </motion.div>
       </main>
+
+      <AnimatePresence>
+        {isDrawerOpen && (
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+            className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-2xl border-t border-orange-100 w-full"
+            style={{ minHeight: 340, maxWidth: '100vw' }}
+          >
+            <div className="flex justify-center items-center py-2">
+              <div className="w-12 h-1.5 bg-orange-200 rounded-full" />
+            </div>
+            <div className="px-6 pb-8 pt-2">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Confirmer l'achat du plan</h3>
+                <button
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="p-2 rounded-full hover:bg-orange-50 transition"
+                  aria-label="Fermer"
+                >
+                  <span className="sr-only">Fermer</span>
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              {selectedPlanDetails && (
+                <div className="mb-6 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Plan</span>
+                    <span className="font-semibold">{selectedPlanDetails.subscription_name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Durée</span>
+                    <span className="font-semibold">{selectedPlanDetails.subscription_duration}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Prix</span>
+                    <span className="font-bold flex items-center gap-1 text-[#ed7e0f]">{selectedPlanDetails.subscription_price} <Coins className="w-4 h-4" /></span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Votre solde</span>
+                    <span className={`font-bold flex items-center gap-1 ${parseInt(userCoins ?? '0') >= selectedPlanDetails.subscription_price ? 'text-green-600' : 'text-red-600'}`}>
+                      {userCoins} <Coins className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="rounded-xl bg-orange-50 p-4 mb-6 flex items-center gap-3">
+                <Coins className="w-6 h-6 text-[#ed7e0f]" />
+                <span className="text-sm text-[#ed7e0f] font-medium">
+                  Le paiement se fera par déduction de vos coins.
+                </span>
+              </div>
+
+              <Button
+                className="w-full bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+                onClick={() => {
+                  setIsDrawerOpen(false);
+                  // Lancer la logique de paiement par coins ici
+                  // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=coins`);
+                }}
+                disabled={parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price}
+              >
+                Continuer
+              </Button>
+              {parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price && (
+                <div className="text-center text-sm text-red-500 mt-3">
+                  Solde insuffisant pour ce plan.
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
