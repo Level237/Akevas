@@ -292,79 +292,102 @@ const StoreBoostPage: React.FC = () => {
 
       <AnimatePresence>
         {isDrawerOpen && (
-          <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-            className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-2xl border-t border-orange-100 w-full"
-            style={{ minHeight: 340, maxWidth: '100vw' }}
-          >
-            <div className="flex justify-center items-center py-2">
-              <div className="w-12 h-1.5 bg-orange-200 rounded-full" />
-            </div>
-            <div className="px-6 pb-8 pt-2">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-gray-900">Confirmer l'achat du plan</h3>
-                <button
-                  onClick={() => setIsDrawerOpen(false)}
-                  className="p-2 rounded-full hover:bg-orange-50 transition"
-                  aria-label="Fermer"
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              style={{backdropFilter: 'blur(100px)'}}
+              className="fixed inset-0 backdrop-blur-sm bg-black/90 z-40"
+              onClick={() => setIsDrawerOpen(false)}
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+              className="fixed py-1 px-12 max-sm:px-2 inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-2xl border-t border-orange-100 w-full"
+              style={{ minHeight: 340, maxWidth: '100vw' }}
+            >
+              <div className="flex justify-center items-center py-2">
+                <div className="w-12 h-1.5 bg-orange-200 rounded-full" />
+              </div>
+              <div className="px-8 pb-8 pt-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-bold text-gray-900">Confirmer l'achat du plan</h3>
+                  <button
+                    onClick={() => setIsDrawerOpen(false)}
+                    className="p-2 rounded-full hover:bg-orange-50 transition"
+                    aria-label="Fermer"
+                  >
+                    <span className="sr-only">Fermer</span>
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                {selectedPlanDetails && (
+                  <div className="mb-6 space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Plan</span>
+                      <span className="font-semibold">{selectedPlanDetails.subscription_name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Durée</span>
+                      <span className="font-semibold">{selectedPlanDetails.subscription_duration}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Prix</span>
+                      <span className="font-bold flex items-center gap-1 text-[#ed7e0f]">{selectedPlanDetails.subscription_price} <Coins className="w-4 h-4" /></span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Votre solde</span>
+                      <span className={`font-bold flex items-center gap-1 ${parseInt(userCoins ?? '0') >= selectedPlanDetails.subscription_price ? 'text-green-600' : 'text-red-600'}`}>
+                        {userCoins} <Coins className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="rounded-xl bg-orange-50 p-4 mb-6 flex items-center gap-3">
+                  <Coins className="w-6 h-6 text-[#ed7e0f]" />
+                  <span className="text-sm text-[#ed7e0f] font-medium">
+                    Le paiement se fera par déduction de vos coins.
+                  </span>
+                </div>
+
+                <div className='flex justify-center gap-6 items-center'>
+                <Button
+                  className="w-full h-12 bg-transparent text-[#ed7e0f] border border-[#ed7e0f] font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+                  onClick={() => {
+                    setIsDrawerOpen(false);
+                    // Lancer la logique de paiement par coins ici
+                    // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=coins`);
+                  }}
+                  
                 >
-                  <span className="sr-only">Fermer</span>
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              {selectedPlanDetails && (
-                <div className="mb-6 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Plan</span>
-                    <span className="font-semibold">{selectedPlanDetails.subscription_name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Durée</span>
-                    <span className="font-semibold">{selectedPlanDetails.subscription_duration}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Prix</span>
-                    <span className="font-bold flex items-center gap-1 text-[#ed7e0f]">{selectedPlanDetails.subscription_price} <Coins className="w-4 h-4" /></span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Votre solde</span>
-                    <span className={`font-bold flex items-center gap-1 ${parseInt(userCoins ?? '0') >= selectedPlanDetails.subscription_price ? 'text-green-600' : 'text-red-600'}`}>
-                      {userCoins} <Coins className="w-4 h-4" />
-                    </span>
-                  </div>
+                 Annuler
+                </Button>
+                <Button
+                  className="w-full h-12 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+                  onClick={() => {
+                    setIsDrawerOpen(false);
+                    // Lancer la logique de paiement par coins ici
+                    // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=coins`);
+                  }}
+                  disabled={parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price}
+                >
+                  Continuer
+                </Button>
                 </div>
-              )}
-
-              <div className="rounded-xl bg-orange-50 p-4 mb-6 flex items-center gap-3">
-                <Coins className="w-6 h-6 text-[#ed7e0f]" />
-                <span className="text-sm text-[#ed7e0f] font-medium">
-                  Le paiement se fera par déduction de vos coins.
-                </span>
+                {parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price && (
+                  <div className="text-center text-sm text-red-500 mt-3">
+                    Solde insuffisant pour ce plan.
+                  </div>
+                )}
               </div>
-
-              <Button
-                className="w-full bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
-                onClick={() => {
-                  setIsDrawerOpen(false);
-                  // Lancer la logique de paiement par coins ici
-                  // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=coins`);
-                }}
-                disabled={parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price}
-              >
-                Continuer
-              </Button>
-              {parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price && (
-                <div className="text-center text-sm text-red-500 mt-3">
-                  Solde insuffisant pour ce plan.
-                </div>
-              )}
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
