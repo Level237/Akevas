@@ -57,5 +57,6 @@ useCurrentSellerQuery,
 useAddProductMutation,
 useGetProductsQuery,
 useUpdateDocsMutation,
-useInitCoinPaymentMutation
+useInitCoinPaymentMutation,
+useVerifyCoinPaymentQuery
 }=sellerService

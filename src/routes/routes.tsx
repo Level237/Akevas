@@ -33,10 +33,15 @@ import CheckoutBoostPage from "@/pages/seller/CheckoutBoostPage";
 import RechargePage from "@/pages/seller/RechargePage";
 import CheckoutRechargePage from "@/pages/seller/CheckoutPage";
 import ConfirmationPage from "@/pages/seller/ConfirmationPage";
+import MobileMoneyPaymentPage from "@/pages/MobileMoneyPaymentPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
     element: <Homepage />
+  },
+  {
+    path: '/payment/mobile-money',
+    element: <MobileMoneyPaymentPage />
   },
   {
     path: '/seller/pro',
