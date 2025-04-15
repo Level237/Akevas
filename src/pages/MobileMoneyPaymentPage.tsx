@@ -18,7 +18,7 @@ export default function MobileMoneyPaymentPage() {
   const phone = sessionStorage.getItem('phone') || '';
   
   // Get credits and amount from URL or session
-  const credits = parseInt(sessionStorage.getItem('credits') || '0');
+  const coins = parseInt(sessionStorage.getItem('coins') || '0');
   const amount = parseInt(sessionStorage.getItem('amount') || '0');
   
   // RTK Query hooks
@@ -36,14 +36,15 @@ export default function MobileMoneyPaymentPage() {
   useEffect(() => {
     const initializePayment = async () => {
       try {
-        const response = await initPayment({
+        const formData = {
           phone,
           amount,
-          credits
-        }).unwrap();
+          coins
+        }
+        const response = await initPayment(formData);
         
-        if (response.statusCharge === "Accepted") {
-          setPaymentRef(response.reference);
+        if (response.data.statusCharge === "Accepted") {
+          setPaymentRef(response.data.reference);
           setPaymentStatus('waiting');
           setMessage("Confirmez votre transaction en composant #150*50#");
           setPollingEnabled(true);
@@ -148,11 +149,11 @@ export default function MobileMoneyPaymentPage() {
           </div>
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-600 text-sm">Coins</span>
-            <span className="font-semibold text-gray-800">{credits}</span>
+            <span className="font-semibold text-gray-800">{coins}</span>
           </div>
           <div className="flex justify-between items-baseline border-t border-dashed border-gray-300 pt-3 mt-3">
             <span className="text-lg font-semibold text-gray-700">Total</span>
-            <span className="text-2xl font-bold text-[#ff7900]">{amount} XAF</span>
+                <span className="text-2xl font-bold text-[#ff7900]">{amount} XAF</span>
           </div>
         </div>
         

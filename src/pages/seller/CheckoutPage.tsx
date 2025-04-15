@@ -39,17 +39,10 @@ export default function CheckoutRechargePage() {
      coins:credits,
      phone_number:phoneNumber
     }
-    const response = await initCoinPayment(formData);
-    if (!isPhoneNumberValid || isProcessing) return;
-    setIsProcessing(true);
-    console.log("Initiating NotchPay payment with phone:", phoneNumber);
-    console.log(response)
-    if(response.data.status === "Accepted"){
-      window.location.href = response.data.authorization_url;
-    }else{
-      setIsProcessing(false);
-      alert("Une erreur est survenue lors de l'initialisation du paiement");
-    }
+    sessionStorage.setItem('coins',credits.toString());
+    sessionStorage.setItem('amount',price.toFixed(2));
+    sessionStorage.setItem('phone',phoneNumber);
+    window.location.href='/payment/mobile-money';
   };
 
   return (
