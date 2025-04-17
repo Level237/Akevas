@@ -26,6 +26,7 @@ export interface Seller {
     products: Product[] | null,
     isPublished: boolean | null,
     images: Image[] | null,
+    subscribe_id:number | null,
     coins:string,
     town: string | null,
     quarter: string | null,

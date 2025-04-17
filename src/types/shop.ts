@@ -10,6 +10,7 @@ export interface Shop {
     shop_key: string;
     products_count: number;
     products: Product[];
+    subscribe_id:number | null;
     coins:string;
     town: string;
     categories: Category[];

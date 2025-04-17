@@ -10,6 +10,13 @@ import {
   Check,
   Plus,
   Coins,
+  Package,
+  Star,
+  TrendingUp,
+  ArrowRight,
+  Zap,
+  Paintbrush,
+  Settings,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useCurrentSellerQuery } from '@/services/sellerService';
@@ -215,8 +222,71 @@ const DashboardPage = () => {
             />
           )}
           {sellerData?.shop.level==="2" && <VisibilityShop sellerData={sellerData}/>}
+          {sellerData?.shop.level==="4" && <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="mb-6"
+          >
+            {sellerData?.shop?.subscribe_id == 2 && (
+              <div className="relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4">
+                  <div className="relative rounded-xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 border border-orange-200 p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex-shrink-0">
+                          <div className="relative">
+                            <div className="absolute inset-0 animate-ping rounded-full bg-orange-400 opacity-20"></div>
+                            <div className="relative rounded-full bg-orange-500 p-2">
+                              <Zap className="h-5 w-5 text-white" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex-1 md:flex md:items-center md:justify-between">
+                          <p className="text-sm text-gray-800">
+                            <span className="font-medium">
+                              {sellerData?.shop?.subscribe_id == 2 
+                                ? "Boutique Classic" 
+                                : "Boutique Premium"} 
+                            </span>
+                            <span className="hidden md:inline"> • </span>
+                            <br className="md:hidden" />
+                            <span className="text-gray-600">
+                              {sellerData?.shop?.subscribe_id == 2 
+                                ? "Votre boutique est maintenant mise en avant sur notre page d'accueil et sur les moteurs de recherches d'Akevas" 
+                                : "Votre boutique bénéficie d'une visibilité premium sur la marketplace"}
+                            </span>
+                          </p>
+                          <div className="mt-2 flex items-center gap-x-4 md:mt-0">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-700">
+                              <span className="relative flex h-2 w-2">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75"></span>
+                                <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500"></span>
+                              </span>
+                              {sellerData?.shop?.subscribe_id == 2 
+                                ? "Mode Classic actif" 
+                                : "Mode Premium actif"}
+                            </span>
+                            <button 
+                              className="text-sm font-medium text-orange-600 hover:text-orange-500 flex items-center gap-1"
+                              onClick={() => {/* Navigation vers les stats ou le tableau de bord */}}
+                            >
+                              Voir les statistiques
+                              <ArrowRight className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </motion.div>}
           {parseInt(sellerData?.shop.level || "0")>=2 && <StatisticsOverview sellerData={sellerData}/>}
+          
           {sellerData?.shop.level==="3" && <VisibilityShop sellerData={sellerData}/>}
+          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Prochaines étapes */}
             <div className="lg:col-span-2">
@@ -357,6 +427,7 @@ const DashboardPage = () => {
               </Card>
             </motion.div>
           </div>
+          
         </main>
       </div>
     
