@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import orange from "@/assets/orange.jpeg"
+import momo from "@/assets/momo.jpeg"
 import {
 
   Shield,
@@ -27,7 +29,7 @@ interface DeliveryAddress {
 }
 
 const CheckoutPage: React.FC = () => {
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('card');
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('orange');
   const [quarter, setQuarter] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const params = new URLSearchParams(window.location.search);
@@ -202,7 +204,7 @@ const CheckoutPage: React.FC = () => {
                     className="mr-2"
                    
                   />
-                  <label htmlFor="pickup" className={`${!isLocalOrder ? 'text-gray-400' : ''}`}>
+                  <label htmlFor="pickup">
                     Récupérer en magasin de {productLocation} (0 XAF)
                   </label>
                 </div>
@@ -218,7 +220,7 @@ const CheckoutPage: React.FC = () => {
                     className="mr-2"
                     
                   />
-                  <label htmlFor="localDelivery" className={`${!isLocalOrder ? 'text-gray-400' : ''}`}>
+                  <label htmlFor="localDelivery">
                     Livraison à domicile {quarter} (1 500 XAF)
                   </label>
                 </div>
@@ -385,28 +387,8 @@ const CheckoutPage: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h2 className="text-xl font-semibold mb-6">Méthode de paiement</h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
                 {/* Carte bancaire */}
-                <div
-                  onClick={() => setSelectedPayment('card')}
-                  className={`relative flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'card'
-                    ? 'border-[#ed7e0f] bg-orange-50 scale-105'
-                    : 'hover:border-gray-300 hover:shadow-md'
-                    }`}
-                >
-                  <img
-                    src={card}
-                    alt="Carte bancaire"
-                    className="h-12 object-contain mb-4"
-                  />
-                  <h3 className="font-medium text-center">Carte bancaire</h3>
-                  <p className="text-sm text-gray-500 text-center">Visa, Mastercard</p>
-                  {selectedPayment === 'card' && (
-                    <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
-                  )}
-                </div>
-
-                {/* Orange Money */}
                 <div
                   onClick={() => setSelectedPayment('orange')}
                   className={`relative flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'orange'
@@ -415,18 +397,18 @@ const CheckoutPage: React.FC = () => {
                     }`}
                 >
                   <img
-                    src={notchpay}
-                    alt="Orange Money"
+                    src={orange}
+                    alt="Carte bancaire"
                     className="h-12 object-contain mb-4"
                   />
-                  <h3 className="font-medium text-center">NotchPay Payment </h3>
-                  <p className="text-sm text-gray-500 text-center">Orange Money/MTN Mobile Money</p>
+                  <h3 className="font-medium text-center">Orange money</h3>
+                  
                   {selectedPayment === 'orange' && (
                     <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
                 </div>
 
-                {/* Mobile Money */}
+                {/* Orange Money */}
                 <div
                   onClick={() => setSelectedPayment('momo')}
                   className={`relative flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'momo'
@@ -435,16 +417,18 @@ const CheckoutPage: React.FC = () => {
                     }`}
                 >
                   <img
-                    src="/images/mtn-momo.png"
-                    alt="Mobile Money"
+                    src={momo}
+                    alt="Orange Money"
                     className="h-12 object-contain mb-4"
                   />
-                  <h3 className="font-medium text-center">Mobile Money</h3>
-                  <p className="text-sm text-gray-500 text-center">MTN, Moov</p>
+                  <h3 className="font-medium text-center">Momo Payment </h3>
+                  
                   {selectedPayment === 'momo' && (
                     <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
                 </div>
+
+            
               </div>
 
 
