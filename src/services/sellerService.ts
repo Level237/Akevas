@@ -48,6 +48,13 @@ export const sellerService=createApi({
                     url:`/api/get/payment/status/${$ref}`,
                     method:'GET',
                 })
+            }),
+            boostShop:builder.mutation({
+                query:(body)=>({
+                    url:`/api/v1/boost/shop`,
+                    method:"POST",
+                    body:body
+                })
             })
         
 })
@@ -58,5 +65,6 @@ useAddProductMutation,
 useGetProductsQuery,
 useUpdateDocsMutation,
 useInitCoinPaymentMutation,
-useVerifyCoinPaymentQuery
+useVerifyCoinPaymentQuery,
+useBoostShopMutation
 }=sellerService

@@ -306,7 +306,7 @@ const StoreBoostPage: React.FC = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-              className="fixed py-1 px-12 max-sm:px-2 inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-2xl border-t border-orange-100 w-full"
+              className="fixed py-1 px-28 max-sm:px-2 inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-2xl border-t border-orange-100 w-full"
               style={{ minHeight: 340, maxWidth: '100vw' }}
             >
               <div className="flex justify-center items-center py-2">
@@ -358,7 +358,7 @@ const StoreBoostPage: React.FC = () => {
 
                 <div className='flex justify-center gap-6 items-center'>
                 <Button
-                  className="w-full h-12 bg-transparent text-[#ed7e0f] border border-[#ed7e0f] font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+                  className="w-full h-12 bg-transparent text-[#ed7e0f] border border-[#ed7e0f] font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-transparent transition-all duration-300 text-lg"
                   onClick={() => {
                     setIsDrawerOpen(false);
                     // Lancer la logique de paiement par coins ici
