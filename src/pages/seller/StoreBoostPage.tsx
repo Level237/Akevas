@@ -8,21 +8,27 @@ import {
   Zap,
   Award,
   AlertCircle,
-  Coins
+  Coins,
+  CheckCircle,
+  Download,
+  RefreshCw,
+  X
 } from 'lucide-react';
 import { useCheckAuthQuery } from '@/services/auth';
 import { useGetSubscriptionQuery } from '@/services/guardService';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
-import { useCurrentSellerQuery } from '@/services/sellerService';
+import { useBoostShopMutation, useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
 import { Input } from '@/components/ui/input';
 import { redirectToLogin } from '@/lib/redirectToLogin';
+import confetti from 'canvas-confetti';
 
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [boostShop]=useBoostShopMutation();
   const [selectedPlanDetails, setSelectedPlanDetails] = useState<any>(null);
   const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card');
   const [isLoadingBoost] = useState(false);
@@ -34,6 +40,9 @@ const StoreBoostPage: React.FC = () => {
   const {data: { data: sellerData }= {},isLoading:isLoadingSeller}=useCurrentSellerQuery<SellerResponse>('seller')
   const userCoins = sellerData?.shop.coins;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showPaymentProcess, setShowPaymentProcess] = useState(false);
+  const [boostStatus, setBoostStatus] = useState<'processing' | 'success' | 'failed'>('processing');
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
   
   if (isLoading || isLoadingSubscription) {
     return <div className='flex justify-center items-center h-screen'><IsLoadingComponents isLoading={isLoading || isLoadingSubscription} /></div>
@@ -59,6 +68,40 @@ const StoreBoostPage: React.FC = () => {
     if (!selectedPlan) return;
     // Implémenter la logique de boost ici
     console.log('Boosting store with plan:', selectedPlan);
+  };
+
+  const handleContinue = async () => {
+    setIsDrawerOpen(false);
+    setShowPaymentProcess(true);
+    setBoostStatus('processing');
+
+    try {
+      const formData = {
+        subscription_id: selectedPlanDetails?.id,
+        coins: selectedPlanDetails?.subscription_price
+      };
+      console.log(selectedPlanDetails?.subscription_price)
+      const response = await boostShop(formData);
+      console.log(response)
+      if (response.data.status === 1) {
+        setBoostStatus('success');
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { x: 0.5, y: 0.6 }
+        });
+        setReceiptUrl('/receipts/boost-' + Date.now() + '.pdf');
+      } else {
+        setBoostStatus('failed');
+      }
+    } catch (error) {
+      setBoostStatus('failed');
+    }
+  };
+
+  const handleRetry = () => {
+    setBoostStatus('processing');
+    handleContinue();
   };
 
   return (
@@ -374,11 +417,7 @@ const StoreBoostPage: React.FC = () => {
                 </Button>
                 <Button
                   className="w-full h-12 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
-                  onClick={() => {
-                    setIsDrawerOpen(false);
-                    // Lancer la logique de paiement par coins ici
-                    // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=coins`);
-                  }}
+                  onClick={handleContinue}
                   disabled={parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price}
                 >
                   Continuer
@@ -392,6 +431,148 @@ const StoreBoostPage: React.FC = () => {
               </div>
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showPaymentProcess && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 bg-gradient-to-br from-orange-50 to-orange-100"
+          >
+            {/* Background graphics */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute right-0 top-0 w-1/2 h-1/2 bg-orange-200 rounded-full opacity-20 blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
+              <div className="absolute left-0 bottom-0 w-1/2 h-1/2 bg-orange-300 rounded-full opacity-20 blur-3xl transform -translate-x-1/3 translate-y-1/3"></div>
+            </div>
+
+            {/* Close button */}
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowPaymentProcess(false)}
+              className="fixed top-6 right-6 z-50 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl border border-orange-100 transition-all duration-300 group"
+            >
+              <X className="w-5 h-5 text-gray-600 group-hover:text-[#ed7e0f] transition-colors" />
+            </motion.button>
+
+            {/* Main content */}
+            <div className="relative min-h-screen flex items-center justify-center p-4">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="w-full max-w-4xl bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/50"
+              >
+                <div className="p-8">
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Processus de Boost</h2>
+                    <p className="text-gray-600 text-lg">Votre boutique est en cours de boost</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div className="bg-orange-50 p-6 rounded-2xl">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Détails de la transaction</h3>
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Plan sélectionné</span>
+                          <span className="font-semibold">{selectedPlanDetails?.subscription_name}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Durée</span>
+                          <span className="font-semibold">{selectedPlanDetails?.subscription_duration}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Coins dépensés</span>
+                          <span className="font-semibold text-[#ed7e0f]">{selectedPlanDetails?.subscription_price} coins</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Nouveau solde</span>
+                          <span className="font-semibold text-[#ed7e0f]">
+                            {parseInt(userCoins ?? '0') - (selectedPlanDetails?.subscription_price ?? 0)} coins
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <AnimatePresence mode="wait">
+                      {boostStatus === 'processing' && (
+                        <motion.div
+                          key="processing"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="bg-orange-50 p-6 rounded-2xl flex flex-col items-center justify-center"
+                        >
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                            className="w-16 h-16 text-[#ed7e0f] mb-4"
+                          >
+                            <RefreshCw size={64} />
+                          </motion.div>
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">Traitement en cours</h3>
+                          <p className="text-gray-600">Veuillez patienter pendant le traitement de votre demande</p>
+                        </motion.div>
+                      )}
+
+                      {boostStatus === 'success' && (
+                        <motion.div
+                          key="success"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          className="bg-green-50 p-6 rounded-2xl flex flex-col items-center justify-center"
+                        >
+                          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                            <CheckCircle className="w-10 h-10 text-green-600" />
+                          </div>
+                          <h3 className="text-xl font-semibold text-green-600 mb-2">Boost réussi!</h3>
+                          <p className="text-gray-600 mb-6 text-center">Votre boutique a été boostée avec succès</p>
+                          {receiptUrl && (
+                            <Button
+                              className="bg-[#ed7e0f] hover:bg-[#d97100] text-white"
+                              onClick={() => window.open(receiptUrl, '_blank')}
+                            >
+                              <Download className="w-4 h-4 mr-2" />
+                              Télécharger le reçu
+                            </Button>
+                          )}
+                        </motion.div>
+                      )}
+
+                      {boostStatus === 'failed' && (
+                        <motion.div
+                          key="failed"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          className="bg-red-50 p-6 rounded-2xl flex flex-col items-center justify-center"
+                        >
+                          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                            <AlertCircle className="w-10 h-10 text-red-600" />
+                          </div>
+                          <h3 className="text-xl font-semibold text-red-600 mb-2">Échec du boost</h3>
+                          <p className="text-gray-600 mb-6 text-center">Une erreur est survenue lors du boost de votre boutique</p>
+                          <Button
+                            className="bg-[#ed7e0f] hover:bg-[#d97100] text-white"
+                            onClick={handleRetry}
+                          >
+                            Réessayer
+                          </Button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
