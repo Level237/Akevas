@@ -21,7 +21,7 @@ export function QuickActions({ sellerData }: QuickActionsProps) {
       description: "Solde coins",
       icon: <Wallet className="w-4 h-4 text-gray-700" />,
       link: "/seller/coins",
-      metric: `${sellerData?.coins || 0} coins`
+      metric: `${sellerData?.shop?.coins || 0} coins`
     },
     {
       title: "Produits",
