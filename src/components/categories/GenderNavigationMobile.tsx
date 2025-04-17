@@ -1,32 +1,88 @@
-
-
+import { useState, useEffect } from 'react';
 import AsyncLink from '../ui/AsyncLink';
+import { motion } from 'framer-motion';
+
 const GenderNavigationMobile = () => {
-  return         <div className="hidden w-full z-50 justify-center max-sm:flex items-center gap-6 py-6 bg-white/80 backdrop-blur-sm shadow-lg">
-  <AsyncLink to="/home?g=homme" className="relative group px-4 py-2 rounded-full hover:bg-orange-50 transition-all duration-300">
-    <span className="text-md font-semibold text-gray-800 group-hover:text-[#ed7e0f] transition-colors flex items-center">
-      
-      HOMME
-    </span>
-    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-[#ed7e0f] opacity-0 transition-all duration-300 group-hover:w-3/4 group-hover:opacity-100"></span>
-  </AsyncLink>
+  const [activeTab, setActiveTab] = useState<string>('');
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  <AsyncLink to="/home?g=femme" className="relative group px-4 py-2 rounded-full hover:bg-orange-50 transition-all duration-300">
-    <span className="text-md font-semibold text-gray-800 group-hover:text-[#ed7e0f] transition-colors flex items-center">
-      
-      FEMME
-    </span>
-    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-[#ed7e0f] opacity-0 transition-all duration-300 group-hover:w-3/4 group-hover:opacity-100"></span>
-  </AsyncLink>
+  // Détecter le scroll et la position actuelle
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 80);
+    };
 
-  <AsyncLink to="/home?g=enfant" className="relative group px-4 py-2 rounded-full hover:bg-orange-50 transition-all duration-300">
-    <span className="text-md font-semibold text-gray-800 group-hover:text-[#ed7e0f] transition-colors flex items-center">
+    window.addEventListener('scroll', handleScroll);
+    
+    // Déterminer l'onglet actif basé sur l'URL
+    const params = new URLSearchParams(window.location.search);
+    const gender = params.get('g');
+    setActiveTab(gender || '');
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const tabs = [
+    { id: 'homme', label: 'HOMME' },
+    { id: 'femme', label: 'FEMME' },
+    { id: 'enfant', label: 'ENFANT' }
+  ];
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className={`hidden max-sm:flex sticky top-[80px] left-0 right-0 z-40 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/90 backdrop-blur-md shadow-md' 
+          : 'bg-white/80 backdrop-blur-sm'
+      }`}
+    >
+      <div className="w-full flex items-center justify-between px-4 py-3 overflow-x-auto no-scrollbar">
+        {tabs.map((tab) => (
+          <AsyncLink
+            key={tab.id}
+            to={`/home?g=${tab.id}`}
+            className={`relative flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 ${
+              activeTab === tab.id 
+                ? 'bg-[#ed7e0f]/10' 
+                : 'hover:bg-orange-50'
+            }`}
+            
+          >
+            <motion.span
+              layout
+              className={`text-sm font-semibold transition-colors ${
+                activeTab === tab.id 
+                  ? 'text-[#ed7e0f]' 
+                  : 'text-gray-700'
+              }`}
+            >
+              {tab.label}
+            </motion.span>
+            {activeTab === tab.id && (
+              <motion.div
+                layoutId="activeTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
+                initial={false}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+          </AsyncLink>
+        ))}
+      </div>
       
-      ENFANT
-    </span>
-    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-[#ed7e0f] opacity-0 transition-all duration-300 group-hover:w-3/4 group-hover:opacity-100"></span>
-  </AsyncLink>
-</div>
+      {/* Indicateur de défilement subtil */}
+      <motion.div 
+        initial={{ scaleX: 0 }}
+        animate={{ 
+          scaleX: isScrolled ? 1 : 0,
+          opacity: isScrolled ? 1 : 0
+        }}
+        className="h-[1px] bg-gradient-to-r from-transparent via-[#ed7e0f]/30 to-transparent"
+      />
+    </motion.div>
+  );
 };
 
 export default GenderNavigationMobile;
