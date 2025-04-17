@@ -25,7 +25,7 @@ const StoreBoostPage: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedPlanDetails, setSelectedPlanDetails] = useState<any>(null);
   const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card');
-  const [isLoadingBoost, setIsLoadingBoost] = useState(false);
+  const [isLoadingBoost] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [phone, setPhone] = useState('');
