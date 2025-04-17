@@ -38,6 +38,7 @@ import ListReviewPage from "@/pages/admin/reviews/ListReviewPage";
 import ListFeedbackPage from "@/pages/admin/feedbacks/ListFeedbackPage";
 import ListShopReviewPage from "@/pages/admin/reviews/ListShopReviewPage";
 import SucessPaymentPage from "@/pages/payment/notchpay/SucessPaymentPage";
+import MobileMoneyPaymentPage from "@/pages/user/MobileMoneyPaymentPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -172,6 +173,9 @@ export const routes = createBrowserRouter([
       },{
         path:'/checkout/state',
         element:<SucessPaymentPage/>
+      },{
+        path:'/pay/mobile-money',
+        element:<MobileMoneyPaymentPage/>
       }
     ]
   }

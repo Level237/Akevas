@@ -147,7 +147,7 @@ const CheckoutPage: React.FC = () => {
           formData.append("price",price);
         }
         if(total){
-          formData.append("total",total.toString());
+          formData.append("amount",total.toString());
         }
         formData.append("s","0");
         if(quarter){
@@ -157,9 +157,13 @@ const CheckoutPage: React.FC = () => {
         formData.append("shipping",shipping.toString());
         formData.append("paymentMethod",selectedPayment);
         formData.append("paymentPhone", paymentPhone);
-        sessionStorage.setItem("formDataPayment",JSON.stringify(formData));
-     
-     
+        let formDataObject:any = {};
+        for (const [key, value] of formData.entries()) {
+          formDataObject[key] = value;
+        }
+        
+        sessionStorage.setItem("formDataPayment",JSON.stringify(formDataObject));
+        window.location.href = "/pay/mobile-money";
     }
     setIsLoading(true);
     

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useInitProductPaymentMutation } from '@/services/auth';
+import { useInitProductPaymentMutation, useVerifyPaymentQuery } from '@/services/auth';
 
 
 export default function MobileMoneyPaymentPage() {
@@ -19,12 +19,12 @@ export default function MobileMoneyPaymentPage() {
   const phone = sessionStorage.getItem('phone') || '';
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
   // Get credits and amount from URL or session
-  const coins = parseInt(sessionStorage.getItem('coins') || '0');
-  const amount = parseInt(sessionStorage.getItem('amount') || '0');
+  const coins = formDataPayment.amount;
+  const amount = 100;
   
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
-  const { data: verificationData, isLoading: isVerifying, error: verifyError } = useVerifyCoinPaymentQuery(paymentRef || '', {
+  const { data: verificationData, isLoading: isVerifying, error: verifyError } = useVerifyPaymentQuery(paymentRef || '', {
     pollingInterval: pollingEnabled ? pollingInterval : 0,
     skip: !pollingEnabled || !paymentRef
   });
@@ -152,15 +152,12 @@ export default function MobileMoneyPaymentPage() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-600 text-sm">Numéro</span>
-            <span className="font-semibold text-gray-800">{phone}</span>
+            <span className="font-semibold text-gray-800">{formDataPayment.paymentPhone}</span>
           </div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-gray-600 text-sm">Coins</span>
-            <span className="font-semibold text-gray-800">{coins}</span>
-          </div>
+          
           <div className="flex justify-between items-baseline border-t border-dashed border-gray-300 pt-3 mt-3">
             <span className="text-lg font-semibold text-gray-700">Total</span>
-                <span className="text-2xl font-bold text-[#ff7900]">{amount} XAF</span>
+                <span className="text-2xl font-bold text-[#ff7900]">{formDataPayment.amount} XAF</span>
           </div>
         </div>
         
