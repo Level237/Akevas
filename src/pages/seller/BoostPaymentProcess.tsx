@@ -16,6 +16,12 @@ interface BoostPaymentProcessProps {
   onClose: () => void;
 }
 
+interface BoostResponse {
+  status: number;
+  paymentId: string;
+  // ... autres champs
+}
+
 const BoostPaymentProcess: React.FC<BoostPaymentProcessProps> = ({
   subscriptionDetails,
   userCoins,

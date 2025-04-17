@@ -24,6 +24,9 @@ import { SellerResponse } from '@/types/seller';
 import { Input } from '@/components/ui/input';
 import { redirectToLogin } from '@/lib/redirectToLogin';
 import confetti from 'canvas-confetti';
+import jsPDF from 'jspdf';
+import { QRCodeCanvas } from "qrcode.react";
+import html2canvas from 'html2canvas';
 
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
@@ -43,6 +46,7 @@ const StoreBoostPage: React.FC = () => {
   const [showPaymentProcess, setShowPaymentProcess] = useState(false);
   const [boostStatus, setBoostStatus] = useState<'processing' | 'success' | 'failed'>('processing');
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+  const [boostResponse, setBoostResponse] = useState<any>(null);
   
   if (isLoading || isLoadingSubscription) {
     return <div className='flex justify-center items-center h-screen'><IsLoadingComponents isLoading={isLoading || isLoadingSubscription} /></div>
@@ -70,6 +74,43 @@ const StoreBoostPage: React.FC = () => {
     console.log('Boosting store with plan:', selectedPlan);
   };
 
+  const generateReceipt = async (paymentId: string) => {
+    try {
+      // Créer le contenu du PDF
+      const doc = new jsPDF();
+      
+      // Ajouter le titre
+      doc.setFontSize(20);
+      doc.text('Reçu de Transaction', 105, 20, { align: 'center' });
+      
+      // Ajouter les détails de la transaction
+      doc.setFontSize(12);
+      doc.text(`ID de Transaction: ${paymentId}`, 20, 40);
+      doc.text(`Plan: ${selectedPlanDetails?.subscription_name}`, 20, 50);
+      doc.text(`Durée: ${selectedPlanDetails?.subscription_duration} jours`, 20, 60);
+      doc.text(`Coins dépensés: ${selectedPlanDetails?.subscription_price}`, 20, 70);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 80);
+      doc.text(`Heure: ${new Date().toLocaleTimeString()}`, 20, 90);
+      
+      // Ajouter le QR code
+      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(paymentId)}`;
+      const qrCodeResponse = await fetch(qrCodeUrl);
+      const qrCodeBlob = await qrCodeResponse.blob();
+      const qrCodeDataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(qrCodeBlob);
+      });
+      
+      doc.addImage(qrCodeDataUrl as string, 'PNG', 85, 100, 40, 40);
+      
+      // Sauvegarder le PDF
+      doc.save(`receipt-${paymentId}.pdf`);
+    } catch (error) {
+      console.error('Erreur lors de la génération du reçu:', error);
+    }
+  };
+
   const handleContinue = async () => {
     setIsDrawerOpen(false);
     setShowPaymentProcess(true);
@@ -80,22 +121,27 @@ const StoreBoostPage: React.FC = () => {
         subscription_id: selectedPlanDetails?.id,
         coins: selectedPlanDetails?.subscription_price
       };
-      console.log(selectedPlanDetails?.subscription_price)
+
       const response = await boostShop(formData);
-      console.log(response)
-      if (response.data.status === 1) {
+      setBoostResponse(response);
+      
+      if (response.data.status === 1 && response.data.paymentId) {
         setBoostStatus('success');
+        // Déclencher l'animation confetti
         confetti({
           particleCount: 100,
           spread: 70,
           origin: { x: 0.5, y: 0.6 }
         });
-        setReceiptUrl('/receipts/boost-' + Date.now() + '.pdf');
+        
+        // Générer le reçu avec l'ID de paiement
+        await generateReceipt(response.data.paymentId);
       } else {
         setBoostStatus('failed');
       }
     } catch (error) {
       setBoostStatus('failed');
+      console.error('Erreur lors du boost:', error);
     }
   };
 
@@ -534,14 +580,28 @@ const StoreBoostPage: React.FC = () => {
                           </div>
                           <h3 className="text-xl font-semibold text-green-600 mb-2">Boost réussi!</h3>
                           <p className="text-gray-600 mb-6 text-center">Votre boutique a été boostée avec succès</p>
-                          {receiptUrl && (
-                            <Button
-                              className="bg-[#ed7e0f] hover:bg-[#d97100] text-white"
-                              onClick={() => window.open(receiptUrl, '_blank')}
-                            >
-                              <Download className="w-4 h-4 mr-2" />
-                              Télécharger le reçu
-                            </Button>
+                          
+                          {boostResponse?.data?.paymentId && (
+                            <div className="space-y-6">
+                              <div className="bg-white p-4 rounded-xl shadow-lg">
+                                <QRCodeCanvas
+                                  value={boostResponse.data.paymentId}
+                                  size={120}
+                                  bgColor="#ffffff"
+                                  fgColor="#000000"
+                                  level="H"
+                                  className="mx-auto"
+                                />
+                              </div>
+
+                              <Button
+                                className="bg-[#ed7e0f] hover:bg-[#d97100] text-white flex items-center gap-2 px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                                onClick={() => generateReceipt(boostResponse.data.paymentId)}
+                              >
+                                <Download className="w-5 h-5" />
+                                <span>Télécharger le reçu</span>
+                              </Button>
+                            </div>
                           )}
                         </motion.div>
                       )}
