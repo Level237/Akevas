@@ -173,10 +173,11 @@ export const routes = createBrowserRouter([
       },{
         path:'/checkout/state',
         element:<SucessPaymentPage/>
-      },{
-        path:'/pay/mobile-money',
-        element:<MobileMoneyPaymentPage/>
-      }
+      },
     ]
+  },
+  {
+    path:'/pay/mobile-money',
+    element:<MobileMoneyPaymentPage/>
   }
 ]);

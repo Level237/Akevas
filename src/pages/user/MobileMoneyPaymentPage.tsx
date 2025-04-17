@@ -49,7 +49,7 @@ export default function MobileMoneyPaymentPage() {
           address: formDataPayment.address
         }
         const response = await initPayment(formData);
-        
+        console.log(response)
         if (response.data.statusCharge === "Accepted") {
           setPaymentRef(response.data.reference);
           setPaymentStatus('waiting');
