@@ -32,6 +32,7 @@ const CheckoutPage: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('orange');
   const [quarter, setQuarter] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentPhone, setPaymentPhone] = useState<string>('');
   const params = new URLSearchParams(window.location.search);
   const s = params.get('s');
   const residence = params.get('residence');
@@ -94,6 +95,12 @@ const CheckoutPage: React.FC = () => {
       alert('Veuillez choisir un quartier de livraison');
       return;
     }
+    
+    if (!paymentPhone) {
+      alert('Veuillez entrer un numéro de téléphone pour le paiement');
+      return;
+    }
+    
     setShowConfirmModal(true);
   };
 
@@ -123,6 +130,7 @@ const CheckoutPage: React.FC = () => {
       formData.append("address",address.address);
       formData.append("shipping",shipping.toString());
       formData.append("paymentMethod",selectedPayment);
+      formData.append("paymentPhone", paymentPhone);
       const response = await initPayment(formData);
       console.log(response)
       if(response.data.status === "Accepted"){
@@ -156,6 +164,7 @@ const CheckoutPage: React.FC = () => {
         formData.append("address",address.address);
         formData.append("shipping",shipping.toString());
         formData.append("paymentMethod",selectedPayment);
+        formData.append("paymentPhone", paymentPhone);
       const response = await initPayment(formData);
       if(response.data.status === "Accepted"){
         
@@ -386,7 +395,28 @@ const CheckoutPage: React.FC = () => {
             {/* Méthodes de paiement */}
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h2 className="text-xl font-semibold mb-6">Méthode de paiement</h2>
-
+              <div className="mt-6 mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Numéro de téléphone pour le paiement
+                </label>
+                <div className="relative">
+                  <input
+                    type="tel"
+                    value={paymentPhone}
+                    onChange={(e) => setPaymentPhone(e.target.value)}
+                    placeholder="Entrez le numéro associé à votre compte de paiement"
+                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f] pl-10 transition-all duration-200 bg-white shadow-sm"
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedPayment === 'orange' ? 'Numéro Orange Money au format 6XXXXXXXX' : 'Numéro MTN Mobile Money au format 6XXXXXXXX'}
+                </p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
                 {/* Carte bancaire */}
                 <div
@@ -427,11 +457,10 @@ const CheckoutPage: React.FC = () => {
                     <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
                 </div>
-
-            
               </div>
 
-
+              {/* Champ de téléphone pour le paiement */}
+             
             </div>
           </div>
 
@@ -485,7 +514,12 @@ const CheckoutPage: React.FC = () => {
               {/* Bouton de paiement */}
               <button
                 onClick={handlePayment}
-                className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
+                disabled={!paymentPhone.trim()}
+              className={`w-full mt-6 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                !paymentPhone.trim() 
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-70' 
+                  : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
+              }`}
               >
                 {isLoading ? 'Traitement...' : 'Payer maintenant'}
               </button>
@@ -546,6 +580,7 @@ const CheckoutPage: React.FC = () => {
                       selectedPayment === 'orange' ? 'NotchPay Payment' :
                       'Mobile Money'
                   }</p>
+                  <p>Numéro: {paymentPhone}</p>
                 </div>
 
                 <div>
