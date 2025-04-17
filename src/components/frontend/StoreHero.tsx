@@ -22,6 +22,7 @@ const SlideControls = memo(({ slides, currentSlide, setCurrentSlide }:{slides:an
 ));
 
 const ProductGrid = memo(({ productImages }:{productImages:any}) => (
+  
   <motion.div 
     className="grid grid-cols-3 gap-4 p-4"
     initial={{ opacity: 0 }}
@@ -100,6 +101,107 @@ export default function StoreHero() {
   }, []);
 
   return (
+    <>
+
+     {/* Mobile Version */}
+     <motion.section 
+  className="w-full md:hidden relative h-[500px] overflow-hidden"
+>
+  <AnimatePresence mode="wait">
+    <motion.div
+     
+      className={`w-full h-full ${slides[currentSlide].bgColor} rounded-2xl`}
+    >
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/20 z-0" />
+
+      {/* Content Container */}
+      <div className="relative h-full z-10 p-6 flex flex-col">
+        {/* Badge */}
+        <motion.span 
+          
+          className="self-start px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-xs mb-4"
+        >
+          {currentSlide === 0 ? "Vendeur" : currentSlide === 1 ? "Livreur" : "Marketplace"}
+        </motion.span>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col justify-between">
+          <div>
+            <motion.h2 
+            
+              className="text-3xl font-bold text-white mb-3"
+            >
+              {slides[2].title}
+            </motion.h2>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-white/80 text-sm leading-relaxed"
+            >
+              {slides[2].description}
+            </motion.p>
+          </div>
+
+          {/* Image or Product Grid */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+            className="my-6 h-48 relative"
+          >
+            {slides[2].isMarketplace && (
+              <div className="grid grid-cols-2 gap-3 h-full">
+                {productImages?.slice(0, 4).map((img, index) => (
+                  <div key={index} className="relative rounded-xl overflow-hidden">
+                    <img
+                      src={img}
+                      alt={`Product ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) }
+          </motion.div>
+
+          {/* Bottom Actions */}
+          <div className="space-y-4">
+            <motion.a
+              href={slides[2].href}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="inline-flex z-[999999999999999999999999999] items-center justify-center w-full bg-white text-[#ed7e0f] 
+                       px-6 py-3.5 rounded-xl font-medium shadow-lg 
+                       active:scale-95 transition-all duration-200"
+              whileTap={{ scale: 0.98 }}
+            >
+              {slides[currentSlide].buttonText}
+            </motion.a>
+          </div>
+        </div>
+      </div>
+
+      {/* Slider Controls */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
+        <SlideControls 
+          slides={slides} 
+          currentSlide={currentSlide} 
+          setCurrentSlide={setCurrentSlide} 
+        />
+      </div>
+    </motion.div>
+  </AnimatePresence>
+
+  {/* Swipe Handlers */}
+  <div 
+    className="absolute inset-0 z-30"
+    
+  />
+</motion.section>
     <section className="flex max-sm:flex-col items-start max-sm:mx-2 max-sm:mt-6 gap-4 mx-16 h-[30rem]">
       <motion.section className="w-[75%] max-sm:hidden rounded-3xl relative h-96 overflow-hidden">
         <motion.div
@@ -202,9 +304,9 @@ export default function StoreHero() {
  
       <motion.section 
       
-        className="w-full  hidden max-sm:block rounded-3xl relative h-96 bg-orange-800 overflow-hidden"
+        className="w-full max-sm:hidden  hidden max-sm:block rounded-3xl relative h-96 bg-orange-800 overflow-hidden"
       >
-        <div className="flex  w-full h-full">
+        <div className="flex   w-full h-full">
           <div className="w-full p-10 flex flex-col items-center justify-center">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
@@ -241,7 +343,7 @@ export default function StoreHero() {
           </motion.div>
         </div>
       </motion.section>
-     <section className="flex flex-col w-[25%] max-sm:w-full h-96 gap-4">
+     <section className="flex max-sm:hidden flex-col w-[25%] max-sm:w-full h-96 gap-4">
         <motion.section 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -291,5 +393,8 @@ export default function StoreHero() {
      {/* Section Livreur */}
     
     </section>
+
+   
+    </>
   )
 }
