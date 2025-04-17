@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
 import { Input } from '@/components/ui/input';
+import { redirectToLogin } from '@/lib/redirectToLogin';
 
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const StoreBoostPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [phone, setPhone] = useState('');
-  const { data, isLoading } = useCheckAuthQuery();
+  const { data:checkAuth, isLoading } = useCheckAuthQuery();
   const { data: subscription, isLoading: isLoadingSubscription } = useGetSubscriptionQuery("guard");
   const {data: { data: sellerData }= {},isLoading:isLoadingSeller}=useCurrentSellerQuery<SellerResponse>('seller')
   const userCoins = sellerData?.shop.coins;
@@ -44,6 +45,9 @@ const StoreBoostPage: React.FC = () => {
         setIsModalOpen(true);
         return;
       }
+    }
+    if(!isLoading && checkAuth?.isAuthenticated!==true){
+        redirectToLogin({redirectUrl:"/seller/pro"})
     }
     const plan = subscription.find((p:any) => p.id === planId);
     setSelectedPlan(planId);
