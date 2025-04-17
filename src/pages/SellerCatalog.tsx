@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
 import { useCurrentSellerQuery } from '@/services/sellerService';
-import { Share2, Plus, ShoppingBag } from 'lucide-react';
-// À implémenter
-import { motion } from 'framer-motion'; // Pour les animations
+import { Share2, Plus, ShoppingBag, Search, Filter, Grid, List } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Product } from '@/types/products';
 import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';
-
-
+import { Input } from '@/components/ui/input';
 
 const SellerCatalog: React.FC = () => {
-    const [selectedCategory] = useState<string>('all');
+    const [selectedCategory, setSelectedCategory] = useState<string>('all');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [searchQuery, setSearchQuery] = useState('');
     const { data: { data: seller } = {}, isLoading: sellerLoading } = useCurrentSellerQuery('seller');
     const shopId = seller?.shop?.shop_id;
-
     const products = seller?.shop?.products;
-
-    //const categories = ['all', ...new Set(products.map((p: any) => p.product_categories))];
 
     if (seller?.shop?.level === "1") {
         return (
@@ -83,86 +80,201 @@ const SellerCatalog: React.FC = () => {
         }
     };
 
-    const filteredProducts = selectedCategory === 'all'
-        ? products
-        : null;
-    console.log(filteredProducts);
+    const filteredProducts = products?.filter((product: Product) => 
+        product.product_name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (selectedCategory === 'all' || product.product_categories.some(cat => cat.category_name === selectedCategory))
+    );
+
+    const categories = ['all', ...new Set(products?.flatMap((p: Product) => 
+        p.product_categories.map(cat => cat.category_name)
+    ) || [])] as string[];
+
     return (
+        <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-6">
-            {/* Header with Add Product Button */}
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Mon Catalogue</h1>
-                <div className="flex gap-2">
+                {/* Hero Section */}
+                <div className="bg-gradient-to-r from-[#ed7e0f] to-[#ff8f1f] rounded-2xl p-8 mb-8 text-white">
+                    <h1 className="text-3xl font-bold mb-2">Mon Catalogue</h1>
+                    <p className="opacity-90">Gérez et partagez vos produits facilement</p>
+                    <div className="flex gap-4 mt-6">
                     <AsyncLink
                         to="/seller/create-product"
-                        className="flex items-center gap-2 bg-[#ed7e0f] text-white px-4 py-2 rounded-lg hover:bg-[#ff8f1f] transition-colors"
+                            className="flex items-center gap-2 bg-white text-[#ed7e0f] px-6 py-3 rounded-lg hover:bg-gray-100 transition-all transform hover:scale-105"
                     >
                         <Plus size={20} />
-                        <span className="hidden sm:inline">Ajouter un produit</span>
+                            <span>Ajouter un produit</span>
                     </AsyncLink>
                     <button
                         onClick={handleShare}
-                        className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                            className="flex items-center gap-2 bg-[#ed7e0f]/20 backdrop-blur-sm px-6 py-3 rounded-lg hover:bg-[#ed7e0f]/30 transition-all border border-white/20"
                     >
                         <Share2 size={20} />
-                        <span className="hidden sm:inline">Partager</span>
+                            <span>Partager</span>
                     </button>
                 </div>
             </div>
 
-            {/* Categories Filter */}
-            <div className="flex gap-2 overflow-x-auto pb-4 mb-6 scrollbar-hide">
-
-
+                {/* Search and Filters Bar */}
+                <div className="bg-white rounded-xl p-4 mb-6 shadow-sm">
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                            <Input
+                                type="text"
+                                placeholder="Rechercher un produit..."
+                                className="pl-10 w-full"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex gap-4">
+                            <select
+                                className="px-4 py-2 border rounded-lg bg-gray-50 text-gray-700"
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                            >
+                                {categories.map(category => (
+                                    <option key={category} value={category}>
+                                        {category === 'all' ? 'Toutes les catégories' : category}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="flex gap-2 border rounded-lg p-1 bg-gray-50">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white shadow-sm' : ''}`}
+                                >
+                                    <Grid size={20} />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={`p-2 rounded ${viewMode === 'list' ? 'bg-white shadow-sm' : ''}`}
+                                >
+                                    <List size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
             </div>
 
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 mb-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filteredProducts.map((product: Product) => (
+                {/* Products Display */}
+                <AnimatePresence>
+                    {viewMode === 'grid' ? (
+                        <motion.div 
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                            layout
+                        >
+                            {filteredProducts?.map((product: Product) => (
+                                <motion.div
+                                    key={product.id}
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group"
+                                >
+                                    <div className="relative h-48 overflow-hidden">
+                                        <img
+                                            src={product.product_profile}
+                                            alt={product.product_name}
+                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                    <div className="p-5">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <h3 className="font-semibold text-gray-800 group-hover:text-[#ed7e0f] transition-colors">
+                                                {product.product_name}
+                                            </h3>
+                                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
+                                                {product.product_categories[0]?.category_name}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                                            {product.product_description}
+                                        </p>
+                                        <div className="flex items-center justify-between mb-4">
+                                            <span className="text-[#ed7e0f] text-xl font-bold">
+                                                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF' }).format(Number(product.product_price))}
+                                            </span>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <AsyncLink
+                                                to={`/seller/products/${product.id}/edit`}
+                                                className="flex-1 text-center py-2.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                            >
+                                                Modifier
+                                            </AsyncLink>
+                                            <AsyncLink
+                                                to={`/produit/${product.product_url}`}
+                                                className="flex-1 text-center py-2.5 text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
+                                            >
+                                                Voir
+                                            </AsyncLink>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    ) : (
+                        <motion.div 
+                            className="flex flex-col gap-4"
+                            layout
+                        >
+                            {filteredProducts?.map((product: Product) => (
                     <motion.div
                         key={product.id}
+                                    layout
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                                    exit={{ opacity: 0, y: -20 }}
+                                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex"
                     >
-                        <div className="relative h-40">
+                                    <div className="w-48 h-48 flex-shrink-0">
                             <img
                                 src={product.product_profile}
                                 alt={product.product_name}
                                 className="w-full h-full object-cover"
                             />
                         </div>
-                        <div className="p-4">
-                            <h3 className="font-semibold text-gray-800 mb-2">{product.product_name}</h3>
-                            <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                                    <div className="flex-1 p-6 flex flex-col">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <h3 className="text-xl font-semibold text-gray-800">
+                                                {product.product_name}
+                                            </h3>
+                                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
+                                                {product.product_categories[0]?.category_name}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-600 flex-1 mb-4">
                                 {product.product_description}
                             </p>
-                            <div className="flex justify-between items-center mb-3">
-                                <span className="text-[#ed7e0f] font-bold">
-                                    {product.product_price}
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[#ed7e0f] text-2xl font-bold">
+                                                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF' }).format(Number(product.product_price))}
                                 </span>
-                                <span className="text-xs text-gray-500">{product?.product_categories[0]?.category_name}</span>
-                            </div>
-                            <div className="flex gap-2">
+                                            <div className="flex gap-3">
                                 <AsyncLink
                                     to={`/seller/products/${product.id}/edit`}
-                                    className="flex-1 text-center py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                                    className="px-6 py-2.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                                 >
                                     Modifier
                                 </AsyncLink>
                                 <AsyncLink
                                     to={`/produit/${product.product_url}`}
-                                    className="flex-1 text-center py-2 text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
+                                                    className="px-6 py-2.5 text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
                                 >
                                     Voir
                                 </AsyncLink>
+                                            </div>
                             </div>
                         </div>
                     </motion.div>
                 ))}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-
-            {/* Mobile Navigation */}
             <MobileNav />
         </div>
     );

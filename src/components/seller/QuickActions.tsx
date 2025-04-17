@@ -13,14 +13,14 @@ export function QuickActions({ sellerData }: QuickActionsProps) {
       title: "Catalogue",
       description: "Gérer vos produits",
       icon: <ShoppingBag className="w-4 h-4 text-gray-700" />,
-      link: "/seller/products",
+      link: "/catalogue",
       metric: "Voir tout"
     },
     {
       title: "Recharger",
       description: "Solde coins",
       icon: <Wallet className="w-4 h-4 text-gray-700" />,
-      link: "/seller/coins",
+      link: "/recharge",
       metric: `${sellerData?.shop?.coins || 0} coins`
     },
     {

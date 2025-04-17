@@ -1,25 +1,18 @@
-
 import { createApi } from "@reduxjs/toolkit/query/react"
 import { baseQueryNotAuth } from "./baseQueryNotAuth";
 import { Product } from "@/types/products";
-
-
-
 
 export const guardService = createApi({
     baseQuery: baseQueryNotAuth,
     reducerPath: "guardService",
     tagTypes: ['guard'],
     endpoints: builder => ({
-
         getCategories: builder.query({
-
             query: () => ({
                 url: '/api/categories',
                 method: 'GET',
             }),
             providesTags: ['guard'],
-
         }),
         getTowns: builder.query({
             query: () => ({
@@ -39,15 +32,21 @@ export const guardService = createApi({
             query: (id) => `/api/shop/${id}`,
             providesTags: ['guard'],
         }),
+        updateShop: builder.mutation({
+            query: (formData) => ({
+                url: '/api/shop/update',
+                method: 'POST',
+                body: formData,
+            }),
+            invalidatesTags: ['guard'],
+        }),
         checkIfEmailExists: builder.mutation({
             query: (formData) => ({
                 url: `/api/check/email-and-phone-number`,
                 method: "POST",
-
                 body: formData,
             }),
             invalidatesTags: ['guard'],
-            //transformResponse: (response: { data: { message: string } }) => response.data.message,
         }),
         getCategoriesWithParentIdNull: builder.query({
             query: () => ({
@@ -145,15 +144,16 @@ export const guardService = createApi({
                 method: 'GET'
             })
         }),
-        getSubscription:builder.query({
-            query:()=>({
-                url:'/api/list/subscriptions',
-                method:'GET'
+        getSubscription: builder.query({
+            query: () => ({
+                url: '/api/list/subscriptions',
+                method: 'GET'
             }),
-            providesTags:['guard']
+            providesTags: ['guard']
         })
     }),
 })
+
 export const {
     useGetShopQuery,
     useGetCategoriesQuery,
@@ -173,5 +173,6 @@ export const {
     useCreateDeliveryMutation,
     useGetAttributeValuesQuery,
     useGetSimilarProductsQuery,
-    useGetSubscriptionQuery
+    useGetSubscriptionQuery,
+    useUpdateShopMutation
 } = guardService

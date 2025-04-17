@@ -34,6 +34,8 @@ import RechargePage from "@/pages/seller/RechargePage";
 import CheckoutRechargePage from "@/pages/seller/CheckoutPage";
 import ConfirmationPage from "@/pages/seller/ConfirmationPage";
 import MobileMoneyPaymentPage from "@/pages/MobileMoneyPaymentPage";
+import StoreCustomizationPage from "@/pages/StoreCustomizationPage";
+
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -131,6 +133,10 @@ export const routes = createBrowserRouter([
       {
         path: '/account',
         element: <AccountPage />
+      },
+      {
+        path: '/shop/customize',
+        element: <StoreCustomizationPage />
       }
     ]
   },

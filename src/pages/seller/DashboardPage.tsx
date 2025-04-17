@@ -232,34 +232,35 @@ const DashboardPage = () => {
           >
             {sellerData?.shop?.subscribe_id == 2 && (
               <div className="relative overflow-hidden">
-                <div className="max-w-7xl mx-auto px-2 sm:px-4">
-                  <div className="relative rounded-xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 border border-orange-200 p-3 sm:p-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
-                      <div className="flex items-start sm:items-center space-x-3 w-full sm:w-auto">
+                <div className="max-w-7xl mx-auto px-4">
+                  <div className="relative rounded-xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 border border-orange-200 p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0">
                           <div className="relative">
                             <div className="absolute inset-0 animate-ping rounded-full bg-orange-400 opacity-20"></div>
                             <div className="relative rounded-full bg-orange-500 p-2">
-                              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                              <Zap className="h-5 w-5 text-white" />
                             </div>
                           </div>
                         </div>
-                        <div className="flex-1 space-y-2 sm:space-y-0">
+                        <div className="flex-1 md:flex md:items-center md:justify-between">
                           <p className="text-sm text-gray-800">
-                            <span className="font-medium block sm:inline">
+                            <span className="font-medium">
                               {sellerData?.shop?.subscribe_id == 2 
                                 ? "Boutique Classic" 
-                                : "Boutique Premium"}
+                                : "Boutique Premium"} 
                             </span>
-                            <span className="hidden sm:inline"> • </span>
-                            <span className="text-gray-600 text-xs sm:text-sm block sm:inline mt-1 sm:mt-0">
+                            <span className="hidden md:inline"> • </span>
+                            <br className="md:hidden" />
+                            <span className="text-gray-600">
                               {sellerData?.shop?.subscribe_id == 2 
                                 ? "Votre boutique est maintenant mise en avant sur notre page d'accueil et sur les moteurs de recherches d'Akevas" 
                                 : "Votre boutique bénéficie d'une visibilité premium sur la marketplace"}
                             </span>
                           </p>
-                          <div className="flex items-center sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-                            <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-medium text-orange-700">
+                          <div className="mt-2 flex items-center gap-x-4 md:mt-0">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-700">
                               <span className="relative flex h-2 w-2">
                                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75"></span>
                                 <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500"></span>
@@ -269,11 +270,11 @@ const DashboardPage = () => {
                                 : "Mode Premium actif"}
                             </span>
                             <button 
-                              className="text-xs sm:text-sm font-medium text-orange-600 hover:text-orange-500 flex items-center gap-1"
+                              className="text-sm font-medium text-orange-600 hover:text-orange-500 flex items-center gap-1"
                               onClick={() => {/* Navigation vers les stats ou le tableau de bord */}}
                             >
-                              <span>Voir les statistiques</span>
-                              <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                              Voir les statistiques
+                              <ArrowRight className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
