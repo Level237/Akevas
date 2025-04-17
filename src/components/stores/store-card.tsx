@@ -22,7 +22,7 @@ const StoreCard = ({
 
   return (
     <motion.div
-      className="w-[300px] max-sm:w-[100%] h-[400px] relative rounded-2xl overflow-hidden cursor-pointer"
+      className="w-[300px] max-sm:w-[100%] max-sm:h-[300px] h-[400px] relative rounded-2xl overflow-hidden cursor-pointer"
       onClick={openModal}
     >
       {/* Image de fond avec un effet de zoom au hover */}

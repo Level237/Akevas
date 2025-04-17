@@ -50,7 +50,7 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
     }, [shops, isLoading]);
 
     return (
-        <div className="relative mt-12">
+        <div className="relative max-sm:mt-0 mt-12">
             <div className="swiper-button-prev" style={{ left: '10px' }}><ArrowLeft /></div>
             <div className="swiper-button-next" style={{ right: '10px' }}><ArrowRight /></div>
             <Swiper
@@ -69,8 +69,8 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
                     640: { slidesPerView: 1 },
                     1024: { slidesPerView: 4 },
                 }}
-                style={{ width: '100%', height: '450px' }}
-                
+                style={{ width: '100%' }}
+                className='h-[450px] max-sm:h-[350px]'
             >
                 
                     {renderShops}

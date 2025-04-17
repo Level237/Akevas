@@ -105,12 +105,12 @@ export default function StoreHero() {
 
      {/* Mobile Version */}
      <motion.section 
-  className="w-full md:hidden relative h-[500px] overflow-hidden"
+  className="w-full md:hidden relative h-[480px] overflow-hidden"
 >
   <AnimatePresence mode="wait">
     <motion.div
      
-      className={`w-full h-full ${slides[currentSlide].bgColor} rounded-2xl`}
+      className={`w-full h-full ${slides[currentSlide].bgColor}`}
     >
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/20 z-0" />
@@ -130,9 +130,9 @@ export default function StoreHero() {
           <div>
             <motion.h2 
             
-              className="text-3xl font-bold text-white mb-3"
+              className="text-2xl font-bold text-white mb-3"
             >
-              {slides[2].title}
+              {slides[currentSlide].title}
             </motion.h2>
             
             <motion.p 
@@ -141,7 +141,7 @@ export default function StoreHero() {
               transition={{ delay: 0.2 }}
               className="text-white/80 text-sm leading-relaxed"
             >
-              {slides[2].description}
+              {slides[currentSlide].description}
             </motion.p>
           </div>
 
@@ -202,7 +202,7 @@ export default function StoreHero() {
     
   />
 </motion.section>
-    <section className="flex max-sm:flex-col items-start max-sm:mx-2 max-sm:mt-6 gap-4 mx-16 h-[30rem]">
+    <section className="flex max-sm:flex-col max-sm:hidden items-start max-sm:mx-2 max-sm:mt-6 gap-4 mx-16 h-[30rem]">
       <motion.section className="w-[75%] max-sm:hidden rounded-3xl relative h-96 overflow-hidden">
         <motion.div
           className={`absolute inset-0 ${slides[currentSlide].bgColor}`}
