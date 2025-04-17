@@ -11,6 +11,7 @@ import ProductListGrid from '@/components/products/ProductListGrid';
 import { ChevronRight } from 'lucide-react';
 import AsyncLink from '@/components/ui/AsyncLink';
 import CategoryGridList from '@/components/categories/CategoryGridList';
+import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)
     const {data:{data:currentGender}={},isLoading}=useGetCurrentHomeByGenderQuery(currentGenderId)
@@ -31,6 +32,7 @@ const CurrentHomeByGenderPage = () => {
     <div className="min-h-screen bg-gray-50">
       <TopBar />
       <Header />
+      <GenderNavigationMobile />
       <MobileNav />
 
       {/* Hero Section */}
@@ -58,16 +60,7 @@ const CurrentHomeByGenderPage = () => {
               {/* Tendances du moment */}
       <div className="bg-gray-200 py-16">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-baseline mb-8">
-            <h2 className="text-2xl font-bold text-black">Tendances du moment</h2>
-            <AsyncLink
-              to={`/products?g=${currentGender?.gender_name}`}
-              className="text-black flex items-center text-sm hover:underline"
-            >
-              Voir tous les produits
-              <ChevronRight className="ml-1 h-4 w-4" />
-            </AsyncLink>
-          </div>
+          
           <ProductListGrid products={currentGender?.products} isLoading={isLoading} />
         </div>
       </div>
