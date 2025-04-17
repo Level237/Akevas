@@ -46,7 +46,6 @@ const CheckoutPage: React.FC = () => {
 
   const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
-  const [initPayment] = useInitProductPaymentMutation();
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);
 
  
@@ -122,24 +121,17 @@ const CheckoutPage: React.FC = () => {
 
       formData.append("s","1");
       if(quarter){
-        formData.append("quarter",quarter);
+        sessionStorage.setItem("quarter",quarter);
       }
       if(totalQuantity){
-        formData.append("quantity",totalQuantity.toString());
+        sessionStorage.setItem("quantity",totalQuantity.toString());
       }
-      formData.append("address",address.address);
-      formData.append("shipping",shipping.toString());
-      formData.append("paymentMethod",selectedPayment);
-      formData.append("paymentPhone", paymentPhone);
-      const response = await initPayment(formData);
-      console.log(response)
-      if(response.data.status === "Accepted"){
-        window.location.href = response.data.authorization_url;
-        setIsLoading(false);
-      }else{
-        setIsLoading(false);
-        alert("Une erreur est survenue lors de l'initialisation du paiement");
-      }
+      sessionStorage.setItem("address",address.address);
+      sessionStorage.setItem("shipping",shipping.toString());
+      sessionStorage.setItem("paymentMethod",selectedPayment);
+      sessionStorage.setItem("paymentPhone", paymentPhone);
+      
+
     }else if (s === '0') {
       
         if(productId){
@@ -165,15 +157,8 @@ const CheckoutPage: React.FC = () => {
         formData.append("shipping",shipping.toString());
         formData.append("paymentMethod",selectedPayment);
         formData.append("paymentPhone", paymentPhone);
-      const response = await initPayment(formData);
-      if(response.data.status === "Accepted"){
-        
-        window.location.href = response.data.authorization_url;
-        setIsLoading(false);
-      }else{
-        setIsLoading(false);
-        alert("Une erreur est survenue lors de l'initialisation du paiement");
-      }
+        sessionStorage.setItem("formDataPayment",JSON.stringify(formData));
+     
      
     }
     setIsLoading(true);
