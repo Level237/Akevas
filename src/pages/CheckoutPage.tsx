@@ -406,21 +406,21 @@ const CheckoutPage: React.FC = () => {
                   {selectedPayment === 'orange' ? 'Numéro Orange Money au format 6XXXXXXXX' : 'Numéro MTN Mobile Money au format 6XXXXXXXX'}
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
+              <div className="flex items-center gap-6">
                 {/* Carte bancaire */}
                 <div
                   onClick={() => setSelectedPayment('orange')}
-                  className={`relative flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'orange'
-                    ? 'border-[#ed7e0f] bg-orange-50 scale-105'
+                  className={`relative flex flex-col w-52 items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'orange'
+                    ? 'border-[#ed7e0f] bg-orange-50 '
                     : 'hover:border-gray-300 hover:shadow-md'
                     }`}
                 >
                   <img
                     src={orange}
                     alt="Carte bancaire"
-                    className="h-12 object-contain mb-4"
+                    className="h-12 max-sm:h-8 object-contain mb-4"
                   />
-                  <h3 className="font-medium text-center">Orange money</h3>
+                  <h3 className="font-medium max-sm:text-xs text-center">Orange money</h3>
                   
                   {selectedPayment === 'orange' && (
                     <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
@@ -430,7 +430,7 @@ const CheckoutPage: React.FC = () => {
                 {/* Orange Money */}
                 <div
                   onClick={() => setSelectedPayment('momo')}
-                  className={`relative flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'momo'
+                  className={`relative w-52 flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'momo'
                     ? 'border-[#ed7e0f] bg-orange-50 scale-105'
                     : 'hover:border-gray-300 hover:shadow-md'
                     }`}
@@ -438,12 +438,12 @@ const CheckoutPage: React.FC = () => {
                   <img
                     src={momo}
                     alt="Orange Money"
-                    className="h-12 object-contain mb-4"
+                    className="h-12 max-sm:h-8 object-contain mb-4"
                   />
-                  <h3 className="font-medium text-center">Momo Payment </h3>
+                  <h3 className="font-medium max-sm:text-xs text-center">Momo Payment </h3>
                   
                   {selectedPayment === 'momo' && (
-                    <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
+                    <div className="absolute  top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
                 </div>
               </div>
