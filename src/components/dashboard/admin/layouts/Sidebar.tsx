@@ -25,7 +25,10 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
   { icon: Truck, label: "Livreurs", href: "/admin/delivery" },
-  { icon: Store, label: "Boutiques", href: "/admin/shops" },
+  { icon: Store, label: "Boutiques", href: "#",
+    subItems: [
+      { label: "Listes", href: "/admin/shops" },
+      { label: "Nouvelle boutique", href: "/admin/shop/new" },] },
   { icon: Users, label: "Clients", href: "/admin/customers" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { 

@@ -48,6 +48,7 @@
     "react-virtualized-auto-sizer": "^1.0.25",
     "react-window": "^1.8.11",
     "slick-carousel": "^1.8.1",
+    "sonner": "^2.0.3",
     "styled-components": "^6.1.15",
     "swiper": "^11.2.4",
     "tailwind-merge": "^2.5.4",

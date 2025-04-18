@@ -39,6 +39,7 @@ import ListFeedbackPage from "@/pages/admin/feedbacks/ListFeedbackPage";
 import ListShopReviewPage from "@/pages/admin/reviews/ListShopReviewPage";
 import SucessPaymentPage from "@/pages/payment/notchpay/SucessPaymentPage";
 import MobileMoneyPaymentPage from "@/pages/user/MobileMoneyPaymentPage";
+import AddShopPage from "@/pages/admin/shops/add-shop";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -129,6 +130,10 @@ export const routes = createBrowserRouter([
       {
         path:"admin/feedbacks",
         element:<ListFeedbackPage/>
+      },
+      {
+        path:"admin/shop/new",
+        element:<AddShopPage/>
       }
     ]
   },

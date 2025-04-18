@@ -117,6 +117,13 @@ export const adminService = createApi({
                 body:body
             }),
             invalidatesTags:['admin']
+        }),
+        addShop:builder.mutation({
+            query:(body)=>({
+                url:'/api/v1/add/shop',
+                body:body
+            })
+
         })
     })
 })
@@ -142,5 +149,6 @@ export const {
     useAdminListFeedbackQuery,
     useAdminListShopReviewsQuery,
     useDeclineOrValidateShopReviewMutation,
-    useSendCoinsToShopMutation
+    useSendCoinsToShopMutation,
+    useAddShopMutation
 } = adminService
