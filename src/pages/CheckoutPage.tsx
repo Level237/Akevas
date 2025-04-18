@@ -6,16 +6,14 @@ import {
   Shield,
   Loader2,
 } from 'lucide-react';
-import card from '@/assets/visa.png';
 import Header from '@/components/ui/header';
 import { ScrollRestoration } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { useGetUserQuery, useInitProductPaymentMutation } from '@/services/auth';
+import { useGetUserQuery } from '@/services/auth';
 import { useGetQuartersQuery } from '@/services/guardService';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import notchpay from '@/assets/notchpay.png';
 type PaymentMethod = 'card' | 'orange' | 'momo';
 type DeliveryOption = 'pickup' | 'localDelivery' | 'remotePickup' | 'remoteDelivery';
 

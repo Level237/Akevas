@@ -19,12 +19,11 @@ export default function MobileMoneyPaymentPage() {
   const phone = sessionStorage.getItem('phone') || '';
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
   // Get credits and amount from URL or session
-  const coins = formDataPayment.amount;
-  const amount = 100;
+ 
   
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
-  const { data: verificationData, isLoading: isVerifying, error: verifyError } = useVerifyPaymentQuery(paymentRef || '', {
+  const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '', {
     pollingInterval: pollingEnabled ? pollingInterval : 0,
     skip: !pollingEnabled || !paymentRef
   });

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle, Store, Truck, ChevronUp, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const FloatingHelpButton = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -8,8 +8,6 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import StoreStories from '@/components/stores/store-stories';
 import ProductListGrid from '@/components/products/ProductListGrid';
-import { ChevronRight } from 'lucide-react';
-import AsyncLink from '@/components/ui/AsyncLink';
 import CategoryGridList from '@/components/categories/CategoryGridList';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 const CurrentHomeByGenderPage = () => {

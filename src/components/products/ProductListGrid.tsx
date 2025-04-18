@@ -1,7 +1,7 @@
 import { useState, memo, useRef} from 'react'
 import { Product } from '@/types/products'
 import { motion, useMotionValue,useAnimation, PanInfo } from 'framer-motion'
-import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react'
 import ProductModal from './ProductModal'
 
 
@@ -32,22 +32,14 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  console.log(isDragging)
   const dragX = useMotionValue(0);
   const controls = useAnimation();
   const safeProducts = products || [];
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    e.stopPropagation();
-  };
+ 
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    e.stopPropagation();
-    if (scrollContainerRef.current) {
-      e.preventDefault();
-    }
-  };
-
-  const handleDragEnd = (event: any, info: PanInfo) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const velocity = info.velocity.x;
     const offset = info.offset.x;
     
