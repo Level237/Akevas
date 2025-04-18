@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setInitialLoading } from '@/store/features/loadingSlice';
 import { RootState } from '@/store';
 import { AnimatePresence } from 'framer-motion';
+import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
 
 
 const Homepage = () => {
@@ -102,6 +103,8 @@ const Homepage = () => {
 
       </section>
        
+      <FloatingHelpButton />
+      
       <MobileNav />
       <AnimatePresence>
       {shouldShow && (
