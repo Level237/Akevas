@@ -23,7 +23,7 @@ Welcome to Akevas, a dynamic online marketplace built with React.js! Akevas serv
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/akevas.git
+   git clone https://github.com/Level237/akevas.git
    ```
 
 2. Navigate to the project directory:
