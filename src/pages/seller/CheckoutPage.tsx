@@ -1,26 +1,54 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Lock,Shield, ArrowRight, X } from 'lucide-react';
+import { Phone, Lock, Shield, ArrowRight, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import notchPayLogo from '@/assets/notchpay.png';
+import orangeLogo from '@/assets/orange.jpeg';
+import momoLogo from '@/assets/momo.png';
 import { cn } from "@/lib/utils";
 import { useNavigate } from 'react-router-dom';
-const NotchPayDisplay = () => (
 
- 
-    <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-orange-50 via-white to-orange-50 border border-orange-100 shadow-sm">
-        <div className="flex items-center gap-3">
-            <img
-                src={notchPayLogo}
-                alt="NotchPay Logo"
-                className="h-7 w-auto object-contain"
-            />
-            <span className="text-base font-medium text-gray-700">Paiement Mobile Sécurisé</span>
-        </div>
-        <Shield className="w-5 h-5 text-green-600" />
+const PaymentMethodDisplay = ({ selectedMethod, onMethodChange }: { selectedMethod: 'cm.orange' | 'cm.mtn', onMethodChange: (method: 'cm.orange' | 'cm.mtn') => void }) => (
+  <div className="space-y-4">
+    <div className="flex gap-4">
+      <button
+        onClick={() => onMethodChange('cm.orange')}
+        className={cn(
+          "flex-1 p-4 rounded-xl border transition-all duration-200",
+          selectedMethod === 'cm.orange' 
+            ? "border-orange-400 bg-orange-50" 
+            : "border-gray-200 hover:border-orange-200"
+        )}
+      >
+        <img
+          src={orangeLogo}
+          alt="Orange Money"
+          className="h-7 w-auto object-contain mx-auto"
+        />
+      </button>
+      
+      <button
+        onClick={() => onMethodChange('cm.mtn')}
+        className={cn(
+          "flex-1 p-4 rounded-xl border transition-all duration-200",
+          selectedMethod === 'cm.mtn'
+            ? "border-purple-400 bg-purple-50"
+            : "border-gray-200 hover:border-purple-200"
+        )}
+      >
+        <img
+          src={momoLogo}
+          alt="MTN Mobile Money"
+          className="h-7 w-auto object-contain mx-auto"
+        />
+      </button>
     </div>
+    <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 via-white to-gray-50 border border-gray-100 shadow-sm">
+      <span className="text-base font-medium text-gray-700">Paiement Mobile Sécurisé</span>
+      <Shield className="w-5 h-5 text-green-600" />
+    </div>
+  </div>
 );
 
 export default function CheckoutRechargePage() {
@@ -29,16 +57,28 @@ export default function CheckoutRechargePage() {
   const credits = parseInt(params.get('credits') || '0');
   const [price] = useState<number>(credits);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [isProcessing, setIsProcessing] = useState<boolean>(true);
-  console.log(setIsProcessing)
-  const isPhoneNumberValid = /^\+?[0-9]{7,}$/.test(phoneNumber.replace(/\s+/g, ''));
+  const [paymentMethod, setPaymentMethod] = useState<'cm.orange' | 'cm.mtn'>('cm.orange');
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  const validatePhoneNumber = (number: string, method: 'cm.orange' | 'cm.mtn'): boolean => {
+    const cleanNumber = number.replace(/\s+/g, '');
+    if (cleanNumber.length !== 9) return false;
+
+    if (method === 'cm.orange') {
+      return /^(69|65|65[456])\d{6}$/.test(cleanNumber);
+    } else { // momo
+      return /^(67|65[23]|683)\d{6}$/.test(cleanNumber);
+    }
+  };
+
+  const isPhoneNumberValid = validatePhoneNumber(phoneNumber, paymentMethod);
 
   const handlePayment = async() => {
-   
-    sessionStorage.setItem('coins',credits.toString());
-    sessionStorage.setItem('amount',price.toFixed(2));
-    sessionStorage.setItem('phone',phoneNumber);
-    window.location.href='/payment/mobile-money';
+    sessionStorage.setItem('coins', credits.toString());
+    sessionStorage.setItem('amount', price.toFixed(2));
+    sessionStorage.setItem('phone', phoneNumber);
+    sessionStorage.setItem('paymentMethod', paymentMethod);
+    window.location.href = '/payment/mobile-money';
   };
 
   return (
@@ -86,28 +126,32 @@ export default function CheckoutRechargePage() {
         </div>
 
         <div className="p-8 space-y-6">
-          <NotchPayDisplay />
+          <PaymentMethodDisplay selectedMethod={paymentMethod} onMethodChange={setPaymentMethod} />
 
           <div className="space-y-2">
             <Label htmlFor="phone-number" className="text-sm font-medium text-gray-700 flex items-center gap-1">
               <Phone className="w-4 h-4 text-gray-500"/>
-              Numéro de téléphone (Mobile Money)
+              Numéro {paymentMethod === 'cm.orange' ? 'Orange Money' : 'MTN Mobile Money'}
             </Label>
             <Input
               id="phone-number"
               type="tel"
-              placeholder="Votre numéro pour recevoir la confirmation"
+              placeholder={paymentMethod === 'cm.orange' ? "Ex: 696000000" : "Ex: 670000000"}
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className={cn(
                 "py-3 text-base bg-white/70 border-gray-300 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/30 transition-shadow duration-200",
-                 !isPhoneNumberValid && phoneNumber.length > 0 ? 'border-red-400 focus:ring-red-400/30' : ''
+                !isPhoneNumberValid && phoneNumber.length > 0 ? 'border-red-400 focus:ring-red-400/30' : ''
               )}
               required
             />
-             {!isPhoneNumberValid && phoneNumber.length > 0 && (
-                 <p className="text-xs text-red-600">Format de numéro invalide.</p>
-             )}
+            {!isPhoneNumberValid && phoneNumber.length > 0 && (
+              <p className="text-xs text-red-600">
+                {paymentMethod === 'cm.orange' 
+                  ? "Le numéro doit commencer par 69, 65 ou 654/655/656 (9 chiffres)" 
+                  : "Le numéro doit commencer par 67, 652/653 ou 683 (9 chiffres)"}
+              </p>
+            )}
           </div>
 
           <Button
@@ -117,25 +161,25 @@ export default function CheckoutRechargePage() {
             disabled={!isPhoneNumberValid || isProcessing}
           >
             {isProcessing ? (
-               <motion.div
-                 animate={{ rotate: 360 }}
-                 transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                 className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-               />
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+              />
             ) : (
               <Lock className="w-5 h-5 transition-transform duration-300 group-hover:rotate-[-10deg]" />
             )}
             <span>
               {isProcessing ? 'Vérification...' : `Payer ${price.toFixed(2)} XAF`}
             </span>
-             {!isProcessing && <ArrowRight className="w-5 h-5 ml-1 transition-transform duration-300 group-hover:translate-x-1"/>}
+            {!isProcessing && <ArrowRight className="w-5 h-5 ml-1 transition-transform duration-300 group-hover:translate-x-1"/>}
           </Button>
 
-           <p className="text-center text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
-             <Shield className="w-3 h-3 text-green-600" /> Transaction sécurisée et rapide.
-           </p>
+          <p className="text-center text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
+            <Shield className="w-3 h-3 text-green-600" /> Transaction sécurisée et rapide.
+          </p>
         </div>
       </motion.div>
     </div>
   );
-} 
+}

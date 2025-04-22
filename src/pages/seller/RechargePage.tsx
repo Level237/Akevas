@@ -261,7 +261,7 @@ export default function RechargePage() {
                    className="bg-[#ed7e0f] hover:bg-[#d97100]"
                    disabled={!customCredits || customCredits <= 0 || isInsufficientCoins(customCredits)}
                  >
-                   {isInsufficientCoins(customCredits) ? 
+                   {isInsufficientCoins(Number(customCredits)) ? 
                      "Votre nombre de coins est insuffisant" : 
                      "Confirmer et Payer"
                    }
