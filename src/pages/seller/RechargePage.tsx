@@ -14,6 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
+import { useCurrentSellerQuery } from '@/services/sellerService';
+
 const creditPackages = [
   { id: 1, credits: 500, price: 500, popular: false },
   { id: 2, credits: 5000, price: 5000, popular: true },
@@ -25,6 +27,8 @@ export default function RechargePage() {
   const [customCredits, setCustomCredits] = useState<number | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const navigate = useNavigate();
+  const {data: { data: sellerData } = {}} = useCurrentSellerQuery('seller');
+
   const calculatePrice = useCallback((credits: number | null) => {
     if (credits === null || credits <= 0) return "0.00";
     const numCredits = Number(credits);
@@ -56,6 +60,11 @@ export default function RechargePage() {
         }
     }
 };
+
+  const isInsufficientCoins = (credits: number) => {
+    const currentCoins = Number(sellerData?.shop?.coins || 0);
+    return credits > currentCoins;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -250,24 +259,35 @@ export default function RechargePage() {
                    type="button"
                    onClick={() => navigate(`/checkout/recharge?credits=${customCredits}`)}
                    className="bg-[#ed7e0f] hover:bg-[#d97100]"
-                   disabled={!customCredits || customCredits <= 0}
+                   disabled={!customCredits || customCredits <= 0 || isInsufficientCoins(customCredits)}
                  >
-                   Confirmer et Payer
+                   {isInsufficientCoins(customCredits) ? 
+                     "Votre nombre de coins est insuffisant" : 
+                     "Confirmer et Payer"
+                   }
                  </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
 
-        {/* Bouton de paiement (vous devrez peut-être ajuster sa logique) */}
+        {/* Bouton de paiement */}
         {selectedPackage && !isAnimating && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mt-12 text-center"
           >
-            <Button onClick={() => navigate(`/checkout/recharge?credits=${creditPackages.find(p => p.id === selectedPackage)?.credits}`)} size="lg" className="bg-[#ed7e0f] hover:bg-[#d97100] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
-              Procéder au paiement ({creditPackages.find(p => p.id === selectedPackage)?.credits} coins)
+            <Button 
+              onClick={() => navigate(`/checkout/recharge?credits=${creditPackages.find(p => p.id === selectedPackage)?.credits}`)} 
+              size="lg" 
+              className="bg-[#ed7e0f] hover:bg-[#d97100] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
+              disabled={isInsufficientCoins(creditPackages.find(p => p.id === selectedPackage)?.credits || 0)}
+            >
+              {isInsufficientCoins(creditPackages.find(p => p.id === selectedPackage)?.credits || 0) ? 
+                "Votre nombre de coins est insuffisant" :
+                `Procéder au paiement (${creditPackages.find(p => p.id === selectedPackage)?.credits} coins)`
+              }
             </Button>
           </motion.div>
         )}

@@ -8,6 +8,7 @@ export type Image = {
 export interface Seller {
   id: string
   firstName: string,
+  lastName:string,
   phone_number: string,
   identity_card_in_front: string | null,
   identity_card_in_back: string | null,
