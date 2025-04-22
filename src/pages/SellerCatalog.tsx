@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCurrentSellerQuery } from '@/services/sellerService';
-import { Share2, Plus, ShoppingBag, Search, Filter, Grid, List } from 'lucide-react';
+import { Share2, Plus, ShoppingBag, Search, Grid, List } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Product } from '@/types/products';
 import AsyncLink from '@/components/ui/AsyncLink';

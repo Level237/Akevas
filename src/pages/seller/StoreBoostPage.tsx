@@ -17,7 +17,7 @@ import {
 import { useCheckAuthQuery } from '@/services/auth';
 import { useGetSubscriptionQuery } from '@/services/guardService';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose} from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { useBoostShopMutation, useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
@@ -26,7 +26,6 @@ import { redirectToLogin } from '@/lib/redirectToLogin';
 import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
 import { QRCodeCanvas } from "qrcode.react";
-import html2canvas from 'html2canvas';
 
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +44,6 @@ const StoreBoostPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showPaymentProcess, setShowPaymentProcess] = useState(false);
   const [boostStatus, setBoostStatus] = useState<'processing' | 'success' | 'failed'>('processing');
-  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
   const [boostResponse, setBoostResponse] = useState<any>(null);
   
   if (isLoading || isLoadingSubscription) {
@@ -68,11 +66,7 @@ const StoreBoostPage: React.FC = () => {
     setIsDrawerOpen(true);
   };
 
-  const handleBoost = () => {
-    if (!selectedPlan) return;
-    // Implémenter la logique de boost ici
-    console.log('Boosting store with plan:', selectedPlan);
-  };
+
 
   const generateReceipt = async (paymentId: string) => {
     try {

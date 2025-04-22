@@ -1,5 +1,5 @@
 import { motion} from 'framer-motion';
-import { Coins, CreditCard, Shield, Zap, X, Settings } from 'lucide-react';
+import { Coins, CreditCard, Shield, Zap,Settings } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import {
   Dialog,

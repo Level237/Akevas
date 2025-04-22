@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Lock, ShoppingCart, Smartphone, Shield, ArrowRight, X } from 'lucide-react';
+import { Phone, Lock,Shield, ArrowRight, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import notchPayLogo from '@/assets/notchpay.png';
 import { cn } from "@/lib/utils";
 import { useNavigate } from 'react-router-dom';
-import { useInitCoinPaymentMutation } from '@/services/sellerService';
 const NotchPayDisplay = () => (
 
  
@@ -30,15 +29,12 @@ export default function CheckoutRechargePage() {
   const credits = parseInt(params.get('credits') || '0');
   const [price] = useState<number>(credits);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [initCoinPayment] = useInitCoinPaymentMutation();
+  const [isProcessing, setIsProcessing] = useState<boolean>(true);
+  console.log(setIsProcessing)
   const isPhoneNumberValid = /^\+?[0-9]{7,}$/.test(phoneNumber.replace(/\s+/g, ''));
 
   const handlePayment = async() => {
-    const formData = {
-     coins:credits,
-     phone_number:phoneNumber
-    }
+   
     sessionStorage.setItem('coins',credits.toString());
     sessionStorage.setItem('amount',price.toFixed(2));
     sessionStorage.setItem('phone',phoneNumber);

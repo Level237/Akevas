@@ -16,11 +16,6 @@ interface BoostPaymentProcessProps {
   onClose: () => void;
 }
 
-interface BoostResponse {
-  status: number;
-  paymentId: string;
-  // ... autres champs
-}
 
 const BoostPaymentProcess: React.FC<BoostPaymentProcessProps> = ({
   subscriptionDetails,
@@ -28,7 +23,7 @@ const BoostPaymentProcess: React.FC<BoostPaymentProcessProps> = ({
   onClose
 }) => {
   const [status, setStatus] = useState<'processing' | 'success' | 'failed'>('processing');
-  const [boostShop, { isLoading }] = useBoostShopMutation();
+  const [boostShop] = useBoostShopMutation();
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
 
   useEffect(() => {

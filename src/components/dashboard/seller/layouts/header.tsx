@@ -1,4 +1,4 @@
-import { Coins, LogOut, Menu, User, Zap } from 'lucide-react'
+import { Coins, LogOut, Menu, User } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { AvatarImage } from '@radix-ui/react-avatar'
 import React from 'react'

@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useGetShopQuery, useUpdateShopMutation } from '@/services/guardService';
 
 
 const StoreCustomizationPage: React.FC = () => {

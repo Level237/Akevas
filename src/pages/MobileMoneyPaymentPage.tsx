@@ -23,7 +23,7 @@ export default function MobileMoneyPaymentPage() {
   
   // RTK Query hooks
   const [initPayment] = useInitCoinPaymentMutation();
-  const { data: verificationData, isLoading: isVerifying, error: verifyError } = useVerifyCoinPaymentQuery(paymentRef || '', {
+  const { data: verificationData } = useVerifyCoinPaymentQuery(paymentRef || '', {
     pollingInterval: pollingEnabled ? pollingInterval : 0,
     skip: !pollingEnabled || !paymentRef
   });

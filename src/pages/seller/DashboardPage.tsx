@@ -10,13 +10,8 @@ import {
   Check,
   Plus,
   Coins,
-  Package,
-  Star,
-  TrendingUp,
   ArrowRight,
   Zap,
-  Paintbrush,
-  Settings,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useCurrentSellerQuery } from '@/services/sellerService';
