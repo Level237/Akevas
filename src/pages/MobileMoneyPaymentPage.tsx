@@ -20,7 +20,7 @@ export default function MobileMoneyPaymentPage() {
   // Get credits and amount from URL or session
   const coins = parseInt(sessionStorage.getItem('coins') || '0');
   const amount = parseInt(sessionStorage.getItem('amount') || '0');
-  
+  const paymentMethod=sessionStorage.getItem('paymentMethod')
   // RTK Query hooks
   const [initPayment] = useInitCoinPaymentMutation();
   const { data: verificationData } = useVerifyCoinPaymentQuery(paymentRef || '', {
@@ -39,7 +39,8 @@ export default function MobileMoneyPaymentPage() {
         const formData = {
           phone,
           amount,
-          coins
+          coins,
+          paymentMethod
         }
         const response = await initPayment(formData);
         
