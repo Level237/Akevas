@@ -65,14 +65,14 @@ export default function CheckoutRechargePage() {
     if (cleanNumber.length !== 9) return false;
 
     if (method === 'cm.orange') {
-      return /^(69|65|65[456])\d{6}$/.test(cleanNumber);
+      return /^(69[0123456789]|65|65[456])\d{6}$/.test(cleanNumber);
     } else { // momo
       return /^(67|65[23]|683)\d{6}$/.test(cleanNumber);
     }
   };
 
   const isPhoneNumberValid = validatePhoneNumber(phoneNumber, paymentMethod);
-
+  console.log(isPhoneNumberValid)
   const handlePayment = async() => {
     sessionStorage.setItem('coins', credits.toString());
     sessionStorage.setItem('amount', price.toFixed(2));
