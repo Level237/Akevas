@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Search, X, Menu, Clock, TrendingUp, Lock } from 'lucide-react'
+import { User, Search, X, Menu, Clock, TrendingUp, Lock,CheckCircle } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -13,6 +13,7 @@ import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
+import { Badge } from './badge';
 // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
@@ -92,6 +93,7 @@ const Header = () => {
     pollingInterval: 0,
   });
 
+  console.log(seller)
   const { data: userDataAuth } = useGetUserQuery('Auth', {
     refetchOnFocus: false,
     refetchOnMountOrArgChange: false,
@@ -262,9 +264,35 @@ const Header = () => {
                   </div>}
                 </DropdownAccount>
 
-                {userData && userData.role_id === 2 && <AsyncLink to="/seller/pro">
-                  <Button className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">Devenir vendeur pro <Lock className="w-4 h-4" /></Button>
-                </AsyncLink>}
+                {userData && userData.shop.isSubscribe === 1 ? (
+                  <div className="relative group">
+                    <Button 
+                      variant="ghost"
+                      className="relative bg-gradient-to-br from-[#ed7e0f] via-orange-500 to-[#d97100] text-white hover:from-[#d97100] hover:via-orange-600 hover:to-[#ed7e0f] rounded-xl px-5 py-2.5 flex items-center gap-3 transition-all duration-500 shadow-lg hover:shadow-orange-500/30 transform hover:-translate-y-0.5"
+                    >
+                      <Badge 
+                        variant="secondary"
+                        className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold tracking-wider px-2.5"
+                      >
+                        PRO
+                      </Badge>
+                      <CheckCircle className="w-5 h-5 text-white/90" />
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-300 opacity-60"></span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 bg-orange-400"></span>
+                      </span>
+                    </Button>
+                    <div className="absolute opacity-0 group-hover:opacity-100 -bottom-8 left-1/2 transform -translate-x-1/2 text-sm font-medium text-[#ed7e0f] bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm transition-all duration-300 whitespace-nowrap">
+                      Compte vérifié
+                    </div>
+                  </div>
+                ) : (
+                  <AsyncLink to="/seller/pro">
+                    <Button className="text-sm bg-[#ed7e0f] hover:bg-[#ed7e0f]/80">
+                      Devenir vendeur pro <Lock className="w-4 h-4" />
+                    </Button>
+                  </AsyncLink>
+                )}
 
                 
 
