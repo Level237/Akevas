@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Upload,
   Plus,
-
   X,
   Save,
   AlertCircle,
-  Loader2
+  Loader2,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useAddProductMutation } from '@/services/sellerService';
 import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
@@ -26,12 +27,17 @@ interface ProductAttribute {
 
 interface ProductVariant {
   id: string;
-  variant_name: string;
-  attribute_value_id: number[];
+  size?: string;
   price: number;
-  images: File[];
+  colors: Array<{
+    id: number;
+    name: string;
+    hex: string;
+    images: File[];
+  }>;
 }
 
+const CLOTHING_SHOE_CATEGORIES = [1, 2, 3, 4, 5];
 
 const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -39,7 +45,6 @@ const CreateProductPage: React.FC = () => {
   const [city, setCity] = useState('');
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
 
-  //console.log(getAttributes)
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
@@ -63,10 +68,12 @@ const CreateProductPage: React.FC = () => {
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const navigate = useNavigate()
 
-  //console.log(selectedSubCategories)
-  // Liste des catégories disponibles
+  const [availableSizes, setAvailableSizes] = useState<string[]>([]);
+  const [availableColors, setAvailableColors] = useState<Array<{id: number, name: string, hex: string}>>([]);
+  const [newSize, setNewSize] = useState('');
+  const [newPrice, setNewPrice] = useState('');
+  const [expandedSizeId, setExpandedSizeId] = useState<string | null>(null);
 
-  // Effet pour initialiser les attributs depuis l'API
   useEffect(() => {
     if (getAttributes) {
       setAttributes(
@@ -79,7 +86,6 @@ const CreateProductPage: React.FC = () => {
     }
   }, [getAttributes]);
 
-  // Nouvelle fonction pour gérer la sélection/déselection des catégories
   const handleChangeCategories = (selected: number[]) => {
     setSelectedCategories(selected);
   };
@@ -114,8 +120,6 @@ const CreateProductPage: React.FC = () => {
     const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
 
     if (attrIndex !== -1) {
-      // Pour les valeurs qui ne viennent pas de l'API (taille et poids),
-      // on génère un ID unique négatif pour éviter les conflits avec les IDs de l'API
       const newValueId = valueId || -(Date.now());
 
       const newValue = {
@@ -131,7 +135,7 @@ const CreateProductPage: React.FC = () => {
       }
     }
   };
-  //console.log(variants)
+
   const removeAttributeValue = (attributeId: number, valueToRemove: string) => {
     const newAttributes = [...attributes];
     const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
@@ -165,10 +169,9 @@ const CreateProductPage: React.FC = () => {
 
     const newVariants = combinations.map((combo, index) => ({
       id: `variant-${index}`,
-      variant_name: combo.name,
-      attribute_value_id: combo.ids,
+      size: combo.name,
       price: Number(price) || 0,
-      images: []
+      colors: []
     }));
 
     setVariants(newVariants);
@@ -177,7 +180,12 @@ const CreateProductPage: React.FC = () => {
   const handleVariantImageUpload = (variantId: string, files: FileList) => {
     setVariants(variants.map(variant =>
       variant.id === variantId
-        ? { ...variant, images: [...variant.images, ...Array.from(files)] }
+        ? { ...variant, colors: [...variant.colors, ...Array.from(files).map(file => ({
+          id: Date.now(),
+          name: '',
+          hex: '',
+          images: [file]
+        }))] }
         : variant
     ));
   };
@@ -185,7 +193,7 @@ const CreateProductPage: React.FC = () => {
   const removeVariantImage = (variantId: string, imageIndex: number) => {
     setVariants(variants.map(variant =>
       variant.id === variantId
-        ? { ...variant, images: variant.images.filter((_, idx) => idx !== imageIndex) }
+        ? { ...variant, colors: variant.colors.filter((_, idx) => idx !== imageIndex) }
         : variant
     ));
   };
@@ -207,7 +215,6 @@ const CreateProductPage: React.FC = () => {
     );
   };
 
-
   const getFilteredWeights = () => {
     if (!getAttributes || !getAttributes[2]) return [];
     return getAttributes[2].values.filter((size: any) =>
@@ -219,7 +226,6 @@ const CreateProductPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validation des champs requis
     if (!name.trim()) {
       alert("Le nom du produit est requis");
       return;
@@ -265,12 +271,11 @@ const CreateProductPage: React.FC = () => {
       return;
     }
 
-    // Validation des variants si des attributs sont sélectionnés
     const hasSelectedAttributes = attributes.some(attr => attr.values.length > 0);
     if (hasSelectedAttributes) {
       const invalidVariants = variants.some(variant =>
-        variant.images.length === 0 ||
-        !variant.price
+        variant.colors.length === 0 ||
+        variant.colors.some(color => color.images.length === 0)
       );
 
       if (invalidVariants) {
@@ -297,24 +302,32 @@ const CreateProductPage: React.FC = () => {
       selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
       selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
 
-      // Ajouter les variants au formData s'il y en a
       if (variants.length > 0) {
-        const variantsData = variants.map(variant => ({
-          variant_name: variant.variant_name,
-          attribute_value_id: variant.attribute_value_id,
-          price: variant.price,
-          images: []
-        }));
+        const transformedVariants = [];
+        
+        for (const variant of variants) {
+          for (const color of variant.colors) {
+            transformedVariants.push({
+              variant_name: `${variant.size}-${color.name}`,
+              size: variant.size,
+              color: color.name,
+              price: variant.price,
+              images: []
+            });
+          }
+        }
 
-        formData.append('variants', JSON.stringify(variantsData));
+        formData.append('variants', JSON.stringify(transformedVariants));
 
-        // Ajouter les images des variants séparément
-        variants.forEach((variant, variantIndex) => {
-          variant.images.forEach((image, imageIndex) => {
-            formData.append(`variant_images_${variantIndex}_${imageIndex}`, image);
+        let variantImageIndex = 0;
+        variants.forEach(variant => {
+          variant.colors.forEach(color => {
+            color.images.forEach(image => {
+              formData.append(`variant_images_${variantImageIndex}`, image);
+              variantImageIndex++;
+            });
           });
         });
-        //console.log(variantsData)
       }
       
       const response = await addProduct(formData);
@@ -333,10 +346,119 @@ const CreateProductPage: React.FC = () => {
     setCity(value);
   };
 
+  const needsSizeColorAttributes = useMemo(() => {
+    return selectedCategories.some(catId => CLOTHING_SHOE_CATEGORIES.includes(catId));
+  }, [selectedCategories]);
+
+  useEffect(() => {
+    if (getAttributes && getAttributes[0]) {
+      setAvailableColors(getAttributes[0].values.map((color: any) => ({
+        id: color.id,
+        name: color.value,
+        hex: color.hex || '#CCCCCC'
+      })));
+    }
+  }, [getAttributes]);
+
+  useEffect(() => {
+    if (getAttributes && getAttributes[1]) {
+      setAvailableSizes(getAttributes[1].values.map((size: any) => size.value));
+    }
+  }, [getAttributes]);
+
+  const addSizeVariant = () => {
+    if (!newSize || !newPrice || Number(newPrice) <= 0) return;
+    
+    const variantId = `size-${Date.now()}`;
+    const newVariant: ProductVariant = {
+      id: variantId,
+      size: newSize,
+      price: Number(newPrice),
+      colors: []
+    };
+    
+    setVariants([...variants, newVariant]);
+    setNewSize('');
+    setNewPrice('');
+    setExpandedSizeId(variantId);
+  };
+
+  const removeSizeVariant = (variantId: string) => {
+    setVariants(variants.filter(v => v.id !== variantId));
+    if (expandedSizeId === variantId) {
+      setExpandedSizeId(null);
+    }
+  };
+
+  const addColorToVariant = (variantId: string, colorId: number, colorName: string, colorHex: string) => {
+    setVariants(variants.map(variant => {
+      if (variant.id === variantId) {
+        if (!variant.colors.some(c => c.id === colorId)) {
+          return {
+            ...variant,
+            colors: [...variant.colors, { id: colorId, name: colorName, hex: colorHex, images: [] }]
+          };
+        }
+      }
+      return variant;
+    }));
+  };
+
+  const removeColorFromVariant = (variantId: string, colorId: number) => {
+    setVariants(variants.map(variant => {
+      if (variant.id === variantId) {
+        return {
+          ...variant,
+          colors: variant.colors.filter(c => c.id !== colorId)
+        };
+      }
+      return variant;
+    }));
+  };
+
+  const handleColorImageUpload = (variantId: string, colorId: number, files: FileList) => {
+    setVariants(variants.map(variant => {
+      if (variant.id === variantId) {
+        return {
+          ...variant,
+          colors: variant.colors.map(color => {
+            if (color.id === colorId) {
+              return {
+                ...color,
+                images: [...color.images, ...Array.from(files)]
+              };
+            }
+            return color;
+          })
+        };
+      }
+      return variant;
+    }));
+  };
+
+  const removeColorImage = (variantId: string, colorId: number, imageIndex: number) => {
+    setVariants(variants.map(variant => {
+      if (variant.id === variantId) {
+        return {
+          ...variant,
+          colors: variant.colors.map(color => {
+            if (color.id === colorId) {
+              return {
+                ...color,
+                images: color.images.filter((_, idx) => idx !== imageIndex)
+              };
+            }
+            return color;
+          })
+        };
+      }
+      return variant;
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <form onSubmit={handleSubmit} encType='multipart/form-data'>
-        {/* Boutons fixes pour mobile en haut */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-b z-50">
           <div className="flex gap-3">
             <button
@@ -376,7 +498,6 @@ const CreateProductPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Onglets pour mobile */}
           <div className="md:hidden mb-6">
             <div className="flex rounded-xl bg-gray-100 p-1">
               <button
@@ -401,9 +522,7 @@ const CreateProductPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Colonne principale */}
             <div className={`md:col-span-2 space-y-6 ${activeTab === 'attributes' ? 'hidden md:block' : ''}`}>
-              {/* Informations de base */}
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
                 <input
                   type="text"
@@ -443,8 +562,6 @@ const CreateProductPage: React.FC = () => {
                 />
               </div>
 
-
-
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
                 <div className="relative">
                   <label className="block text-lg font-semibold mb-4">Genre produit</label>
@@ -471,7 +588,6 @@ const CreateProductPage: React.FC = () => {
                     </div>
                     {isLoadingCategoriesByGender ? <div>Loading...</div> : (
                       <MultiSelect
-
                         options={categoriesByGender?.categories}
                         selected={selectedCategories}
                         onChange={handleChangeCategories}
@@ -491,7 +607,6 @@ const CreateProductPage: React.FC = () => {
                     {selectedCategories.length > 0 && (
                       !isLoadingSubCategoriesByParentId && (
                         <MultiSelect
-
                           options={subCategoriesByGender?.categories}
                           selected={selectedSubCategories}
                           onChange={handleChangeSubCategories}
@@ -502,7 +617,6 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 </div>
               )}
-              {/* Nouvelle section pour les informations de contact */}
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                 <h2 className="text-lg font-semibold">Informations de contact</h2>
 
@@ -557,7 +671,6 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* Photo mise en avant */}
               <div className="bg-white rounded-2xl shadow-sm p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold">Photo mise en avant</h2>
@@ -595,7 +708,6 @@ const CreateProductPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Galerie d'images */}
               <div className="bg-white    rounded-2xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
                 <div className="grid max-sm:grid-cols-1 grid-cols-4 gap-4">
@@ -626,7 +738,6 @@ const CreateProductPage: React.FC = () => {
                       className="hidden "
                       accept="image/*"
                       multiple
-
                       onChange={handleImageUpload}
                     />
                   </label>
@@ -634,268 +745,225 @@ const CreateProductPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Colonne latérale */}
             <div className={`space-y-6 ${activeTab === 'product' ? 'hidden md:block' : ''}`}>
-              {/* Attributs */}
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Attributs</h2>
-                <div className="space-y-4">
-                  {attributes.map((attribute) => (
-                    <div key={attribute.id}>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-sm text-gray-700">{attribute.name}</h3>
-                        <button
-                          type="button"
-                          onClick={() => generateVariants(attributes)}
-                          className="text-xs text-[#ed7e0f] hover:underline"
-                        >
-                          Générer les variantes
-                        </button>
-                      </div>
+              {/* Affichage des attributs - message par défaut quand aucune catégorie n'est sélectionnée */}
+            
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                  <div className="p-8 text-center">
+                    <div className="mx-auto w-16 h-16 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                      <AlertCircle className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-800 mb-2">
+                      Veuillez d'abord sélectionner une catégorie
+                    </h3>
+                    <p className="text-gray-500">
+                      Les attributs disponibles s'afficheront ici en fonction de la catégorie de produit choisie.
+                    </p>
+                  </div>
+                </div>
+              
 
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {attribute.values.map((value) => (
-                          <span key={value.id} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100">
-                            {attribute.name === 'Couleur' && value.hex && (
-                              <span
-                                className="w-3 h-3 rounded-full mr-1.5"
-                                style={{ backgroundColor: value.hex }}
-                              />
-                            )}
-                            {value.value}
-                            <button
-                              type="button"
-                              onClick={() => removeAttributeValue(attribute.id, value.value)}
-                              className="ml-1.5 text-gray-400 hover:text-gray-600"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
+              {/* Attributs spécifiques pour vêtements/chaussures */}
+              {needsSizeColorAttributes && selectedCategories.length > 0 && activeTab === 'attributes' && (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                  <div className="mb-6">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">Gestion des tailles et couleurs</h2>
+                    <p className="text-gray-600 text-sm">
+                      Ajoutez les différentes tailles disponibles et leur prix, puis pour chaque taille, 
+                      sélectionnez les couleurs disponibles avec des images.
+                    </p>
+                  </div>
 
-                      <div className="relative flex gap-2">
+                  <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+                    <h3 className="text-md font-medium mb-3">Ajouter une taille</h3>
+                    <div className="flex flex-wrap gap-3">
+                      <div className="flex-1 min-w-[120px]">
+                        <label className="block text-xs text-gray-500 mb-1">Taille</label>
                         <input
                           type="text"
-                          placeholder={`Ajouter ${attribute.name.toLowerCase()}`}
-                          className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                          value={
-                            attribute.name === 'Couleur'
-                              ? colorSearchTerm
-                              : attribute.name === 'Taille'
-                                ? sizeSearchTerm
-                                : attribute.name === 'Poids'
-                                  ? weightSearchTerm
-                                  : ''
-                          }
-                          onChange={(e) => {
-                            if (attribute.name === 'Couleur') {
-                              setColorSearchTerm(e.target.value);
-                              setShowColorSuggestions(true);
-                            } else if (attribute.name === 'Taille') {
-                              setSizeSearchTerm(e.target.value);
-                              setShowSizeSuggestions(true);
-                            } else if (attribute.name === 'Poids' && weightSearchTerm) {
-                              setWeightSearchTerm(e.target.value);
-                              setShowWeightSuggestions(true);
-                            }
-                          }}
-                          onFocus={() => {
-                            if (attribute.name === 'Couleur') setShowColorSuggestions(true);
-                            if (attribute.name === 'Taille') setShowSizeSuggestions(true);
-                            if (attribute.name === 'Poids') setShowWeightSuggestions(true);
-                          }}
+                          value={newSize}
+                          onChange={(e) => setNewSize(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                          placeholder="Ex: M, XL, 42..."
                         />
-
-                        {/* Suggestions pour les couleurs */}
-                        {attribute.name === 'Couleur' && showColorSuggestions && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                            {getFilteredColors().map((color: any) => (
-                              <button
-                                key={color.id}
-                                className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center"
-                                onClick={() => {
-                                  addAttributeValue(attribute.id, color.value, color.id, color.hex);
-                                  setColorSearchTerm('');
-                                  setShowColorSuggestions(false);
-                                }}
-                              >
-                                <span
-                                  className="w-4 h-4 rounded-full mr-2"
-                                  style={{ backgroundColor: color.hex }}
-                                />
-                                {color.value}
-                              </button>
-                            ))}
-                            {colorSearchTerm && !getFilteredColors().some((c: any) => c.value.toLowerCase() === colorSearchTerm.toLowerCase()) && (
-                              <button
-                                className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
-                                onClick={() => {
-                                  addAttributeValue(attribute.id, colorSearchTerm, undefined, colorSearchTerm);
-                                  setColorSearchTerm('');
-                                  setShowColorSuggestions(false);
-                                }}
-                              >
-                                + Créer "{colorSearchTerm}"
-                              </button>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Suggestions pour les tailles */}
-                        {attribute.name === 'Taille' && showSizeSuggestions && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                            {getFilteredSizes().map((size: any) => (
-                              <button
-                                key={size.id}
-                                className="w-full px-3 py-2 text-left hover:bg-gray-50"
-                                onClick={() => {
-                                  addAttributeValue(attribute.id, size.value, size.id, undefined);
-                                  setSizeSearchTerm('');
-                                  setShowSizeSuggestions(false);
-                                }}
-                              >
-                                {size.value}
-                              </button>
-                            ))}
-                            {sizeSearchTerm && !getFilteredSizes().some((s: any) => s.toLowerCase() === sizeSearchTerm.toLowerCase()) && (
-                              <button
-                                className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
-                                onClick={() => {
-                                  addAttributeValue(attribute.id, sizeSearchTerm.toUpperCase(), undefined, undefined);
-                                  setSizeSearchTerm('');
-                                  setShowSizeSuggestions(false);
-                                }}
-                              >
-                                + Créer "{sizeSearchTerm.toUpperCase()}"
-                              </button>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Suggestions pour les poids */}
-                        {attribute.name === 'Poids' && showWeightSuggestions && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                            {getFilteredWeights().map((weight: any) => (
-                              <button
-                                key={weight}
-                                className="w-full px-3 py-2 text-left hover:bg-gray-50"
-                                onClick={() => {
-                                  addAttributeValue(attribute.id, weight.value, weight.id, undefined);
-                                  setWeightSearchTerm('');
-                                  setShowWeightSuggestions(false);
-                                }}
-                              >
-                                {weight.value}
-                              </button>
-                            ))}
-                            {weightSearchTerm && !getFilteredWeights().some((w: any) => w.toLowerCase() === weightSearchTerm.toLowerCase()) && (
-                              <button
-                                className="w-full px-3 py-2 text-left hover:bg-gray-50 text-[#ed7e0f]"
-                                onClick={() => {
-                                  addAttributeValue(attribute.id, weightSearchTerm, undefined, undefined);
-                                  setWeightSearchTerm('');
-                                  setShowWeightSuggestions(false);
-                                }}
-                              >
-                                + Créer "{weightSearchTerm}"
-                              </button>
-                            )}
-                          </div>
-                        )}
-
+                      </div>
+                      <div className="flex-1 min-w-[120px]">
+                        <label className="block text-xs text-gray-500 mb-1">Prix (FCFA)</label>
+                        <input
+                          type="number"
+                          value={newPrice}
+                          onChange={(e) => setNewPrice(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                          placeholder="Ex: 15000"
+                        />
+                      </div>
+                      <div className="flex items-end">
                         <button
                           type="button"
-                          className="px-3 py-1.5 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm"
-                          onClick={() => {
-                            if (attribute.name === 'Couleur' && colorSearchTerm) {
-                              addAttributeValue(attribute.id, colorSearchTerm, undefined, colorSearchTerm);
-                              setColorSearchTerm('');
-                            } else if (attribute.name === 'Taille' && sizeSearchTerm) {
-                              addAttributeValue(attribute.id, sizeSearchTerm.toUpperCase(), undefined, undefined);
-                              setSizeSearchTerm('');
-                            } else if (attribute.name === 'Poids' && weightSearchTerm) {
-                              addAttributeValue(attribute.id, weightSearchTerm, undefined, undefined);
-                              setWeightSearchTerm('');
-                            }
-                          }}
+                          onClick={addSizeVariant}
+                          className="h-[42px] px-4 py-2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-lg hover:from-[#ed7e0f]/90 hover:to-orange-500"
                         >
-                          <Plus className="w-4 h-4" />
+                          Ajouter
                         </button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              {/* Variantes */}
-              {variants.length > 0 && (
-                <div className="bg-white rounded-2xl shadow-sm p-6">
-                  <h2 className="text-lg font-semibold mb-4">Variantes ({variants.length})</h2>
-                  <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                    {variants.map((variant) => (
-                      <div key={variant.id} className="p-3 bg-gray-50 rounded-xl">
-                        <div className="mb-3">
-                          <span className="text-sm text-gray-600">
-                            {variant.variant_name}
-                          </span>
-                        </div>
-                        <div className="space-y-4">
-                          <div>
-                            <label className="block text-xs text-gray-500 mb-1">Prix unitaire</label>
-                            <input
-                              type="number"
-                              value={variant.price}
-                              onChange={(e) => {
-                                const newVariants = variants.map((v) =>
-                                  v.id === variant.id ? { ...v, price: Number(e.target.value) } : v
-                                );
-                                setVariants(newVariants);
-                              }}
-                              className="w-full px-3 py-1.5 text-sm border rounded-lg"
-                              placeholder="0.00 €"
-                            />
-                          </div>
-
-                          <div className="flex flex-col">
-                            <label className="block text-xs text-gray-500 mb-2">Images de la variante</label>
-                            <div className="flex flex-wrap gap-2">
-                              {variant.images.map((image, imageIndex) => (
-                                <div key={imageIndex} className="relative group w-16 h-16">
-                                  <img
-                                    src={URL.createObjectURL(image)}
-                                    alt={`Variante ${variant.id} image ${imageIndex + 1}`}
-                                    className="w-full h-full object-cover rounded-lg"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => removeVariantImage(variant.id, imageIndex)}
-                                    className="absolute top-1 right-1 p-1 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                  >
-                                    <X className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              ))}
-                              <label className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50">
-                                <input
-                                  type="file"
-                                  className="hidden"
-                                  accept="image/*"
-                                  multiple
-                                  onChange={(e) => e.target.files && handleVariantImageUpload(variant.id, e.target.files)}
-                                />
-                                <Plus className="w-5 h-5 text-gray-400" />
-                              </label>
+                  {variants.length > 0 ? (
+                    <div className="space-y-4">
+                      <h3 className="text-md font-medium">Tailles disponibles</h3>
+                      
+                      {variants.map((variant) => (
+                        <div key={variant.id} className="border rounded-xl overflow-hidden">
+                          <div className="flex items-center justify-between bg-gray-50 p-3 border-b">
+                            <div className="flex items-center gap-4">
+                              <span className="text-lg font-medium">{variant.size}</span>
+                              <span className="px-3 py-1 bg-[#ed7e0f]/10 text-[#ed7e0f] rounded-full">
+                                {variant.price.toLocaleString()} FCFA
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setExpandedSizeId(expandedSizeId === variant.id ? null : variant.id)}
+                                className="p-1.5 hover:bg-gray-100 rounded-full"
+                              >
+                                {expandedSizeId === variant.id ? 
+                                  <ChevronUp className="w-5 h-5" /> : 
+                                  <ChevronDown className="w-5 h-5" />
+                                }
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeSizeVariant(variant.id)}
+                                className="p-1.5 hover:bg-gray-100 text-red-500 rounded-full"
+                              >
+                                <X className="w-5 h-5" />
+                              </button>
                             </div>
                           </div>
+                          
+                          {expandedSizeId === variant.id && (
+                            <div className="p-4">
+                              <h4 className="text-sm font-medium mb-3">Couleurs disponibles pour cette taille</h4>
+                              
+                              {variant.colors.length > 0 && (
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                                  {variant.colors.map((color) => (
+                                    <div key={color.id} className="border rounded-lg p-3 space-y-2">
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                          <span 
+                                            className="w-4 h-4 rounded-full border" 
+                                            style={{ backgroundColor: color.hex }}
+                                          />
+                                          <span className="text-sm">{color.name}</span>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          onClick={() => removeColorFromVariant(variant.id, color.id)}
+                                          className="text-gray-400 hover:text-red-500"
+                                        >
+                                          <X className="w-4 h-4" />
+                                        </button>
+                                      </div>
+                                      
+                                      <div>
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                          {color.images.map((image, imageIndex) => (
+                                            <div key={imageIndex} className="relative group w-16 h-16">
+                                              <img
+                                                src={URL.createObjectURL(image)}
+                                                alt={`${variant.size} ${color.name}`}
+                                                className="w-full h-full object-cover rounded-md"
+                                              />
+                                              <button
+                                                type="button"
+                                                onClick={() => removeColorImage(variant.id, color.id, imageIndex)}
+                                                className="absolute top-1 right-1 p-1 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                              >
+                                                <X className="w-3 h-3" />
+                                              </button>
+                                            </div>
+                                          ))}
+                                          <label className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-50">
+                                            <input
+                                              type="file"
+                                              className="hidden"
+                                              accept="image/*"
+                                              multiple
+                                              onChange={(e) => e.target.files && handleColorImageUpload(variant.id, color.id, e.target.files)}
+                                            />
+                                            <Plus className="w-5 h-5 text-gray-400" />
+                                          </label>
+                                        </div>
+                                        {color.images.length === 0 && (
+                                          <p className="text-xs text-red-500 mt-1">
+                                            Ajoutez au moins une image pour cette couleur
+                                          </p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              
+                              <div className="mt-4">
+                                <h4 className="text-sm font-medium mb-2">Ajouter des couleurs</h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {availableColors
+                                    .filter(color => !variant.colors.some(c => c.id === color.id))
+                                    .map(color => (
+                                      <button
+                                        key={color.id}
+                                        type="button"
+                                        onClick={() => addColorToVariant(variant.id, color.id, color.name, color.hex)}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full"
+                                      >
+                                        <span 
+                                          className="w-3 h-3 rounded-full border" 
+                                          style={{ backgroundColor: color.hex }}
+                                        />
+                                        <span className="text-sm">{color.name}</span>
+                                      </button>
+                                    ))
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center border-2 border-dashed border-gray-200 rounded-xl">
+                      <div className="mx-auto w-12 h-12 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <Plus className="w-6 h-6 text-gray-400" />
                       </div>
-                    ))}
+                      <h3 className="text-lg font-medium text-gray-800 mb-1">Aucune taille ajoutée</h3>
+                      <p className="text-gray-500">
+                        Commencez par ajouter les tailles disponibles pour ce produit
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Message pour les produits sans attributs spécifiques */}
+              {!needsSizeColorAttributes && selectedCategories.length > 0 && activeTab === 'attributes' && (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                  <div className="p-8 text-center">
+                    <h3 className="text-lg font-medium text-gray-800 mb-2">
+                      Ce type de produit ne nécessite pas d'attributs spécifiques
+                    </h3>
+                    <p className="text-gray-500">
+                      Les attributs comme la taille et la couleur ne sont pas requis pour cette catégorie.
+                      Vous pouvez continuer avec les informations de base du produit.
+                    </p>
                   </div>
                 </div>
               )}
 
-              {/* Actions */}
               <div className="flex max-sm:hidden gap-3">
                 <button
                   type="button"
