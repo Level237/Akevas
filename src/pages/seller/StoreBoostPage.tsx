@@ -12,7 +12,8 @@ import {
   CheckCircle,
   Download,
   RefreshCw,
-  X
+  X,
+  Crown
 } from 'lucide-react';
 import { useCheckAuthQuery } from '@/services/auth';
 import { useGetSubscriptionQuery } from '@/services/guardService';
@@ -26,6 +27,7 @@ import { redirectToLogin } from '@/lib/redirectToLogin';
 import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
 import { QRCodeCanvas } from "qrcode.react";
+import AsyncLink from '@/components/ui/AsyncLink';
 
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
@@ -385,36 +387,47 @@ const StoreBoostPage: React.FC = () => {
           className="text-center mb-16"
         >
           <h1 className="text-5xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#ed7e0f] to-orange-600">
-            Vous aviez deja un plan en cours
+            Vous avez déjà un abonnement Pro actif
           </h1>
           <motion.div
-              
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-             
-              className="`group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300"
-            >
-              
-
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                 dd
-                </h3>
-               
-
-               
-
-                <button
-                  
-                  className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
-                      bg-orange-50 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white
-                    }`}
-                >
-                  
-                </button>
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl mx-auto bg-white rounded-3xl shadow-lg p-8 border border-orange-100"
+          >
+            <div className="flex flex-col items-center gap-6">
+              <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center">
+                <Crown className="w-10 h-10 text-[#ed7e0f]" />
               </div>
-            </motion.div>
+              
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Profitez de tous les avantages Pro
+                </h3>
+                <p className="text-gray-600 mb-8">
+                  Accédez à votre tableau de bord pour gérer votre boutique et suivre vos performances
+                </p>
+              </div>
+
+              <div className="flex gap-4 w-full max-w-md">
+                <button
+                  onClick={() => window.history.back()}
+                  className="flex-1 py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                    bg-orange-50 text-[#ed7e0f] hover:bg-orange-100"
+                >
+                  Retour
+                </button>
+                
+                <AsyncLink
+                  to="/seller/dashboard"
+                  className="flex-1 py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                    bg-[#ed7e0f] text-white hover:bg-orange-600"
+                >
+                  Dashboard
+                </AsyncLink>
+              </div>
+            </div>
           </motion.div>
+        </motion.div>
         </>}
        
         

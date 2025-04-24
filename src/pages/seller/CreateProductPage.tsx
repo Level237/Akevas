@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Upload,
   Plus,
+
   X,
   Save,
   AlertCircle,
-  Loader2,
-  ChevronDown,
-  ChevronUp
+  Loader2
 } from 'lucide-react';
 import { useAddProductMutation } from '@/services/sellerService';
 import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
@@ -15,29 +14,28 @@ import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 
+// Nouvelle interface pour mieux typer les attributs
 interface ProductAttribute {
   id: number;
   name: string;
+  affectsPrice: boolean; // Nouveau champ pour différencier les types d'attributs
   values: Array<{
     id: number;
     value: string;
     hex?: string;
+    price?: number; // Prix spécifique pour les attributs qui affectent le prix
   }>;
 }
 
 interface ProductVariant {
   id: string;
-  size?: string;
+  variant_name: string;
+  attribute_value_id: number[];
   price: number;
-  colors: Array<{
-    id: number;
-    name: string;
-    hex: string;
-    images: File[];
-  }>;
+  images: File[];
+  stock?: number; // Optionnel: pour gérer le stock par variant
 }
 
-const CLOTHING_SHOE_CATEGORIES = [1, 2, 3, 4, 5];
 
 const CreateProductPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -45,6 +43,7 @@ const CreateProductPage: React.FC = () => {
   const [city, setCity] = useState('');
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
 
+  //console.log(getAttributes)
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
@@ -62,30 +61,31 @@ const CreateProductPage: React.FC = () => {
   const [showWeightSuggestions, setShowWeightSuggestions] = useState(false);
   const [activeTab, setActiveTab] = useState<'product' | 'attributes'>('product');
   const [gender, setGender] = useState<number>(0)
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender)
   const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender })
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const navigate = useNavigate()
 
-  const [availableSizes, setAvailableSizes] = useState<string[]>([]);
-  const [availableColors, setAvailableColors] = useState<Array<{id: number, name: string, hex: string}>>([]);
-  const [newSize, setNewSize] = useState('');
-  const [newPrice, setNewPrice] = useState('');
-  const [expandedSizeId, setExpandedSizeId] = useState<string | null>(null);
+  //console.log(selectedSubCategories)
+  // Liste des catégories disponibles
 
+  // Initialisation des attributs avec la propriété affectsPrice
   useEffect(() => {
     if (getAttributes) {
       setAttributes(
         getAttributes.map((attr: any) => ({
           id: attr.id,
           name: attr.name,
+          affectsPrice: attr.name === 'Taille', // La taille affecte le prix, la couleur non
           values: []
         }))
       );
     }
   }, [getAttributes]);
 
+  // Nouvelle fonction pour gérer la sélection/déselection des catégories
   const handleChangeCategories = (selected: number[]) => {
     setSelectedCategories(selected);
   };
@@ -120,6 +120,8 @@ const CreateProductPage: React.FC = () => {
     const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
 
     if (attrIndex !== -1) {
+      // Pour les valeurs qui ne viennent pas de l'API (taille et poids),
+      // on génère un ID unique négatif pour éviter les conflits avec les IDs de l'API
       const newValueId = valueId || -(Date.now());
 
       const newValue = {
@@ -135,7 +137,7 @@ const CreateProductPage: React.FC = () => {
       }
     }
   };
-
+  //console.log(variants)
   const removeAttributeValue = (attributeId: number, valueToRemove: string) => {
     const newAttributes = [...attributes];
     const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
@@ -150,8 +152,8 @@ const CreateProductPage: React.FC = () => {
   };
 
   const generateVariants = (attrs: ProductAttribute[]) => {
-    const generateCombinations = (attributes: ProductAttribute[]): { name: string; ids: number[] }[] => {
-      if (attributes.length === 0) return [{ name: '', ids: [] }];
+    const generateCombinations = (attributes: ProductAttribute[]): { name: string; ids: number[]; price: number }[] => {
+      if (attributes.length === 0) return [{ name: '', ids: [], price: Number(price) || 0 }];
 
       const [first, ...rest] = attributes;
       const restCombinations = generateCombinations(rest);
@@ -159,7 +161,8 @@ const CreateProductPage: React.FC = () => {
       return first.values.flatMap(value =>
         restCombinations.map(combo => ({
           name: combo.name ? `${value.value}-${combo.name}` : value.value,
-          ids: [value.id, ...combo.ids]
+          ids: [value.id, ...combo.ids],
+          price: value.price || combo.price
         }))
       );
     };
@@ -169,9 +172,10 @@ const CreateProductPage: React.FC = () => {
 
     const newVariants = combinations.map((combo, index) => ({
       id: `variant-${index}`,
-      size: combo.name,
-      price: Number(price) || 0,
-      colors: []
+      variant_name: combo.name,
+      attribute_value_id: combo.ids,
+      price: combo.price,
+      images: []
     }));
 
     setVariants(newVariants);
@@ -180,12 +184,7 @@ const CreateProductPage: React.FC = () => {
   const handleVariantImageUpload = (variantId: string, files: FileList) => {
     setVariants(variants.map(variant =>
       variant.id === variantId
-        ? { ...variant, colors: [...variant.colors, ...Array.from(files).map(file => ({
-          id: Date.now(),
-          name: '',
-          hex: '',
-          images: [file]
-        }))] }
+        ? { ...variant, images: [...variant.images, ...Array.from(files)] }
         : variant
     ));
   };
@@ -193,13 +192,13 @@ const CreateProductPage: React.FC = () => {
   const removeVariantImage = (variantId: string, imageIndex: number) => {
     setVariants(variants.map(variant =>
       variant.id === variantId
-        ? { ...variant, colors: variant.colors.filter((_, idx) => idx !== imageIndex) }
+        ? { ...variant, images: variant.images.filter((_, idx) => idx !== imageIndex) }
         : variant
     ));
   };
 
   const getFilteredColors = () => {
-    if (!getAttributes || !getAttributes[0]) return [];
+    if (!getAttributes || !getAttributes[0]?.values) return [];
     return getAttributes[0].values.filter((color: any) =>
       color.value.toLowerCase().includes(colorSearchTerm.toLowerCase()) &&
       !attributes.find(attr => attr.id === getAttributes[0].id)?.values
@@ -208,12 +207,14 @@ const CreateProductPage: React.FC = () => {
   };
 
   const getFilteredSizes = () => {
-    if (!getAttributes || !getAttributes[1]) return [];
+    if (!getAttributes || !getAttributes[1]?.values) return [];
     return getAttributes[1].values.filter((size: any) =>
       size.value.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
-      !attributes.find(attr => attr.id === getAttributes[1].id)?.values.some(v => v.value === size.value)
+      !attributes.find(attr => attr.id === getAttributes[1].id)?.values
+        .some(v => v.value === size.value)
     );
   };
+
 
   const getFilteredWeights = () => {
     if (!getAttributes || !getAttributes[2]) return [];
@@ -226,6 +227,7 @@ const CreateProductPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Validation des champs requis
     if (!name.trim()) {
       alert("Le nom du produit est requis");
       return;
@@ -271,11 +273,12 @@ const CreateProductPage: React.FC = () => {
       return;
     }
 
+    // Validation des variants si des attributs sont sélectionnés
     const hasSelectedAttributes = attributes.some(attr => attr.values.length > 0);
     if (hasSelectedAttributes) {
       const invalidVariants = variants.some(variant =>
-        variant.colors.length === 0 ||
-        variant.colors.some(color => color.images.length === 0)
+        variant.images.length === 0 ||
+        !variant.price
       );
 
       if (invalidVariants) {
@@ -302,32 +305,24 @@ const CreateProductPage: React.FC = () => {
       selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
       selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
 
+      // Ajouter les variants au formData s'il y en a
       if (variants.length > 0) {
-        const transformedVariants = [];
-        
-        for (const variant of variants) {
-          for (const color of variant.colors) {
-            transformedVariants.push({
-              variant_name: `${variant.size}-${color.name}`,
-              size: variant.size,
-              color: color.name,
-              price: variant.price,
-              images: []
-            });
-          }
-        }
+        const variantsData = variants.map(variant => ({
+          variant_name: variant.variant_name,
+          attribute_value_id: variant.attribute_value_id,
+          price: variant.price,
+          images: []
+        }));
 
-        formData.append('variants', JSON.stringify(transformedVariants));
+        formData.append('variants', JSON.stringify(variantsData));
 
-        let variantImageIndex = 0;
-        variants.forEach(variant => {
-          variant.colors.forEach(color => {
-            color.images.forEach(image => {
-              formData.append(`variant_images_${variantImageIndex}`, image);
-              variantImageIndex++;
-            });
+        // Ajouter les images des variants séparément
+        variants.forEach((variant, variantIndex) => {
+          variant.images.forEach((image, imageIndex) => {
+            formData.append(`variant_images_${variantIndex}_${imageIndex}`, image);
           });
         });
+        //console.log(variantsData)
       }
       
       const response = await addProduct(formData);
@@ -346,119 +341,48 @@ const CreateProductPage: React.FC = () => {
     setCity(value);
   };
 
-  const needsSizeColorAttributes = useMemo(() => {
-    return selectedCategories.some(catId => CLOTHING_SHOE_CATEGORIES.includes(catId));
-  }, [selectedCategories]);
-
-  useEffect(() => {
-    if (getAttributes && getAttributes[0]) {
-      setAvailableColors(getAttributes[0].values.map((color: any) => ({
-        id: color.id,
-        name: color.value,
-        hex: color.hex || '#CCCCCC'
-      })));
-    }
-  }, [getAttributes]);
-
-  useEffect(() => {
-    if (getAttributes && getAttributes[1]) {
-      setAvailableSizes(getAttributes[1].values.map((size: any) => size.value));
-    }
-  }, [getAttributes]);
-
-  const addSizeVariant = () => {
-    if (!newSize || !newPrice || Number(newPrice) <= 0) return;
-    
-    const variantId = `size-${Date.now()}`;
-    const newVariant: ProductVariant = {
-      id: variantId,
-      size: newSize,
-      price: Number(newPrice),
-      colors: []
-    };
-    
-    setVariants([...variants, newVariant]);
-    setNewSize('');
-    setNewPrice('');
-    setExpandedSizeId(variantId);
-  };
-
-  const removeSizeVariant = (variantId: string) => {
-    setVariants(variants.filter(v => v.id !== variantId));
-    if (expandedSizeId === variantId) {
-      setExpandedSizeId(null);
-    }
-  };
-
-  const addColorToVariant = (variantId: string, colorId: number, colorName: string, colorHex: string) => {
-    setVariants(variants.map(variant => {
-      if (variant.id === variantId) {
-        if (!variant.colors.some(c => c.id === colorId)) {
+  // Fonction pour mettre à jour le prix d'un attribut
+  const updateAttributePrice = (attributeId: number, valueId: number, price: number) => {
+    setAttributes(prevAttributes => 
+      prevAttributes.map(attr => {
+        if (attr.id === attributeId) {
           return {
-            ...variant,
-            colors: [...variant.colors, { id: colorId, name: colorName, hex: colorHex, images: [] }]
+            ...attr,
+            values: attr.values.map(val => 
+              val.id === valueId ? { ...val, price } : val
+            )
           };
         }
-      }
-      return variant;
-    }));
+        return attr;
+      })
+    );
   };
 
-  const removeColorFromVariant = (variantId: string, colorId: number) => {
-    setVariants(variants.map(variant => {
-      if (variant.id === variantId) {
-        return {
-          ...variant,
-          colors: variant.colors.filter(c => c.id !== colorId)
-        };
-      }
-      return variant;
-    }));
+  // Fonction pour gérer l'ajout de taille
+  const handleAddSize = (attributeId: number) => {
+    setAttributes(prevAttributes => 
+      prevAttributes.map(attr => {
+        if (attr.id === attributeId) {
+          return {
+            ...attr,
+            values: [...attr.values, { id: Date.now(), value: sizeSearchTerm, price: 0 }]
+          };
+        }
+        return attr;
+      })
+    );
+    setSizeSearchTerm('');
   };
 
-  const handleColorImageUpload = (variantId: string, colorId: number, files: FileList) => {
-    setVariants(variants.map(variant => {
-      if (variant.id === variantId) {
-        return {
-          ...variant,
-          colors: variant.colors.map(color => {
-            if (color.id === colorId) {
-              return {
-                ...color,
-                images: [...color.images, ...Array.from(files)]
-              };
-            }
-            return color;
-          })
-        };
-      }
-      return variant;
-    }));
-  };
-
-  const removeColorImage = (variantId: string, colorId: number, imageIndex: number) => {
-    setVariants(variants.map(variant => {
-      if (variant.id === variantId) {
-        return {
-          ...variant,
-          colors: variant.colors.map(color => {
-            if (color.id === colorId) {
-              return {
-                ...color,
-                images: color.images.filter((_, idx) => idx !== imageIndex)
-              };
-            }
-            return color;
-          })
-        };
-      }
-      return variant;
-    }));
-  };
+  // Effet pour générer les variations quand les attributs changent
+  useEffect(() => {
+    generateVariants(attributes);
+  }, [attributes, price]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <form onSubmit={handleSubmit} encType='multipart/form-data'>
+        {/* Boutons fixes pour mobile en haut */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-b z-50">
           <div className="flex gap-3">
             <button
@@ -498,6 +422,7 @@ const CreateProductPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Onglets pour mobile */}
           <div className="md:hidden mb-6">
             <div className="flex rounded-xl bg-gray-100 p-1">
               <button
@@ -522,7 +447,9 @@ const CreateProductPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Colonne principale */}
             <div className={`md:col-span-2 space-y-6 ${activeTab === 'attributes' ? 'hidden md:block' : ''}`}>
+              {/* Informations de base */}
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
                 <input
                   type="text"
@@ -562,6 +489,8 @@ const CreateProductPage: React.FC = () => {
                 />
               </div>
 
+
+
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
                 <div className="relative">
                   <label className="block text-lg font-semibold mb-4">Genre produit</label>
@@ -588,6 +517,7 @@ const CreateProductPage: React.FC = () => {
                     </div>
                     {isLoadingCategoriesByGender ? <div>Loading...</div> : (
                       <MultiSelect
+
                         options={categoriesByGender?.categories}
                         selected={selectedCategories}
                         onChange={handleChangeCategories}
@@ -607,6 +537,7 @@ const CreateProductPage: React.FC = () => {
                     {selectedCategories.length > 0 && (
                       !isLoadingSubCategoriesByParentId && (
                         <MultiSelect
+
                           options={subCategoriesByGender?.categories}
                           selected={selectedSubCategories}
                           onChange={handleChangeSubCategories}
@@ -617,6 +548,7 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 </div>
               )}
+              {/* Nouvelle section pour les informations de contact */}
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                 <h2 className="text-lg font-semibold">Informations de contact</h2>
 
@@ -671,6 +603,7 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+              {/* Photo mise en avant */}
               <div className="bg-white rounded-2xl shadow-sm p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold">Photo mise en avant</h2>
@@ -708,6 +641,7 @@ const CreateProductPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Galerie d'images */}
               <div className="bg-white    rounded-2xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
                 <div className="grid max-sm:grid-cols-1 grid-cols-4 gap-4">
@@ -738,6 +672,7 @@ const CreateProductPage: React.FC = () => {
                       className="hidden "
                       accept="image/*"
                       multiple
+
                       onChange={handleImageUpload}
                     />
                   </label>
@@ -745,225 +680,395 @@ const CreateProductPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Colonne latérale */}
             <div className={`space-y-6 ${activeTab === 'product' ? 'hidden md:block' : ''}`}>
-              {/* Affichage des attributs - message par défaut quand aucune catégorie n'est sélectionnée */}
-            
-                <div className="bg-white rounded-2xl shadow-sm p-6">
-                  <div className="p-8 text-center">
-                    <div className="mx-auto w-16 h-16 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                      <AlertCircle className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-800 mb-2">
-                      Veuillez d'abord sélectionner une catégorie
-                    </h3>
-                    <p className="text-gray-500">
-                      Les attributs disponibles s'afficheront ici en fonction de la catégorie de produit choisie.
-                    </p>
+              {/* Nouvelle section des attributs */}
+              <div className="bg-white rounded-2xl shadow-sm p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">Attributs du produit</h2>
+                    <p className="text-sm text-gray-500 mt-1">Configurez les variations de votre produit</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                      onClick={() => {
+                        setAttributes([]);
+                        setVariants([]);
+                      }}
+                    >
+                      Réinitialiser
+                    </button>
                   </div>
                 </div>
-              
 
-              {/* Attributs spécifiques pour vêtements/chaussures */}
-              {needsSizeColorAttributes && selectedCategories.length > 0 && activeTab === 'attributes' && (
-                <div className="bg-white rounded-2xl shadow-sm p-6">
-                  <div className="mb-6">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Gestion des tailles et couleurs</h2>
-                    <p className="text-gray-600 text-sm">
-                      Ajoutez les différentes tailles disponibles et leur prix, puis pour chaque taille, 
-                      sélectionnez les couleurs disponibles avec des images.
-                    </p>
+                {/* Type de variation */}
+                <div className="mb-8">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">Type de variation</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAttributes(attributes.filter(attr => !attr.affectsPrice));
+                        setVariants([]);
+                      }}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        !attributes.some(attr => attr.affectsPrice)
+                          ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                          </svg>
+                        </div>
+                        <span className="text-sm font-medium">Couleur uniquement</span>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!attributes.some(attr => attr.affectsPrice)) {
+                          setAttributes([
+                            ...attributes,
+                            {
+                              id: 2,
+                              name: 'Taille',
+                              affectsPrice: true,
+                              values: []
+                            }
+                          ]);
+                        }
+                        setVariants([]);
+                      }}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        attributes.some(attr => attr.affectsPrice)
+                          ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                          </svg>
+                        </div>
+                        <span className="text-sm font-medium">Couleur et Taille</span>
+                      </div>
+                    </button>
                   </div>
+                </div>
 
-                  <div className="mb-6 p-4 bg-gray-50 rounded-xl">
-                    <h3 className="text-md font-medium mb-3">Ajouter une taille</h3>
-                    <div className="flex flex-wrap gap-3">
-                      <div className="flex-1 min-w-[120px]">
-                        <label className="block text-xs text-gray-500 mb-1">Taille</label>
-                        <input
-                          type="text"
-                          value={newSize}
-                          onChange={(e) => setNewSize(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                          placeholder="Ex: M, XL, 42..."
-                        />
-                      </div>
-                      <div className="flex-1 min-w-[120px]">
-                        <label className="block text-xs text-gray-500 mb-1">Prix (FCFA)</label>
-                        <input
-                          type="number"
-                          value={newPrice}
-                          onChange={(e) => setNewPrice(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                          placeholder="Ex: 15000"
-                        />
-                      </div>
-                      <div className="flex items-end">
-                        <button
-                          type="button"
-                          onClick={addSizeVariant}
-                          className="h-[42px] px-4 py-2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-lg hover:from-[#ed7e0f]/90 hover:to-orange-500"
-                        >
-                          Ajouter
-                        </button>
-                      </div>
-                    </div>
+                {/* Sélection des couleurs */}
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-gray-700">Couleurs disponibles</h3>
+                    <span className="text-sm text-gray-500">
+                      {variants.filter(v => v.attribute_value_id.length === 1).length} sélectionné(s)
+                    </span>
                   </div>
-
-                  {variants.length > 0 ? (
-                    <div className="space-y-4">
-                      <h3 className="text-md font-medium">Tailles disponibles</h3>
-                      
-                      {variants.map((variant) => (
-                        <div key={variant.id} className="border rounded-xl overflow-hidden">
-                          <div className="flex items-center justify-between bg-gray-50 p-3 border-b">
-                            <div className="flex items-center gap-4">
-                              <span className="text-lg font-medium">{variant.size}</span>
-                              <span className="px-3 py-1 bg-[#ed7e0f]/10 text-[#ed7e0f] rounded-full">
-                                {variant.price.toLocaleString()} FCFA
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => setExpandedSizeId(expandedSizeId === variant.id ? null : variant.id)}
-                                className="p-1.5 hover:bg-gray-100 rounded-full"
-                              >
-                                {expandedSizeId === variant.id ? 
-                                  <ChevronUp className="w-5 h-5" /> : 
-                                  <ChevronDown className="w-5 h-5" />
-                                }
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => removeSizeVariant(variant.id)}
-                                className="p-1.5 hover:bg-gray-100 text-red-500 rounded-full"
-                              >
-                                <X className="w-5 h-5" />
-                              </button>
-                            </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    {getAttributes?.[0]?.values.map((color: any) => (
+                      <label
+                        key={color.id}
+                        className={`relative group cursor-pointer ${
+                          variants.some(v => v.attribute_value_id.includes(color.id))
+                            ? 'ring-2 ring-[#ed7e0f] ring-offset-2'
+                            : ''
+                        }`}
+                      >
+                        <div className="aspect-square rounded-xl overflow-hidden">
+                          <div
+                            className="w-full h-full"
+                            style={{ backgroundColor: color.hex || '#f3f4f6' }}
+                          />
+                        </div>
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                            {variants.some(v => v.attribute_value_id.includes(color.id)) ? (
+                              <X className="w-4 h-4 text-gray-900" />
+                            ) : (
+                              <Plus className="w-4 h-4 text-gray-900" />
+                            )}
                           </div>
-                          
-                          {expandedSizeId === variant.id && (
-                            <div className="p-4">
-                              <h4 className="text-sm font-medium mb-3">Couleurs disponibles pour cette taille</h4>
-                              
-                              {variant.colors.length > 0 && (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-                                  {variant.colors.map((color) => (
-                                    <div key={color.id} className="border rounded-lg p-3 space-y-2">
-                                      <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                          <span 
-                                            className="w-4 h-4 rounded-full border" 
-                                            style={{ backgroundColor: color.hex }}
-                                          />
-                                          <span className="text-sm">{color.name}</span>
-                                        </div>
-                                        <button
-                                          type="button"
-                                          onClick={() => removeColorFromVariant(variant.id, color.id)}
-                                          className="text-gray-400 hover:text-red-500"
-                                        >
-                                          <X className="w-4 h-4" />
-                                        </button>
-                                      </div>
-                                      
-                                      <div>
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                          {color.images.map((image, imageIndex) => (
-                                            <div key={imageIndex} className="relative group w-16 h-16">
-                                              <img
-                                                src={URL.createObjectURL(image)}
-                                                alt={`${variant.size} ${color.name}`}
-                                                className="w-full h-full object-cover rounded-md"
-                                              />
-                                              <button
-                                                type="button"
-                                                onClick={() => removeColorImage(variant.id, color.id, imageIndex)}
-                                                className="absolute top-1 right-1 p-1 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                              >
-                                                <X className="w-3 h-3" />
-                                              </button>
-                                            </div>
-                                          ))}
-                                          <label className="w-16 h-16 border-2 border-dashed border-gray-200 rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-50">
-                                            <input
-                                              type="file"
-                                              className="hidden"
-                                              accept="image/*"
-                                              multiple
-                                              onChange={(e) => e.target.files && handleColorImageUpload(variant.id, color.id, e.target.files)}
-                                            />
-                                            <Plus className="w-5 h-5 text-gray-400" />
-                                          </label>
-                                        </div>
-                                        {color.images.length === 0 && (
-                                          <p className="text-xs text-red-500 mt-1">
-                                            Ajoutez au moins une image pour cette couleur
-                                          </p>
+                        </div>
+                        <input
+                          type="checkbox"
+                          className="hidden"
+                          checked={variants.some(v => v.attribute_value_id.includes(color.id))}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              if (attributes.some(attr => attr.affectsPrice)) {
+                                const newVariant = {
+                                  id: `variant-${color.id}`,
+                                  variant_name: color.value,
+                                  attribute_value_id: [color.id],
+                                  price: Number(price) || 0,
+                                  images: []
+                                };
+                                setVariants([...variants, newVariant]);
+                              } else {
+                                const newVariant = {
+                                  id: `variant-${color.id}`,
+                                  variant_name: color.value,
+                                  attribute_value_id: [color.id],
+                                  price: Number(price) || 0,
+                                  images: []
+                                };
+                                setVariants([...variants, newVariant]);
+                              }
+                            } else {
+                              setVariants(variants.filter(v => !v.attribute_value_id.includes(color.id)));
+                            }
+                          }}
+                        />
+                        <span className="absolute bottom-2 left-2 right-2 text-xs font-medium text-white bg-black/50 rounded px-2 py-1 truncate">
+                          {color.value}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Sélection des tailles */}
+                {attributes.some(attr => attr.affectsPrice) && (
+                  <div className="mb-8">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-gray-700">Tailles disponibles</h3>
+                      <span className="text-sm text-gray-500">
+                        {variants.filter(v => v.attribute_value_id.length === 2).length} combinaison(s)
+                      </span>
+                    </div>
+                    <div className="space-y-4">
+                      {getAttributes?.[0]?.values
+                        .filter((color: any) => variants.some(v => v.attribute_value_id.includes(color.id)))
+                        .map((color: any) => (
+                          <div key={color.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className="w-5 h-5 rounded-full"
+                                  style={{ backgroundColor: color.hex || '#f3f4f6' }}
+                                />
+                                <span className="font-medium text-gray-900">{color.value}</span>
+                              </div>
+                              <div className="flex-1">
+                                <Select
+                                  onValueChange={(value) => {
+                                    const sizeId = Number(value);
+                                    if (value) {
+                                      const newVariant = {
+                                        id: `variant-${sizeId}-${color.id}`,
+                                        variant_name: `${getAttributes?.[1]?.values.find((s: any) => s.id === sizeId)?.value}-${color.value}`,
+                                        attribute_value_id: [sizeId, color.id],
+                                        price: getAttributes?.[1]?.values.find((s: any) => s.id === sizeId)?.price || Number(price) || 0,
+                                        images: []
+                                      };
+                                      setVariants([...variants, newVariant]);
+                                    } else {
+                                      setVariants(variants.filter(v => 
+                                        !(v.attribute_value_id.includes(color.id))
+                                      ));
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Sélectionner une taille" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {getAttributes?.[1]?.values.map((size: any) => (
+                                      <SelectItem 
+                                        key={size.id} 
+                                        value={String(size.id)}
+                                        disabled={variants.some(v => 
+                                          v.attribute_value_id.includes(size.id) && 
+                                          v.attribute_value_id.includes(color.id)
                                         )}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                              
-                              <div className="mt-4">
-                                <h4 className="text-sm font-medium mb-2">Ajouter des couleurs</h4>
-                                <div className="flex flex-wrap gap-2">
-                                  {availableColors
-                                    .filter(color => !variant.colors.some(c => c.id === color.id))
-                                    .map(color => (
-                                      <button
-                                        key={color.id}
-                                        type="button"
-                                        onClick={() => addColorToVariant(variant.id, color.id, color.name, color.hex)}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full"
                                       >
-                                        <span 
-                                          className="w-3 h-3 rounded-full border" 
-                                          style={{ backgroundColor: color.hex }}
-                                        />
-                                        <span className="text-sm">{color.name}</span>
-                                      </button>
-                                    ))
-                                  }
-                                </div>
+                                        <div className="flex items-center justify-between">
+                                          <span>{size.value}</span>
+                                          {size.price && (
+                                            <span className="text-[#ed7e0f] text-sm">
+                                              +{size.price - Number(price)} FCFA
+                                            </span>
+                                          )}
+                                        </div>
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
                               </div>
                             </div>
-                          )}
-                        </div>
-                      ))}
+                            <div className="flex flex-wrap gap-2">
+                              {variants
+                                .filter(v => 
+                                  v.attribute_value_id.includes(color.id) && 
+                                  v.attribute_value_id.length === 2
+                                )
+                                .map(variant => {
+                                  const size = getAttributes?.[1]?.values.find((s: any) => 
+                                    variant.attribute_value_id.includes(s.id)
+                                  );
+                                  return (
+                                    <div
+                                      key={variant.id}
+                                      className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm bg-[#ed7e0f]/10 border border-[#ed7e0f]"
+                                    >
+                                      <span className="font-medium">{size?.value}</span>
+                                      <button
+                                        onClick={() => {
+                                          setVariants(variants.filter(v => v.id !== variant.id));
+                                        }}
+                                        className="ml-2 p-0.5 hover:bg-[#ed7e0f]/20 rounded-full"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        ))}
                     </div>
-                  ) : (
-                    <div className="p-8 text-center border-2 border-dashed border-gray-200 rounded-xl">
-                      <div className="mx-auto w-12 h-12 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Plus className="w-6 h-6 text-gray-400" />
-                      </div>
-                      <h3 className="text-lg font-medium text-gray-800 mb-1">Aucune taille ajoutée</h3>
-                      <p className="text-gray-500">
-                        Commencez par ajouter les tailles disponibles pour ce produit
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Message pour les produits sans attributs spécifiques */}
-              {!needsSizeColorAttributes && selectedCategories.length > 0 && activeTab === 'attributes' && (
-                <div className="bg-white rounded-2xl shadow-sm p-6">
-                  <div className="p-8 text-center">
-                    <h3 className="text-lg font-medium text-gray-800 mb-2">
-                      Ce type de produit ne nécessite pas d'attributs spécifiques
-                    </h3>
-                    <p className="text-gray-500">
-                      Les attributs comme la taille et la couleur ne sont pas requis pour cette catégorie.
-                      Vous pouvez continuer avec les informations de base du produit.
-                    </p>
                   </div>
-                </div>
-              )}
+                )}
 
+                {/* Aperçu des variations */}
+                {variants.length > 0 && (
+                  <div className="mt-8">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {attributes.some(attr => attr.affectsPrice) 
+                            ? "Combinaisons sélectionnées" 
+                            : "Variations de couleur"}
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">Gérez les prix et le stock pour chaque variante</p>
+                      </div>
+                      <span className="px-3 py-1 bg-[#ed7e0f]/10 text-[#ed7e0f] rounded-full text-sm font-medium">
+                        {variants.length} variante{variants.length > 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {variants
+                        .filter(variant => {
+                          if (attributes.some(attr => attr.affectsPrice)) {
+                            return variant.attribute_value_id.length === 2;
+                          }
+                          return variant.attribute_value_id.length === 1;
+                        })
+                        .map((variant) => {
+                          const color = getAttributes?.[0]?.values.find((c: any) => 
+                            variant.attribute_value_id.includes(c.id)
+                          );
+                          const size = getAttributes?.[1]?.values.find((s: any) => 
+                            variant.attribute_value_id.includes(s.id)
+                          );
+                          
+                          return (
+                            <div 
+                              key={variant.id} 
+                              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-[#ed7e0f]/30 transition-all duration-200"
+                            >
+                              <div className="flex items-center gap-4 mb-4">
+                                {color?.hex && (
+                                  <div className="relative">
+                                    <div
+                                      className="w-14 h-14 rounded-xl border-2 border-white shadow-sm"
+                                      style={{ backgroundColor: color.hex }}
+                                    />
+                                    {variant.images.length > 0 && (
+                                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#ed7e0f] text-white text-xs flex items-center justify-center rounded-full">
+                                        {variant.images.length}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                                <div className="flex-1">
+                                  <h5 className="font-medium text-gray-900 flex items-center gap-2">
+                                    {color?.value}
+                                    {size && (
+                                      <>
+                                        <span className="text-gray-300">|</span>
+                                        <span className="text-gray-600">{size.value}</span>
+                                      </>
+                                    )}
+                                  </h5>
+                                  <div className="flex items-center gap-6 mt-2">
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="number"
+                                        value={variant.price}
+                                        onChange={(e) => {
+                                          const newPrice = Number(e.target.value);
+                                          setVariants(variants.map(v => 
+                                            v.id === variant.id ? { ...v, price: newPrice } : v
+                                          ));
+                                        }}
+                                        className="w-28 px-3 py-1.5 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
+                                        placeholder="Prix"
+                                      />
+                                      <span className="text-[#ed7e0f] font-medium">FCFA</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="number"
+                                        value={variant.stock || ''}
+                                        onChange={(e) => {
+                                          const newStock = Number(e.target.value);
+                                          setVariants(variants.map(v => 
+                                            v.id === variant.id ? { ...v, stock: newStock } : v
+                                          ));
+                                        }}
+                                        className="w-20 px-3 py-1.5 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
+                                        placeholder="Stock"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                                {variant.images.map((image, idx) => (
+                                  <div key={idx} className="relative group/image">
+                                    <img
+                                      src={URL.createObjectURL(image)}
+                                      alt={`Variant ${idx + 1}`}
+                                      className="w-16 h-16 object-cover rounded-lg ring-1 ring-gray-100"
+                                    />
+                                    <button
+                                      onClick={() => removeVariantImage(variant.id, idx)}
+                                      className="absolute -top-1.5 -right-1.5 p-1 bg-white rounded-full opacity-0 group-hover/image:opacity-100 transition-all duration-200 shadow-sm hover:bg-red-50"
+                                    >
+                                      <X className="w-3.5 h-3.5 text-red-500" />
+                                    </button>
+                                  </div>
+                                ))}
+                                <label className="w-16 h-16 flex flex-col items-center justify-center gap-1 border border-dashed border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50/50 transition-colors">
+                                  <Plus className="w-4 h-4 text-gray-400" />
+                                  <span className="text-[10px] text-gray-400">Ajouter</span>
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={(e) => e.target.files && handleVariantImageUpload(variant.id, e.target.files)}
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
               <div className="flex max-sm:hidden gap-3">
                 <button
                   type="button"
