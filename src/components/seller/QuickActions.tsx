@@ -27,7 +27,7 @@ export function QuickActions({ sellerData }: QuickActionsProps) {
       title: "Produits",
       description: "Gérer l'inventaire",
       icon: <Package className="w-4 h-4 text-gray-700" />,
-      link: "/seller/products/manage",
+      link: "/seller/products",
       metric: `${sellerData?.shop?.products_count || 0}`
     },
     {
