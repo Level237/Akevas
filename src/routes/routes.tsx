@@ -40,6 +40,7 @@ import ListShopReviewPage from "@/pages/admin/reviews/ListShopReviewPage";
 import SucessPaymentPage from "@/pages/payment/notchpay/SucessPaymentPage";
 import MobileMoneyPaymentPage from "@/pages/user/MobileMoneyPaymentPage";
 import AddShopPage from "@/pages/admin/shops/add-shop";
+import CatalogPage from "@/pages/CatalogPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -48,6 +49,10 @@ export const routes = createBrowserRouter([
   {
     path: '/c/:url',
     element: <CategoryProductsPage />
+  },
+  {
+    path: '/catalog/:shopKey',
+    element: <CatalogPage />
   },
   {
     path: '/login',

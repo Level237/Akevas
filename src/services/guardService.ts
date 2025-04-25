@@ -181,6 +181,12 @@ export const guardService = createApi({
                 url:"/api/get/modal/shop",
                 method:"Get"
             })
+        }),
+        getCatalogSeller:builder.query({
+            query:(shopKey)=>({
+                url:`/api/catalogue/${shopKey}`,
+                method:"GET"
+            })
         })
         
     }),
@@ -208,5 +214,6 @@ export const {
     useGetCategoryByUrlQuery,
     useSearchByQueryQuery,
     useGetProfileShopQuery,
-    useGetModalShopQuery
+    useGetModalShopQuery,
+    useGetCatalogSellerQuery
 } = guardService
