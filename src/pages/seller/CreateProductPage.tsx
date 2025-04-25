@@ -162,7 +162,7 @@ const CreateProductPage: React.FC = () => {
         restCombinations.map(combo => ({
           name: combo.name ? `${value.value}-${combo.name}` : value.value,
           ids: [value.id, ...combo.ids],
-          price: value.price || combo.price
+          price: Number(price) || 0 // Utiliser le prix général comme valeur initiale
         }))
       );
     };
@@ -278,7 +278,8 @@ const CreateProductPage: React.FC = () => {
     if (hasSelectedAttributes) {
       const invalidVariants = variants.some(variant =>
         variant.images.length === 0 ||
-        !variant.price
+        !variant.price ||
+        variant.price <= 0
       );
 
       if (invalidVariants) {
@@ -953,7 +954,7 @@ const CreateProductPage: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="space-y-4 max-w-2xl">
                       {variants
                         .filter(variant => {
                           if (attributes.some(attr => attr.affectsPrice)) {
@@ -974,91 +975,120 @@ const CreateProductPage: React.FC = () => {
                               key={variant.id} 
                               className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-[#ed7e0f]/30 transition-all duration-200"
                             >
-                              <div className="flex items-center gap-4 mb-4">
-                                {color?.hex && (
-                                  <div className="relative">
-                                    <div
-                                      className="w-14 h-14 rounded-xl border-2 border-white shadow-sm"
-                                      style={{ backgroundColor: color.hex }}
-                                    />
-                                    {variant.images.length > 0 && (
-                                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#ed7e0f] text-white text-xs flex items-center justify-center rounded-full">
-                                        {variant.images.length}
-                                      </span>
+                              <div className="flex flex-col gap-4">
+                                <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-3 flex-1">
+                                    {color?.hex && (
+                                      <div className="relative">
+                                        <div
+                                          className="w-10 h-10 rounded-xl border-2 border-white shadow-sm"
+                                          style={{ backgroundColor: color.hex }}
+                                        />
+                                        {variant.images.length > 0 && (
+                                          <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#ed7e0f] text-white text-xs flex items-center justify-center rounded-full">
+                                            {variant.images.length}
+                                          </span>
+                                        )}
+                                      </div>
                                     )}
-                                  </div>
-                                )}
-                                <div className="flex-1">
-                                  <h5 className="font-medium text-gray-900 flex items-center gap-2">
-                                    {color?.value}
-                                    {size && (
-                                      <>
-                                        <span className="text-gray-300">|</span>
-                                        <span className="text-gray-600">{size.value}</span>
-                                      </>
-                                    )}
-                                  </h5>
-                                  <div className="flex items-center gap-6 mt-2">
-                                    <div className="flex items-center gap-2">
-                                      <input
-                                        type="number"
-                                        value={variant.price}
-                                        onChange={(e) => {
-                                          const newPrice = Number(e.target.value);
-                                          setVariants(variants.map(v => 
-                                            v.id === variant.id ? { ...v, price: newPrice } : v
-                                          ));
-                                        }}
-                                        className="w-28 px-3 py-1.5 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
-                                        placeholder="Prix"
-                                      />
-                                      <span className="text-[#ed7e0f] font-medium">FCFA</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <input
-                                        type="number"
-                                        value={variant.stock || ''}
-                                        onChange={(e) => {
-                                          const newStock = Number(e.target.value);
-                                          setVariants(variants.map(v => 
-                                            v.id === variant.id ? { ...v, stock: newStock } : v
-                                          ));
-                                        }}
-                                        className="w-20 px-3 py-1.5 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
-                                        placeholder="Stock"
-                                      />
+                                    <div>
+                                      <h5 className="font-medium text-gray-900 flex items-center gap-2">
+                                        {color?.value}
+                                        {size && (
+                                          <>
+                                            <span className="text-gray-300">|</span>
+                                            <span className="text-gray-600">{size.value}</span>
+                                          </>
+                                        )}
+                                      </h5>
+                                      <div className="flex items-center gap-4 mt-1">
+                                        <div className="flex items-center gap-2">
+                                          {attributes.some(attr => attr.affectsPrice) ? (
+                                            <>
+                                            <input
+                                              type="number"
+                                             
+                                              value={variant.price}
+                                            onChange={(e) => {
+                                              const newPrice = Number(e.target.value);
+                                              setVariants(variants.map(v => 
+                                                v.id === variant.id ? { ...v, price: newPrice } : v
+                                              ));
+                                            }}
+                                            className="w-24 px-2 py-1 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
+                                            placeholder="Prix"
+                                            />
+                                            <span className="text-[#ed7e0f] text-sm font-medium">FCFA</span>
+                                            </>
+                                            
+                                          ) : (
+                                            <>
+                                            <input
+                                            type="number"
+                                            readOnly
+                                            value={variant.price}
+                                          onChange={(e) => {
+                                            const newPrice = Number(e.target.value);
+                                            setVariants(variants.map(v => 
+                                              v.id === variant.id ? { ...v, price: newPrice } : v
+                                            ));
+                                          }}
+                                          className="w-24 px-2 py-1 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
+                                          placeholder="Prix"
+                                          />
+
+                                            <span className="text-[#ed7e0f] text-sm font-medium">FCFA</span>
+                                            </>
+                                            
+                                          )}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="number"
+                                            value={variant.stock || ''}
+                                            onChange={(e) => {
+                                              const newStock = Number(e.target.value);
+                                              setVariants(variants.map(v => 
+                                                v.id === variant.id ? { ...v, stock: newStock } : v
+                                              ));
+                                            }}
+                                            className="w-20 px-2 py-1 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
+                                            placeholder="Stock"
+                                          />
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
-                                {variant.images.map((image, idx) => (
-                                  <div key={idx} className="relative group/image">
-                                    <img
-                                      src={URL.createObjectURL(image)}
-                                      alt={`Variant ${idx + 1}`}
-                                      className="w-16 h-16 object-cover rounded-lg ring-1 ring-gray-100"
+                                <div className="flex flex-wrap gap-3">
+                                  {variant.images.map((image, idx) => (
+                                    <div key={idx} className="relative group/image">
+                                      <img
+                                        src={URL.createObjectURL(image)}
+                                        alt={`Variant ${idx + 1}`}
+                                        className="w-20 h-20 object-cover rounded-lg ring-1 ring-gray-100"
+                                      />
+                                      <button
+                                        onClick={() => removeVariantImage(variant.id, idx)}
+                                        className="absolute -top-2 -right-2 p-1 bg-white rounded-full opacity-0 group-hover/image:opacity-100 transition-all duration-200 shadow-sm hover:bg-red-50"
+                                      >
+                                        <X className="w-3.5 h-3.5 text-red-500" />
+                                      </button>
+                                    </div>
+                                  ))}
+                                  <label className="w-20 h-20 flex flex-col items-center justify-center gap-1 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50/50 transition-colors">
+                                    <Plus className="w-5 h-5 text-gray-400" />
+                                    <span className="text-xs text-gray-400">Ajouter</span>
+                                    <input
+                                      type="file"
+                                      className="hidden"
+                                      accept="image/*"
+                                      multiple
+                                      onChange={(e) => e.target.files && handleVariantImageUpload(variant.id, e.target.files)}
                                     />
-                                    <button
-                                      onClick={() => removeVariantImage(variant.id, idx)}
-                                      className="absolute -top-1.5 -right-1.5 p-1 bg-white rounded-full opacity-0 group-hover/image:opacity-100 transition-all duration-200 shadow-sm hover:bg-red-50"
-                                    >
-                                      <X className="w-3.5 h-3.5 text-red-500" />
-                                    </button>
-                                  </div>
-                                ))}
-                                <label className="w-16 h-16 flex flex-col items-center justify-center gap-1 border border-dashed border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50/50 transition-colors">
-                                  <Plus className="w-4 h-4 text-gray-400" />
-                                  <span className="text-[10px] text-gray-400">Ajouter</span>
-                                  <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    multiple
-                                    onChange={(e) => e.target.files && handleVariantImageUpload(variant.id, e.target.files)}
-                                  />
-                                </label>
+                                  </label>
+                                </div>
                               </div>
                             </div>
                           );
