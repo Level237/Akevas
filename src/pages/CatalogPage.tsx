@@ -8,10 +8,7 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import { ArrowLeft, Search, Filter, Share2, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
-interface Category {
-  id: number;
-  name: string;
-}
+
 
 const CatalogPage: React.FC = () => {
   const { shopKey } = useParams();
@@ -31,7 +28,7 @@ const CatalogPage: React.FC = () => {
   ] : [];
   // Filtrer les produits selon la catégorie sélectionnée
   const filteredProducts = catalogData ? 
-    selectedCategory === 'all' 
+    selectedCategory === 'Tous les produits' 
       ? catalogData 
       : catalogData.filter((product: any) => 
           product.product_categories.some((cat: any) => 
@@ -39,7 +36,7 @@ const CatalogPage: React.FC = () => {
           )
         )
     : [];
-  console.log(filteredProducts)
+  console.log(selectedCategory)
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white">
@@ -62,11 +59,11 @@ const CatalogPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           {/* Barre de navigation principale */}
           <div className="flex items-center h-16 px-4">
-            <Link to="/stores" className="mr-4 lg:hidden">
+            <AsyncLink to={`/shop/${catalogData[0].shop_id}`} className="mr-4 lg:hidden">
               <ArrowLeft className="w-6 h-6 text-gray-700" />
-            </Link>
+            </AsyncLink>
             <div className="flex-1">
-              <h1 className="text-lg font-semibold text-gray-900">La Boutique</h1>
+              <h1 className="text-lg font-semibold text-gray-900">{catalogData[0].shop_name}</h1>
               <p className="text-sm text-gray-500 hidden md:block">Catalogue des produits</p>
             </div>
             <div className="flex items-center gap-3">
