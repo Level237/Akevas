@@ -70,7 +70,7 @@ const CreateProductPage: React.FC = () => {
 
   //console.log(selectedSubCategories)
   // Liste des catégories disponibles
-
+  console.log(variants)
   // Initialisation des attributs avec la propriété affectsPrice
   useEffect(() => {
     if (getAttributes) {
@@ -950,7 +950,10 @@ const CreateProductPage: React.FC = () => {
                         <p className="text-sm text-gray-500 mt-1">Gérez les prix et le stock pour chaque variante</p>
                       </div>
                       <span className="px-3 py-1 bg-[#ed7e0f]/10 text-[#ed7e0f] rounded-full text-sm font-medium">
-                        {variants.length} variante{variants.length > 1 ? 's' : ''}
+                        {attributes.some(attr => attr.affectsPrice)
+                          ? variants.filter(v => v.attribute_value_id.length === 2).length
+                          : variants.filter(v => v.attribute_value_id.length === 1).length
+                        } variante{variants.length > 1 ? 's' : ''}
                       </span>
                     </div>
 
