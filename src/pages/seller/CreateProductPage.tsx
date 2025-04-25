@@ -68,6 +68,13 @@ const CreateProductPage: React.FC = () => {
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const navigate = useNavigate()
 
+  // Ajout des pointures par catégorie
+  const shoeSizes = {
+    'Bébé': ['16', '17', '18'],
+    'Enfant': ['28', '30', '32', '34', '35', '36', '37'],
+    'Adulte': ['38', '39', '40', '41', '42', '43', '44', '45']
+  };
+
   //console.log(selectedSubCategories)
   // Liste des catégories disponibles
   console.log(variants)
@@ -707,26 +714,26 @@ const CreateProductPage: React.FC = () => {
                 {/* Type de variation */}
                 <div className="mb-8">
                   <h3 className="text-sm font-medium text-gray-700 mb-3">Type de variation</h3>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     <button
                       type="button"
                       onClick={() => {
                         setAttributes(attributes.filter(attr => !attr.affectsPrice));
                         setVariants([]);
                       }}
-                      className={`p-4 rounded-xl border-2 transition-all ${
+                      className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         !attributes.some(attr => attr.affectsPrice)
                           ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
                       <div className="flex flex-col items-center gap-2">
-                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
                           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                           </svg>
                         </div>
-                        <span className="text-sm font-medium">Couleur uniquement</span>
+                        <span className="text-xs font-medium">Couleur uniquement</span>
                       </div>
                     </button>
                     <button
@@ -745,19 +752,50 @@ const CreateProductPage: React.FC = () => {
                         }
                         setVariants([]);
                       }}
-                      className={`p-4 rounded-xl border-2 transition-all ${
-                        attributes.some(attr => attr.affectsPrice)
+                      className={`p-4 h-24 rounded-xl border-2 transition-all ${
+                        attributes.some(attr => attr.affectsPrice && attr.name === 'Taille')
                           ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
                       <div className="flex flex-col items-center gap-2">
-                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
                           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                           </svg>
                         </div>
-                        <span className="text-sm font-medium">Couleur et Taille</span>
+                        <span className="text-xs font-medium">Couleur et Taille</span>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!attributes.some(attr => attr.affectsPrice)) {
+                          setAttributes([
+                            ...attributes,
+                            {
+                              id: 3,
+                              name: 'Pointure',
+                              affectsPrice: true,
+                              values: []
+                            }
+                          ]);
+                        }
+                        setVariants([]);
+                      }}
+                      className={`p-4 h-24 rounded-xl border-2 transition-all ${
+                        attributes.some(attr => attr.affectsPrice && attr.name === 'Pointure')
+                          ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                          </svg>
+                        </div>
+                        <span className="text-xs font-medium">Couleur et Pointure</span>
                       </div>
                     </button>
                   </div>
@@ -771,7 +809,7 @@ const CreateProductPage: React.FC = () => {
                       {variants.filter(v => v.attribute_value_id.length === 1).length} sélectionné(s)
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-8 gap-3">
                     {getAttributes?.[0]?.values.map((color: any) => (
                       <label
                         key={color.id}
@@ -783,16 +821,16 @@ const CreateProductPage: React.FC = () => {
                       >
                         <div className="aspect-square rounded-xl overflow-hidden">
                           <div
-                            className="w-full h-full"
-                            style={{ backgroundColor: color.hex || '#f3f4f6' }}
+                            className="w-12 h-12"
+                            style={{ backgroundColor: color.hex_color || '#f3f4f6' }}
                           />
                         </div>
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                          <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
                             {variants.some(v => v.attribute_value_id.includes(color.id)) ? (
                               <X className="w-4 h-4 text-gray-900" />
                             ) : (
-                              <Plus className="w-4 h-4 text-gray-900" />
+                              <Plus className="w-2 h-2 text-gray-900" />
                             )}
                           </div>
                         </div>
@@ -826,9 +864,7 @@ const CreateProductPage: React.FC = () => {
                             }
                           }}
                         />
-                        <span className="absolute bottom-2 left-2 right-2 text-xs font-medium text-white bg-black/50 rounded px-2 py-1 truncate">
-                          {color.value}
-                        </span>
+                       
                       </label>
                     ))}
                   </div>
@@ -852,7 +888,7 @@ const CreateProductPage: React.FC = () => {
                               <div className="flex items-center gap-2">
                                 <span
                                   className="w-5 h-5 rounded-full"
-                                  style={{ backgroundColor: color.hex || '#f3f4f6' }}
+                                  style={{ backgroundColor: color.hex_color || '#f3f4f6' }}
                                 />
                                 <span className="font-medium text-gray-900">{color.value}</span>
                               </div>
@@ -937,6 +973,82 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 )}
 
+                {/* Sélection des pointures */}
+                {attributes.some(attr => attr.affectsPrice && attr.name === 'Pointure') && (
+                  <div className="mb-8">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-gray-700">Pointures disponibles</h3>
+                      <span className="text-sm text-gray-500">
+                        {variants.filter(v => v.attribute_value_id.length === 2).length} combinaison(s)
+                      </span>
+                    </div>
+                    <div className="space-y-4">
+                      {getAttributes?.[0]?.values
+                        .filter((color: any) => variants.some(v => v.attribute_value_id.includes(color.id)))
+                        .map((color: any) => (
+                          <div key={color.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className="w-5 h-5 rounded-full"
+                                  style={{ backgroundColor: color.hex || '#f3f4f6' }}
+                                />
+                                <span className="font-medium text-gray-900">{color.value}</span>
+                              </div>
+                            </div>
+                            
+                            {/* Catégories de pointures */}
+                            <div className="space-y-4">
+                              {Object.entries(shoeSizes).map(([category, sizes]) => (
+                                <div key={category} className="space-y-2">
+                                  <h4 className="text-sm font-medium text-gray-700">{category}</h4>
+                                  <div className="flex flex-wrap gap-2">
+                                    {sizes.map((size) => (
+                                      <button
+                                        key={size}
+                                        onClick={() => {
+                                          const sizeId = Number(size);
+                                          if (!variants.some(v => 
+                                            v.attribute_value_id.includes(color.id) && 
+                                            v.attribute_value_id.includes(sizeId)
+                                          )) {
+                                            const newVariant = {
+                                              id: `variant-${sizeId}-${color.id}`,
+                                              variant_name: `${size}-${color.value}`,
+                                              attribute_value_id: [sizeId, color.id],
+                                              price: Number(price) || 0,
+                                              images: []
+                                            };
+                                            setVariants([...variants, newVariant]);
+                                          } else {
+                                            setVariants(variants.filter(v => 
+                                              !(v.attribute_value_id.includes(color.id) && 
+                                                v.attribute_value_id.includes(sizeId))
+                                            ));
+                                          }
+                                        }}
+                                        className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                                          variants.some(v => 
+                                            v.attribute_value_id.includes(color.id) && 
+                                            v.attribute_value_id.includes(Number(size))
+                                          )
+                                            ? 'bg-[#ed7e0f] text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        }`}
+                                      >
+                                        {size}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Aperçu des variations */}
                 {variants.length > 0 && (
                   <div className="mt-8">
@@ -953,7 +1065,7 @@ const CreateProductPage: React.FC = () => {
                         {attributes.some(attr => attr.affectsPrice)
                           ? variants.filter(v => v.attribute_value_id.length === 2).length
                           : variants.filter(v => v.attribute_value_id.length === 1).length
-                        } variante{variants.length > 1 ? 's' : ''}
+                        } var{variants.length > 1 ? 's' : ''}
                       </span>
                     </div>
 
@@ -974,123 +1086,121 @@ const CreateProductPage: React.FC = () => {
                           );
                           
                           return (
-                            <div 
-                              key={variant.id} 
-                              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-[#ed7e0f]/30 transition-all duration-200"
+                            <div
+                              key={variant.id}
+                              className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300"
                             >
-                              <div className="flex flex-col gap-4">
-                                <div className="flex items-center gap-4">
-                                  <div className="flex items-center gap-3 flex-1">
-                                    {color?.hex && (
+                              <div className="flex flex-col gap-6">
+                                {/* En-tête avec couleur et taille */}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-4">
+                                    {color?.hex_color && (
                                       <div className="relative">
                                         <div
-                                          className="w-10 h-10 rounded-xl border-2 border-white shadow-sm"
-                                          style={{ backgroundColor: color.hex }}
+                                          className="w-8 h-8 rounded-xl border-2 border-white shadow-md transform hover:scale-105 transition-transform"
+                                          style={{ backgroundColor: color.hex_color }}
                                         />
                                         {variant.images.length > 0 && (
-                                          <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#ed7e0f] text-white text-xs flex items-center justify-center rounded-full">
+                                          <span className="absolute -top-2 -right-2 w-6 h-6 bg-[#ed7e0f] text-white text-xs font-bold flex items-center justify-center rounded-full shadow-sm">
                                             {variant.images.length}
                                           </span>
                                         )}
                                       </div>
                                     )}
                                     <div>
-                                      <h5 className="font-medium text-gray-900 flex items-center gap-2">
+                                      <h5 className="text-lg flex items-center font-semibold text-gray-900">
                                         {color?.value}
                                         {size && (
-                                          <>
-                                            <span className="text-gray-300">|</span>
-                                            <span className="text-gray-600">{size.value}</span>
-                                          </>
+                                          <span className="inline-flex items-center">
+                                            <span className="w-1.5 h-1.5 bg-gray-300 rounded-full mx-2"></span>
+                                            <span className="text-gray-700 font-medium">{size.value}</span>
+                                          </span>
                                         )}
                                       </h5>
-                                      <div className="flex items-center gap-4 mt-1">
-                                        <div className="flex items-center gap-2">
-                                          {attributes.some(attr => attr.affectsPrice) ? (
-                                            <>
-                                            <input
-                                              type="number"
-                                             
-                                              value={variant.price}
+                                    </div>
+                                  </div>
+                                  {!attributes.some(attr => attr.affectsPrice) && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-gray-500 text-sm">Prix :</span>
+                                      <span className="text-gray-900 font-medium">{variant.price} FCFA</span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Section prix et stock */}
+                                <div className={`${attributes.some(attr => attr.affectsPrice) ? 'grid grid-cols-2 gap-4' : ''}`}>
+                                {attributes.some(attr => attr.affectsPrice) && (
+                                  <div className="space-y-2">
+                                    <label className="block text-sm font-medium text-gray-700">Prix</label>
+                                    <div className="relative">
+                                      
+                                        <div className="relative flex items-center">
+                                          <input
+                                            type="number"
+                                            value={variant.price}
                                             onChange={(e) => {
                                               const newPrice = Number(e.target.value);
-                                              setVariants(variants.map(v => 
+                                              setVariants(variants.map(v =>
                                                 v.id === variant.id ? { ...v, price: newPrice } : v
                                               ));
                                             }}
-                                            className="w-24 px-2 py-1 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
-                                            placeholder="Prix"
-                                            />
-                                            <span className="text-[#ed7e0f] text-sm font-medium">FCFA</span>
-                                            </>
-                                            
-                                          ) : (
-                                            <>
-                                            <input
-                                            type="number"
-                                            readOnly
-                                            value={variant.price}
-                                          onChange={(e) => {
-                                            const newPrice = Number(e.target.value);
-                                            setVariants(variants.map(v => 
-                                              v.id === variant.id ? { ...v, price: newPrice } : v
-                                            ));
-                                          }}
-                                          className="w-24 px-2 py-1 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
-                                          placeholder="Prix"
+                                            className="w-full pl-3 pr-16 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f] transition-all"
+                                            placeholder="Entrez le prix"
                                           />
-
-                                            <span className="text-[#ed7e0f] text-sm font-medium">FCFA</span>
-                                            </>
-                                            
-                                          )}
+                                          <span className="absolute right-3 text-[#ed7e0f] font-medium">FCFA</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                          <input
-                                            type="number"
-                                            value={variant.stock || ''}
-                                            onChange={(e) => {
-                                              const newStock = Number(e.target.value);
-                                              setVariants(variants.map(v => 
-                                                v.id === variant.id ? { ...v, stock: newStock } : v
-                                              ));
-                                            }}
-                                            className="w-20 px-2 py-1 text-sm bg-gray-50 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
-                                            placeholder="Stock"
-                                          />
-                                        </div>
-                                      </div>
+                                      
                                     </div>
+                                  </div>
+                                )}
+                                  <div className="space-y-2">
+                                    <label className="block text-sm font-medium text-gray-700">Stock</label>
+                                    <input
+                                      type="number"
+                                      value={variant.stock || ''}
+                                      onChange={(e) => {
+                                        const newStock = Number(e.target.value);
+                                        setVariants(variants.map(v =>
+                                          v.id === variant.id ? { ...v, stock: newStock } : v
+                                        ));
+                                      }}
+                                      className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f] transition-all"
+                                      placeholder="Quantité disponible"
+                                    />
                                   </div>
                                 </div>
 
-                                <div className="flex flex-wrap gap-3">
-                                  {variant.images.map((image, idx) => (
-                                    <div key={idx} className="relative group/image">
-                                      <img
-                                        src={URL.createObjectURL(image)}
-                                        alt={`Variant ${idx + 1}`}
-                                        className="w-20 h-20 object-cover rounded-lg ring-1 ring-gray-100"
+                                {/* Section images */}
+                                <div className="space-y-3">
+                                  <label className="block text-sm font-medium text-gray-700">Images du produit</label>
+                                  <div className="flex flex-wrap gap-3">
+                                    {variant.images.map((image, idx) => (
+                                      <div key={idx} className="relative group">
+                                        <img
+                                          src={URL.createObjectURL(image)}
+                                          alt={`Variant ${idx + 1}`}
+                                          className="w-16 h-16 object-cover rounded-xl shadow-sm group-hover:ring-2 group-hover:ring-[#ed7e0f] transition-all"
+                                        />
+                                        <button
+                                          onClick={() => removeVariantImage(variant.id, idx)}
+                                          className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
+                                        >
+                                          <X className="w-4 h-4 text-red-500" />
+                                        </button>
+                                      </div>
+                                    ))}
+                                    <label className="w-16 h-16 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50/80 hover:border-[#ed7e0f] transition-all group">
+                                      <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#ed7e0f]" />
+                                      <span className="text-xs text-gray-400 group-hover:text-[#ed7e0f]">Ajouter</span>
+                                      <input
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={(e) => e.target.files && handleVariantImageUpload(variant.id, e.target.files)}
                                       />
-                                      <button
-                                        onClick={() => removeVariantImage(variant.id, idx)}
-                                        className="absolute -top-2 -right-2 p-1 bg-white rounded-full opacity-0 group-hover/image:opacity-100 transition-all duration-200 shadow-sm hover:bg-red-50"
-                                      >
-                                        <X className="w-3.5 h-3.5 text-red-500" />
-                                      </button>
-                                    </div>
-                                  ))}
-                                  <label className="w-20 h-20 flex flex-col items-center justify-center gap-1 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50/50 transition-colors">
-                                    <Plus className="w-5 h-5 text-gray-400" />
-                                    <span className="text-xs text-gray-400">Ajouter</span>
-                                    <input
-                                      type="file"
-                                      className="hidden"
-                                      accept="image/*"
-                                      multiple
-                                      onChange={(e) => e.target.files && handleVariantImageUpload(variant.id, e.target.files)}
-                                    />
-                                  </label>
+                                    </label>
+                                  </div>
                                 </div>
                               </div>
                             </div>
