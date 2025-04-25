@@ -1118,6 +1118,9 @@ const CreateProductPage: React.FC = () => {
                           const size = getAttributes?.[1]?.values.find((s: any) => 
                             variant.attribute_value_id.includes(s.id)
                           );
+                          const shoeSize = getAttributes?.[3]?.values.find((s: any) => 
+                            variant.attribute_value_id.includes(s.id)
+                          );
                           
                           return (
                             <div
@@ -1125,7 +1128,7 @@ const CreateProductPage: React.FC = () => {
                               className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300"
                             >
                               <div className="flex flex-col gap-6">
-                                {/* En-tête avec couleur et taille */}
+                                {/* En-tête avec couleur et taille/pointure */}
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-4">
                                     {color?.hex_color && (
@@ -1144,10 +1147,10 @@ const CreateProductPage: React.FC = () => {
                                     <div>
                                       <h5 className="text-lg flex items-center font-semibold text-gray-900">
                                         {color?.value}
-                                        {size && (
+                                        {(size || shoeSize) && (
                                           <span className="inline-flex items-center">
                                             <span className="w-1.5 h-1.5 bg-gray-300 rounded-full mx-2"></span>
-                                            <span className="text-gray-700 font-medium">{size.value}</span>
+                                            <span className="text-gray-700 font-medium">{size?.value || shoeSize?.value}</span>
                                           </span>
                                         )}
                                       </h5>
