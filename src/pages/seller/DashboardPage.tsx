@@ -376,8 +376,8 @@ const DashboardPage = () => {
                   Ressources utiles
                 </h3>
                 <div className="space-y-4">
-                  <a
-                    href="#"
+                  <AsyncLink
+                    to='/seller/guide'
                     className="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center">
@@ -395,7 +395,7 @@ const DashboardPage = () => {
                         </p>
                       </div>
                     </div>
-                  </a>
+                  </AsyncLink>
 
                   <a
                     href="#"
