@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { useCurrentSellerQuery } from '@/services/sellerService';
-import { Share2, Plus, ShoppingBag, Search, Grid, List } from 'lucide-react';
+import { Share2, Plus, ShoppingBag, Search, Grid, List, Copy, Check, Facebook, MessageCircle, Twitter, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Product } from '@/types/products';
 import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const SellerCatalog: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [searchQuery, setSearchQuery] = useState('');
+    const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+    const [isCopied, setIsCopied] = useState(false);
     const { data: { data: seller } = {}, isLoading: sellerLoading } = useCurrentSellerQuery('seller');
     const shopId = seller?.shop?.shop_id;
     const products = seller?.shop?.products;
@@ -67,16 +70,18 @@ const SellerCatalog: React.FC = () => {
         );
     }
 
-    const handleShare = async () => {
+    const handleShare = () => {
+        setIsShareDialogOpen(true);
+    };
+
+    const handleCopyLink = async () => {
+        const shareUrl = `${window.location.origin}/shop/${shopId}/catalog`;
         try {
-            const shareUrl = `${window.location.origin}/shop/${shopId}/catalog`;
-            await navigator.share({
-                title: `Catalogue de ${seller.shop.name}`,
-                text: 'Découvrez mes produits !',
-                url: shareUrl,
-            });
+            await navigator.clipboard.writeText(shareUrl);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
         } catch (error) {
-            console.error('Erreur lors du partage:', error);
+            console.error('Erreur lors de la copie:', error);
         }
     };
 
@@ -91,6 +96,71 @@ const SellerCatalog: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Partager votre catalogue</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+                            <Input 
+                                readOnly 
+                                value={`${window.location.origin}/shop/${shopId}/catalog`}
+                                className="bg-transparent border-none focus-visible:ring-0"
+                            />
+                            <button
+                                onClick={handleCopyLink}
+                                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                            >
+                                {isCopied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <a 
+                                href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.origin}/shop/${shopId}/catalog`}
+                                target="_blank"
+                                rel="noopener noreferrer" 
+                                className="flex items-center justify-center gap-2 p-2 bg-[#1877F2] text-white rounded-lg hover:bg-[#1865D3] transition-colors"
+                            >
+                                <Facebook className="w-5 h-5" />
+                                Facebook
+                            </a>
+
+                            <a
+                                href={`https://twitter.com/intent/tweet?url=${window.location.origin}/shop/${shopId}/catalog`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-2 p-2 bg-[#1DA1F2] text-white rounded-lg hover:bg-[#1A8CD8] transition-colors"
+                            >
+                                <Twitter className="w-5 h-5" />
+                                Twitter
+                            </a>
+
+                            <a
+                                href={`https://wa.me/?text=${window.location.origin}/shop/${shopId}/catalog`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-2 p-2 bg-[#25D366] text-white rounded-lg hover:bg-[#20BD5A] transition-colors"
+                            >
+                                <MessageCircle className="w-5 h-5" />
+                                WhatsApp
+                            </a>
+
+                            <a
+                                href={`https://telegram.me/share/url?url=${window.location.origin}/shop/${shopId}/catalog`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-2 p-2 bg-[#0088cc] text-white rounded-lg hover:bg-[#0077b3] transition-colors"
+                            >
+                                <Send className="w-5 h-5" />
+                                Telegram
+                            </a>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
         <div className="max-w-7xl mx-auto px-4 py-6">
                 {/* Hero Section */}
                 <div className="bg-gradient-to-r from-[#ed7e0f] to-[#ff8f1f] rounded-2xl p-8 mb-8 text-white">
@@ -99,7 +169,7 @@ const SellerCatalog: React.FC = () => {
                     <div className="flex gap-4 mt-6">
                     <AsyncLink
                         to="/seller/create-product"
-                            className="flex items-center gap-2 bg-white text-[#ed7e0f] px-6 py-3 rounded-lg hover:bg-gray-100 transition-all transform hover:scale-105"
+                            className="flex items-center gap-2 bg-white text-[#ed7e0f] px-6 py-3 rounded-lg hover:bg-gray-100 transition-all"
                     >
                         <Plus size={20} />
                             <span>Ajouter un produit</span>
