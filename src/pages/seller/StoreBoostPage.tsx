@@ -43,11 +43,12 @@ const StoreBoostPage: React.FC = () => {
   const { data: subscription, isLoading: isLoadingSubscription } = useGetSubscriptionQuery("guard");
   const {data: { data: sellerData }= {},isLoading:isLoadingSeller}=useCurrentSellerQuery<SellerResponse>('seller')
   const userCoins = sellerData?.shop.coins;
+  const shopLevel = sellerData?.shop.level;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showPaymentProcess, setShowPaymentProcess] = useState(false);
   const [boostStatus, setBoostStatus] = useState<'processing' | 'success' | 'failed'>('processing');
   const [boostResponse, setBoostResponse] = useState<any>(null);
-  
+  const [isLevelError, setIsLevelError] = useState(false);
   if (isLoading || isLoadingSubscription) {
     return <div className='flex justify-center items-center h-screen'><IsLoadingComponents isLoading={isLoading || isLoadingSubscription} /></div>
   }
@@ -58,6 +59,10 @@ const StoreBoostPage: React.FC = () => {
         setIsModalOpen(true);
         return;
       }
+    }
+    if (!isLoadingSeller && shopLevel && parseInt(shopLevel) <= 2) {
+      setIsLevelError(true);
+      return;
     }
     if(!isLoading && checkAuth?.isAuthenticated!==true){
         redirectToLogin({redirectUrl:"/seller/pro"})
@@ -146,6 +151,42 @@ const StoreBoostPage: React.FC = () => {
     handleContinue();
   };
 
+  if (isLevelError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl mx-auto bg-white rounded-3xl shadow-lg p-8 border border-orange-100"
+        >
+          <div className="flex flex-col items-center gap-6">
+            <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center">
+              <AlertCircle className="w-10 h-10 text-red-600" />
+            </div>
+            
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Niveau de boutique insuffisant
+              </h3>
+              <p className="text-gray-600 mb-8">
+                Votre boutique doit être au moins de niveau 3 pour pouvoir accéder aux fonctionnalités de boost.
+              </p>
+            </div>
+
+            <div className="flex gap-4 w-full max-w-md">
+              <button
+                onClick={() => window.history.back()}
+                className="flex-1 py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                  bg-orange-50 text-[#ed7e0f] hover:bg-orange-100"
+              >
+                Retour
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
 

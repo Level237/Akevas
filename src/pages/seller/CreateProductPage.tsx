@@ -1156,12 +1156,23 @@ const CreateProductPage: React.FC = () => {
                                       </h5>
                                     </div>
                                   </div>
-                                  {!attributes.some(attr => attr.affectsPrice) && (
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-gray-500 text-sm">Prix :</span>
-                                      <span className="text-gray-900 font-medium">{variant.price} FCFA</span>
-                                    </div>
-                                  )}
+                                  <div className="flex items-center gap-4">
+                                    {!attributes.some(attr => attr.affectsPrice) && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-gray-500 text-sm">Prix :</span>
+                                        <span className="text-gray-900 font-medium">{variant.price} FCFA</span>
+                                      </div>
+                                    )}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setVariants(variants.filter(v => v.id !== variant.id));
+                                      }}
+                                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                    >
+                                      <X className="w-5 h-5 text-gray-500" />
+                                    </button>
+                                  </div>
                                 </div>
 
                                 {/* Section prix et stock */}
