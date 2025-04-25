@@ -3,9 +3,8 @@ import { useGetCatalogSellerQuery } from '@/services/guardService';
 import MobileNav from '@/components/ui/mobile-nav';
 import { ScrollRestoration } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 import AsyncLink from '@/components/ui/AsyncLink';
-import { ArrowLeft, Search, Filter, Share2, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Search, Filter} from 'lucide-react';
 import { useState } from 'react';
 
 
@@ -13,7 +12,7 @@ import { useState } from 'react';
 const CatalogPage: React.FC = () => {
   const { shopKey } = useParams();
   const { data: catalogData, isLoading } = useGetCatalogSellerQuery(shopKey || '');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Tous les produits');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
     
   // Extraire les catégories uniques des produits
