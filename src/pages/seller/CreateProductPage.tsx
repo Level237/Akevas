@@ -43,7 +43,7 @@ const CreateProductPage: React.FC = () => {
   const [city, setCity] = useState('');
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
 
-  //console.log(getAttributes)
+  console.log(getAttributes)
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
@@ -67,7 +67,7 @@ const CreateProductPage: React.FC = () => {
   const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender })
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const navigate = useNavigate()
-
+  //console.log(getAttributes?.[3]?.groups)
   // Ajout des pointures par catégorie
   const shoeSizes = {
     'Bébé': ['16', '17', '18'],
@@ -749,11 +749,18 @@ const CreateProductPage: React.FC = () => {
                               values: []
                             }
                           ]);
+                        } else {
+                          // Si on a déjà un attribut qui affecte le prix, on le remplace par Taille
+                          setAttributes(attributes.map(attr => 
+                            attr.affectsPrice 
+                              ? { ...attr, name: 'Taille', id: 2 }
+                              : attr
+                          ));
                         }
                         setVariants([]);
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
-                        attributes.some(attr => attr.affectsPrice && attr.name === 'Taille')
+                        attributes.some(attr => attr.name === 'Taille')
                           ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
@@ -780,11 +787,18 @@ const CreateProductPage: React.FC = () => {
                               values: []
                             }
                           ]);
+                        } else {
+                          // Si on a déjà un attribut qui affecte le prix, on le remplace par Pointure
+                          setAttributes(attributes.map(attr => 
+                            attr.affectsPrice 
+                              ? { ...attr, name: 'Pointure', id: 3 }
+                              : attr
+                          ));
                         }
                         setVariants([]);
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
-                        attributes.some(attr => attr.affectsPrice && attr.name === 'Pointure')
+                        attributes.some(attr => attr.name === 'Pointure')
                           ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
@@ -871,7 +885,7 @@ const CreateProductPage: React.FC = () => {
                 </div>
 
                 {/* Sélection des tailles */}
-                {attributes.some(attr => attr.affectsPrice) && (
+                {attributes.some(attr => attr.name === 'Taille') && (
                   <div className="mb-8">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-sm font-medium text-gray-700">Tailles disponibles</h3>
@@ -974,7 +988,7 @@ const CreateProductPage: React.FC = () => {
                 )}
 
                 {/* Sélection des pointures */}
-                {attributes.some(attr => attr.affectsPrice && attr.name === 'Pointure') && (
+                {attributes.some(attr => attr.name === 'Pointure') && (
                   <div className="mb-8">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-sm font-medium text-gray-700">Pointures disponibles</h3>
@@ -991,54 +1005,74 @@ const CreateProductPage: React.FC = () => {
                               <div className="flex items-center gap-2">
                                 <span
                                   className="w-5 h-5 rounded-full"
-                                  style={{ backgroundColor: color.hex || '#f3f4f6' }}
+                                  style={{ backgroundColor: color.hex_color || '#f3f4f6' }}
                                 />
                                 <span className="font-medium text-gray-900">{color.value}</span>
                               </div>
                             </div>
                             
-                            {/* Catégories de pointures */}
+                            {/* Pointures classées par groupes */}
                             <div className="space-y-4">
-                              {Object.entries(shoeSizes).map(([category, sizes]) => (
-                                <div key={category} className="space-y-2">
-                                  <h4 className="text-sm font-medium text-gray-700">{category}</h4>
-                                  <div className="flex flex-wrap gap-2">
-                                    {sizes.map((size) => (
-                                      <button
-                                        key={size}
-                                        onClick={() => {
-                                          const sizeId = Number(size);
-                                          if (!variants.some(v => 
-                                            v.attribute_value_id.includes(color.id) && 
-                                            v.attribute_value_id.includes(sizeId)
-                                          )) {
-                                            const newVariant = {
-                                              id: `variant-${sizeId}-${color.id}`,
-                                              variant_name: `${size}-${color.value}`,
-                                              attribute_value_id: [sizeId, color.id],
-                                              price: Number(price) || 0,
-                                              images: []
-                                            };
-                                            setVariants([...variants, newVariant]);
-                                          } else {
-                                            setVariants(variants.filter(v => 
-                                              !(v.attribute_value_id.includes(color.id) && 
-                                                v.attribute_value_id.includes(sizeId))
-                                            ));
-                                          }
-                                        }}
-                                        className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
-                                          variants.some(v => 
-                                            v.attribute_value_id.includes(color.id) && 
-                                            v.attribute_value_id.includes(Number(size))
-                                          )
-                                            ? 'bg-[#ed7e0f] text-white'
-                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                        }`}
-                                      >
-                                        {size}
-                                      </button>
-                                    ))}
+                              {getAttributes?.[3]?.groups.map((group: any) => (
+                                <div key={group.id} className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="text-sm font-medium text-gray-700">{group.label}</h4>
+                                    <span className="text-xs text-gray-500">
+                                      {getAttributes?.[3]?.values.filter((value: any) => 
+                                        value.attribute_value_group_id === group.id && 
+                                        variants.some(v => 
+                                          v.attribute_value_id.includes(color.id) && 
+                                          v.attribute_value_id.includes(value.id)
+                                        )
+                                      ).length} sélectionné(s)
+                                    </span>
+                                  </div>
+                                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                                    {getAttributes?.[3]?.values
+                                      .filter((value: any) => value.attribute_value_group_id === group.id)
+                                      .map((shoeSize: any) => {
+                                        const isSelected = variants.some(v => 
+                                          v.attribute_value_id.includes(color.id) && 
+                                          v.attribute_value_id.includes(shoeSize.id)
+                                        );
+                                        return (
+                                          <button
+                                            key={shoeSize.id}
+                                            type="button"
+                                            onClick={() => {
+                                              if (!isSelected) {
+                                                // Créer une nouvelle variante avec la couleur et la pointure
+                                                const newVariant = {
+                                                  id: `variant-${color.id}-${shoeSize.id}`,
+                                                  variant_name: `${color.value} - ${shoeSize.value}`,
+                                                  attribute_value_id: [color.id, shoeSize.id],
+                                                  price: Number(price) || 0,
+                                                  images: []
+                                                };
+                                                setVariants([...variants, newVariant]);
+                                              } else {
+                                                // Supprimer la variante existante
+                                                setVariants(variants.filter(v => 
+                                                  !(v.attribute_value_id.includes(color.id) && 
+                                                    v.attribute_value_id.includes(shoeSize.id))
+                                                ));
+                                              }
+                                            }}
+                                            className={`relative px-3 py-2 rounded-lg text-sm transition-all ${
+                                              isSelected
+                                                ? 'bg-[#ed7e0f] text-white shadow-sm'
+                                                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                                            }`}
+                                          >
+                                            {shoeSize.value}
+                                            {isSelected && (
+                                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                                                <div className="w-2 h-2 bg-[#ed7e0f] rounded-full" />
+                                              </div>
+                                            )}
+                                          </button>
+                                        );
+                                      })}
                                   </div>
                                 </div>
                               ))}
