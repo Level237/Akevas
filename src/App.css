@@ -4,3 +4,22 @@
 .sample-slider [class^="swiper-button-"] {
     width: 5px;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  .pulse {
+    animation: pulse 2s infinite;
+  }

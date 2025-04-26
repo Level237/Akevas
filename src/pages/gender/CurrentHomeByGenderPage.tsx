@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import StoreStories from '@/components/stores/store-stories';
 import ProductListGrid from '@/components/products/ProductListGrid';
-import CategoryGridList from '@/components/categories/CategoryGridList';
+import CategoryGridList from '@/components/categories/CategoryShowcaseDual';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)

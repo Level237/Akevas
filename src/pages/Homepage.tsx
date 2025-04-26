@@ -7,7 +7,7 @@ import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
 import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
 import { useGetCategoriesWithParentIdNullQuery, useGetHomeShopsQuery } from '@/services/guardService';
-import CategoryGridList from '@/components/categories/CategoryGridList';
+import CategoryShowcaseDual from '@/components/categories/CategoryShowcaseDual';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 import { Shop } from '@/types/shop';
 
@@ -98,7 +98,7 @@ const Homepage = () => {
           <PremiumProducts />
         
         
-          <CategoryGridList categories={categories} isLoading={categoriesLoading} title={`Navigation par catégorie`} />
+          <CategoryShowcaseDual categories={categories} isLoading={categoriesLoading} title="Catégories" />
         
 
       </section>
