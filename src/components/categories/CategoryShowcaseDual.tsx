@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo, useCallback } from "react"
 
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, ChevronRight, ChevronLeft, Plus } from "lucide-react"
@@ -16,12 +16,7 @@ interface Category {
 }
 
 export default function CategoryShowcasePremium({categories, isLoading,title}: {categories: Category[], isLoading: boolean,title:string}) {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [autoplay, setAutoplay] = useState(true)
-  const autoplayRef = useRef<NodeJS.Timeout | null>(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
@@ -30,16 +25,7 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
  
 
   // Effet de suivi de la souris pour les effets interactifs
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
 
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove)
-    }
-  }, [])
 
   // Fonction pour faire défiler horizontalement avec la molette de la souris
   useEffect(() => {
@@ -66,27 +52,21 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
 
 
   // Fonctions de gestion du défilement manuel
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsDragging(true)
     setStartX(e.pageX - scrollContainerRef.current!.offsetLeft)
     setScrollLeft(scrollContainerRef.current!.scrollLeft)
-  }
+  }, [])
 
-  const handleMouseLeave = () => {
-    setIsDragging(false)
-  }
-
-  const handleMouseUp = () => {
-    setIsDragging(false)
-  }
-
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseLeave = useCallback(() => setIsDragging(false), [])
+  const handleMouseUp = useCallback(() => setIsDragging(false), [])
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging) return
     e.preventDefault()
     const x = e.pageX - scrollContainerRef.current!.offsetLeft
-    const walk = (x - startX) * 2 // Multiplicateur de vitesse
+    const walk = (x - startX) * 2
     scrollContainerRef.current!.scrollLeft = scrollLeft - walk
-  }
+  }, [isDragging, startX, scrollLeft])
 
   // Ajouter ces fonctions de contrôle
   const scrollToPosition = (position: 'start' | 'center' | 'end') => {
@@ -174,6 +154,52 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
     )
   }
 
+  // OPTIMISATION : useMemo pour la liste des catégories
+  const renderedCategories = useMemo(() => (
+    !isLoading && categories.map((category:any, index:number) => (
+      <div
+        key={`${category.id}-${index}`}
+        className="min-w-[300px] max-w-[300px] flex-shrink-0"
+        style={{
+          transform: isDragging ? 'scale(0.98)' : 'scale(1)',
+          transition: 'transform 0.3s ease-out'
+        }}
+      >
+        <Link 
+          to={`/categories/${category.category_name}`} 
+          className="group block h-full"
+          onClick={(e) => isDragging && e.preventDefault()}
+        >
+          <div
+            className="relative h-[350px] rounded-2xl overflow-hidden mb-4 border border-white/10 transform transition-transform duration-300 hover:scale-[1.02]"
+            style={{
+              boxShadow: "0 15px 30px -10px rgba(0,0,0,0.5)",
+            }}
+          >
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${category.color || "from-blue-500/20 to-purple-500/20"} opacity-40 z-10`}
+            />
+            <img
+              src={category.category_profile || "/placeholder.svg"}
+              alt={category.category_name}
+              className="object-cover w-full h-full transition-all duration-700 ease-out group-hover:scale-110 z-0"
+              draggable="false"
+              loading="lazy" // OPTIMISATION
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent z-20">
+              <h3 className="text-xl font-semibold text-white mb-2">{category.category_name}</h3>
+              <p className="text-white/70 text-sm line-clamp-2">{category.category_description}</p>
+            </div>
+            <div
+              className="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2.5 z-20 border border-white/20"
+            >
+              <Plus className="h-5 w-5 text-white" />
+            </div>
+          </div>
+        </Link>
+      </div>
+    ))
+  ), [categories, isLoading, isDragging])
 
   return (
     <section className="w-full py-16 overflow-hidden bg-black text-white relative">
@@ -244,60 +270,8 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
             onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
           >
-            {/* Dupliquer les catégories pour un effet infini */}
-            {!isLoading && categories.map((category:any, index:number) => (
-              <motion.div
-                key={`${category.id}-${index}`}
-                className="min-w-[300px] max-w-[300px] flex-shrink-0"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true, margin: "-100px" }}
-                style={{
-                  transform: isDragging ? 'scale(0.98)' : 'scale(1)',
-                  transition: 'transform 0.3s ease-out'
-                }}
-              >
-                <Link 
-                  to={`/categories/${category.category_name}`} 
-                  className="group block h-full"
-                  onClick={(e) => isDragging && e.preventDefault()} // Empêcher la navigation pendant le glissement
-                >
-                  <div
-                    className="relative h-[350px] rounded-2xl overflow-hidden mb-4 border border-white/10 transform transition-transform duration-300 hover:scale-[1.02]"
-                    style={{
-                      boxShadow: "0 15px 30px -10px rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${category.color || "from-blue-500/20 to-purple-500/20"} opacity-40 z-10`}
-                    />
-                    <img
-                      src={category.category_profile || "/placeholder.svg"}
-                      alt={category.category_name}
-                      className="object-cover w-full h-full transition-all duration-700 ease-out group-hover:scale-110 z-0"
-                      draggable="false" // Désactiver le glissement d'image
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent z-20">
-                      <h3 className="text-xl font-semibold text-white mb-2">{category.category_name}</h3>
-                      <p className="text-white/70 text-sm line-clamp-2">{category.category_description}</p>
-                    </div>
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileHover={{ opacity: 1, scale: 1 }}
-                      className="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2.5 z-20 border border-white/20"
-                    >
-                      <Plus className="h-5 w-5 text-white" />
-                    </motion.div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+            {renderedCategories}
           </motion.div>
 
           {/* Ajouter le composant de contrôle ici */}
