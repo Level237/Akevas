@@ -1,10 +1,9 @@
-"use client"
-
 import { useState, useRef, useEffect, useMemo, useCallback } from "react"
 
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, ChevronRight, ChevronLeft, Plus } from "lucide-react"
 import { Link } from "react-router-dom"
+import { FixedSizeList as List } from 'react-window'
 
 interface Category {
   id: string
@@ -17,6 +16,7 @@ interface Category {
 
 export default function CategoryShowcasePremium({categories, isLoading,title}: {categories: Category[], isLoading: boolean,title:string}) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<any>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
@@ -68,33 +68,24 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
     scrollContainerRef.current!.scrollLeft = scrollLeft - walk
   }, [isDragging, startX, scrollLeft])
 
-  // Ajouter ces fonctions de contrôle
+  // Nouvelle fonction de contrôle pour react-window
   const scrollToPosition = (position: 'start' | 'center' | 'end') => {
-    const container = scrollContainerRef.current
-    if (!container) return
-
-    const scrollWidth = container.scrollWidth
-    const clientWidth = container.clientWidth
-
-    const positions = {
-      start: 0,
-      center: (scrollWidth - clientWidth) / 2,
-      end: scrollWidth - clientWidth
+    if (!listRef.current) return
+    let index = 0
+    if (position === 'center') {
+      index = Math.floor(categories.length / 2)
+    } else if (position === 'end') {
+      index = categories.length - 1
     }
-
-    container.scrollTo({
-      left: positions[position],
-      behavior: 'smooth'
-    })
+    listRef.current.scrollToItem(index, 'center')
   }
 
-  // Ajouter ce nouveau composant de contrôle moderne
+  // Mettre à jour ModernControls pour utiliser scrollToPosition
   const ModernControls = () => {
     const [activeControl, setActiveControl] = useState('center')
 
     return (
       <motion.div
-        
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20"
       >
         <div className="relative">
@@ -201,6 +192,54 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
     ))
   ), [categories, isLoading, isDragging])
 
+  const Row = ({ index, style }: { index: number, style: React.CSSProperties }) => {
+    const category = categories[index] as any
+    return (
+      <div
+        key={`${category.id}-${index}`}
+        className="min-w-[300px] max-w-[300px] flex-shrink-0"
+        style={{
+          ...style,
+          transform: isDragging ? 'scale(0.98)' : 'scale(1)',
+          transition: 'transform 0.3s ease-out'
+        }}
+      >
+        <Link 
+          to={`/categories/${category.category_name}`} 
+          className="group block h-full"
+          onClick={(e) => isDragging && e.preventDefault()}
+        >
+          <div
+            className="relative h-[350px] rounded-2xl overflow-hidden mb-4 border border-white/10 transform transition-transform duration-300 hover:scale-[1.02]"
+            style={{
+              boxShadow: "0 15px 30px -10px rgba(0,0,0,0.5)",
+            }}
+          >
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${category.color || "from-blue-500/20 to-purple-500/20"} opacity-40 z-10`}
+            />
+            <img
+              src={category.category_profile || "/placeholder.svg"}
+              alt={category.category_name}
+              className="object-cover w-full h-full transition-all duration-700 ease-out group-hover:scale-110 z-0"
+              draggable="false"
+              loading="lazy" // OPTIMISATION
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent z-20">
+              <h3 className="text-xl font-semibold text-white mb-2">{category.category_name}</h3>
+              <p className="text-white/70 text-sm line-clamp-2">{category.category_description}</p>
+            </div>
+            <div
+              className="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2.5 z-20 border border-white/20"
+            >
+              <Plus className="h-5 w-5 text-white" />
+            </div>
+          </div>
+        </Link>
+      </div>
+    )
+  }
+
   return (
     <section className="w-full py-16 overflow-hidden bg-black text-white relative">
       {/* Éléments de design d'arrière-plan */}
@@ -261,9 +300,10 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
           <motion.div
             ref={scrollContainerRef}
             className={`
-              flex overflow-x-auto pb-10 space-x-6 
+              flex pb-10 space-x-6 
               cursor-grab select-none no-scrollbar 
               scroll-smooth transition-all duration-200
+              w-full overflow-x-hidden
               ${isDragging ? 'cursor-grabbing' : ''}
             `}
             onMouseDown={handleMouseDown}
@@ -271,7 +311,17 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
           >
-            {renderedCategories}
+            <List
+              ref={listRef}
+              height={370}
+              width={scrollContainerRef.current?.clientWidth || 1200}
+              itemCount={categories.length}
+              itemSize={320}
+              layout="horizontal"
+              style={{ width: "100%", overflowX: "hidden" }}
+            >
+              {Row}
+            </List>
           </motion.div>
 
           {/* Ajouter le composant de contrôle ici */}
