@@ -1,176 +1,93 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 
-
-
-// Composant pour l'image lazy-loadée modifié
-const LazyImage = React.memo(({ src, alt, className }: { src: string; alt: string; className: string }) => {
-  const [isLoaded, setIsLoaded] = React.useState(false);
-
-  return (
-    <div className={`relative ${className}`}>
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        className={`w-full h-full object-cover transition-all duration-300 ${
-          isLoaded ? 'opacity-100 group-hover:scale-105' : 'opacity-0'
-        }`}
-        onLoad={() => setIsLoaded(true)}
-      />
-      {!isLoaded && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse" />
-      )}
-    </div>
-  );
-});
-
-LazyImage.displayName = 'LazyImage';
-
-// Composant Skeleton optimisé et mémorisé
-const CategorySkeleton = React.memo(() => (
-  <div className="relative overflow-hidden rounded-lg aspect-square bg-gray-200 animate-pulse">
-    <div className="absolute bottom-4 left-4">
-      <div className="h-6 w-32 bg-gray-300 rounded" />
-    </div>
-  </div>
-));
-
-CategorySkeleton.displayName = 'CategorySkeleton';
+import { ArrowRight} from "lucide-react"
+import { Link } from "react-router-dom"
 
 interface Category {
-  category_name: string;
-  category_profile: string;
-  name: string;
-  id: string | number;
+  id: string
+  name: string
+  description: string
+  image: string
 }
 
-const CategoryItem = React.memo(({ category }: { category: Category }) => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="group cursor-pointer"
-    style={{
-      willChange: 'transform',
-      transform: 'translateZ(0)',
-    }}
-  >
-    <div 
-      className="relative overflow-hidden rounded-lg aspect-square"
-      style={{
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
-      }}
-    >
-      <img
-        src={category.category_profile}
-        alt={category.category_name}
-        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-        loading="lazy"
-        decoding="async"
-        style={{
-          willChange: 'transform',
-          transform: 'translateZ(0)',
-        }}
-      />
-      <div 
-        className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ willChange: 'opacity' }}
-      />
-      <div className="absolute bottom-4 left-4 text-white">
-        <h3 className="text-xl font-semibold">{category.category_name}</h3>
-      </div>
-    </div>
-  </motion.div>
-));
+export default function CategoryGridList({categories, isLoading,title}: {categories: Category[], isLoading: boolean,title:string}) {
+  // Ces données seraient normalement récupérées depuis une API ou une base de données
+  const categoriesData: Category[] = [
+    {
+      id: "1",
+      name: "Électronique",
+      description: "Smartphones, ordinateurs et accessoires high-tech",
+      image: "/placeholder.svg?height=600&width=800",
+    },
+    {
+      id: "2",
+      name: "Mode",
+      description: "Vêtements, chaussures et accessoires tendance",
+      image: "/placeholder.svg?height=600&width=800",
+    },
+    {
+      id: "3",
+      name: "Maison",
+      description: "Meubles, décoration et articles pour la maison",
+      image: "/placeholder.svg?height=600&width=800",
+    },
+    {
+      id: "4",
+      name: "Sport",
+      description: "Équipements et vêtements pour tous les sports",
+      image: "/placeholder.svg?height=600&width=800",
+    },
+    {
+      id: "5",
+      name: "Beauté",
+      description: "Cosmétiques, parfums et soins personnels",
+      image: "/placeholder.svg?height=600&width=800",
+    },
+    {
+      id: "6",
+      name: "Livres",
+      description: "Romans, BD et livres spécialisés",
+      image: "/placeholder.svg?height=600&width=800",
+    },
+  ]
 
-CategoryItem.displayName = 'CategoryItem';
+  return (
+    <section className="w-full py-12 bg-gradient-to-b from-background to-muted/30">
+      <div className="container px-4 md:px-6">
+        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-10">
+          <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Explorez nos catégories</div>
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Découvrez notre sélection</h2>
+          <p className="max-w-[700px] text-muted-foreground md:text-xl">
+            Parcourez nos catégories soigneusement sélectionnées pour trouver exactement ce que vous cherchez.
+          </p>
+        </div>
 
-const CategoryGridList = React.memo(({
-  categories = [],
-  isLoading,
-  title
-}: {
-  categories: Category[];
-  isLoading: boolean;
-  title: string;
-}) => {
-  const [loadedCategories, setLoadedCategories] = useState<Category[]>([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-
-  useEffect(() => {
-    if (categories.length > 0) {
-      // Précharger toutes les images
-      const imagePromises = categories.map(category => {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.src = category.category_profile;
-          img.onload = () => resolve(true);
-          img.onerror = () => resolve(false);
-        });
-      });
-
-      Promise.all(imagePromises).then(() => {
-        setLoadedCategories(categories);
-        setImagesLoaded(true);
-      });
-    }
-  }, [categories]);
-
-  if (isLoading || !imagesLoaded) {
-    return (
-      <div 
-        className="container mx-auto px-4 py-8"
-        style={{
-          transform: 'translateZ(0)',
-          willChange: 'transform',
-        }}
-      >
-        <h2 className="text-2xl font-bold mb-8">{title}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {Array(12).fill(0).map((_, i) => (
-            <div 
-              key={i} 
-              className="aspect-square rounded-lg bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse"
-            />
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {!isLoading && categories.map((category) => (
+            <Link
+              key={category.id}
+              to={`/categories/${category.id}`}
+              className="group relative overflow-hidden rounded-xl"
+            >
+              <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/50 to-black/0 transition-opacity group-hover:via-black/30" />
+              <img
+                src={category.category_profile || "/placeholder.svg"}
+                alt={category.category_name}
+                width={800}
+                height={600}
+                className="h-[300px] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 z-20 flex flex-col justify-end p-6">
+                <h3 className="mb-2 text-xl font-bold text-white">{category.category_name}</h3>
+                <p className="mb-4 text-sm text-white/90">{category.category_description}</p>
+                <div className="flex items-center text-white">
+                  <span className="text-sm font-medium">Explorer</span>
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
-    );
-  }
-
-  return (
-    <div 
-      className="container mx-auto px-4 py-8"
-      style={{
-        transform: 'translateZ(0)',
-        willChange: 'transform',
-        perspective: '1000px',
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
-      }}
-    >
-      <h2 className="text-2xl font-bold mb-8">{title}</h2>
-      <motion.div 
-        className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        style={{
-          willChange: 'transform',
-          transform: 'translateZ(0)',
-        }}
-      >
-        {loadedCategories.map((category) => (
-          <CategoryItem
-            key={category.id}
-            category={category}
-          />
-        ))}
-      </motion.div>
-    </div>
-  );
-});
-
-CategoryGridList.displayName = 'CategoryGridList';
-export default CategoryGridList;
+    </section>
+  )
+}

@@ -73,7 +73,7 @@ const Homepage = () => {
     }
   }, [shopsLoading, categoriesLoading, dispatch]);
 
-  if (isInitialLoading) {
+  if (isInitialLoading || shopsLoading || categoriesLoading) {
     return <PageLoader />;
   }
 
