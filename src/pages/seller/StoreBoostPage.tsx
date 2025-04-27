@@ -193,7 +193,7 @@ const StoreBoostPage: React.FC = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero Section avec animation */}
-        {!isLoading && sellerData?.shop.isSubscribe===0 ?  <>
+        {!isLoading && sellerData?.shop.isSubscribe===0 || !sellerData ?  <>
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
