@@ -29,9 +29,8 @@ export default function StatisticsOverview(sellerData: { sellerData: Seller | nu
   return (
     <div className="w-full">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
+        
+        
         className="mb-8"
       >
         <Card className="p-8 bg-white shadow-lg">
@@ -52,10 +51,7 @@ export default function StatisticsOverview(sellerData: { sellerData: Seller | nu
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
               <motion.div
-                key={stat.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 * index }}
+                
                 className={`p-6 rounded-2xl bg-gradient-to-r ${stat.gradient} text-white`}
               >
                 <div className="flex items-center justify-between">
@@ -71,9 +67,7 @@ export default function StatisticsOverview(sellerData: { sellerData: Seller | nu
             ))}
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
+           
             className="p-6 rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 text-white"
           >
             <div className="flex items-center justify-between">
