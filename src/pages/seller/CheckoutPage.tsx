@@ -158,7 +158,7 @@ export default function CheckoutRechargePage() {
             size="lg"
             className="w-full bg-gradient-to-r from-[#ed7e0f] to-orange-600 hover:from-orange-600 hover:to-[#ed7e0f] text-white font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
             onClick={handlePayment}
-            disabled={!isPhoneNumberValid || isProcessing}
+            //disabled={!isPhoneNumberValid || isProcessing}
           >
             {isProcessing ? (
               <motion.div
