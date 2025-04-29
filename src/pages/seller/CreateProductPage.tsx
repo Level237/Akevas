@@ -864,465 +864,17 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Sélection des couleurs */}
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-gray-700">Couleurs disponibles</h3>
-                    <span className="text-sm text-gray-500">
-                      {variants.filter(v => v.attribute_value_id.length === 1).length} sélectionné(s)
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-8 gap-3">
-                    {getAttributes?.[0]?.values.map((color: any) => (
-                      <label
-                        key={color.id}
-                        className={`relative group cursor-pointer ${
-                          variants.some(v => v.attribute_value_id.includes(color.id))
-                            ? 'ring-2 ring-[#ed7e0f] ring-offset-2'
-                            : ''
-                        }`}
-                      >
-                        <div className="aspect-square rounded-xl overflow-hidden">
-                          <div
-                            className="w-12 h-12"
-                            style={{ backgroundColor: color.hex_color || '#f3f4f6' }}
-                          />
-                        </div>
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
-                            {variants.some(v => v.attribute_value_id.includes(color.id)) ? (
-                              <X className="w-4 h-4 text-gray-900" />
-                            ) : (
-                              <Plus className="w-2 h-2 text-gray-900" />
-                            )}
-                          </div>
-                        </div>
-                        <input
-                          type="checkbox"
-                          className="hidden"
-                          checked={variants.some(v => v.attribute_value_id.includes(color.id))}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              if (attributes.some(attr => attr.affectsPrice)) {
-                                const newVariant = {
-                                  id: `variant-${color.id}`,
-                                  variant_name: color.value,
-                                  attribute_value_id: [color.id],
-                                  price: Number(price) || 0,
-                                  images: []
-                                };
-                                setVariants([...variants, newVariant]);
-                              } else {
-                                const newVariant = {
-                                  id: `variant-${color.id}`,
-                                  variant_name: color.value,
-                                  attribute_value_id: [color.id],
-                                  price: Number(price) || 0,
-                                  images: []
-                                };
-                                setVariants([...variants, newVariant]);
-                              }
-                            } else {
-                              setVariants(variants.filter(v => !v.attribute_value_id.includes(color.id)));
-                            }
-                          }}
-                        />
-                       
-                      </label>
-                    ))}
-                  </div>
-                </div>
+              
 
-                {/* Sélection des tailles */}
-                {attributes.some(attr => attr.name === 'Taille') && (
-                  <div className="mb-8">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-medium text-gray-700">Tailles disponibles</h3>
-                      <span className="text-sm text-gray-500">
-                        {variants.filter(v => v.attribute_value_id.length === 2).length} combinaison(s)
-                      </span>
-                    </div>
-                    <div className="space-y-4">
-                      {getAttributes?.[0]?.values
-                        .filter((color: any) => variants.some(v => v.attribute_value_id.includes(color.id)))
-                        .map((color: any) => (
-                          <div key={color.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className="w-5 h-5 rounded-full"
-                                  style={{ backgroundColor: color.hex_color || '#f3f4f6' }}
-                                />
-                                <span className="font-medium text-gray-900">{color.value}</span>
-                              </div>
-                              <div className="flex-1">
-                                <Select
-                                  onValueChange={(value) => {
-                                    const sizeId = Number(value);
-                                    if (value) {
-                                      const newVariant = {
-                                        id: `variant-${sizeId}-${color.id}`,
-                                        variant_name: `${getAttributes?.[1]?.values.find((s: any) => s.id === sizeId)?.value}-${color.value}`,
-                                        attribute_value_id: [sizeId, color.id],
-                                        price: getAttributes?.[1]?.values.find((s: any) => s.id === sizeId)?.price || Number(price) || 0,
-                                        images: []
-                                      };
-                                      setVariants([...variants, newVariant]);
-                                    } else {
-                                      setVariants(variants.filter(v => 
-                                        !(v.attribute_value_id.includes(color.id))
-                                      ));
-                                    }
-                                  }}
-                                >
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Sélectionner une taille" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {getAttributes?.[1]?.values.map((size: any) => (
-                                      <SelectItem 
-                                        key={size.id} 
-                                        value={String(size.id)}
-                                        disabled={variants.some(v => 
-                                          v.attribute_value_id.includes(size.id) && 
-                                          v.attribute_value_id.includes(color.id)
-                                        )}
-                                      >
-                                        <div className="flex items-center justify-between">
-                                          <span>{size.value}</span>
-                                          {size.price && (
-                                            <span className="text-[#ed7e0f] text-sm">
-                                              +{size.price - Number(price)} FCFA
-                                            </span>
-                                          )}
-                                        </div>
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                              {variants
-                                .filter(v => 
-                                  v.attribute_value_id.includes(color.id) && 
-                                  v.attribute_value_id.length === 2
-                                )
-                                .map(variant => {
-                                  const size = getAttributes?.[1]?.values.find((s: any) => 
-                                    variant.attribute_value_id.includes(s.id)
-                                  );
-                                  return (
-                                    <div
-                                      key={variant.id}
-                                      className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm bg-[#ed7e0f]/10 border border-[#ed7e0f]"
-                                    >
-                                      <span className="font-medium">{size?.value}</span>
-                                      <button
-                                        onClick={() => {
-                                          setVariants(variants.filter(v => v.id !== variant.id));
-                                        }}
-                                        className="ml-2 p-0.5 hover:bg-[#ed7e0f]/20 rounded-full"
-                                      >
-                                        <X className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-                                  );
-                                })}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Sélection des pointures */}
-                {attributes.some(attr => attr.name === 'Pointure') && (
-                  <div className="mb-8">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-medium text-gray-700">Pointures disponibles</h3>
-                      <span className="text-sm text-gray-500">
-                        {variants.filter(v => v.attribute_value_id.length === 2).length} combinaison(s)
-                      </span>
-                    </div>
-                    <div className="space-y-4">
-                      {getAttributes?.[0]?.values
-                        .filter((color: any) => variants.some(v => v.attribute_value_id.includes(color.id)))
-                        .map((color: any) => (
-                          <div key={color.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className="w-5 h-5 rounded-full"
-                                  style={{ backgroundColor: color.hex_color || '#f3f4f6' }}
-                                />
-                                <span className="font-medium text-gray-900">{color.value}</span>
-                              </div>
-                            </div>
-                            
-                            {/* Pointures classées par groupes */}
-                            <div className="space-y-4">
-                              {getAttributes?.[3]?.groups.map((group: any) => (
-                                <div key={group.id} className="space-y-2">
-                                  <div className="flex items-center justify-between">
-                                    <h4 className="text-sm font-medium text-gray-700">{group.label}</h4>
-                                    <span className="text-xs text-gray-500">
-                                      {getAttributes?.[3]?.values.filter((value: any) => 
-                                        value.attribute_value_group_id === group.id && 
-                                        variants.some(v => 
-                                          v.attribute_value_id.includes(color.id) && 
-                                          v.attribute_value_id.includes(value.id)
-                                        )
-                                      ).length} sélectionné(s)
-                                    </span>
-                                  </div>
-                                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                                    {getAttributes?.[3]?.values
-                                      .filter((value: any) => value.attribute_value_group_id === group.id)
-                                      .map((shoeSize: any) => {
-                                        const isSelected = variants.some(v => 
-                                          v.attribute_value_id.includes(color.id) && 
-                                          v.attribute_value_id.includes(shoeSize.id)
-                                        );
-                                        return (
-                                          <button
-                                            key={shoeSize.id}
-                                            type="button"
-                                            onClick={() => {
-                                              if (!isSelected) {
-                                                // Créer une nouvelle variante avec la couleur et la pointure
-                                                const newVariant = {
-                                                  id: `variant-${color.id}-${shoeSize.id}`,
-                                                  variant_name: `${color.value} - ${shoeSize.value}`,
-                                                  attribute_value_id: [color.id, shoeSize.id],
-                                                  price: Number(price) || 0,
-                                                  images: [],
-                                                  stock: 0
-                                                };
-                                                setVariants([...variants, newVariant]);
-                                              } else {
-                                                // Supprimer la variante existante
-                                                setVariants(variants.filter(v => 
-                                                  !(v.attribute_value_id.includes(color.id) && 
-                                                    v.attribute_value_id.includes(shoeSize.id))
-                                                ));
-                                              }
-                                            }}
-                                            className={`relative px-3 py-2 rounded-lg text-sm transition-all ${
-                                              isSelected
-                                                ? 'bg-[#ed7e0f] text-white shadow-sm'
-                                                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                                            }`}
-                                          >
-                                            {shoeSize.value}
-                                            {isSelected && (
-                                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center">
-                                                <div className="w-2 h-2 bg-[#ed7e0f] rounded-full" />
-                                              </div>
-                                            )}
-                                          </button>
-                                        );
-                                      })}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Aperçu des variations */}
-                {variants.length > 0 && (
-                  <div className="mt-8">
-                    <div className="flex items-center justify-between mb-6">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {attributes.some(attr => attr.affectsPrice) 
-                            ? "Combinaisons sélectionnées" 
-                            : "Variations de couleur"}
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">Gérez les prix et le stock pour chaque variante</p>
-                      </div>
-                      <span className="px-3 py-1 bg-[#ed7e0f]/10 text-[#ed7e0f] rounded-full text-sm font-medium">
-                        {attributes.some(attr => attr.affectsPrice)
-                          ? variants.filter(v => v.attribute_value_id.length === 2).length
-                          : variants.filter(v => v.attribute_value_id.length === 1).length
-                        } var{variants.length > 1 ? 's' : ''}
-                      </span>
-                    </div>
-
-                    <div className="space-y-4 max-w-2xl">
-                      {variants
-                        .filter(variant => {
-                          if (attributes.some(attr => attr.affectsPrice)) {
-                            return variant.attribute_value_id.length === 2;
-                          }
-                          return variant.attribute_value_id.length === 1;
-                        })
-                        .map((variant) => {
-                          const color = getAttributes?.[0]?.values.find((c: any) => 
-                            variant.attribute_value_id.includes(c.id)
-                          );
-                          const size = getAttributes?.[1]?.values.find((s: any) => 
-                            variant.attribute_value_id.includes(s.id)
-                          );
-                          const shoeSize = getAttributes?.[3]?.values.find((s: any) => 
-                            variant.attribute_value_id.includes(s.id)
-                          );
-                          
-                          return (
-                            <div
-                              key={variant.id}
-                              className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300"
-                            >
-                              <div className="flex flex-col gap-6">
-                                {/* En-tête avec couleur et taille/pointure */}
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-4">
-                                    {color?.hex_color && (
-                                      <div className="relative">
-                                        <div
-                                          className="w-8 h-8 rounded-xl border-2 border-white shadow-md transform hover:scale-105 transition-transform"
-                                          style={{ backgroundColor: color.hex_color }}
-                                        />
-                                        {variant.images.length > 0 && (
-                                          <span className="absolute -top-2 -right-2 w-6 h-6 bg-[#ed7e0f] text-white text-xs font-bold flex items-center justify-center rounded-full shadow-sm">
-                                            {variant.images.length}
-                                          </span>
-                                        )}
-                                      </div>
-                                    )}
-                                    <div>
-                                      <h5 className="text-lg flex items-center font-semibold text-gray-900">
-                                        {color?.value}
-                                        {(size || shoeSize) && (
-                                          <span className="inline-flex items-center">
-                                            <span className="w-1.5 h-1.5 bg-gray-300 rounded-full mx-2"></span>
-                                            <span className="text-gray-700 font-medium">{size?.value || shoeSize?.value}</span>
-                                          </span>
-                                        )}
-                                      </h5>
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center gap-4">
-                                    {!attributes.some(attr => attr.affectsPrice) && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-gray-500 text-sm">Prix :</span>
-                                        <span className="text-gray-900 font-medium">{variant.price} FCFA</span>
-                                      </div>
-                                    )}
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setVariants(variants.filter(v => v.id !== variant.id));
-                                      }}
-                                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                                    >
-                                      <X className="w-5 h-5 text-gray-500" />
-                                    </button>
-                                  </div>
-                                </div>
-
-                                {/* Section prix et stock */}
-                                <div className={`${attributes.some(attr => attr.affectsPrice) ? 'grid grid-cols-2 gap-4' : ''}`}>
-                                {attributes.some(attr => attr.affectsPrice) && (
-                                  <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-gray-700">Prix</label>
-                                    <div className="relative">
-                                      
-                                        <div className="relative flex items-center">
-                                          <input
-                                            type="number"
-                                            value={variant.price}
-                                            onChange={(e) => {
-                                              const newPrice = Number(e.target.value);
-                                              setVariants(variants.map(v =>
-                                                v.id === variant.id ? { ...v, price: newPrice } : v
-                                              ));
-                                            }}
-                                            className="w-full pl-3 pr-16 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f] transition-all"
-                                            placeholder="Entrez le prix"
-                                          />
-                                          <span className="absolute right-3 text-[#ed7e0f] font-medium">FCFA</span>
-                                        </div>
-                                      
-                                    </div>
-                                  </div>
-                                )}
-                                  <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-gray-700">Stock</label>
-                                    <input
-                                      type="number"
-                                      value={variant.stock || ''}
-                                      onChange={(e) => {
-                                        const newStock = Number(e.target.value);
-                                        setVariants(variants.map(v =>
-                                          v.id === variant.id ? { ...v, stock: newStock } : v
-                                        ));
-                                      }}
-                                      className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f] transition-all"
-                                      placeholder="Quantité disponible"
-                                    />
-                                  </div>
-                                </div>
-
-                                {/* Section images */}
-                                <div className="space-y-3">
-                                  <label className="block text-sm font-medium text-gray-700">Images du produit</label>
-                                  <div className="flex flex-wrap gap-3">
-                                    {variant.images.map((image, idx) => (
-                                      <div key={idx} className="relative group">
-                                        <img
-                                          src={URL.createObjectURL(image)}
-                                          alt={`Variant ${idx + 1}`}
-                                          className="w-16 h-16 object-cover rounded-xl shadow-sm group-hover:ring-2 group-hover:ring-[#ed7e0f] transition-all"
-                                        />
-                                        <button
-                                          onClick={() => removeVariantImage(variant.id, idx)}
-                                          className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
-                                        >
-                                          <X className="w-4 h-4 text-red-500" />
-                                        </button>
-                                      </div>
-                                    ))}
-                                    <label className="w-16 h-16 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50/80 hover:border-[#ed7e0f] transition-all group">
-                                      <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#ed7e0f]" />
-                                      <span className="text-xs text-gray-400 group-hover:text-[#ed7e0f]">Ajouter</span>
-                                      <input
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={(e) => e.target.files && handleVariantImageUpload(variant.id, e.target.files)}
-                                      />
-                                    </label>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
-                )}
+              
+              
               </div>
 
               {/* Nouvelle section des variations */}
               <div className="bg-white rounded-2xl shadow-sm p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Variations du produit</h2>
-                    <p className="text-sm text-gray-500 mt-1">Configurez les différentes variations de votre produit</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={addVariationFrame}
-                    className="px-4 py-2 bg-[#ed7e0f] text-white rounded-xl hover:bg-[#ed7e0f]/90 transition-colors"
-                  >
-                    Ajouter une variation
-                  </button>
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900">Variations du produit</h2>
+                  <p className="text-sm text-gray-500 mt-1">Configurez les différentes variations de votre produit</p>
                 </div>
 
                 {/* Liste des cadres de variation */}
@@ -1489,57 +1041,80 @@ const CreateProductPage: React.FC = () => {
                   ))}
                 </div>
 
+                {/* Bouton Ajouter une variation */}
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={addVariationFrame}
+                    className="px-6 py-3 bg-[#ed7e0f] text-white rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Ajouter une variation
+                  </button>
+                </div>
+              </div>
+
                 {/* Liste des variations sélectionnées */}
                 {variationFrames.length > 0 && (
                   <div className="mt-8">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations sélectionnées</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-3">
                       {variationFrames.map((frame) => {
                         const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
                         const size = getAttributes?.[1]?.values.find((s: any) => s.id === frame.sizeId);
                         const shoeSize = getAttributes?.[3]?.values.find((s: any) => s.id === frame.shoeSizeId);
 
                         return (
-                          <div key={frame.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all">
-                            <div className="flex items-start gap-4">
+                          <div key={frame.id} className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm hover:shadow-md transition-all">
+                            <div className="flex items-center gap-3">
                               {frame.images.length > 0 ? (
-                                <img
-                                  src={URL.createObjectURL(frame.images[0])}
-                                  alt="Variation"
-                                  className="w-16 h-16 object-cover rounded-lg"
-                                />
+                                <div className="relative w-12 h-12 flex-shrink-0">
+                                  <img
+                                    src={URL.createObjectURL(frame.images[0])}
+                                    alt="Variation"
+                                    className="w-full h-full object-cover rounded-lg"
+                                  />
+                                  <div className="absolute -top-1 -right-1 bg-white rounded-full px-1.5 py-0.5 border border-gray-100 shadow-sm">
+                                    <span className="text-xs text-gray-500">{frame.images.length}</span>
+                                  </div>
+                                </div>
                               ) : (
-                                <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                                  <Image className="w-6 h-6 text-gray-400" />
+                                <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Image className="w-5 h-5 text-gray-400" />
                                 </div>
                               )}
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
+                              
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   {color && (
-                                    <div className="flex items-center gap-2">
+                                    <div className="inline-flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-full">
                                       <div
-                                        className="w-4 h-4 rounded-full"
+                                        className="w-3 h-3 rounded-full border border-gray-200"
                                         style={{ backgroundColor: color.hex_color }}
                                       />
-                                      <span className="font-medium">{color.value}</span>
+                                      <span className="text-sm font-medium truncate">{color.value}</span>
                                     </div>
                                   )}
                                   {(size || shoeSize) && (
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-gray-500">•</span>
-                                      <span className="font-medium">{size?.value || shoeSize?.value}</span>
+                                    <div className="inline-flex items-center bg-gray-50 px-2 py-1 rounded-full">
+                                      <span className="text-sm font-medium">{size?.value || shoeSize?.value}</span>
                                     </div>
                                   )}
                                 </div>
-                                <div className="mt-2 flex items-center justify-between">
-                                  <span className="text-sm text-gray-500">
-                                    {frame.images.length} image{frame.images.length > 1 ? 's' : ''}
-                                  </span>
-                                  <span className="font-medium text-[#ed7e0f]">
+                                
+                                <div className="mt-1.5">
+                                  <span className="font-medium text-[#ed7e0f] text-sm">
                                     {(frame.sizeId || frame.shoeSizeId) ? `${frame.price} FCFA` : 'Prix global'}
                                   </span>
                                 </div>
                               </div>
+
+                              <button
+                                onClick={() => removeVariationFrame(frame.id)}
+                                className="p-1.5 hover:bg-gray-50 rounded-lg transition-colors"
+                              >
+                                <X className="w-4 h-4 text-gray-400" />
+                              </button>
                             </div>
                           </div>
                         );
@@ -1547,7 +1122,6 @@ const CreateProductPage: React.FC = () => {
                     </div>
                   </div>
                 )}
-              </div>
 
               {/* Actions */}
               <div className="flex max-sm:hidden gap-3">
