@@ -1007,13 +1007,13 @@ const CreateProductPage: React.FC = () => {
                         {/* Section images */}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Images de la variation</label>
-                          <div className="grid grid-cols-3 gap-3">
+                          <div className="grid grid-cols-4 gap-3">
                             {frame.images.map((image, idx) => (
                               <div key={idx} className="relative group aspect-square">
                                 <img
                                   src={URL.createObjectURL(image)}
                                   alt={`Variation ${idx + 1}`}
-                                  className="w-full h-full object-cover rounded-xl"
+                                  className="w-16 h-16 object-cover rounded-xl"
                                 />
                                 <button
                                   onClick={() => removeVariationImage(frame.id, idx)}
@@ -1046,7 +1046,7 @@ const CreateProductPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={addVariationFrame}
-                    className="px-6 py-3 bg-[#ed7e0f] text-white rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
+                    className="px-4 py-3 bg-[#ed7e0f] text-white rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
                   >
                     <Plus className="w-5 h-5" />
                     Ajouter une variation
