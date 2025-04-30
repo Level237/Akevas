@@ -927,7 +927,7 @@ const CreateProductPage: React.FC = () => {
                               </SelectContent>
                             </Select>
                           </div>
-
+                                
                           {/* Sélection de la taille ou pointure */}
                           {attributes.some(attr => attr.name === 'Taille') && (
                             <div>
@@ -1046,7 +1046,7 @@ const CreateProductPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={addVariationFrame}
-                    className="px-4 py-3 bg-[#ed7e0f] text-white rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
+                    className="px-4 py-3 bg-transparent border border-[#ed7e0f] hover:bg-[#ed7e0f]/5 text-[#ed7e0f] rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
                   >
                     <Plus className="w-5 h-5" />
                     Ajouter une variation
