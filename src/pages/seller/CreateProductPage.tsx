@@ -383,41 +383,126 @@ const CreateProductPage: React.FC = () => {
     setSizeSearchTerm('');
   };
 
-  // Effet pour générer les variations quand les attributs changent
-  useEffect(() => {
-    generateVariants(attributes);
-  }, [attributes, price]);
-
   const [variationFrames, setVariationFrames] = useState<Array<{
     id: string;
     colorId?: number;
-    sizeId?: number;
-    shoeSizeId?: number;
-    price: number;
+    sizes: Array<{
+      id: number;
+      quantity: number;
+    }>;
+    shoeSizes: Array<{
+      id: number;
+      quantity: number;
+    }>;
     images: File[];
-    stock?: number;
   }>>([]);
+
+  // Effet pour générer les variations quand les tailles ou couleurs changent
+  useEffect(() => {
+    if (variationFrames.length > 0) {
+      generateVariations();
+    }
+  }, [variationFrames]);
+
+  const [sizePrices, setSizePrices] = useState<Record<number, number>>({});
+  const [shoeSizePrices, setShoeSizePrices] = useState<Record<number, number>>({});
+
+  // Fonction pour obtenir toutes les tailles uniques sélectionnées
+  const getUniqueSizes = () => {
+    const sizeIds = new Set<number>();
+    variationFrames.forEach(frame => {
+      frame.sizes.forEach(size => sizeIds.add(size.id));
+    });
+    return Array.from(sizeIds);
+  };
+
+  // Fonction pour obtenir toutes les pointures uniques sélectionnées
+  const getUniqueShoeSizes = () => {
+    const sizeIds = new Set<number>();
+    variationFrames.forEach(frame => {
+      frame.shoeSizes.forEach(size => sizeIds.add(size.id));
+    });
+    return Array.from(sizeIds);
+  };
 
   const addVariationFrame = () => {
     setVariationFrames([
       ...variationFrames,
       {
         id: `frame-${Date.now()}`,
-        price: Number(price) || 0,
-        images: [],
-        stock: 0
+        sizes: [],
+        shoeSizes: [],
+        images: []
       }
     ]);
-  };
-
-  const removeVariationFrame = (frameId: string) => {
-    setVariationFrames(variationFrames.filter(frame => frame.id !== frameId));
   };
 
   const updateVariationFrame = (frameId: string, updates: Partial<typeof variationFrames[0]>) => {
     setVariationFrames(variationFrames.map(frame => 
       frame.id === frameId ? { ...frame, ...updates } : frame
     ));
+  };
+
+  const addSizeToVariation = (frameId: string, sizeId: number, quantity: number) => {
+    setVariationFrames(variationFrames.map(frame => {
+      if (frame.id === frameId) {
+        const existingSize = frame.sizes.find(s => s.id === sizeId);
+        if (existingSize) {
+          return {
+            ...frame,
+            sizes: frame.sizes.map(s => 
+              s.id === sizeId ? { ...s, quantity: s.quantity + quantity } : s
+            )
+          };
+        }
+        return {
+          ...frame,
+          sizes: [...frame.sizes, { id: sizeId, quantity }]
+        };
+      }
+      return frame;
+    }));
+  };
+
+  const addShoeSizeToVariation = (frameId: string, sizeId: number, quantity: number) => {
+    setVariationFrames(variationFrames.map(frame => {
+      if (frame.id === frameId) {
+        const existingSize = frame.shoeSizes.find(s => s.id === sizeId);
+        if (existingSize) {
+          return {
+            ...frame,
+            shoeSizes: frame.shoeSizes.map(s => 
+              s.id === sizeId ? { ...s, quantity: s.quantity + quantity } : s
+            )
+          };
+        }
+        return {
+          ...frame,
+          shoeSizes: [...frame.shoeSizes, { id: sizeId, quantity }]
+        };
+      }
+      return frame;
+    }));
+  };
+
+  const removeSizeFromVariation = (frameId: string, sizeId: number) => {
+    setVariationFrames(variationFrames.map(frame => 
+      frame.id === frameId 
+        ? { ...frame, sizes: frame.sizes.filter(s => s.id !== sizeId) }
+        : frame
+    ));
+  };
+
+  const removeShoeSizeFromVariation = (frameId: string, sizeId: number) => {
+    setVariationFrames(variationFrames.map(frame => 
+      frame.id === frameId 
+        ? { ...frame, shoeSizes: frame.shoeSizes.filter(s => s.id !== sizeId) }
+        : frame
+    ));
+  };
+
+  const removeVariationFrame = (frameId: string) => {
+    setVariationFrames(variationFrames.filter(frame => frame.id !== frameId));
   };
 
   const handleVariationImageUpload = (frameId: string, files: FileList) => {
@@ -434,6 +519,83 @@ const CreateProductPage: React.FC = () => {
         ? { ...frame, images: frame.images.filter((_, idx) => idx !== imageIndex) }
         : frame
     ));
+  };
+
+  // Fonction pour générer toutes les combinaisons possibles
+  const generateVariations = () => {
+    const colors = variationFrames.map(frame => frame.colorId).filter(Boolean);
+    const sizes = getUniqueSizes();
+    const shoeSizes = getUniqueShoeSizes();
+
+    const newVariations: typeof variationFrames = [];
+
+    // Générer les combinaisons couleur + taille
+    colors.forEach(colorId => {
+      sizes.forEach(sizeId => {
+        const existingFrame = variationFrames.find(
+          frame => frame.colorId === colorId && frame.sizes.some(s => s.id === sizeId)
+        );
+
+        if (!existingFrame) {
+          newVariations.push({
+            id: `frame-${Date.now()}-${colorId}-${sizeId}`,
+            colorId,
+            sizes: [{ id: sizeId, quantity: 1 }],
+            shoeSizes: [],
+            images: []
+          });
+        }
+      });
+
+      // Générer les combinaisons couleur + pointure
+      shoeSizes.forEach(sizeId => {
+        const existingFrame = variationFrames.find(
+          frame => frame.colorId === colorId && frame.shoeSizes.some(s => s.id === sizeId)
+        );
+
+        if (!existingFrame) {
+          newVariations.push({
+            id: `frame-${Date.now()}-${colorId}-${sizeId}`,
+            colorId,
+            sizes: [],
+            shoeSizes: [{ id: sizeId, quantity: 1 }],
+            images: []
+          });
+        }
+      });
+    });
+
+    setVariationFrames([...variationFrames, ...newVariations]);
+  };
+
+  // Fonction pour mettre à jour le prix d'une taille
+  const updateSizePrice = (sizeId: number, price: number) => {
+    setSizePrices(prev => ({ ...prev, [sizeId]: price }));
+    
+    // Mettre à jour toutes les variations qui contiennent cette taille
+    setVariationFrames(prevFrames => 
+      prevFrames.map(frame => ({
+        ...frame,
+        sizes: frame.sizes.map(size => 
+          size.id === sizeId ? { ...size, price } : size
+        )
+      }))
+    );
+  };
+
+  // Fonction pour mettre à jour le prix d'une pointure
+  const updateShoeSizePrice = (sizeId: number, price: number) => {
+    setShoeSizePrices(prev => ({ ...prev, [sizeId]: price }));
+    
+    // Mettre à jour toutes les variations qui contiennent cette pointure
+    setVariationFrames(prevFrames => 
+      prevFrames.map(frame => ({
+        ...frame,
+        shoeSizes: frame.shoeSizes.map(size => 
+          size.id === sizeId ? { ...size, price } : size
+        )
+      }))
+    );
   };
 
   return (
@@ -769,6 +931,8 @@ const CreateProductPage: React.FC = () => {
                       onClick={() => {
                         setAttributes(attributes.filter(attr => !attr.affectsPrice));
                         setVariants([]);
+                        setVariationFrames([]);
+                        addVariationFrame();
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         !attributes.some(attr => attr.affectsPrice)
@@ -807,6 +971,8 @@ const CreateProductPage: React.FC = () => {
                           ));
                         }
                         setVariants([]);
+                        setVariationFrames([]);
+                        addVariationFrame();
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         attributes.some(attr => attr.name === 'Taille')
@@ -845,6 +1011,8 @@ const CreateProductPage: React.FC = () => {
                           ));
                         }
                         setVariants([]);
+                        setVariationFrames([]);
+                        addVariationFrame();
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         attributes.some(attr => attr.name === 'Pointure')
@@ -913,17 +1081,19 @@ const CreateProductPage: React.FC = () => {
                                 <SelectValue placeholder="Choisir une couleur" />
                               </SelectTrigger>
                               <SelectContent>
-                                {getAttributes?.[0]?.values.map((color: any) => (
-                                  <SelectItem key={color.id} value={color.id.toString()}>
-                                    <div className="flex items-center gap-2">
-                                      <div
-                                        className="w-4 h-4 rounded-full border border-gray-200"
-                                        style={{ backgroundColor: color.hex_color }}
-                                      />
-                                      <span>{color.value}</span>
-                                    </div>
-                                  </SelectItem>
-                                ))}
+                                {getAttributes?.[0]?.values
+                                  .filter((color: any) => !variationFrames.some(f => f.colorId === color.id && f.id !== frame.id))
+                                  .map((color: any) => (
+                                    <SelectItem key={color.id} value={color.id.toString()}>
+                                      <div className="flex items-center gap-2">
+                                        <div
+                                          className="w-4 h-4 rounded-full border border-gray-200"
+                                          style={{ backgroundColor: color.hex_color }}
+                                        />
+                                        <span>{color.value}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
                               </SelectContent>
                             </Select>
                           </div>
@@ -932,73 +1102,97 @@ const CreateProductPage: React.FC = () => {
                           {attributes.some(attr => attr.name === 'Taille') && (
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">Taille</label>
-                              <Select
-                                value={frame.sizeId?.toString()}
-                                onValueChange={(value) => updateVariationFrame(frame.id, { sizeId: Number(value) })}
-                              >
-                                <SelectTrigger className="bg-gray-50">
-                                  <SelectValue placeholder="Choisir une taille" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {getAttributes?.[1]?.values.map((size: any) => (
-                                    <SelectItem key={size.id} value={size.id.toString()}>
-                                      {size.value}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                              <div className="space-y-3">
+                                <Select
+                                  onValueChange={(value) => {
+                                    const sizeId = Number(value);
+                                    const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
+                                    if (size) {
+                                      const quantity = prompt(`Quantité pour la taille ${size.value}:`, "1");
+                                      if (quantity && !isNaN(Number(quantity))) {
+                                        addSizeToVariation(frame.id, sizeId, Number(quantity));
+                                      }
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="bg-gray-50">
+                                    <SelectValue placeholder="Choisir une taille" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {getAttributes?.[1]?.values.map((size: any) => (
+                                      <SelectItem key={size.id} value={size.id.toString()}>
+                                        {size.value}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+
+                                {/* Liste des tailles sélectionnées */}
+                                <div className="flex flex-wrap gap-2">
+                                  {frame.sizes.map((size) => {
+                                    const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === size.id);
+                                    return (
+                                      <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
+                                        <span className="text-sm">{sizeData?.value} x{size.quantity}</span>
+                                        <button
+                                          onClick={() => removeSizeFromVariation(frame.id, size.id)}
+                                          className="text-gray-400 hover:text-gray-600"
+                                        >
+                                          <X className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
                             </div>
                           )}
 
                           {attributes.some(attr => attr.name === 'Pointure') && (
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">Pointure</label>
-                              <Select
-                                value={frame.shoeSizeId?.toString()}
-                                onValueChange={(value) => updateVariationFrame(frame.id, { shoeSizeId: Number(value) })}
-                              >
-                                <SelectTrigger className="bg-gray-50">
-                                  <SelectValue placeholder="Choisir une pointure" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {getAttributes?.[3]?.values.map((shoeSize: any) => (
-                                    <SelectItem key={shoeSize.id} value={shoeSize.id.toString()}>
-                                      {shoeSize.value}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          )}
-                        </div>
+                              <div className="space-y-3">
+                                <Select
+                                  onValueChange={(value) => {
+                                    const sizeId = Number(value);
+                                    const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
+                                    if (size) {
+                                      const quantity = prompt(`Quantité pour la pointure ${size.value}:`, "1");
+                                      if (quantity && !isNaN(Number(quantity))) {
+                                        addShoeSizeToVariation(frame.id, sizeId, Number(quantity));
+                                      }
+                                    }
+                                  }}
+                                >
+                                  <SelectTrigger className="bg-gray-50">
+                                    <SelectValue placeholder="Choisir une pointure" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {getAttributes?.[3]?.values.map((size: any) => (
+                                      <SelectItem key={size.id} value={size.id.toString()}>
+                                        {size.value}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
 
-                        {/* Deuxième ligne : Quantité et Prix */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {/* Quantité */}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Quantité</label>
-                            <input
-                              type="number"
-                              value={frame.stock || ''}
-                              onChange={(e) => updateVariationFrame(frame.id, { stock: Number(e.target.value) })}
-                              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
-                              placeholder="Quantité disponible"
-                            />
-                          </div>
-
-                          {/* Prix (uniquement pour les variations avec taille/pointure) */}
-                          {(frame.sizeId || frame.shoeSizeId) && (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Prix</label>
-                              <div className="relative">
-                                <input
-                                  type="number"
-                                  value={frame.price}
-                                  onChange={(e) => updateVariationFrame(frame.id, { price: Number(e.target.value) })}
-                                  className="w-full pl-3 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f]"
-                                  placeholder="Prix"
-                                />
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">FCFA</span>
+                                {/* Liste des pointures sélectionnées */}
+                                <div className="flex flex-wrap gap-2">
+                                  {frame.shoeSizes.map((size) => {
+                                    const sizeData = getAttributes?.[3]?.values.find((s: any) => s.id === size.id);
+                                    return (
+                                      <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
+                                        <span className="text-sm">{sizeData?.value} x{size.quantity}</span>
+                                        <button
+                                          onClick={() => removeShoeSizeFromVariation(frame.id, size.id)}
+                                          className="text-gray-400 hover:text-gray-600"
+                                        >
+                                          <X className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
                             </div>
                           )}
@@ -1054,15 +1248,68 @@ const CreateProductPage: React.FC = () => {
                 </div>
               </div>
 
+                {/* Section des prix par taille/pointure */}
+                <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Prix par taille/pointure</h3>
+                  
+                  {/* Prix des tailles */}
+                  {getUniqueSizes().length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des tailles</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {getUniqueSizes().map(sizeId => {
+                          const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
+                          return (
+                            <div key={sizeId} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+                              <span className="font-medium">{size?.value}</span>
+                              <input
+                                type="number"
+                                value={sizePrices[sizeId] || ''}
+                                onChange={(e) => updateSizePrice(sizeId, Number(e.target.value))}
+                                placeholder="Prix (FCFA)"
+                                className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Prix des pointures */}
+                  {getUniqueShoeSizes().length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des pointures</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {getUniqueShoeSizes().map(sizeId => {
+                          const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
+                          return (
+                            <div key={sizeId} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+                              <span className="font-medium">{size?.value}</span>
+                              <input
+                                type="number"
+                                value={shoeSizePrices[sizeId] || ''}
+                                onChange={(e) => updateShoeSizePrice(sizeId, Number(e.target.value))}
+                                placeholder="Prix (FCFA)"
+                                className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Liste des variations sélectionnées */}
                 {variationFrames.length > 0 && (
                   <div className="mt-8">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations sélectionnées</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations générées</h3>
                     <div className="grid grid-cols-1 gap-3">
                       {variationFrames.map((frame) => {
                         const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
-                        const size = getAttributes?.[1]?.values.find((s: any) => s.id === frame.sizeId);
-                        const shoeSize = getAttributes?.[3]?.values.find((s: any) => s.id === frame.shoeSizeId);
+                        const size = frame.sizes[0] ? getAttributes?.[1]?.values.find((s: any) => s.id === frame.sizes[0].id) : null;
+                        const shoeSize = frame.shoeSizes[0] ? getAttributes?.[3]?.values.find((s: any) => s.id === frame.shoeSizes[0].id) : null;
 
                         return (
                           <div key={frame.id} className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm hover:shadow-md transition-all">
@@ -1104,7 +1351,7 @@ const CreateProductPage: React.FC = () => {
                                 
                                 <div className="mt-1.5">
                                   <span className="font-medium text-[#ed7e0f] text-sm">
-                                    {(frame.sizeId || frame.shoeSizeId) ? `${frame.price} FCFA` : 'Prix global'}
+                                    {size ? `${sizePrices[size.id] || 0} FCFA` : shoeSize ? `${shoeSizePrices[shoeSize.id] || 0} FCFA` : 'Prix global'}
                                   </span>
                                 </div>
                               </div>
