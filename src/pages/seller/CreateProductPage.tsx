@@ -1260,7 +1260,7 @@ const CreateProductPage: React.FC = () => {
                   {getUniqueSizes().length > 0 && (
                     <div className="mb-6">
                       <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des tailles</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                         {getUniqueSizes().map(sizeId => {
                           const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
                           return (
