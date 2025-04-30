@@ -529,43 +529,47 @@ const CreateProductPage: React.FC = () => {
 
     const newVariations: typeof variationFrames = [];
 
-    // Générer les combinaisons couleur + taille
+    // Pour chaque couleur, créer une variation avec toutes ses tailles
     colors.forEach(colorId => {
-      sizes.forEach(sizeId => {
-        const existingFrame = variationFrames.find(
-          frame => frame.colorId === colorId && frame.sizes.some(s => s.id === sizeId)
-        );
-
-        if (!existingFrame) {
-          newVariations.push({
-            id: `frame-${Date.now()}-${colorId}-${sizeId}`,
-            colorId,
-            sizes: [{ id: sizeId, quantity: 1 }],
-            shoeSizes: [],
-            images: []
+      const existingFrame = variationFrames.find(frame => frame.colorId === colorId);
+      if (existingFrame) {
+        // Si c'est une variation avec des tailles
+        if (existingFrame.sizes.length > 0) {
+          existingFrame.sizes.forEach(size => {
+            newVariations.push({
+              id: `frame-${Date.now()}-${colorId}-${size.id}`,
+              colorId,
+              sizes: [size],
+              shoeSizes: [],
+              images: existingFrame.images
+            });
           });
         }
-      });
-
-      // Générer les combinaisons couleur + pointure
-      shoeSizes.forEach(sizeId => {
-        const existingFrame = variationFrames.find(
-          frame => frame.colorId === colorId && frame.shoeSizes.some(s => s.id === sizeId)
-        );
-
-        if (!existingFrame) {
-          newVariations.push({
-            id: `frame-${Date.now()}-${colorId}-${sizeId}`,
-            colorId,
-            sizes: [],
-            shoeSizes: [{ id: sizeId, quantity: 1 }],
-            images: []
+        // Si c'est une variation avec des pointures
+        if (existingFrame.shoeSizes.length > 0) {
+          existingFrame.shoeSizes.forEach(size => {
+            newVariations.push({
+              id: `frame-${Date.now()}-${colorId}-${size.id}`,
+              colorId,
+              sizes: [],
+              shoeSizes: [size],
+              images: existingFrame.images
+            });
           });
         }
-      });
+      }
     });
 
-    setVariationFrames([...variationFrames, ...newVariations]);
+    // Filtrer les variations existantes pour éviter les doublons
+    const uniqueVariations = newVariations.filter(newVar => 
+      !variationFrames.some(existing => 
+        existing.colorId === newVar.colorId && 
+        (existing.sizes.some(s => newVar.sizes.some(ns => ns.id === s.id)) ||
+         existing.shoeSizes.some(s => newVar.shoeSizes.some(ns => ns.id === s.id)))
+      )
+    );
+
+    setVariationFrames([...variationFrames, ...uniqueVariations]);
   };
 
   // Fonction pour mettre à jour le prix d'une taille
@@ -1305,62 +1309,91 @@ const CreateProductPage: React.FC = () => {
                 {variationFrames.length > 0 && (
                   <div className="mt-8">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations générées</h3>
-                    <div className="grid grid-cols-1 gap-3">
+                    <div className="grid grid-cols-1 gap-4">
                       {variationFrames.map((frame) => {
                         const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
                         const size = frame.sizes[0] ? getAttributes?.[1]?.values.find((s: any) => s.id === frame.sizes[0].id) : null;
                         const shoeSize = frame.shoeSizes[0] ? getAttributes?.[3]?.values.find((s: any) => s.id === frame.shoeSizes[0].id) : null;
 
                         return (
-                          <div key={frame.id} className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm hover:shadow-md transition-all">
-                            <div className="flex items-center gap-3">
+                          <div key={frame.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all">
+                            <div className="flex items-center gap-4">
                               {frame.images.length > 0 ? (
-                                <div className="relative w-12 h-12 flex-shrink-0">
+                                <div className="relative w-20 h-20 flex-shrink-0">
                                   <img
                                     src={URL.createObjectURL(frame.images[0])}
                                     alt="Variation"
                                     className="w-full h-full object-cover rounded-lg"
                                   />
-                                  <div className="absolute -top-1 -right-1 bg-white rounded-full px-1.5 py-0.5 border border-gray-100 shadow-sm">
-                                    <span className="text-xs text-gray-500">{frame.images.length}</span>
-                                  </div>
+                                  {frame.images.length > 1 && (
+                                    <div className="absolute -top-1 -right-1 bg-white rounded-full px-2 py-0.5 border border-gray-100 shadow-sm">
+                                      <span className="text-xs text-gray-500">+{frame.images.length - 1}</span>
+                                    </div>
+                                  )}
                                 </div>
                               ) : (
-                                <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <Image className="w-5 h-5 text-gray-400" />
+                                <div className="w-20 h-20 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Image className="w-8 h-8 text-gray-400" />
                                 </div>
                               )}
                               
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  {color && (
-                                    <div className="inline-flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-full">
-                                      <div
-                                        className="w-3 h-3 rounded-full border border-gray-200"
-                                        style={{ backgroundColor: color.hex_color }}
-                                      />
-                                      <span className="text-sm font-medium truncate">{color.value}</span>
+                                {/* En-tête avec la couleur */}
+                                {color && (
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <div
+                                      className="w-5 h-5 rounded-full border border-gray-200"
+                                      style={{ backgroundColor: color.hex_color }}
+                                    />
+                                    <span className="text-base font-medium">{color.value}</span>
+                                  </div>
+                                )}
+
+                                {/* Grille des tailles/pointures */}
+                                <div className="space-y-3">
+                                  {/* Tailles */}
+                                  {frame.sizes.length > 0 && (
+                                    <div className="flex flex-wrap gap-2">
+                                      {frame.sizes.map(sizeItem => {
+                                        const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === sizeItem.id);
+                                        return (
+                                          <div key={sizeItem.id} className="bg-gray-50 rounded-lg p-2">
+                                            <div className="text-sm font-medium">{sizeData?.value}</div>
+                                            <div className="flex items-center gap-2 mt-1">
+                                              <span className="text-xs text-gray-500">Qté: {sizeItem.quantity}</span>
+                                              <span className="text-xs font-medium text-[#ed7e0f]">{sizePrices[sizeItem.id] || 0} FCFA</span>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
                                     </div>
                                   )}
-                                  {(size || shoeSize) && (
-                                    <div className="inline-flex items-center bg-gray-50 px-2 py-1 rounded-full">
-                                      <span className="text-sm font-medium">{size?.value || shoeSize?.value}</span>
+
+                                  {/* Pointures */}
+                                  {frame.shoeSizes.length > 0 && (
+                                    <div className="flex flex-wrap gap-2">
+                                      {frame.shoeSizes.map(shoeItem => {
+                                        const shoeSizeData = getAttributes?.[3]?.values.find((s: any) => s.id === shoeItem.id);
+                                        return (
+                                          <div key={shoeItem.id} className="bg-gray-50 rounded-lg p-2">
+                                            <div className="text-sm font-medium">{shoeSizeData?.value}</div>
+                                            <div className="flex items-center gap-2 mt-1">
+                                              <span className="text-xs text-gray-500">Qté: {shoeItem.quantity}</span>
+                                              <span className="text-xs font-medium text-[#ed7e0f]">{shoeSizePrices[shoeItem.id] || 0} FCFA</span>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
                                     </div>
                                   )}
-                                </div>
-                                
-                                <div className="mt-1.5">
-                                  <span className="font-medium text-[#ed7e0f] text-sm">
-                                    {size ? `${sizePrices[size.id] || 0} FCFA` : shoeSize ? `${shoeSizePrices[shoeSize.id] || 0} FCFA` : 'Prix global'}
-                                  </span>
                                 </div>
                               </div>
 
                               <button
                                 onClick={() => removeVariationFrame(frame.id)}
-                                className="p-1.5 hover:bg-gray-50 rounded-lg transition-colors"
+                                className="p-2 hover:bg-gray-50 rounded-lg transition-colors self-start"
                               >
-                                <X className="w-4 h-4 text-gray-400" />
+                                <X className="w-5 h-5 text-gray-400" />
                               </button>
                             </div>
                           </div>
