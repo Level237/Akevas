@@ -91,6 +91,28 @@ const CreateProductPage: React.FC = () => {
         }))
       );
     }
+
+    if (!attributes.some(attr => attr.affectsPrice)) {
+      setAttributes([
+        ...attributes,
+        {
+          id: 2,
+          name: 'Taille',
+          affectsPrice: true,
+          values: []
+        }
+      ]);
+    } else {
+      // Si on a déjà un attribut qui affecte le prix, on le remplace par Taille
+      setAttributes(attributes.map(attr => 
+        attr.affectsPrice 
+          ? { ...attr, name: 'Taille', id: 2 }
+          : attr
+      ));
+    }
+    setVariants([]);
+    setVariationFrames([]);
+    addVariationFrame();
   }, [getAttributes]);
 
   // Nouvelle fonction pour gérer la sélection/déselection des catégories
