@@ -969,9 +969,9 @@ const CreateProductPage: React.FC = () => {
                   {/* Photo mise en avant pour produit simple */}
                   <div className="bg-white rounded-2xl shadow-sm p-6">
                     <h2 className="text-lg font-semibold mb-4">Photo mise en avant</h2>
-                    <div className="aspect-square w-full rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
+                    <div className="aspect-square w-64 h-64 rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
                       {featuredImage ? (
-                        <div className="relative group h-full">
+                        <div className="relative group h-64">
                           <img
                             src={URL.createObjectURL(featuredImage)}
                             alt="Featured product"
