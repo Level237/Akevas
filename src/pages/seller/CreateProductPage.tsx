@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {
   Upload,
   Plus,
-
   X,
   Save,
   AlertCircle,
   Loader2,
-  Image
+  Image,
+  Package,
+  Palette,
+  Ruler
 } from 'lucide-react';
 import { useAddProductMutation } from '@/services/sellerService';
 import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 
 // Nouvelle interface pour mieux typer les attributs
@@ -39,6 +41,9 @@ interface ProductVariant {
 
 
 const CreateProductPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const [showModal, setShowModal] = useState(true);
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [city, setCity] = useState('');
@@ -63,11 +68,11 @@ const CreateProductPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'product' | 'attributes'>('product');
   const [gender, setGender] = useState<number>(0)
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [productType, setProductType] = useState<'simple' | 'variable'>('simple');
   const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender)
   const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender })
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
-  const navigate = useNavigate()
   //console.log(getAttributes?.[3]?.groups)
   // Ajout des pointures par catégorie
   const shoeSizes = {
@@ -594,7 +599,6 @@ const CreateProductPage: React.FC = () => {
     setVariationFrames([...variationFrames, ...uniqueVariations]);
   };
 
-  // Fonction pour mettre à jour le prix d'une taille
   const updateSizePrice = (sizeId: number, price: number) => {
     setSizePrices(prev => ({ ...prev, [sizeId]: price }));
     
@@ -608,140 +612,172 @@ const CreateProductPage: React.FC = () => {
       }))
     );
   };
+ // Fonction pour mettre à jour le prix d'une pointure
+ const updateShoeSizePrice = (sizeId: number, price: number) => {
+  setShoeSizePrices(prev => ({ ...prev, [sizeId]: price }));
+  
+  // Mettre à jour toutes les variations qui contiennent cette pointure
+  setVariationFrames(prevFrames => 
+    prevFrames.map(frame => ({
+      ...frame,
+      shoeSizes: frame.shoeSizes.map(size => 
+        size.id === sizeId ? { ...size, price } : size
+      )
+    }))
+  );
+};
 
-  // Fonction pour mettre à jour le prix d'une pointure
-  const updateShoeSizePrice = (sizeId: number, price: number) => {
-    setShoeSizePrices(prev => ({ ...prev, [sizeId]: price }));
-    
-    // Mettre à jour toutes les variations qui contiennent cette pointure
-    setVariationFrames(prevFrames => 
-      prevFrames.map(frame => ({
-        ...frame,
-        shoeSizes: frame.shoeSizes.map(size => 
-          size.id === sizeId ? { ...size, price } : size
-        )
-      }))
-    );
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (type === 'simple' || type === 'variable') {
+      setProductType(type);
+      setShowModal(false);
+    }
+  }, [searchParams]);
+
+  const handleProductTypeSelect = (type: 'simple' | 'variable') => {
+    setProductType(type);
+    setShowModal(false);
+    navigate(`?type=${type}`);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <form onSubmit={handleSubmit} encType='multipart/form-data'>
-        {/* Boutons fixes pour mobile en haut */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-b z-50">
-          <div className="flex gap-3">
-            <button
-              type="button"
-              className="flex-1 px-6 py-3 border rounded-xl hover:bg-gray-50 font-medium"
-            >
-              Annuler
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium"
-            >
-              Publier
-            </button>
+      {/* Modal de sélection du type de produit */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <h2 className="text-2xl font-bold mb-6 text-center">Choisir le type de produit</h2>
+            <div className="grid grid-cols-1 gap-6">
+              <button
+                onClick={() => handleProductTypeSelect('simple')}
+                className="p-6 rounded-xl border-2 border-gray-200 hover:border-[#ed7e0f] transition-all group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#ed7e0f]/10 flex items-center justify-center group-hover:bg-[#ed7e0f]/20">
+                    <Package className="w-6 h-6 text-[#ed7e0f]" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium text-gray-900">Produit Simple</h3>
+                    <p className="text-sm text-gray-500 mt-1">Un produit sans variations de couleur ou taille</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleProductTypeSelect('variable')}
+                className="p-6 rounded-xl border-2 border-gray-200 hover:border-[#ed7e0f] transition-all group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#ed7e0f]/10 flex items-center justify-center group-hover:bg-[#ed7e0f]/20">
+                    <Palette className="w-6 h-6 text-[#ed7e0f]" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium text-gray-900">Produit Variable</h3>
+                    <p className="text-sm text-gray-500 mt-1">Un produit avec plusieurs variations (couleur, taille, etc.)</p>
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
+      )}
 
-        <main className="max-w-7xl mx-auto px-4 py-8 pt-24 md:pt-8">
-          <div className="mb-8 flex max-sm:flex-col max-sm:gap-5 justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
-                Créer un produit
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Enrichissez votre catalogue avec un nouveau produit
-              </p>
-            </div>
-            <div className="flex max-sm:hidden gap-3">
-              <button type="button" className="px-4 py-2 text-gray-700 bg-white border rounded-xl hover:bg-gray-50 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" />
-                Guide
-              </button>
-              <button type="button" className="px-4 py-2 text-gray-700 bg-white border rounded-xl hover:bg-gray-50 flex items-center gap-2">
-                <Save className="w-4 h-4" />
-                Brouillon
-              </button>
-            </div>
-          </div>
-
-          {/* Onglets pour mobile */}
-          <div className="md:hidden mb-6">
-            <div className="flex rounded-xl bg-gray-100 p-1">
-              <button
-                onClick={() => setActiveTab('product')}
-                className={`flex-1 py-2 text-sm font-medium rounded-lg ${activeTab === 'product'
-                  ? 'bg-white shadow-sm text-[#ed7e0f]'
-                  : 'text-gray-600'
-                  }`}
-              >
-                Produit
-              </button>
-              <button
-                onClick={() => setActiveTab('attributes')}
-                className={`flex-1 py-2 text-sm font-medium rounded-lg ${activeTab === 'attributes'
-                  ? 'bg-white shadow-sm text-[#ed7e0f]'
-                  : 'text-gray-600'
-                  }`}
-              >
-                Attributs
-              </button>
+      <form onSubmit={handleSubmit} encType='multipart/form-data'>
+        {/* Header avec boutons d'action */}
+        <header className="sticky top-0 z-40 bg-white border-b">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
+                  {productType === 'simple' ? 'Créer un produit simple' : 'Créer un produit variable'}
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  {productType === 'simple' 
+                    ? 'Ajoutez un nouveau produit sans variations' 
+                    : 'Créez un produit avec plusieurs variations'}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button type="button" className="px-4 py-2 text-gray-700 bg-white border rounded-xl hover:bg-gray-50">
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium flex items-center gap-2"
+                >
+                  {isLoadingAddProduct ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      Publier
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
+        </header>
 
+        <main className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Colonne principale */}
-            <div className={`md:col-span-2 space-y-6 ${activeTab === 'attributes' ? 'hidden md:block' : ''}`}>
+            <div className="md:col-span-2 space-y-6">
               {/* Informations de base */}
-              <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+              <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 text-2xl font-medium border-[1px] rounded-lg border-[#0000007a] focus:ring-0"
+                  className="w-full px-4 py-3 text-2xl font-medium border-0 border-b focus:ring-0 focus:border-[#ed7e0f]"
                   placeholder="Nom du produit"
                   required
                 />
 
-                <div className="flex max-sm:flex-col gap-4">
-                  <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="px-4 py-2 max-sm:py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                    placeholder="Prix (Fcfa)"
-                    required
-                  />
+                {productType === 'simple' && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
+                      <input
+                        type="number"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                        placeholder="Prix (Fcfa)"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                      <input
+                        type="number"
+                        value={stock}
+                        onChange={(e) => setStock(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                        placeholder="Quantité disponible"
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
 
-                  <input
-                    type="number"
-                    value={stock}
-                    onChange={(e) => setStock(e.target.value)}
-                    className="px-4 py-2  max-sm:py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                    placeholder="Stock"
-                    required
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={6}
+                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                    placeholder="Description détaillée du produit..."
                   />
                 </div>
-
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={6}
-                  className="w-full px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                  placeholder="Description détaillée du produit..."
-                />
               </div>
 
-
-
-              <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-                <div className="relative">
+              {/* Catégories et sous-catégories */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
+                <div>
                   <label className="block text-lg font-semibold mb-4">Genre produit</label>
-
                   <Select name='gender' onValueChange={handleChangeGender} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-gray-50 border-0">
                       <SelectValue placeholder="Choisir un genre" />
                     </SelectTrigger>
                     <SelectContent>
@@ -752,56 +788,52 @@ const CreateProductPage: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-              {gender !== 0 && (
-                <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-                  <div className="relative">
-                    <label className="block text-lg font-semibold mb-4">Catégories</label>
-                    <div className="flex flex-row flex-wrap gap-2 mb-4">
 
-                    </div>
-                    {isLoadingCategoriesByGender ? <div>Loading...</div> : (
-                      <MultiSelect
-
-                        options={categoriesByGender?.categories}
-                        selected={selectedCategories}
-                        onChange={handleChangeCategories}
-                        placeholder="Select categories..."
-                      />
-                    )}
-                  </div>
-                </div>
-              )}
-              {selectedCategories.length > 0 && (
-                <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-                  <div className="relative">
-                    <label className="block text-lg font-semibold mb-4">Sous catégories</label>
-                    <div className="flex flex-row flex-wrap gap-2 mb-4">
-
-                    </div>
-                    {selectedCategories.length > 0 && (
-                      !isLoadingSubCategoriesByParentId && (
+                {gender !== 0 && (
+                  <>
+                    <div>
+                      <label className="block text-lg font-semibold mb-4">Catégories</label>
+                      {isLoadingCategoriesByGender ? (
+                        <div className="flex items-center justify-center h-20">
+                          <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
+                        </div>
+                      ) : (
                         <MultiSelect
-
-                          options={subCategoriesByGender?.categories}
-                          selected={selectedSubCategories}
-                          onChange={handleChangeSubCategories}
-                          placeholder="Select sub categories..."
+                          options={categoriesByGender?.categories}
+                          selected={selectedCategories}
+                          onChange={handleChangeCategories}
+                          placeholder="Sélectionner les catégories..."
                         />
-                      )
+                      )}
+                    </div>
+
+                    {selectedCategories.length > 0 && (
+                      <div>
+                        <label className="block text-lg font-semibold mb-4">Sous catégories</label>
+                        {isLoadingSubCategoriesByParentId ? (
+                          <div className="flex items-center justify-center h-20">
+                            <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
+                          </div>
+                        ) : (
+                          <MultiSelect
+                            options={subCategoriesByGender?.categories}
+                            selected={selectedSubCategories}
+                            onChange={handleChangeSubCategories}
+                            placeholder="Sélectionner les sous-catégories..."
+                          />
+                        )}
+                      </div>
                     )}
-                  </div>
-                </div>
-              )}
-              {/* Nouvelle section pour les informations de contact */}
+                  </>
+                )}
+              </div>
+
+              {/* Informations de contact */}
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                 <h2 className="text-lg font-semibold">Informations de contact</h2>
-
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Numéro WhatsApp
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Numéro WhatsApp</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg className="h-5 w-5 text-green-500" viewBox="0 0 24 24" fill="currentColor">
@@ -812,20 +844,15 @@ const CreateProductPage: React.FC = () => {
                         type="tel"
                         value={whatsappNumber}
                         onChange={(e) => setWhatsappNumber(e.target.value)}
-                        className="w-full pl-12 pr-4 py-2 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                        className="w-full pl-12 pr-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                         placeholder="Ex: +225 0123456789"
                         required
                       />
                     </div>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Ce numéro sera utilisé pour vous contactez
-                    </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Ville cible
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ville cible</label>
                     <Select name='city' onValueChange={handleCityChange} required>
                       <SelectTrigger className="bg-gray-50 border-0">
                         <SelectValue placeholder="Sélectionnez votre ville de livraison" />
@@ -842,93 +869,92 @@ const CreateProductPage: React.FC = () => {
                         )}
                       </SelectContent>
                     </Select>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Ville  que vous voulez touchez par votre produit
-                    </p>
                   </div>
-                </div>
-              </div>
-              {/* Photo mise en avant */}
-              <div className="bg-white rounded-2xl shadow-sm p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-semibold">Photo mise en avant</h2>
-                </div>
-                <div className="aspect-[4/3] w-full max-w-sm mx-auto rounded-lg overflow-hidden border border-dashed border-gray-200 bg-gray-50">
-                  {featuredImage ? (
-                    <div className="relative group h-full">
-                      <img
-                        src={URL.createObjectURL(featuredImage)}
-                        alt="Featured product"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
-                          type="button"
-                          onClick={removeFeaturedImage}
-                          className="p-1.5 bg-white/90 rounded-full hover:bg-white"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <label className="h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
-                      <Upload className="w-8 h-8 text-gray-400" />
-                      <span className="mt-1 text-sm text-gray-500">Ajouter une photo</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleFeaturedImageUpload}
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
-
-              {/* Galerie d'images */}
-              <div className="bg-white    rounded-2xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
-                <div className="grid max-sm:grid-cols-1 grid-cols-4 gap-4">
-                  {images.slice(1).map((image, index) => (
-                    <div key={index} className="relative group  aspect-square rounded-xl overflow-hidden">
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt={`Product ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index + 1)}
-                          className="p-2  bg-white rounded-full hover:bg-gray-100"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-
-                  <label className="aspect-square rounded-xl  bg-gray-50 max-sm:w-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed border-gray-200">
-                    <Upload className="w-8 h-12 text-gray-400" />
-                    <span className="mt-2 text-sm text-gray-500">Ajouter des photos</span>
-                    <input
-                      type="file"
-                      className="hidden "
-                      accept="image/*"
-                      multiple
-
-                      onChange={handleImageUpload}
-                    />
-                  </label>
                 </div>
               </div>
             </div>
 
             {/* Colonne latérale */}
-            <div className={`space-y-6 ${activeTab === 'product' ? 'hidden md:block' : ''}`}>
-              {/* Nouvelle section des attributs */}
-              <div className="bg-white rounded-2xl shadow-sm p-6">
+            <div className="space-y-6">
+              {productType === 'simple' ? (
+                <>
+                  {/* Photo mise en avant pour produit simple */}
+                  <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 className="text-lg font-semibold mb-4">Photo mise en avant</h2>
+                    <div className="aspect-square w-full rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
+                      {featuredImage ? (
+                        <div className="relative group h-full">
+                          <img
+                            src={URL.createObjectURL(featuredImage)}
+                            alt="Featured product"
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button
+                              type="button"
+                              onClick={removeFeaturedImage}
+                              className="p-2 bg-white/90 rounded-full hover:bg-white"
+                            >
+                              <X className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <label className="h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+                          <Upload className="w-10 h-10 text-gray-400" />
+                          <span className="mt-2 text-sm text-gray-500">Ajouter une photo</span>
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleFeaturedImageUpload}
+                          />
+                        </label>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Galerie d'images pour produit simple */}
+                  <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
+                    <div className="grid grid-cols-2 gap-4">
+                      {images.map((image, index) => (
+                        <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="p-2 bg-white rounded-full hover:bg-gray-100"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+
+                      <label className="aspect-square rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed border-gray-200">
+                        <Upload className="w-8 h-8 text-gray-400" />
+                        <span className="mt-2 text-sm text-gray-500">Ajouter</span>
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          multiple
+                          onChange={handleImageUpload}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Section des attributs pour produit variable */}
+                  <div className="bg-white rounded-2xl shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-lg font-semibold text-gray-900">Attributs du produit</h2>
@@ -957,7 +983,8 @@ const CreateProductPage: React.FC = () => {
                       onClick={() => {
                         setAttributes(attributes.filter(attr => !attr.affectsPrice));
                         setVariants([]);
-                        // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
+                        setVariationFrames([]);
+                        addVariationFrame();
                         if (variationFrames.length > 0) {
                           setVariationFrames([{
                             id: variationFrames[0].id,
@@ -1005,17 +1032,19 @@ const CreateProductPage: React.FC = () => {
                           ));
                         }
                         setVariants([]);
-                        // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
-                        if (variationFrames.length > 0) {
-                          setVariationFrames([{
-                            id: variationFrames[0].id,
-                            sizes: [],
-                            shoeSizes: [],
-                            images: []
-                          }]);
-                        } else {
-                          addVariationFrame();
-                        }
+                       setVariationFrames([]);
+                       addVariationFrame();
+                       // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
+                       if (variationFrames.length > 0) {
+                         setVariationFrames([{
+                          id: variationFrames[0].id,
+                           sizes: [],
+                           shoeSizes: [],
+                           images: []
+                         }]);
+                       } else {
+                       addVariationFrame();
+                      }
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         attributes.some(attr => attr.name === 'Taille')
@@ -1053,17 +1082,19 @@ const CreateProductPage: React.FC = () => {
                           ));
                         }
                         setVariants([]);
-                        if (variationFrames.length > 0) {
-                          setVariationFrames([{
-                            id: variationFrames[0].id,
-                            sizes: [],
-                            shoeSizes: [],
-                            images: []
-                          }]);
-                        } else {
-                          addVariationFrame();
-                        }
-                      
+                       setVariationFrames([]);
+                       addVariationFrame();
+                       // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
+                       if (variationFrames.length > 0) {
+                         setVariationFrames([{
+                           id: variationFrames[0].id,
+                           sizes: [],
+                           shoeSizes: [],
+                           images: []
+                         }]);
+                       } else {
+                        addVariationFrame();
+                       }
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         attributes.some(attr => attr.name === 'Pointure')
@@ -1089,7 +1120,6 @@ const CreateProductPage: React.FC = () => {
               
               </div>
 
-              {/* Nouvelle section des variations */}
               <div className="bg-white rounded-2xl shadow-sm p-6">
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold text-gray-900">Variations du produit</h2>
@@ -1352,8 +1382,8 @@ const CreateProductPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Liste des variations sélectionnées */}
-                {variationFrames.length > 0 && (
+                  {/* Liste des variations sélectionnées */}
+                  {variationFrames.length > 0 && (
                   <div className="mt-8">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations générées</h3>
                     <div className="grid grid-cols-1 gap-4">
@@ -1449,22 +1479,8 @@ const CreateProductPage: React.FC = () => {
                     </div>
                   </div>
                 )}
-
-              {/* Actions */}
-              <div className="flex max-sm:hidden gap-3">
-                <button
-                  type="button"
-                  className="flex-1 px-6 py-2.5 border rounded-xl hover:bg-gray-50 font-medium"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-2.5 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium"
-                >
-                  {isLoadingAddProduct ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Publier'}
-                </button>
-              </div>
+                </>
+              )}
             </div>
           </div>
         </main>
