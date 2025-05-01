@@ -145,52 +145,7 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
     )
   }
 
-  // OPTIMISATION : useMemo pour la liste des catégories
-  const renderedCategories = useMemo(() => (
-    !isLoading && categories.map((category:any, index:number) => (
-      <div
-        key={`${category.id}-${index}`}
-        className="min-w-[300px] max-w-[300px] flex-shrink-0"
-        style={{
-          transform: isDragging ? 'scale(0.98)' : 'scale(1)',
-          transition: 'transform 0.3s ease-out'
-        }}
-      >
-        <Link 
-          to={`/categories/${category.category_name}`} 
-          className="group block h-full"
-          onClick={(e) => isDragging && e.preventDefault()}
-        >
-          <div
-            className="relative h-[350px] rounded-2xl overflow-hidden mb-4 border border-white/10 transform transition-transform duration-300 hover:scale-[1.02]"
-            style={{
-              boxShadow: "0 15px 30px -10px rgba(0,0,0,0.5)",
-            }}
-          >
-            <div
-              className={`absolute inset-0 bg-gradient-to-br ${category.color || "from-blue-500/20 to-purple-500/20"} opacity-40 z-10`}
-            />
-            <img
-              src={category.category_profile || "/placeholder.svg"}
-              alt={category.category_name}
-              className="object-cover w-full h-full transition-all duration-700 ease-out group-hover:scale-110 z-0"
-              draggable="false"
-              loading="lazy" // OPTIMISATION
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent z-20">
-              <h3 className="text-xl font-semibold text-white mb-2">{category.category_name}</h3>
-              <p className="text-white/70 text-sm line-clamp-2">{category.category_description}</p>
-            </div>
-            <div
-              className="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2.5 z-20 border border-white/20"
-            >
-              <Plus className="h-5 w-5 text-white" />
-            </div>
-          </div>
-        </Link>
-      </div>
-    ))
-  ), [categories, isLoading, isDragging])
+
 
   const Row = ({ index, style }: { index: number, style: React.CSSProperties }) => {
     const category = categories[index] as any
@@ -207,7 +162,7 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
         <Link 
           to={`/categories/${category.category_name}`} 
           className="group block h-full"
-          onClick={(e) => isDragging && e.preventDefault()}
+          
         >
           <div
             className="relative h-[350px] rounded-2xl overflow-hidden mb-4 border border-white/10 transform transition-transform duration-300 hover:scale-[1.02]"
@@ -222,7 +177,7 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
               src={category.category_profile || "/placeholder.svg"}
               alt={category.category_name}
               className="object-cover w-full h-full transition-all duration-700 ease-out group-hover:scale-110 z-0"
-              draggable="false"
+              
               loading="lazy" // OPTIMISATION
             />
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent z-20">
