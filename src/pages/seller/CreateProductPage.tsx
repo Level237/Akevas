@@ -76,7 +76,7 @@ const CreateProductPage: React.FC = () => {
   const [selectedProductType, setSelectedProductType] = useState<'simple' | 'variable' | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
 
-  console.log(getAttributes)
+  
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
@@ -110,7 +110,7 @@ const CreateProductPage: React.FC = () => {
 
   //console.log(selectedSubCategories)
   // Liste des catégories disponibles
-  console.log(variants)
+ 
   // Initialisation des attributs avec la propriété affectsPrice
   useEffect(() => {
     if (getAttributes) {
@@ -673,20 +673,20 @@ const CreateProductPage: React.FC = () => {
       }))
     );
   };
- // Fonction pour mettre à jour le prix d'une pointure
- const updateShoeSizePrice = (sizeId: number, price: number) => {
-  setShoeSizePrices(prev => ({ ...prev, [sizeId]: price }));
-  
-  // Mettre à jour toutes les variations qui contiennent cette pointure
-  setVariationFrames(prevFrames => 
-    prevFrames.map(frame => ({
-      ...frame,
-      shoeSizes: frame.shoeSizes.map(size => 
-        size.id === sizeId ? { ...size, price } : size
-      )
-    }))
-  );
-};
+  // Fonction pour mettre à jour le prix d'une pointure
+  const updateShoeSizePrice = (sizeId: number, price: number) => {
+    setShoeSizePrices(prev => ({ ...prev, [sizeId]: price }));
+    
+    // Mettre à jour toutes les variations qui contiennent cette pointure
+    setVariationFrames(prevFrames => 
+      prevFrames.map(frame => ({
+        ...frame,
+        shoeSizes: frame.shoeSizes.map(size => 
+          size.id === sizeId ? { ...size, price } : size
+        )
+      }))
+    );
+  };
 
   useEffect(() => {
     const type = searchParams.get('type');
@@ -707,7 +707,7 @@ const CreateProductPage: React.FC = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simuler un chargement
       setProductType(selectedProductType);
-      setShowModal(false);
+    setShowModal(false);
       navigate(`?type=${selectedProductType}`);
     } catch (error) {
       console.error('Erreur lors de la sélection du type de produit:', error);
@@ -819,8 +819,8 @@ const CreateProductPage: React.FC = () => {
             <div className="p-6">
               <div className="space-y-4">
                 {/* Produit Simple */}
-                <button
-                  onClick={() => handleProductTypeSelect('simple')}
+              <button
+                onClick={() => handleProductTypeSelect('simple')}
                   className={`w-full transition-all ${
                     selectedProductType === 'simple'
                       ? 'bg-[#ed7e0f]/5 ring-2 ring-[#ed7e0f]'
@@ -834,10 +834,10 @@ const CreateProductPage: React.FC = () => {
                         : 'bg-gray-100'
                     }`}>
                       <Package className="w-6 h-6 text-[#ed7e0f]" />
-                    </div>
+                  </div>
                     <div className="flex-1 text-left">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900">Produit Simple</h3>
+                    <h3 className="font-medium text-gray-900">Produit Simple</h3>
                         {selectedProductType === 'simple' && (
                           <div className="px-2 py-1 rounded-full bg-[#ed7e0f]/10 text-[#ed7e0f] text-xs font-medium">
                             Sélectionné
@@ -845,13 +845,13 @@ const CreateProductPage: React.FC = () => {
                         )}
                       </div>
                       <p className="text-sm text-gray-600 mt-1">Un produit unique avec un seul prix et une seule référence. Idéal pour les produits sans variations.</p>
-                    </div>
                   </div>
-                </button>
+                </div>
+              </button>
 
                 {/* Produit Variable */}
-                <button
-                  onClick={() => handleProductTypeSelect('variable')}
+              <button
+                onClick={() => handleProductTypeSelect('variable')}
                   className={`w-full transition-all ${
                     selectedProductType === 'variable'
                       ? 'bg-[#ed7e0f]/5 ring-2 ring-[#ed7e0f]'
@@ -865,25 +865,25 @@ const CreateProductPage: React.FC = () => {
                         : 'bg-gray-100'
                     }`}>
                       <Palette className="w-6 h-6 text-[#ed7e0f]" />
-                    </div>
+                  </div>
                     <div className="flex-1 text-left">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900">Produit Variable</h3>
+                    <h3 className="font-medium text-gray-900">Produit Variable</h3>
                         {selectedProductType === 'variable' && (
                           <div className="px-2 py-1 rounded-full bg-[#ed7e0f]/10 text-[#ed7e0f] text-xs font-medium">
                             Sélectionné
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600 mt-1">Un produit configurable avec plusieurs variations, prix et stocks. Parfait pour les vêtements et chaussures.</p>
-                    </div>
                   </div>
+                        )}
+                </div>
+                      <p className="text-sm text-gray-600 mt-1">Un produit configurable avec plusieurs variations, prix et stocks. Parfait pour les vêtements et chaussures.</p>
+            </div>
+          </div>
                 </button>
-              </div>
+        </div>
 
               {/* Footer avec bouton de confirmation */}
               <div className="mt-8 flex justify-end">
-                <button
+            <button
                   onClick={handleConfirmProductType}
                   disabled={!selectedProductType || isLoading}
                   className={`px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all ${
@@ -903,9 +903,9 @@ const CreateProductPage: React.FC = () => {
                       <span>Continuer</span>
                     </>
                   )}
-                </button>
-              </div>
-            </div>
+            </button>
+          </div>
+        </div>
           </div>
         </div>
       )}
@@ -915,21 +915,21 @@ const CreateProductPage: React.FC = () => {
         <header className="sticky top-0 z-40 bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <div>
+            <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
                   {productType === 'simple' ? 'Créer un produit simple' : 'Créer un produit variable'}
-                </h1>
+              </h1>
                 <p className="text-gray-600 mt-1">
                   {productType === 'simple' 
                     ? 'Ajoutez un nouveau produit sans variations' 
                     : 'Créez un produit avec plusieurs variations'}
-                </p>
-              </div>
+              </p>
+            </div>
               <div className="flex items-center gap-3">
                 <button type="button" className="px-4 py-2 text-gray-700 bg-white border rounded-xl hover:bg-gray-50">
                   Annuler
-                </button>
-                <button
+              </button>
+              <button
                   type="submit"
                   className="px-6 py-2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium flex items-center gap-2"
                 >
@@ -939,9 +939,9 @@ const CreateProductPage: React.FC = () => {
                       Publier
                     </>
                   )}
-                </button>
-              </div>
+              </button>
             </div>
+          </div>
           </div>
         </header>
 
@@ -964,38 +964,38 @@ const CreateProductPage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
-                      <input
-                        type="number"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
                         className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                        placeholder="Prix (Fcfa)"
-                        required
-                      />
+                    placeholder="Prix (Fcfa)"
+                    required
+                  />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                      <input
-                        type="number"
-                        value={stock}
-                        onChange={(e) => setStock(e.target.value)}
+                  <input
+                    type="number"
+                    value={stock}
+                    onChange={(e) => setStock(e.target.value)}
                         className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                         placeholder="Quantité disponible"
-                        required
-                      />
-                    </div>
+                    required
+                  />
+                </div>
                   </div>
                 )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={6}
-                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                    placeholder="Description détaillée du produit..."
-                  />
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={6}
+                  className="w-full px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                  placeholder="Description détaillée du produit..."
+                />
                 </div>
               </div>
 
@@ -1016,41 +1016,41 @@ const CreateProductPage: React.FC = () => {
                   </Select>
                 </div>
 
-                {gender !== 0 && (
+              {gender !== 0 && (
                   <>
                     <div>
-                      <label className="block text-lg font-semibold mb-4">Catégories</label>
+                    <label className="block text-lg font-semibold mb-4">Catégories</label>
                       {isLoadingCategoriesByGender ? (
                         <div className="flex items-center justify-center h-20">
                           <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
-                        </div>
-                      ) : (
-                        <MultiSelect
-                          options={categoriesByGender?.categories}
-                          selected={selectedCategories}
-                          onChange={handleChangeCategories}
-                          placeholder="Sélectionner les catégories..."
-                        />
-                      )}
                     </div>
+                      ) : (
+                      <MultiSelect
+                        options={categoriesByGender?.categories}
+                        selected={selectedCategories}
+                        onChange={handleChangeCategories}
+                          placeholder="Sélectionner les catégories..."
+                      />
+                    )}
+                  </div>
 
-                    {selectedCategories.length > 0 && (
+              {selectedCategories.length > 0 && (
                       <div>
-                        <label className="block text-lg font-semibold mb-4">Sous catégories</label>
+                    <label className="block text-lg font-semibold mb-4">Sous catégories</label>
                         {isLoadingSubCategoriesByParentId ? (
                           <div className="flex items-center justify-center h-20">
                             <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
-                          </div>
+                    </div>
                         ) : (
-                          <MultiSelect
-                            options={subCategoriesByGender?.categories}
-                            selected={selectedSubCategories}
-                            onChange={handleChangeSubCategories}
+                        <MultiSelect
+                          options={subCategoriesByGender?.categories}
+                          selected={selectedSubCategories}
+                          onChange={handleChangeSubCategories}
                             placeholder="Sélectionner les sous-catégories..."
-                          />
-                        )}
-                      </div>
+                        />
                     )}
+                </div>
+              )}
                   </>
                 )}
               </div>
@@ -1099,7 +1099,7 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
+                </div>
 
             {/* Colonne latérale */}
             <div className="space-y-6">
@@ -1109,79 +1109,79 @@ const CreateProductPage: React.FC = () => {
                   <div className="bg-white rounded-2xl shadow-sm p-6">
                     <h2 className="text-lg font-semibold mb-4">Photo mise en avant</h2>
                     <div className="aspect-square w-64 h-64 rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
-                      {featuredImage ? (
+                  {featuredImage ? (
                         <div className="relative group h-64">
-                          <img
-                            src={URL.createObjectURL(featuredImage)}
-                            alt="Featured product"
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <button
-                              type="button"
-                              onClick={removeFeaturedImage}
+                      <img
+                        src={URL.createObjectURL(featuredImage)}
+                        alt="Featured product"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button
+                          type="button"
+                          onClick={removeFeaturedImage}
                               className="p-2 bg-white/90 rounded-full hover:bg-white"
-                            >
+                        >
                               <X className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
                         <label className="h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
                           <Upload className="w-10 h-10 text-gray-400" />
                           <span className="mt-2 text-sm text-gray-500">Ajouter une photo</span>
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={handleFeaturedImageUpload}
-                          />
-                        </label>
-                      )}
-                    </div>
-                  </div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleFeaturedImageUpload}
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
 
                   {/* Galerie d'images pour produit simple */}
                   <div className="bg-white rounded-2xl shadow-sm p-6">
-                    <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
+                <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
                     <div className="grid grid-cols-2 gap-4">
                       {images.map((image, index) => (
                         <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt={`Product ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <button
-                              type="button"
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`Product ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button
+                          type="button"
                               onClick={() => removeImage(index)}
                               className="p-2 bg-white rounded-full hover:bg-gray-100"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
 
                       <label className="aspect-square rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed border-gray-200">
                         <Upload className="w-8 h-8 text-gray-400" />
                         <span className="mt-2 text-sm text-gray-500">Ajouter</span>
-                        <input
-                          type="file"
+                    <input
+                      type="file"
                           className="hidden"
-                          accept="image/*"
-                          multiple
-                          onChange={handleImageUpload}
-                        />
-                      </label>
-                    </div>
-                  </div>
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                </div>
+              </div>
                 </>
               ) : (
                 <>
                   {/* Section des attributs pour produit variable */}
-                  <div className="bg-white rounded-2xl shadow-sm p-6">
+              <div className="bg-white rounded-2xl shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-lg font-semibold text-gray-900">Attributs du produit</h2>
@@ -1259,8 +1259,8 @@ const CreateProductPage: React.FC = () => {
                           ));
                         }
                         setVariants([]);
-                       setVariationFrames([]);
-                       addVariationFrame();
+                        setVariationFrames([]);
+                        addVariationFrame();
                        // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
                        if (variationFrames.length > 0) {
                          setVariationFrames([{
@@ -1309,8 +1309,8 @@ const CreateProductPage: React.FC = () => {
                           ));
                         }
                         setVariants([]);
-                       setVariationFrames([]);
-                       addVariationFrame();
+                        setVariationFrames([]);
+                        addVariationFrame();
                        // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
                        if (variationFrames.length > 0) {
                          setVariationFrames([{
@@ -1575,7 +1575,7 @@ const CreateProductPage: React.FC = () => {
                       </div>
                     </div>
                   )}
-
+                  
                   {/* Prix des tailles */}
                   {getUniqueSizes().length > 0 && (
                     <div className="mb-6">
@@ -1604,7 +1604,7 @@ const CreateProductPage: React.FC = () => {
                   {getUniqueShoeSizes().length > 0 && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des pointures</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                         {getUniqueShoeSizes().map(sizeId => {
                           const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
                           return (
@@ -1625,8 +1625,8 @@ const CreateProductPage: React.FC = () => {
                   )}
                 </div>
 
-                  {/* Liste des variations sélectionnées */}
-                  {variationFrames.length > 0 && (
+                {/* Liste des variations sélectionnées */}
+                {variationFrames.length > 0 && (
                   <div className="mt-8">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations générées</h3>
                     <div className="grid grid-cols-1 gap-4">
