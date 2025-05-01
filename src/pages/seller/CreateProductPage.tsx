@@ -11,6 +11,7 @@ import {
   Palette,
   Ruler
 } from 'lucide-react';
+import vendor from '@/assets/vendor.jpg'  
 import { useAddProductMutation } from '@/services/sellerService';
 import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
@@ -48,6 +49,8 @@ const CreateProductPage: React.FC = () => {
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [city, setCity] = useState('');
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedProductType, setSelectedProductType] = useState<'simple' | 'variable' | null>(null);
 
   console.log(getAttributes)
   const [description, setDescription] = useState('');
@@ -630,54 +633,139 @@ const CreateProductPage: React.FC = () => {
   useEffect(() => {
     const type = searchParams.get('type');
     if (type === 'simple' || type === 'variable') {
-      setProductType(type);
+      setSelectedProductType(type);
       setShowModal(false);
     }
   }, [searchParams]);
 
-  const handleProductTypeSelect = (type: 'simple' | 'variable') => {
-    setProductType(type);
-    setShowModal(false);
-    navigate(`?type=${type}`);
+  const handleProductTypeSelect = async (type: 'simple' | 'variable') => {
+    setSelectedProductType(type);
+  };
+
+  const handleConfirmProductType = async () => {
+    if (!selectedProductType) return;
+    
+    setIsLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simuler un chargement
+      setProductType(selectedProductType);
+      setShowModal(false);
+      navigate(`?type=${selectedProductType}`);
+    } catch (error) {
+      console.error('Erreur lors de la sélection du type de produit:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Modal de sélection du type de produit */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
-            <h2 className="text-2xl font-bold mb-6 text-center">Choisir le type de produit</h2>
-            <div className="grid grid-cols-1 gap-6">
-              <button
-                onClick={() => handleProductTypeSelect('simple')}
-                className="p-6 rounded-xl border-2 border-gray-200 hover:border-[#ed7e0f] transition-all group"
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-full max-w-3xl mx-4 overflow-hidden shadow-xl">
+            {/* Header avec bouton de fermeture */}
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
+                Choisir le type de produit
+              </h2>
+              <button 
+                onClick={() => setShowModal(false)}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#ed7e0f]/10 flex items-center justify-center group-hover:bg-[#ed7e0f]/20">
-                    <Package className="w-6 h-6 text-[#ed7e0f]" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="font-medium text-gray-900">Produit Simple</h3>
-                    <p className="text-sm text-gray-500 mt-1">Un produit sans variations de couleur ou taille</p>
-                  </div>
-                </div>
+                <X className="w-6 h-6 text-gray-500" />
               </button>
+            </div>
 
-              <button
-                onClick={() => handleProductTypeSelect('variable')}
-                className="p-6 rounded-xl border-2 border-gray-200 hover:border-[#ed7e0f] transition-all group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#ed7e0f]/10 flex items-center justify-center group-hover:bg-[#ed7e0f]/20">
-                    <Palette className="w-6 h-6 text-[#ed7e0f]" />
+            <div className="p-6">
+              <div className="space-y-4">
+                {/* Produit Simple */}
+                <button
+                  onClick={() => handleProductTypeSelect('simple')}
+                  className={`w-full transition-all ${
+                    selectedProductType === 'simple'
+                      ? 'bg-[#ed7e0f]/5 ring-2 ring-[#ed7e0f]'
+                      : 'hover:bg-gray-50 ring-1 ring-gray-200'
+                  } rounded-xl p-4`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className={`p-3 rounded-xl ${
+                      selectedProductType === 'simple'
+                        ? 'bg-[#ed7e0f]/10'
+                        : 'bg-gray-100'
+                    }`}>
+                      <Package className="w-6 h-6 text-[#ed7e0f]" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-gray-900">Produit Simple</h3>
+                        {selectedProductType === 'simple' && (
+                          <div className="px-2 py-1 rounded-full bg-[#ed7e0f]/10 text-[#ed7e0f] text-xs font-medium">
+                            Sélectionné
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">Un produit unique avec un seul prix et une seule référence. Idéal pour les produits sans variations.</p>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <h3 className="font-medium text-gray-900">Produit Variable</h3>
-                    <p className="text-sm text-gray-500 mt-1">Un produit avec plusieurs variations (couleur, taille, etc.)</p>
+                </button>
+
+                {/* Produit Variable */}
+                <button
+                  onClick={() => handleProductTypeSelect('variable')}
+                  className={`w-full transition-all ${
+                    selectedProductType === 'variable'
+                      ? 'bg-[#ed7e0f]/5 ring-2 ring-[#ed7e0f]'
+                      : 'hover:bg-gray-50 ring-1 ring-gray-200'
+                  } rounded-xl p-4`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className={`p-3 rounded-xl ${
+                      selectedProductType === 'variable'
+                        ? 'bg-[#ed7e0f]/10'
+                        : 'bg-gray-100'
+                    }`}>
+                      <Palette className="w-6 h-6 text-[#ed7e0f]" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-gray-900">Produit Variable</h3>
+                        {selectedProductType === 'variable' && (
+                          <div className="px-2 py-1 rounded-full bg-[#ed7e0f]/10 text-[#ed7e0f] text-xs font-medium">
+                            Sélectionné
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">Un produit configurable avec plusieurs variations, prix et stocks. Parfait pour les vêtements et chaussures.</p>
+                    </div>
                   </div>
-                </div>
-              </button>
+                </button>
+              </div>
+
+              {/* Footer avec bouton de confirmation */}
+              <div className="mt-8 flex justify-end">
+                <button
+                  onClick={handleConfirmProductType}
+                  disabled={!selectedProductType || isLoading}
+                  className={`px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all ${
+                    selectedProductType
+                      ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:opacity-90'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Configuration en cours...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5" />
+                      <span>Continuer</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1260,10 +1348,10 @@ const CreateProductPage: React.FC = () => {
                                 {/* Liste des pointures sélectionnées */}
                                 <div className="flex flex-wrap gap-2">
                                   {frame.shoeSizes.map((size) => {
-                                    const sizeData = getAttributes?.[3]?.values.find((s: any) => s.id === size.id);
+                                    const shoeSizeData = getAttributes?.[3]?.values.find((s: any) => s.id === size.id);
                                     return (
                                       <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
-                                        <span className="text-sm">{sizeData?.value} x{size.quantity}</span>
+                                        <span className="text-sm">{shoeSizeData?.value}</span>
                                         <button
                                           onClick={() => removeShoeSizeFromVariation(frame.id, size.id)}
                                           className="text-gray-400 hover:text-gray-600"
