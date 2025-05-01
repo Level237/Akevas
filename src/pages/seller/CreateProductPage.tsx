@@ -957,8 +957,17 @@ const CreateProductPage: React.FC = () => {
                       onClick={() => {
                         setAttributes(attributes.filter(attr => !attr.affectsPrice));
                         setVariants([]);
-                        setVariationFrames([]);
-                        addVariationFrame();
+                        // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
+                        if (variationFrames.length > 0) {
+                          setVariationFrames([{
+                            id: variationFrames[0].id,
+                            sizes: [],
+                            shoeSizes: [],
+                            images: []
+                          }]);
+                        } else {
+                          addVariationFrame();
+                        }
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         !attributes.some(attr => attr.affectsPrice)
@@ -989,7 +998,6 @@ const CreateProductPage: React.FC = () => {
                             }
                           ]);
                         } else {
-                          // Si on a déjà un attribut qui affecte le prix, on le remplace par Taille
                           setAttributes(attributes.map(attr => 
                             attr.affectsPrice 
                               ? { ...attr, name: 'Taille', id: 2 }
@@ -997,8 +1005,17 @@ const CreateProductPage: React.FC = () => {
                           ));
                         }
                         setVariants([]);
-                        setVariationFrames([]);
-                        addVariationFrame();
+                        // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
+                        if (variationFrames.length > 0) {
+                          setVariationFrames([{
+                            id: variationFrames[0].id,
+                            sizes: [],
+                            shoeSizes: [],
+                            images: []
+                          }]);
+                        } else {
+                          addVariationFrame();
+                        }
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         attributes.some(attr => attr.name === 'Taille')
@@ -1029,7 +1046,6 @@ const CreateProductPage: React.FC = () => {
                             }
                           ]);
                         } else {
-                          // Si on a déjà un attribut qui affecte le prix, on le remplace par Pointure
                           setAttributes(attributes.map(attr => 
                             attr.affectsPrice 
                               ? { ...attr, name: 'Pointure', id: 3 }
@@ -1037,8 +1053,17 @@ const CreateProductPage: React.FC = () => {
                           ));
                         }
                         setVariants([]);
-                        setVariationFrames([]);
-                        addVariationFrame();
+                        if (variationFrames.length > 0) {
+                          setVariationFrames([{
+                            id: variationFrames[0].id,
+                            sizes: [],
+                            shoeSizes: [],
+                            images: []
+                          }]);
+                        } else {
+                          addVariationFrame();
+                        }
+                      
                       }}
                       className={`p-4 h-24 rounded-xl border-2 transition-all ${
                         attributes.some(attr => attr.name === 'Pointure')
