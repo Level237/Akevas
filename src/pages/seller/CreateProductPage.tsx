@@ -40,6 +40,29 @@ interface ProductVariant {
   stock?: number; // Optionnel: pour gérer le stock par variant
 }
 
+// Nouvelle interface pour les variations structurées
+interface Variation {
+  id: string;
+  color: {
+    id: number;
+    name: string;
+    hex: string;
+  };
+  size?: {
+    id: number;
+    name: string;
+    quantity: number;
+    price: number;
+  };
+  shoeSize?: {
+    id: number;
+    name: string;
+    quantity: number;
+    price: number;
+  };
+  images: File[];
+  price: number;
+}
 
 const CreateProductPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -51,6 +74,7 @@ const CreateProductPage: React.FC = () => {
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedProductType, setSelectedProductType] = useState<'simple' | 'variable' | null>(null);
+  const [variations, setVariations] = useState<Variation[]>([]);
 
   console.log(getAttributes)
   const [description, setDescription] = useState('');
@@ -271,12 +295,12 @@ const CreateProductPage: React.FC = () => {
       return;
     }
 
-    if (!price || Number(price) <= 0) {
+    if (selectedProductType === 'simple' && (!price || Number(price) <= 0)) {
       alert("Le prix doit être supérieur à 0");
       return;
     }
 
-    if (!stock || Number(stock) <= 0) {
+    if (selectedProductType === 'simple' && (!stock || Number(stock) <= 0)) {
       alert("Le stock doit être supérieur à 0");
       return;
     }
@@ -306,24 +330,33 @@ const CreateProductPage: React.FC = () => {
       return;
     }
 
-    if (!featuredImage) {
+    if (selectedProductType === 'simple' && !featuredImage) {
       alert("Une photo mise en avant est requise");
       return;
     }
 
-    // Validation des variants si des attributs sont sélectionnés
-    const hasSelectedAttributes = attributes.some(attr => attr.values.length > 0);
-    if (hasSelectedAttributes) {
-      const invalidVariants = variants.some(variant =>
-        variant.images.length === 0 ||
-        !variant.price ||
-        variant.price <= 0
-      );
-
-      if (invalidVariants) {
-        alert("Veuillez remplir tous les champs (images, prix) pour chaque variante");
-        return;
-      }
+    // Afficher les variations structurées
+    if (selectedProductType === 'variable' && variations.length > 0) {
+      console.log('Variations structurées:', variations);
+      
+      // Afficher un résumé des variations dans la console
+      variations.forEach((variation, index) => {
+        console.log(`\nVariation ${index + 1}:`);
+        console.log(`- ID: ${variation.id}`);
+        console.log(`- Couleur: ${variation.color.name} (${variation.color.hex})`);
+        if (variation.size) {
+          console.log(`- Taille: ${variation.size.name}`);
+          console.log(`  Quantité: ${variation.size.quantity}`);
+          console.log(`  Prix: ${variation.size.price} FCFA`);
+        }
+        if (variation.shoeSize) {
+          console.log(`- Pointure: ${variation.shoeSize.name}`);
+          console.log(`  Quantité: ${variation.shoeSize.quantity}`);
+          console.log(`  Prix: ${variation.shoeSize.price} FCFA`);
+        }
+        console.log(`- Nombre d'images: ${variation.images.length}`);
+        console.log(`- Prix total: ${variation.price} FCFA`);
+      });
     }
 
     try {
@@ -344,29 +377,53 @@ const CreateProductPage: React.FC = () => {
       selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
       selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
 
-      // Ajouter les variants au formData s'il y en a
-      if (variants.length > 0) {
-        const variantsData = variants.map(variant => ({
-          variant_name: variant.variant_name,
-          attribute_value_id: variant.attribute_value_id,
-          price: variant.price,
-          images: []
-        }));
+      // Ajouter les variations au formData
+      if (variations.length > 0) {
+        // Regrouper les variations par couleur pour éviter la duplication des images
+        const variationsByColor = variations.reduce((acc, variation) => {
+          const colorKey = variation.color.id;
+          if (!acc[colorKey]) {
+            acc[colorKey] = {
+              color: variation.color,
+              images: variation.images,
+              variations: []
+            };
+          }
+          acc[colorKey].variations.push({
+            id: variation.id,
+            size: variation.size,
+            shoeSize: variation.shoeSize,
+            price: variation.price
+          });
+          return acc;
+        }, {} as Record<number, {
+          color: { id: number; name: string; hex: string };
+          images: File[];
+          variations: Array<{
+            id: string;
+            size?: { id: number; name: string; quantity: number; price: number };
+            shoeSize?: { id: number; name: string; quantity: number; price: number };
+            price: number;
+          }>;
+        }>);
 
-        formData.append('variants', JSON.stringify(variantsData));
-
-        // Ajouter les images des variants séparément
-        variants.forEach((variant, variantIndex) => {
-          variant.images.forEach((image, imageIndex) => {
-            formData.append(`variant_images_${variantIndex}_${imageIndex}`, image);
+        // Ajouter les variations groupées par couleur
+        formData.append('variations', JSON.stringify(Object.values(variationsByColor)));
+        
+        // Ajouter les images des variations par couleur
+        Object.values(variationsByColor).forEach((colorGroup, colorIndex) => {
+          colorGroup.images.forEach((image, imageIndex) => {
+            formData.append(`color_${colorGroup.color.id}_image_${imageIndex}`, image);
           });
         });
-        //console.log(variantsData)
       }
       
-      const response = await addProduct(formData);
-      console.log(response)
-      navigate('/seller/products')
+      // Afficher le contenu du formData pour vérification
+      console.log('Contenu du formData:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      
     } catch (error) {
       console.log(error)
     }
@@ -436,6 +493,7 @@ const CreateProductPage: React.FC = () => {
 
   const [sizePrices, setSizePrices] = useState<Record<number, number>>({});
   const [shoeSizePrices, setShoeSizePrices] = useState<Record<number, number>>({});
+  const [globalColorPrice, setGlobalColorPrice] = useState<number>(0);
 
   // Fonction pour obtenir toutes les tailles uniques sélectionnées
   const getUniqueSizes = () => {
@@ -657,6 +715,87 @@ const CreateProductPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Effet pour générer les variations structurées
+  useEffect(() => {
+    const generateStructuredVariations = () => {
+      const newVariations: Variation[] = [];
+
+      variationFrames.forEach(frame => {
+        const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
+        
+        if (!color) return;
+
+        // Cas 1: Variation couleur uniquement
+        if (!attributes.some(attr => attr.affectsPrice)) {
+          newVariations.push({
+            id: frame.id,
+            color: {
+              id: color.id,
+              name: color.value,
+              hex: color.hex_color
+            },
+            images: frame.images,
+            price: globalColorPrice
+          });
+        }
+        
+        // Cas 2: Variation couleur + taille
+        if (frame.sizes.length > 0) {
+          frame.sizes.forEach(sizeItem => {
+            const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeItem.id);
+            if (size) {
+              newVariations.push({
+                id: `${frame.id}-${size.id}`,
+                color: {
+                  id: color.id,
+                  name: color.value,
+                  hex: color.hex_color
+                },
+                size: {
+                  id: size.id,
+                  name: size.value,
+                  quantity: sizeItem.quantity,
+                  price: sizePrices[size.id] || 0
+                },
+                images: frame.images,
+                price: sizePrices[size.id] || 0
+              });
+            }
+          });
+        }
+
+        // Cas 3: Variation couleur + pointure
+        if (frame.shoeSizes.length > 0) {
+          frame.shoeSizes.forEach(shoeItem => {
+            const shoeSize = getAttributes?.[3]?.values.find((s: any) => s.id === shoeItem.id);
+            if (shoeSize) {
+              newVariations.push({
+                id: `${frame.id}-${shoeSize.id}`,
+                color: {
+                  id: color.id,
+                  name: color.value,
+                  hex: color.hex_color
+                },
+                shoeSize: {
+                  id: shoeSize.id,
+                  name: shoeSize.value,
+                  quantity: shoeItem.quantity,
+                  price: shoeSizePrices[shoeSize.id] || 0
+                },
+                images: frame.images,
+                price: shoeSizePrices[shoeSize.id] || 0
+              });
+            }
+          });
+        }
+      });
+
+      setVariations(newVariations);
+    };
+
+    generateStructuredVariations();
+  }, [variationFrames, getAttributes, attributes, globalColorPrice, sizePrices, shoeSizePrices]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1302,7 +1441,7 @@ const CreateProductPage: React.FC = () => {
                                     const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === size.id);
                                     return (
                                       <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
-                                        <span className="text-sm">{sizeData?.value} x{size.quantity}</span>
+                                        <span className="text-sm">{sizeData?.value}</span>
                                         <button
                                           onClick={() => removeSizeFromVariation(frame.id, size.id)}
                                           className="text-gray-400 hover:text-gray-600"
@@ -1419,8 +1558,24 @@ const CreateProductPage: React.FC = () => {
 
                 {/* Section des prix par taille/pointure */}
                 <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Prix par taille/pointure</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Prix des variations</h3>
                   
+                  {/* Prix global pour les variations de couleur uniquement */}
+                  {!attributes.some(attr => attr.affectsPrice) && (
+                    <div className="mb-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Prix global pour toutes les couleurs</h4>
+                      <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+                        <input
+                          type="number"
+                          value={globalColorPrice || ''}
+                          onChange={(e) => setGlobalColorPrice(Number(e.target.value))}
+                          placeholder="Prix global (FCFA)"
+                          className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {/* Prix des tailles */}
                   {getUniqueSizes().length > 0 && (
                     <div className="mb-6">
@@ -1511,6 +1666,11 @@ const CreateProductPage: React.FC = () => {
                                       style={{ backgroundColor: color.hex_color }}
                                     />
                                     <span className="text-base font-medium">{color.value}</span>
+                                    {!attributes.some(attr => attr.affectsPrice) && (
+                                      <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
+                                        {globalColorPrice || 0} FCFA
+                                      </span>
+                                    )}
                                   </div>
                                 )}
 
