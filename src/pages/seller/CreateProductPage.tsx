@@ -11,7 +11,7 @@ import {
   Palette,
   Ruler
 } from 'lucide-react';
-import vendor from '@/assets/vendor.jpg'  
+import vendor from '@/assets/vendor.jpg'
 import { useAddProductMutation } from '@/services/sellerService';
 import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
@@ -336,28 +336,7 @@ const CreateProductPage: React.FC = () => {
     }
 
     // Afficher les variations structurées
-    if (selectedProductType === 'variable' && variations.length > 0) {
-      console.log('Variations structurées:', variations);
-      
-      // Afficher un résumé des variations dans la console
-      variations.forEach((variation, index) => {
-        console.log(`\nVariation ${index + 1}:`);
-        console.log(`- ID: ${variation.id}`);
-        console.log(`- Couleur: ${variation.color.name} (${variation.color.hex})`);
-        if (variation.size) {
-          console.log(`- Taille: ${variation.size.name}`);
-          console.log(`  Quantité: ${variation.size.quantity}`);
-          console.log(`  Prix: ${variation.size.price} FCFA`);
-        }
-        if (variation.shoeSize) {
-          console.log(`- Pointure: ${variation.shoeSize.name}`);
-          console.log(`  Quantité: ${variation.shoeSize.quantity}`);
-          console.log(`  Prix: ${variation.shoeSize.price} FCFA`);
-        }
-        console.log(`- Nombre d'images: ${variation.images.length}`);
-        console.log(`- Prix total: ${variation.price} FCFA`);
-      });
-    }
+ 
 
     try {
       const formData = new FormData()
@@ -368,6 +347,7 @@ const CreateProductPage: React.FC = () => {
       formData.append('product_gender', gender.toString());
       formData.append('whatsapp_number', whatsappNumber);
       formData.append('product_residence', city);
+      formData.append('type', productType);
 
       if (featuredImage) {
         formData.append('product_profile', featuredImage);
@@ -424,6 +404,9 @@ const CreateProductPage: React.FC = () => {
         console.log(`${key}:`, value);
       }
       
+      const response = await addProduct(formData);
+      console.log(response)
+      //navigate('/seller/products')
     } catch (error) {
       console.log(error)
     }
@@ -723,7 +706,7 @@ const CreateProductPage: React.FC = () => {
 
       variationFrames.forEach(frame => {
         const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
-        
+       
         if (!color) return;
 
         // Cas 1: Variation couleur uniquement
@@ -1144,7 +1127,7 @@ const CreateProductPage: React.FC = () => {
                   {/* Galerie d'images pour produit simple */}
                   <div className="bg-white rounded-2xl shadow-sm p-6">
                 <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                       {images.map((image, index) => (
                         <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
                       <img

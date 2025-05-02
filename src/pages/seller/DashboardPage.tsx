@@ -30,6 +30,7 @@ import { QuickActions } from '@/components/seller/QuickActions';
 const DashboardPage = () => {
 
   const {data: { data: sellerData } = {},isLoading}=useCurrentSellerQuery<SellerResponse>('seller')
+  console.log(sellerData)
   const [message, setMessage] = useState(sessionStorage.getItem('message') || '');
   const storeStatus = sellerData?.shop.state;
   console.log(sellerData)
