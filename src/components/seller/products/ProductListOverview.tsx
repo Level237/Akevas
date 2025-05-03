@@ -100,11 +100,11 @@ export default function ProductListOverview({ products, isLoading }: { products:
                 </td>
                 <td className="px-4 py-4">
                   <span className="font-medium">
-                    {product.product_price.toLocaleString()} FCFA
+                    {product?.product_price?.toLocaleString()} FCFA
                   </span>
                 </td>
                 <td className="px-4 py-4">
-                  <span className="font-medium">{product.product_quantity}</span>
+                  <span className="font-medium">{product?.product_quantity}</span>
                 </td>
                 <td className="px-4 py-4">
                   <span
@@ -190,7 +190,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-gray-500">Prix:</span>
-                <div className="font-medium">{product.product_price.toLocaleString()} FCFA</div>
+                <div className="font-medium">{product?.product_price?.toLocaleString()} FCFA</div>
               </div>
               <div>
                 <span className="text-gray-500">Stock:</span>

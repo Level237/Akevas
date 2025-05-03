@@ -48,6 +48,7 @@ interface Variation {
     name: string;
     hex: string;
   };
+  quantity?: number;
   size?: {
     id: number;
     name: string;
@@ -371,9 +372,11 @@ const CreateProductPage: React.FC = () => {
           }
           acc[colorKey].variations.push({
             id: variation.id,
+            quantity: variation.quantity,
             size: variation.size,
             shoeSize: variation.shoeSize,
-            price: variation.price
+            price: variation.price,
+            isColorOnly: !attributes.some(attr => attr.affectsPrice)
           });
           return acc;
         }, {} as Record<number, {
@@ -381,9 +384,11 @@ const CreateProductPage: React.FC = () => {
           images: File[];
           variations: Array<{
             id: string;
+            quantity?: number;
             size?: { id: number; name: string; quantity: number; price: number };
             shoeSize?: { id: number; name: string; quantity: number; price: number };
             price: number;
+            isColorOnly: boolean;
           }>;
         }>);
 
@@ -465,6 +470,7 @@ const CreateProductPage: React.FC = () => {
       quantity: number;
     }>;
     images: File[];
+    quantity?: number;
   }>>([]);
 
   // Effet pour générer les variations quand les tailles ou couleurs changent
@@ -503,7 +509,8 @@ const CreateProductPage: React.FC = () => {
         id: `frame-${Date.now()}`,
         sizes: [],
         shoeSizes: [],
-        images: []
+        images: [],
+        quantity: undefined
       }
     ]);
   };
@@ -612,7 +619,8 @@ const CreateProductPage: React.FC = () => {
               colorId,
               sizes: [size],
               shoeSizes: [],
-              images: existingFrame.images
+              images: existingFrame.images,
+              quantity: existingFrame.quantity
             });
           });
         }
@@ -624,7 +632,8 @@ const CreateProductPage: React.FC = () => {
               colorId,
               sizes: [],
               shoeSizes: [size],
-              images: existingFrame.images
+              images: existingFrame.images,
+              quantity: existingFrame.quantity
             });
           });
         }
@@ -718,6 +727,7 @@ const CreateProductPage: React.FC = () => {
               name: color.value,
               hex: color.hex_color
             },
+            quantity: frame.quantity ?? 1,
             images: frame.images,
             price: globalColorPrice
           });
@@ -1200,7 +1210,8 @@ const CreateProductPage: React.FC = () => {
                             id: variationFrames[0].id,
                             sizes: [],
                             shoeSizes: [],
-                            images: []
+                            images: [],
+                            quantity: undefined
                           }]);
                         } else {
                           addVariationFrame();
@@ -1250,7 +1261,8 @@ const CreateProductPage: React.FC = () => {
                           id: variationFrames[0].id,
                            sizes: [],
                            shoeSizes: [],
-                           images: []
+                           images: [],
+                           quantity: undefined
                          }]);
                        } else {
                        addVariationFrame();
@@ -1300,7 +1312,8 @@ const CreateProductPage: React.FC = () => {
                            id: variationFrames[0].id,
                            sizes: [],
                            shoeSizes: [],
-                           images: []
+                           images: [],
+                           quantity: undefined
                          }]);
                        } else {
                         addVariationFrame();
@@ -1388,6 +1401,21 @@ const CreateProductPage: React.FC = () => {
                               </SelectContent>
                             </Select>
                           </div>
+                          {/* Champ quantité pour couleur uniquement */}
+                          {!attributes.some(attr => attr.affectsPrice) && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Quantité</label>
+                              <input
+                                type="number"
+                                min={1}
+                                value={frame.quantity ?? ''}
+                                onChange={e => updateVariationFrame(frame.id, { quantity: Number(e.target.value) })}
+                                className="w-full px-4 py-2 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
+                                placeholder="Quantité pour cette couleur"
+                                required
+                              />
+                            </div>
+                          )}
                                 
                           {/* Sélection de la taille ou pointure */}
                           {attributes.some(attr => attr.name === 'Taille') && (
@@ -1652,8 +1680,11 @@ const CreateProductPage: React.FC = () => {
                                     {!attributes.some(attr => attr.affectsPrice) && (
                                       <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
                                         {globalColorPrice || 0} FCFA
+                                        
                                       </span>
+                                      
                                     )}
+                                    <span className="text-xs text-gray-500">Qté: {frame.quantity}</span>
                                   </div>
                                 )}
 
