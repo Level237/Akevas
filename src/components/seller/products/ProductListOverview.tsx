@@ -124,9 +124,12 @@ export default function ProductListOverview({ products, isLoading }: { products:
                   </div>
                 </td>
                 <td className="px-4 w-80 py-4 text-gray-600">
-                  <div className="grid grid-cols-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {product.product_categories.map((category) => (
-                      <span key={category.id} className="px-2 py-1 my-1 mx-1 rounded-full text-xs bg-gray-100 text-gray-700">
+                      <span 
+                        key={category.id} 
+                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100 transition-colors"
+                      >
                         {category.category_name}
                       </span>
                     ))}
@@ -138,7 +141,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                   </span>
                 </td>
                 <td className="px-4 py-4">
-                  <span className="font-medium">{product?.product_quantity}</span>
+                  <span className="font-medium"> {product.variations && product.variations.length > 0 ? 'Varié' : product?.product_quantity}</span>
                 </td>
                 <td className="px-4 py-4">
                   <span

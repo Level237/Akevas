@@ -411,7 +411,7 @@ const CreateProductPage: React.FC = () => {
       
       const response = await addProduct(formData);
       console.log(response)
-      //navigate('/seller/products')
+      navigate('/seller/products')
     } catch (error) {
       console.log(error)
     }
