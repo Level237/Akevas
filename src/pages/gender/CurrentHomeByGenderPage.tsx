@@ -8,8 +8,8 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import StoreStories from '@/components/stores/store-stories';
 import ProductListGrid from '@/components/products/ProductListGrid';
-import CategoryGridList from '@/components/categories/CategoryShowcaseDual';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
+import CategoryShowcaseDual from '@/components/categories/CategoryShowcaseDual';
 const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)
     const {data:{data:currentGender}={},isLoading}=useGetCurrentHomeByGenderQuery(currentGenderId)
@@ -63,7 +63,7 @@ const CurrentHomeByGenderPage = () => {
         </div>
       </div>
       {/* Catégories populaires */}
-      <CategoryGridList title='Catégories populaires' categories={currentGender?.categories} isLoading={isLoading} />
+      <CategoryShowcaseDual categories={currentGender?.categories} isLoading={isLoading} title="Catégories" />
 
 
 

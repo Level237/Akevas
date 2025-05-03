@@ -28,7 +28,7 @@ const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const [selectedTab, setSelectedTab] = useState('description');
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<any | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -114,7 +114,7 @@ const ProductDetailPage: React.FC = () => {
       
       // Cas où la variation a des attributs
       if (currentVariant.attributes && currentVariant.attributes.length > 0) {
-        const selectedAttr = currentVariant.attributes.find(attr => attr.value === selectedAttribute) 
+        const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute) 
           || currentVariant.attributes[0];
         
         return {
@@ -271,7 +271,7 @@ const ProductDetailPage: React.FC = () => {
                       }}
                     >
                       <div className="flex lg:flex-col gap-2 px-1">
-                        {getAllImages().map((image, idx) => (
+                        {getAllImages().map((image: any, idx: any) => (
                           <button
                             key={idx}
                             onClick={(e: any) => handleImageClick(e)}
@@ -437,7 +437,7 @@ const ProductDetailPage: React.FC = () => {
                             <div className="mt-4">
                               <h4 className="text-sm font-medium text-gray-900 mb-2">Taille</h4>
                               <div className="flex flex-wrap gap-2">
-                                {selectedVariant.attributes.map((attr) => (
+                                {selectedVariant.attributes.map((attr: any) => (
                                   <button
                                     key={attr.id}
                                     onClick={() => handleAttributeSelect(attr.value)}

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react"
 
-import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, ChevronRight, ChevronLeft, Plus } from "lucide-react"
+import { motion } from "framer-motion"
+import { ChevronRight, ChevronLeft, Plus } from "lucide-react"
 import { Link } from "react-router-dom"
 import { FixedSizeList as List } from 'react-window'
 
@@ -311,6 +311,7 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
           >
+            {!isLoading && categories.length > 0 && (
             <List
               ref={listRef}
               height={370}
@@ -322,6 +323,7 @@ export default function CategoryShowcasePremium({categories, isLoading,title}: {
             >
               {Row}
             </List>
+            )}
           </motion.div>
 
           {/* Ajouter le composant de contrôle ici */}
