@@ -35,6 +35,7 @@ const ProductDetailPage: React.FC = () => {
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const { data: { data: similarProducts } = {}, isLoading: isLoadingSimilarProducts } = useGetSimilarProductsQuery(product?.id);
   const [showCartButton, setShowCartButton] = useState(false);
+  console.log(product)
   const dispatch = useDispatch();
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -51,10 +52,8 @@ const ProductDetailPage: React.FC = () => {
   // Helper function to get all images
   const getAllImages = () => {
     if (selectedVariant) {
-      // Si une variante est sélectionnée, retourner ses images
-     
-      const variantImages = selectedVariant.images?.[0] || [];
-      return [...variantImages];
+      // Si une variante est sélectionnée, retourner toutes ses images
+      return selectedVariant.images?.map((path: any) => ({ path })) || [];
     }
     
     // Sinon, retourner les images du produit principal
@@ -63,31 +62,115 @@ const ProductDetailPage: React.FC = () => {
     return [mainImage, ...productImages];
   };
  
-  // Helper function to get current price and images
-  const getCurrentProductInfo = () => {
-    if (selectedVariant) {
+  // Fonction utilitaire pour obtenir les informations de la première variation
+  const getFirstVariationInfo = (product: any) => {
+    if (!product?.variations || product.variations.length === 0) {
+      return null;
+    }
+
+    const firstVariation = product.variations[0];
+
+    // Cas où la variation a des attributs (comme dans l'exemple "polor" et "pantouffle")
+    if (firstVariation.attributes && firstVariation.attributes.length > 0) {
+      const firstAttr = firstVariation.attributes[0];
       return {
-        price: selectedVariant.price,
-        mainImage: selectedVariant.image,
-        images: selectedVariant.images || []  // Assuming variants have their own images
+        price: firstAttr.price,
+        quantity: firstAttr.quantity,
+        image: firstVariation.images?.[0] || product.product_profile
       };
     }
+
+    // Cas où la variation est simple (comme dans l'exemple "pljjfee")
+    if (firstVariation.isColorOnly) {
+      return {
+        price: firstVariation.price,
+        quantity: firstVariation.quantity,
+        image: firstVariation.images?.[0] || product.product_profile
+      };
+    }
+
+    return null;
+  };
+
+  // Modifier la fonction getCurrentProductInfo pour gérer tous les cas
+  const getCurrentProductInfo = () => {
+    // Si une variante est sélectionnée
+    if (selectedVariant) {
+      // Cas où la variation a des attributs
+      if (selectedVariant.attributes && selectedVariant.attributes.length > 0) {
+        const firstAttr = selectedVariant.attributes[0];
+        return {
+          price: firstAttr.price,
+          quantity: firstAttr.quantity,
+          mainImage: selectedVariant.images?.[0],
+          images: selectedVariant.images?.map((path: string) => ({ path })) || [],
+          color: selectedVariant.color,
+          variantName: selectedVariant.color.name
+        };
+      }
+      
+      // Cas où la variation est simple
+      return {
+        price: selectedVariant.price,
+        quantity: selectedVariant.quantity,
+        mainImage: selectedVariant.images?.[0],
+        images: selectedVariant.images?.map((path: string) => ({ path })) || [],
+        color: selectedVariant.color,
+        variantName: selectedVariant.color.name
+      };
+    }
+
+    // Si le produit n'a pas de prix, quantité ou image principale, mais a des variations
+    if (
+      (!product?.product_price || !product?.product_quantity || !product?.product_profile) &&
+      product?.variations &&
+      product.variations.length > 0
+    ) {
+      const variationInfo = getFirstVariationInfo(product);
+      if (variationInfo) {
+        return {
+          price: variationInfo.price,
+          quantity: variationInfo.quantity,
+          mainImage: variationInfo.image,
+          images: product.variations[0].images?.map((path: string) => ({ path })) || [],
+          color: product.variations[0].color,
+          variantName: product.variations[0].color.name
+        };
+      }
+    }
+
+    // Sinon, on retourne les infos du produit principal
     return {
       price: product?.product_price,
+      quantity: product?.product_quantity,
       mainImage: product?.product_profile,
-      images: product?.product_images || []
+      images: product?.product_images || [],
+      color: null,
+      variantName: null
     };
+  };
+
+  // Fonction pour obtenir la quantité totale du produit
+  const getProductQuantity = () => {
+    if (product?.product_quantity) {
+      return product.product_quantity;
+    }
+
+    if (product?.variations && product.variations.length > 0) {
+      const variationInfo = getFirstVariationInfo(product);
+      return variationInfo?.quantity || 0;
+    }
+
+    return 0;
   };
 
   // Get current product information
   const currentInfo = getCurrentProductInfo();
 
   // Modifier le gestionnaire de sélection de variant
-  const handleVariantSelect = (variant: Variant) => {
+  const handleVariantSelect = (variant: any) => {
     setSelectedVariant(variant);
-    
-    // Réinitialiser l'index de l'image sélectionnée à 0 pour afficher l'image principale de la variante
-    setSelectedImage(0);
+    setSelectedImage(0); // Réinitialiser à la première image de la variation
   };
 
   // Modifier le gestionnaire de clic sur l'image principale
@@ -286,7 +369,7 @@ const ProductDetailPage: React.FC = () => {
                     <span className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
                       Premium
                     </span>
-                    {product.product_quantity > 0 ? <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+                    {getProductQuantity() > 0 ? <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
                       En stock
                       
                     </span> : <span className="px-3 py-1 text-sm font-medium bg-red-100 text-red-800 rounded-full">
@@ -303,31 +386,75 @@ const ProductDetailPage: React.FC = () => {
                   {/* Description courte */}
                   <p className="text-gray-800 font-bold line-clamp-3">{product.product_description}</p>
                   {/* Variants */}
-                  {product?.variants && product.variants.length > 0 && (
-                    <div className="space-y-4">
-                      <h3 className="text-sm font-medium text-gray-700">Variantes</h3>
-                      <div className="flex flex-wrap gap-3">
-                        {product.variants.map((variant: Variant) => (
-                          <button
-                            key={variant.id}
-                            onClick={() => handleVariantSelect(variant)}
-                            className={`flex items-center gap-2 p-2 rounded-lg border transition-all
-                              ${selectedVariant?.id === variant.id
-                                ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20 bg-[#ed7e0f]/5'
-                                : 'border-gray-200 hover:border-gray-300'}`}
-                          >
-                            <img
-                              src={variant?.images[0][0]?.path }
-                              alt={variant.variant_name}
-                              className="w-12 h-12 rounded-lg object-cover"
-                            />
-                            <div className="text-left">
-                              <p className="text-sm font-medium">{variant.variant_name}</p>
-                              <p className="text-sm text-gray-500">{variant.price} FCFA</p>
-                            </div>
-                          </button>
-                        ))}
+                  {product?.variations && product.variations.length > 0 && (
+                    <div className="space-y-6">
+                      <div className="border-b pb-6">
+                        
+                        
+                        {/* Grille des variations */}
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-semibold text-gray-900">Options disponibles</h3>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {product.variations.map((variation: any) => (
+                              <button
+                                key={variation.id}
+                                onClick={() => handleVariantSelect(variation)}
+                                className={`flex items-center p-2 border rounded-lg transition-all ${
+                                  selectedVariant?.id === variation.id
+                                    ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 ring-1 ring-[#ed7e0f]/20'
+                                    : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                                }`}
+                              >
+                                <div className="w-12 h-12 mr-3 rounded-md overflow-hidden">
+                                  <img
+                                    src={variation.images?.[0]}
+                                    alt={variation.color.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div>
+                                  <div className="flex items-center mb-1">
+                                    <div 
+                                      className="w-3 h-3 rounded-full border mr-2"
+                                      style={{ backgroundColor: variation.color.hex }}
+                                    />
+                                    <span className="font-medium text-sm text-gray-900">{variation.color.name}</span>
+                                  </div>
+                                  <div className="text-sm font-bold text-[#ed7e0f]">
+                                    {variation.attributes?.[0]?.price || variation.price} FCFA
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Informations de la variation sélectionnée */}
+                      {currentInfo.variantName && (
+                        <div className="bg-gray-50 rounded-lg p-4">
+                          <div className="flex items-center gap-3 mb-3">
+                            {currentInfo.color && (
+                              <div 
+                                className="w-6 h-6 rounded-full border"
+                                style={{ backgroundColor: currentInfo.color.hex }}
+                              />
+                            )}
+                            <h4 className="font-medium text-gray-900">
+                              {currentInfo.variantName} sélectionné
+                            </h4>
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Prix et stock</span>
+                            <div className="flex items-center gap-4">
+                              <span className="font-medium">{currentInfo.quantity} en stock</span>
+                              <span className="font-bold text-[#ed7e0f]">{currentInfo.price} FCFA</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   {/* Prix et réduction avec design modernisé */}
@@ -385,9 +512,9 @@ const ProductDetailPage: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                    {product.product_quantity && (
+                    {getProductQuantity() > 0 && (
                       <span className="text-sm text-gray-500">
-                        Stock disponible: {product.product_quantity} unités
+                        Stock disponible: {getProductQuantity()} unités
                       </span>
                     )}
                   </div>
