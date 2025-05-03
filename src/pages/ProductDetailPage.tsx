@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -40,6 +40,8 @@ const ProductDetailPage: React.FC = () => {
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const productId = product?.id
+  const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null);
+
   const handleAddToCart = useCallback(async () => {
     setIsLoadingCart(true);
     dispatch(addItem({ product, quantity }));
@@ -92,85 +94,87 @@ const ProductDetailPage: React.FC = () => {
     return null;
   };
 
-  // Modifier la fonction getCurrentProductInfo pour gérer tous les cas
+  // Modifier l'useEffect pour initialiser la première variation et son premier attribut
+  useEffect(() => {
+    if (product?.variations && product.variations.length > 0 && !selectedVariant) {
+      const firstVariation = product.variations[0];
+      setSelectedVariant(firstVariation);
+      // Si la variation a des attributs, sélectionner le premier
+      if (firstVariation.attributes && firstVariation.attributes.length > 0) {
+        setSelectedAttribute(firstVariation.attributes[0].value);
+      }
+      setSelectedImage(0);
+    }
+  }, [product, selectedVariant]);
+
+  // Modifier getCurrentProductInfo pour gérer les attributs
   const getCurrentProductInfo = () => {
-    // Si une variante est sélectionnée
-    if (selectedVariant) {
+    if (product?.variations && product.variations.length > 0) {
+      const currentVariant = selectedVariant || product.variations[0];
+      
       // Cas où la variation a des attributs
-      if (selectedVariant.attributes && selectedVariant.attributes.length > 0) {
-        const firstAttr = selectedVariant.attributes[0];
+      if (currentVariant.attributes && currentVariant.attributes.length > 0) {
+        const selectedAttr = currentVariant.attributes.find(attr => attr.value === selectedAttribute) 
+          || currentVariant.attributes[0];
+        
         return {
-          price: firstAttr.price,
-          quantity: firstAttr.quantity,
-          mainImage: selectedVariant.images?.[0],
-          images: selectedVariant.images?.map((path: string) => ({ path })) || [],
-          color: selectedVariant.color,
-          variantName: selectedVariant.color.name
+          price: selectedAttr.price,
+          quantity: selectedAttr.quantity,
+          mainImage: currentVariant.images?.[0],
+          images: currentVariant.images?.map((path: string) => ({ path })) || [],
+          color: currentVariant.color,
+          variantName: currentVariant.color.name,
+          attribute: selectedAttr.value
         };
       }
       
-      // Cas où la variation est simple
+      // Cas où la variation est simple (couleur uniquement)
       return {
-        price: selectedVariant.price,
-        quantity: selectedVariant.quantity,
-        mainImage: selectedVariant.images?.[0],
-        images: selectedVariant.images?.map((path: string) => ({ path })) || [],
-        color: selectedVariant.color,
-        variantName: selectedVariant.color.name
+        price: currentVariant.price,
+        quantity: currentVariant.quantity,
+        mainImage: currentVariant.images?.[0],
+        images: currentVariant.images?.map((path: string) => ({ path })) || [],
+        color: currentVariant.color,
+        variantName: currentVariant.color.name,
+        attribute: null
       };
     }
 
-    // Si le produit n'a pas de prix, quantité ou image principale, mais a des variations
-    if (
-      (!product?.product_price || !product?.product_quantity || !product?.product_profile) &&
-      product?.variations &&
-      product.variations.length > 0
-    ) {
-      const variationInfo = getFirstVariationInfo(product);
-      if (variationInfo) {
-        return {
-          price: variationInfo.price,
-          quantity: variationInfo.quantity,
-          mainImage: variationInfo.image,
-          images: product.variations[0].images?.map((path: string) => ({ path })) || [],
-          color: product.variations[0].color,
-          variantName: product.variations[0].color.name
-        };
-      }
-    }
-
-    // Sinon, on retourne les infos du produit principal
+    // Si le produit n'a pas de variations
     return {
       price: product?.product_price,
       quantity: product?.product_quantity,
       mainImage: product?.product_profile,
       images: product?.product_images || [],
       color: null,
-      variantName: null
+      variantName: null,
+      attribute: null
     };
   };
 
-  // Fonction pour obtenir la quantité totale du produit
+  // Modifier la fonction getProductQuantity pour utiliser currentInfo
   const getProductQuantity = () => {
-    if (product?.product_quantity) {
-      return product.product_quantity;
-    }
-
-    if (product?.variations && product.variations.length > 0) {
-      const variationInfo = getFirstVariationInfo(product);
-      return variationInfo?.quantity || 0;
-    }
-
-    return 0;
+    return currentInfo.quantity || 0;
   };
 
   // Get current product information
   const currentInfo = getCurrentProductInfo();
 
-  // Modifier le gestionnaire de sélection de variant
+  // Modifier handleVariantSelect pour gérer la sélection de variante
   const handleVariantSelect = (variant: any) => {
     setSelectedVariant(variant);
-    setSelectedImage(0); // Réinitialiser à la première image de la variation
+    // Réinitialiser l'attribut sélectionné avec le premier de la nouvelle variante
+    if (variant.attributes && variant.attributes.length > 0) {
+      setSelectedAttribute(variant.attributes[0].value);
+    } else {
+      setSelectedAttribute(null);
+    }
+    setSelectedImage(0);
+  };
+
+  // Ajouter un gestionnaire pour la sélection d'attribut
+  const handleAttributeSelect = (value: string) => {
+    setSelectedAttribute(value);
   };
 
   // Modifier le gestionnaire de clic sur l'image principale
@@ -389,12 +393,11 @@ const ProductDetailPage: React.FC = () => {
                   {product?.variations && product.variations.length > 0 && (
                     <div className="space-y-6">
                       <div className="border-b pb-6">
-                        
-                        
                         {/* Grille des variations */}
                         <div className="space-y-4">
                           <h3 className="text-lg font-semibold text-gray-900">Options disponibles</h3>
                           
+                          {/* Sélection de la couleur */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {product.variations.map((variation: any) => (
                               <button
@@ -428,6 +431,28 @@ const ProductDetailPage: React.FC = () => {
                               </button>
                             ))}
                           </div>
+
+                          {/* Sélection de la taille/pointure si la variante en a */}
+                          {selectedVariant?.attributes && selectedVariant.attributes.length > 0 && (
+                            <div className="mt-4">
+                              <h4 className="text-sm font-medium text-gray-900 mb-2">Taille</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {selectedVariant.attributes.map((attr) => (
+                                  <button
+                                    key={attr.id}
+                                    onClick={() => handleAttributeSelect(attr.value)}
+                                    className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
+                                      selectedAttribute === attr.value
+                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 text-[#ed7e0f]'
+                                        : 'border-gray-200 hover:border-gray-300'
+                                    }`}
+                                  >
+                                    {attr.value}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -442,7 +467,8 @@ const ProductDetailPage: React.FC = () => {
                               />
                             )}
                             <h4 className="font-medium text-gray-900">
-                              {currentInfo.variantName} sélectionné
+                              {currentInfo.variantName}
+                              {currentInfo.attribute && ` - Taille ${currentInfo.attribute}`}
                             </h4>
                           </div>
 
