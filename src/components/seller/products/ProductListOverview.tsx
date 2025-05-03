@@ -45,6 +45,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
       const j = Math.floor(Math.random() * (i + 1));
       [images[i], images[j]] = [images[j], images[i]];
     }
+    console.log(images)
     return images;
   };
 
@@ -90,7 +91,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                 <td className="px-4 py-4">
                   <div className="flex max-sm:flex-col items-center gap-3">
                     <div className="relative w-12 h-12">
-                      {getRandomVariationImages(product).slice(0, 3).map((img, idx) => (
+                      {getRandomVariationImages(product).slice(0, ).map((img, idx) => (
                         <img
                           key={img}
                           src={img}
@@ -128,7 +129,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                     {product.product_categories.map((category) => (
                       <span 
                         key={category.id} 
-                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100 transition-colors"
+                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-[#f0f0f0] text-gray-700 border border-gray-100 hover:bg-gray-100 transition-colors"
                       >
                         {category.category_name}
                       </span>
@@ -137,11 +138,11 @@ export default function ProductListOverview({ products, isLoading }: { products:
                 </td>
                 <td className="px-4 py-4">
                   <span className="font-medium">
-                    {product?.product_price?.toLocaleString()} FCFA
+                    {product.variations && product.variations.length > 0 ? "prix variable" : product?.product_price?.toLocaleString()} 
                   </span>
                 </td>
                 <td className="px-4 py-4">
-                  <span className="font-medium"> {product.variations && product.variations.length > 0 ? 'Varié' : product?.product_quantity}</span>
+                  <span className="font-medium"> {product.variations && product.variations.length > 0 ? 'Quantité variable' : product?.product_quantity}</span>
                 </td>
                 <td className="px-4 py-4">
                   <span
