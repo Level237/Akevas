@@ -16,6 +16,7 @@ import { Product } from '@/types/products';
 import { useDispatch } from 'react-redux';
 import { addItem } from '@/store/cartSlice';
 import AsyncLink from '@/components/ui/AsyncLink';
+import { normalizeProduct } from '@/lib/normalizeProduct';
 ;
 
 interface FilterOption {
@@ -90,7 +91,9 @@ const ProductListPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const { data: { productList,totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery(currentPage);
   const dispatch = useDispatch();
+  const safeProducts = productList || [];
 
+  const normalizedProducts = safeProducts.map(normalizeProduct);
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev =>
       prev.includes(sectionId)
@@ -435,7 +438,7 @@ const ProductListPage: React.FC = () => {
           {/* Liste des produits */}
           <div className="lg:col-span-3">
             <div className={viewMode === 'grid' ? 'grid grid-cols-1 max-sm:flex max-sm:flex-col max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
-              { !isLoading && productList && productList.map((product:Product) => (
+              { !isLoading && normalizedProducts && normalizedProducts.map((product:Product) => (
                 <ProductCard product={product} />
               ))}
               <div>
