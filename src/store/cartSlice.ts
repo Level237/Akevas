@@ -68,14 +68,15 @@ const cartSlice = createSlice({
 
         removeItem: (state, action) => {
             const { product, selectedVariation } = action.payload;
-            
+            console.log(product)
             const item = state.cartItems.find(item => {
                 if (selectedVariation) {
+                    
                     return item.selectedVariation?.color.id === selectedVariation.color.id;
                 }
                 return item.product.id === product.id && !item.selectedVariation;
             });
-
+           
             if (item) {
                 item.quantity -= 1;
                 

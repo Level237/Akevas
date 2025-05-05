@@ -24,8 +24,11 @@ const CartPage: React.FC = () => {
   const totalPrice = useSelector((state: RootState) => state.cart.totalPrice)
   const dispatch = useDispatch<AppDispatch>()
 
-  const handleRemoveItem = (product: Product) => {
-    dispatch(removeItem({ product }))
+  const handleRemoveItem = (product: Product, selectedVariation?: any) => {
+    dispatch(removeItem({ 
+      product,
+      selectedVariation: selectedVariation || undefined
+    }));
   }
   const handleUpdateQuantity = (product: Product, quantity: number) => {
     dispatch(updateQuantity({ product, quantity }))
@@ -81,7 +84,7 @@ const CartPage: React.FC = () => {
                     >
                       <div className="w-24 h-24">
                         <img
-                          src={item.product.product_profile}
+                          src={item.selectedVariation?.images?.[0] || item.product.product_profile}
                           alt={item.product.product_name}
                           className="w-full h-full object-cover rounded-lg"
                         />
@@ -93,12 +96,36 @@ const CartPage: React.FC = () => {
                             <h3 className="font-medium text-gray-900">
                               {item.product.product_name}
                             </h3>
+                            {item.selectedVariation && (
+                              <div className="mt-1 space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-500">Couleur:</span>
+                                  <div className="flex items-center gap-2">
+                                    <div
+                                      className="w-4 h-4 rounded-full border border-gray-200"
+                                      style={{ backgroundColor: item.selectedVariation.color.hex }}
+                                    />
+                                    <span className="text-sm text-gray-700">
+                                      {item.selectedVariation.color.name}
+                                    </span>
+                                  </div>
+                                </div>
+                                {item.selectedVariation.attributes?.[0] && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500">Taille:</span>
+                                    <span className="text-sm text-gray-700">
+                                      {item.selectedVariation.attributes[0].value}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                             <p className="text-sm text-gray-500">
                               Ville: {item.product.residence}
                             </p>
                           </div>
                           <button
-                            onClick={() => handleRemoveItem(item.product)}
+                            onClick={() => handleRemoveItem(item.product, item.selectedVariation)}
                             className="text-gray-400 hover:text-gray-500"
                           >
                             <X className="w-5 h-5" />
@@ -126,7 +153,12 @@ const CartPage: React.FC = () => {
                             </button>
                           </div>
                           <span className="font-medium max-sm:text-sm text-gray-900">
-                            {(parseInt(item.product.product_price) * item.quantity).toFixed(2)} Fcfa
+                            {(
+                              (item.selectedVariation?.attributes?.[0]?.price 
+                                ? parseFloat(item.selectedVariation.attributes[0].price)
+                                : parseFloat(item.product.product_price)
+                              ) * item.quantity
+                            ).toFixed(2)} Fcfa
                           </span>
                         </div>
                       </div>
