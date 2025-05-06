@@ -1,3 +1,4 @@
+import { normalizeProduct } from "@/lib/normalizeProduct"
 import AsyncLink from "../ui/AsyncLink"
 import { Product } from "@/types/products"
 import { motion } from "framer-motion"
@@ -5,8 +6,14 @@ import { Star } from "lucide-react"
 import React from "react"
 
 const SimilarProducts = ({ similarProducts, isLoadingSimilarProducts }: { similarProducts: Product[], isLoadingSimilarProducts: boolean }) => {
+    
+    const safeProducts = similarProducts || [];
 
-
+    // Fonction utilitaire pour normaliser un produit
+    
+  
+    // On normalise tous les produits avant de les afficher
+    const normalizedProducts = safeProducts.map(normalizeProduct);
     return (
         <>
             {
@@ -15,7 +22,7 @@ const SimilarProducts = ({ similarProducts, isLoadingSimilarProducts }: { simila
                         <h2 className="text-lg font-bold text-gray-900 mb-4">Produits similaires</h2>
 
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                            {similarProducts.slice(0, 5).map((product) => (
+                            {normalizedProducts.slice(0, 5).map((product) => (
                                 <motion.div
                                     key={product.id}
                                     initial={{ opacity: 0, y: 20 }}

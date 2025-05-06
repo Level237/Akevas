@@ -47,6 +47,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
             colorId: currentInfo.color.id,
             colorName: currentInfo.color.name,
             attribute: currentInfo.attribute,
+            colorHex: currentInfo.color.hex,
             variantName: currentInfo.variantName,
             quantity: currentInfo.quantity
         } : null;
