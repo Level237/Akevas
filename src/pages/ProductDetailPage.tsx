@@ -16,7 +16,6 @@ import {
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetProductByUrlQuery, useGetSimilarProductsQuery } from '@/services/guardService';
-import { Variant } from '@/types/products';
 import SimilarProducts from '@/components/products/SimilarProducts';
 import { addItem } from '@/store/cartSlice';
 import { useDispatch } from 'react-redux';

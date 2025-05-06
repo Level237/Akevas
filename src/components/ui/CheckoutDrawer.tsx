@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useCheckAuthQuery } from '@/services/auth';
 
 interface CheckoutDrawerProps {
-
     onClose: () => void;
     product: any;
     selectedImage: number;
@@ -12,12 +11,18 @@ interface CheckoutDrawerProps {
     currentInfo: {
         price: number;
         mainImage?: string;
+        color?: {
+            id: number;
+            name: string;
+            hex: string;
+        };
+        attribute?: string;
+        variantName?: string;
     };
     getAllImages: () => Array<{ path: string }>;
 }
 
 const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
-
     onClose,
     product,
     selectedImage,
@@ -27,14 +32,28 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
     getAllImages,
 }: CheckoutDrawerProps) => {
     const { data } = useCheckAuthQuery()
-    const checkOutNavigation = () => {
-        if (data?.isAuthenticated) {
-            window.location.href = `/checkout?s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}`;
-        } else {
 
-            window.location.href = `/login?redirect=checkout&s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}`;
+    const checkOutNavigation = () => {
+        // Créer un objet avec les informations de variation
+        const variationInfo = currentInfo.color ? {
+            colorId: currentInfo.color.id,
+            colorName: currentInfo.color.name,
+            attribute: currentInfo.attribute,
+            variantName: currentInfo.variantName
+        } : null;
+
+        // Encoder les informations de variation pour l'URL
+        const variationParams = variationInfo 
+            ? `&variation=${encodeURIComponent(JSON.stringify(variationInfo))}`
+            : '';
+
+        if (data?.isAuthenticated) {
+            window.location.href = `/checkout?s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}${variationParams}`;
+        } else {
+            window.location.href = `/login?redirect=checkout&s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}${variationParams}`;
         }
     }
+
     return (
         <>
             {/* Overlay */}
@@ -46,7 +65,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                 className="fixed inset-0 bg-black/40 z-40"
             />
 
-            {/* Drawer - Maintenant full width sur desktop */}
+            {/* Drawer */}
             <motion.div
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
@@ -79,7 +98,28 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                             />
                             <div className="flex-1">
                                 <h4 className="font-medium text-lg">{product.product_name}</h4>
-                                <p className="text-[#ed7e0f] font-bold text-xl mt-1">{currentInfo.price} FCFA</p>
+                                {/* Affichage des variations */}
+                                {currentInfo.color && (
+                                    <div className="mt-2 space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <div 
+                                                className="w-4 h-4 rounded-full border"
+                                                style={{ backgroundColor: currentInfo.color.hex }}
+                                            />
+                                            <span className="text-sm text-gray-600">
+                                                Couleur: {currentInfo.color.name}
+                                            </span>
+                                        </div>
+                                        {currentInfo.attribute && (
+                                            <div className="text-sm text-gray-600">
+                                                Taille: {currentInfo.attribute}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                <p className="text-[#ed7e0f] font-bold text-xl mt-2">
+                                    {currentInfo.price} FCFA
+                                </p>
                             </div>
                         </div>
 
@@ -111,7 +151,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                         </div>
                     </div>
 
-                    {/* Total et CTA - Maintenant centré sur tous les écrans */}
+                    {/* Total et CTA */}
                     <div className="space-y-6 pt-4">
                         <div className="flex justify-center">
                             <div className="flex items-center gap-8 text-lg font-medium">
@@ -120,7 +160,10 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                             </div>
                         </div>
                         <div className="flex justify-center">
-                            <button onClick={checkOutNavigation} className="bg-[#ed7e0f] text-white px-12 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors w-full lg:w-auto">
+                            <button 
+                                onClick={checkOutNavigation} 
+                                className="bg-[#ed7e0f] text-white px-12 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors w-full lg:w-auto"
+                            >
                                 Procéder à l'achat
                             </button>
                         </div>
