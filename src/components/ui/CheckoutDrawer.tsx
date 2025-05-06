@@ -18,6 +18,7 @@ interface CheckoutDrawerProps {
         };
         attribute?: string;
         variantName?: string;
+        quantity: number;
     };
     getAllImages: () => Array<{ path: string }>;
 }
@@ -33,13 +34,21 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
 }: CheckoutDrawerProps) => {
     const { data } = useCheckAuthQuery()
 
+    // Fonction pour mettre à jour la quantité avec vérification
+    const handleQuantityChange = (newQuantity: number) => {
+        // S'assurer que la quantité ne dépasse pas le stock disponible
+        const validQuantity = Math.min(Math.max(1, newQuantity), currentInfo.quantity);
+        setQuantity(validQuantity);
+    };
+
     const checkOutNavigation = () => {
         // Créer un objet avec les informations de variation
         const variationInfo = currentInfo.color ? {
             colorId: currentInfo.color.id,
             colorName: currentInfo.color.name,
             attribute: currentInfo.attribute,
-            variantName: currentInfo.variantName
+            variantName: currentInfo.variantName,
+            quantity: currentInfo.quantity
         } : null;
 
         // Encoder les informations de variation pour l'URL
@@ -115,6 +124,9 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                                                 Taille: {currentInfo.attribute}
                                             </div>
                                         )}
+                                        <div className="text-sm text-gray-600">
+                                            Stock disponible: {currentInfo.quantity}
+                                        </div>
                                     </div>
                                 )}
                                 <p className="text-[#ed7e0f] font-bold text-xl mt-2">
@@ -130,24 +142,31 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                             </label>
                             <div className="flex items-center justify-center gap-4">
                                 <button
-                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                    onClick={() => handleQuantityChange(quantity - 1)}
                                     className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                                    disabled={quantity <= 1}
                                 >
                                     -
                                 </button>
                                 <input
                                     type="number"
                                     value={quantity}
-                                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                                    onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                                    min="1"
+                                    max={currentInfo.quantity}
                                     className="w-20 text-center bg-white border-0 rounded-lg shadow-sm"
                                 />
                                 <button
-                                    onClick={() => setQuantity(quantity + 1)}
+                                    onClick={() => handleQuantityChange(quantity + 1)}
                                     className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                                    disabled={quantity >= currentInfo.quantity}
                                 >
                                     +
                                 </button>
                             </div>
+                            <p className="text-sm text-gray-500 mt-2 text-center">
+                                {currentInfo.quantity} unités disponibles
+                            </p>
                         </div>
                     </div>
 
