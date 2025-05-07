@@ -42,7 +42,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
         const validQuantity = Math.min(Math.max(1, newQuantity), currentInfo.quantity);
         setQuantity(validQuantity);
     };
-
+    console.log(currentInfo)
     const checkOutNavigation = () => {
         // Créer un objet avec les informations de variation
         const variationInfo = currentInfo.color ? {
@@ -51,9 +51,10 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
             attribute: currentInfo.attribute,
             attributeVariationId: currentInfo.attributeVariationId,
             productVariationId: currentInfo.productVariationId,
+            price: currentInfo.price,
             colorHex: currentInfo.color.hex,
             variantName: currentInfo.variantName,
-            quantity: currentInfo.quantity
+            quantity: quantity
         } : null;
 
         // Encoder les informations de variation pour l'URL

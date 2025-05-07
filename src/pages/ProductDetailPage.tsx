@@ -62,7 +62,7 @@ const ProductDetailPage: React.FC = () => {
     const productImages = product?.product_images || [];
     return [mainImage, ...productImages];
   };
- 
+  
   // Fonction utilitaire pour obtenir les informations de la première variation
   const getFirstVariationInfo = (product: any) => {
     if (!product?.variations || product.variations.length === 0) {
