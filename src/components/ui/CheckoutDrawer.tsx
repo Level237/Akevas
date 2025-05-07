@@ -10,6 +10,8 @@ interface CheckoutDrawerProps {
     setQuantity: (quantity: number) => void;
     currentInfo: {
         price: number;
+        attributeVariationId: number;
+        productVariationId: number;
         mainImage?: string;
         color?: {
             id: number;
@@ -47,6 +49,8 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
             colorId: currentInfo.color.id,
             colorName: currentInfo.color.name,
             attribute: currentInfo.attribute,
+            attributeVariationId: currentInfo.attributeVariationId,
+            productVariationId: currentInfo.productVariationId,
             colorHex: currentInfo.color.hex,
             variantName: currentInfo.variantName,
             quantity: currentInfo.quantity

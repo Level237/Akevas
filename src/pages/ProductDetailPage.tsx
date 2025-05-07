@@ -131,6 +131,8 @@ const ProductDetailPage: React.FC = () => {
       
       // Cas où la variation est simple (couleur uniquement)
       return {
+        attributeVariationId: null,
+        productVariationId: currentVariant.id,
         price: currentVariant.price,
         quantity: currentVariant.quantity,
         mainImage: currentVariant.images?.[0],
@@ -143,6 +145,8 @@ const ProductDetailPage: React.FC = () => {
 
     // Si le produit n'a pas de variations
     return {
+      attributeVariationId: null,
+      productVariationId: null,
       price: product?.product_price,
       quantity: product?.product_quantity,
       mainImage: product?.product_profile,
