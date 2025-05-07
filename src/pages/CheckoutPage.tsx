@@ -33,6 +33,7 @@ const CheckoutPage: React.FC = () => {
   const [paymentPhone, setPaymentPhone] = useState<string>('');
   const params = new URLSearchParams(window.location.search);
   const s = params.get('s');
+  const variations=params.get('variation');
   const residence = params.get('residence');
   const totalPrice = params.get('price');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
@@ -46,7 +47,7 @@ const CheckoutPage: React.FC = () => {
 
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);
 
- 
+  console.log(variations)
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
     phone: '',
@@ -232,7 +233,7 @@ const CheckoutPage: React.FC = () => {
                     className="mr-2"
                     
                   />
-                  <label htmlFor="remotePickup" className={`${isLocalOrder ? 'text-gray-400' : ''}`}>
+                  <label htmlFor="remotePickup" className=''>
                     Expédition au magasin Akevas de {otherLocation} (2 500 XAF)
                   </label>
                 </div>
@@ -248,7 +249,7 @@ const CheckoutPage: React.FC = () => {
                     className="mr-2"
                     
                   />
-                  <label htmlFor="remoteDelivery" className={`${isLocalOrder ? 'text-gray-400' : ''}`}>
+                  <label htmlFor="remoteDelivery" className="">
                     Expédition et livraison à domicile dans la ville de {otherLocation} (3 500 XAF)
                   </label>
                 </div>

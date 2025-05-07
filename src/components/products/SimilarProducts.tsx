@@ -8,10 +8,7 @@ const SimilarProducts = ({ similarProducts, isLoadingSimilarProducts }: { simila
     
     const safeProducts = similarProducts || [];
 
-    // Fonction utilitaire pour normaliser un produit
-    
-  
-    // On normalise tous les produits avant de les afficher
+
     const normalizedProducts = safeProducts.map(normalizeProduct);
     return (
         <>

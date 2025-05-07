@@ -40,7 +40,7 @@ const ProductDetailPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const productId = product?.id
   const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null);
-
+  
   const handleAddToCart = useCallback(async () => {
     setIsLoadingCart(true);
     dispatch(addItem({ product, quantity }));
@@ -115,8 +115,10 @@ const ProductDetailPage: React.FC = () => {
       if (currentVariant.attributes && currentVariant.attributes.length > 0) {
         const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute) 
           || currentVariant.attributes[0];
-        
+          
         return {
+          attributeVariationId: selectedAttr.id,
+          productVariationId: currentVariant.id,
           price: selectedAttr.price,
           quantity: selectedAttr.quantity,
           mainImage: currentVariant.images?.[0],
