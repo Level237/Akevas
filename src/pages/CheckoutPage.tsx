@@ -59,7 +59,7 @@ const CheckoutPage: React.FC = () => {
 
   // Mock cart items
 
-  console.log(variations)
+  console.log(JSON.parse(variations || '{}'))
   // Mock data pour la démonstration
   const productLocation = s == "1" ? cartItems[0].product.residence : residence;
   const deliveryFees = {
@@ -149,7 +149,8 @@ const CheckoutPage: React.FC = () => {
           formData.append("amount",total.toString());
         }
         if(variations){
-          formData.append("variations",variations);
+          formData.append('hasVariation','true');
+          formData.append("variations",JSON.parse(variations));
         }
         formData.append("s","0");
         if(quarter){
