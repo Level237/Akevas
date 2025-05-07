@@ -1,5 +1,4 @@
 import { normalizeProduct } from "@/lib/normalizeProduct"
-import AsyncLink from "../ui/AsyncLink"
 import { Product } from "@/types/products"
 import { motion } from "framer-motion"
 import { Star } from "lucide-react"
@@ -29,8 +28,8 @@ const SimilarProducts = ({ similarProducts, isLoadingSimilarProducts }: { simila
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <AsyncLink
-                                        to={`/produit/${product.product_url}`}
+                                    <a
+                                        href={`/produit/${product.product_url}`}
                                         className="block h-full p-2 rounded-xl hover:bg-gray-50 transition-colors"
                                     >
                                         <div className="relative aspect-square rounded-lg overflow-hidden mb-2">
@@ -60,7 +59,7 @@ const SimilarProducts = ({ similarProducts, isLoadingSimilarProducts }: { simila
                                                 <span>{product.count_seller} vendus</span>
                                             </div>
                                         </div>
-                                    </AsyncLink>
+                                    </a>
                                 </motion.div>
                             ))}
                         </div>
