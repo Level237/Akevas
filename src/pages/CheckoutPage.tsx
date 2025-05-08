@@ -472,17 +472,46 @@ const CheckoutPage: React.FC = () => {
                 {s == "1" && cartItems.map((item) => (
                   <div key={item.product.id} className="flex gap-4">
                     <img
-                      src={item.product.product_profile}
+                      src={item.selectedVariation?.images[0] || item.product.product_profile}
                       alt={item.product.product_name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1">
                       <h3 className="text-sm font-medium">{item.product.product_name}</h3>
+                      {item.selectedVariation && (
+                        <div className="mt-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">Couleur:</span>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="w-3 h-3 rounded-full border border-gray-200"
+                                style={{ backgroundColor: item.selectedVariation.color.hex }}
+                              />
+                              <span className="text-xs text-gray-700">
+                                {item.selectedVariation.color.name}
+                              </span>
+                            </div>
+                          </div>
+                          {item.selectedVariation.attributes?.[0] && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-gray-500">Taille:</span>
+                              <span className="text-xs text-gray-700">
+                                {item.selectedVariation.attributes[0].value}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                       <p className="text-sm text-gray-500">
                         Quantité: {item.quantity}
                       </p>
                       <p className="text-sm font-medium">
-                        {(parseInt(item.product.product_price) * item.quantity).toFixed(2)} Fcfa
+                        {(
+                          (item.selectedVariation?.attributes?.[0]?.price
+                            ? parseFloat(item.selectedVariation.attributes[0].price)
+                            : parseFloat(item.product.product_price)
+                          ) * item.quantity
+                        ).toFixed(2)} Fcfa
                       </p>
                     </div>
                   </div>
@@ -493,7 +522,17 @@ const CheckoutPage: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Sous-total</span>
-                  <span className="font-medium">{s == "1" ? subtotal.toFixed(2) : parseInt(totalPrice || '0').toFixed(2)} Fcfa</span>
+                  <span className="font-medium">
+                    {s == "1" ? 
+                      cartItems.reduce((sum, item) => {
+                        const price = item.selectedVariation?.attributes?.[0]?.price 
+                          ? parseFloat(item.selectedVariation.attributes[0].price)
+                          : parseFloat(item.product.product_price);
+                        return sum + (price * item.quantity);
+                      }, 0).toFixed(2)
+                      : parseInt(totalPrice || '0').toFixed(2)
+                    } Fcfa
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Livraison</span>
@@ -502,7 +541,17 @@ const CheckoutPage: React.FC = () => {
                 <div className="border-t pt-4">
                   <div className="flex justify-between">
                     <span className="text-lg font-medium">Total</span>
-                    <span className="text-lg font-bold">{total.toFixed(2)} Fcfa</span>
+                    <span className="text-lg font-bold">
+                      {s == "1" ? 
+                        (cartItems.reduce((sum, item) => {
+                          const price = item.selectedVariation?.attributes?.[0]?.price 
+                            ? parseFloat(item.selectedVariation.attributes[0].price)
+                            : parseFloat(item.product.product_price);
+                          return sum + (price * item.quantity);
+                        }, 0) + shipping).toFixed(2)
+                        : total.toFixed(2)
+                      } Fcfa
+                    </span>
                   </div>
                 </div>
               </div>
