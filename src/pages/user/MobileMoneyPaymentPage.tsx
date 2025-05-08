@@ -16,15 +16,13 @@ export default function MobileMoneyPaymentPage() {
   const pollingInterval = 5000; // 5 seconds interval for polling
   
   // Get phone from session storage (you could use a different method)
-  const phone = sessionStorage.getItem('phone') || '';
+ 
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
-  // Get credits and amount from URL or session
   let variations=null;
   if(formDataPayment.hasVariation){
     variations=JSON.parse(formDataPayment.variations);
   }
-
-  console.log(variations)
+  
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
   const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '', {
@@ -41,19 +39,23 @@ export default function MobileMoneyPaymentPage() {
     const initializePayment = async () => {
       try {
         const formData = {
-          phone,
+          phone:formDataPayment.phone,
+          paymentPhone:formDataPayment.paymentPhone,
           productId: formDataPayment.productId,
           s: formDataPayment.s,
           quantity: formDataPayment.quantity,
+          methodChanel:formDataPayment.paymentMethod,
           amount: formDataPayment.amount,
           price: formDataPayment.price,
           quarter_delivery: formDataPayment.quarter_delivery,
           shipping: formDataPayment.shipping,
           address: formDataPayment.address,
+          hasVariation:formDataPayment.hasVariation,
           productVariationId: variations?.productVariationId || null,
           attributeVariationId: variations?.attributeVariationId || null
         }
-        //const response = await initPayment(formData);
+        const response = await initPayment(formData);
+        console.log(response)
         
       } catch (error) {
         setPaymentStatus('failed');

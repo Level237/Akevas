@@ -14,7 +14,7 @@ import { useGetUserQuery } from '@/services/auth';
 import { useGetQuartersQuery } from '@/services/guardService';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-type PaymentMethod = 'card' | 'orange' | 'momo';
+type PaymentMethod = 'card' | 'cm.orange' | 'cm.mtn';
 type DeliveryOption = 'pickup' | 'localDelivery' | 'remotePickup' | 'remoteDelivery';
 
 interface DeliveryAddress {
@@ -27,10 +27,11 @@ interface DeliveryAddress {
 }
 
 const CheckoutPage: React.FC = () => {
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('orange');
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('cm.orange');
   const [quarter, setQuarter] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [paymentPhone, setPaymentPhone] = useState<string>('');
+  
   const params = new URLSearchParams(window.location.search);
   const s = params.get('s');
   const variations=params.get('variation');
@@ -38,6 +39,7 @@ const CheckoutPage: React.FC = () => {
   const totalPrice = params.get('price');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
   const { data: userDataAuth } = useGetUserQuery('Auth');
+  const [phone, setPhone] = useState<string>(userDataAuth?.phone_number);
   const productId = params.get('productId');
   const quantity = params.get('quantity');
   const price = params.get('price');
@@ -87,7 +89,7 @@ const CheckoutPage: React.FC = () => {
   };
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-
+  console.log(selectedPayment)
   const handlePayment = () => {
     if (address.deliveryOption === 'localDelivery' && quarter === '') {
       alert('Veuillez choisir un quartier de livraison');
@@ -158,6 +160,7 @@ const CheckoutPage: React.FC = () => {
         if(quarter){
           formData.append("quarter",quarter);
         }
+        formData.append("phone",phone);
         formData.append("address",address.address);
         formData.append("shipping",shipping.toString());
         formData.append("paymentMethod",selectedPayment);
@@ -376,9 +379,8 @@ const CheckoutPage: React.FC = () => {
                   <input
                     type="text"
                     name="phone"
-                    value={userDataAuth?.phone_number}
-                    disabled={!!userDataAuth?.phone_number}
-                    onChange={handleAddressChange}
+                    value={phone}
+                    onChange={(e:any)=>setPhone(e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                   />
                 </div>
@@ -408,14 +410,14 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  {selectedPayment === 'orange' ? 'Numéro Orange Money au format 6XXXXXXXX' : 'Numéro MTN Mobile Money au format 6XXXXXXXX'}
+                  {selectedPayment === 'cm.orange' ? 'Numéro Orange Money au format 6XXXXXXXX' : 'Numéro MTN Mobile Money au format 6XXXXXXXX'}
                 </p>
               </div>
               <div className="flex items-center gap-6">
                 {/* Carte bancaire */}
                 <div
-                  onClick={() => setSelectedPayment('orange')}
-                  className={`relative flex flex-col w-52 items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'orange'
+                  onClick={() => setSelectedPayment('cm.orange')}
+                  className={`relative flex flex-col w-52 items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'cm.orange'
                     ? 'border-[#ed7e0f] bg-orange-50 '
                     : 'hover:border-gray-300 hover:shadow-md'
                     }`}
@@ -427,15 +429,15 @@ const CheckoutPage: React.FC = () => {
                   />
                   <h3 className="font-medium max-sm:text-xs text-center">Orange money</h3>
                   
-                  {selectedPayment === 'orange' && (
+                  {selectedPayment === 'cm.orange' && (
                     <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
                 </div>
 
                 {/* Orange Money */}
                 <div
-                  onClick={() => setSelectedPayment('momo')}
-                  className={`relative w-52 flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'momo'
+                  onClick={() => setSelectedPayment('cm.mtn')}
+                  className={`relative w-52 flex flex-col items-center p-6 border rounded-xl cursor-pointer transition-all ${selectedPayment === 'cm.mtn'
                     ? 'border-[#ed7e0f] bg-orange-50 scale-105'
                     : 'hover:border-gray-300 hover:shadow-md'
                     }`}
@@ -447,7 +449,7 @@ const CheckoutPage: React.FC = () => {
                   />
                   <h3 className="font-medium max-sm:text-xs text-center">Momo Payment </h3>
                   
-                  {selectedPayment === 'momo' && (
+                  {selectedPayment === 'cm.mtn' && (
                     <div className="absolute  top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
                 </div>
@@ -567,16 +569,6 @@ const CheckoutPage: React.FC = () => {
                   }</p>
                   <p>Frais de livraison: {shipping} FCFA</p>
                 </div>
-
-                <div className="border-b pb-2">
-                  <p className="font-medium">Mode de paiement</p>
-                  <p>{selectedPayment === 'card' ? 'Carte bancaire' :
-                      selectedPayment === 'orange' ? 'NotchPay Payment' :
-                      'Mobile Money'
-                  }</p>
-                  <p>Numéro: {paymentPhone}</p>
-                </div>
-
                 <div>
                   <p className="font-medium">Montant total: {total} FCFA</p>
                 </div>
