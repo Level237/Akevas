@@ -30,8 +30,12 @@ const CartPage: React.FC = () => {
       selectedVariation: selectedVariation || undefined
     }));
   }
-  const handleUpdateQuantity = (product: Product, quantity: number) => {
-    dispatch(updateQuantity({ product, quantity }))
+  const handleUpdateQuantity = (product: Product, quantity: number, selectedVariation?: any) => {
+    dispatch(updateQuantity({ 
+      product, 
+      quantity,
+      selectedVariation: selectedVariation || undefined 
+    }));
   }
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
   return (
@@ -137,7 +141,7 @@ const CartPage: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center border rounded-lg max-sm:w-20">
                             <button
-                              onClick={() => handleUpdateQuantity(item.product, Math.max(0, item.quantity - 1))}
+                              onClick={() => handleUpdateQuantity(item.product, item.quantity - 1, item.selectedVariation)}
                               className="p-2 text-gray-600 hover:text-gray-900"
                             >
                               <Minus className="w-4 h-4" />
@@ -146,7 +150,7 @@ const CartPage: React.FC = () => {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => handleUpdateQuantity(item.product, item.quantity + 1)}
+                              onClick={() => handleUpdateQuantity(item.product, item.quantity + 1, item.selectedVariation)}
                               className="p-2 text-gray-600 hover:text-gray-900"
                             >
                               <Plus className="w-4 h-4" />

@@ -102,7 +102,12 @@ const cartSlice = createSlice({
             
             const item = state.cartItems.find(item => {
                 if (selectedVariation) {
-                    return item.selectedVariation?.color.id === selectedVariation.color.id;
+                    // Check if the variation has attributes
+                    if (selectedVariation.attributes && item.selectedVariation?.attributes) {
+                        return item.selectedVariation.attributes[0]?.value === selectedVariation.attributes[0]?.value;
+                    }
+                    // Otherwise check color ID
+                    return item.selectedVariation?.color?.id === selectedVariation.color?.id;
                 }
                 return item.product.id === product.id && !item.selectedVariation;
             });
