@@ -179,6 +179,7 @@ const ProductListPage: React.FC = () => {
         quantity: 1,
         selectedVariation: variation 
       }));
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsLoading(false);
       setShowCartButton(true);
