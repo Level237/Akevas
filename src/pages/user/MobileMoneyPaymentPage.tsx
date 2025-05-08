@@ -19,8 +19,12 @@ export default function MobileMoneyPaymentPage() {
   const phone = sessionStorage.getItem('phone') || '';
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
   // Get credits and amount from URL or session
- 
-  
+  let variations=null;
+  if(formDataPayment.hasVariation){
+    variations=JSON.parse(formDataPayment.variations);
+  }
+
+  console.log(variations)
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
   const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '', {
@@ -45,19 +49,12 @@ export default function MobileMoneyPaymentPage() {
           price: formDataPayment.price,
           quarter_delivery: formDataPayment.quarter_delivery,
           shipping: formDataPayment.shipping,
-          address: formDataPayment.address
+          address: formDataPayment.address,
+          productVariationId: variations?.productVariationId || null,
+          attributeVariationId: variations?.attributeVariationId || null
         }
-        const response = await initPayment(formData);
-        console.log(response)
-        if (response.data.statusCharge === "Accepted") {
-          setPaymentRef(response.data.reference);
-          setPaymentStatus('waiting');
-          setMessage("Confirmez votre transaction en composant #150*50#");
-          setPollingEnabled(true);
-        } else {
-          setPaymentStatus('failed');
-          setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");
-        }
+        //const response = await initPayment(formData);
+        
       } catch (error) {
         setPaymentStatus('failed');
         setMessage("Impossible d'initialiser le paiement. Veuillez réessayer plus tard.");

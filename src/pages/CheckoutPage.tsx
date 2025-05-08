@@ -150,7 +150,9 @@ const CheckoutPage: React.FC = () => {
         }
         if(variations){
           formData.append('hasVariation','true');
-          formData.append("variations",JSON.parse(variations));
+          formData.append("variations",variations);
+        }else{
+          formData.append('hasVariation','false');
         }
         formData.append("s","0");
         if(quarter){
