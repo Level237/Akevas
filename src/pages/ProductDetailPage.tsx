@@ -43,13 +43,18 @@ const ProductDetailPage: React.FC = () => {
   
   const handleAddToCart = useCallback(async () => {
     setIsLoadingCart(true);
-    dispatch(addItem({ product, quantity }));
+    
+    dispatch(addItem({ 
+      product, 
+      quantity,
+      selectedVariation: selectedVariant 
+    }));
     
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     setIsLoadingCart(false);
     setShowCartButton(true);
-  }, [dispatch, product, quantity]);
+  }, [dispatch, product, quantity, selectedVariant]);
   // Helper function to get all images
   const getAllImages = () => {
     if (selectedVariant) {

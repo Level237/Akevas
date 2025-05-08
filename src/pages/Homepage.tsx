@@ -68,7 +68,7 @@ const Homepage = () => {
       // Ajouter un petit délai pour une transition fluide
       const timer = setTimeout(() => {
         dispatch(setInitialLoading(false));
-      }, 1000);
+      }, 10);
       return () => clearTimeout(timer);
     }
   }, [shopsLoading, categoriesLoading, dispatch]);
