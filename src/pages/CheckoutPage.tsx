@@ -136,7 +136,21 @@ const CheckoutPage: React.FC = () => {
       sessionStorage.setItem("paymentMethod",selectedPayment);
       sessionStorage.setItem("paymentPhone", paymentPhone);
       
+      formData.append("price",total.toString());
+      formData.append("address",total.toString());
+      formData.append("phone",phone);
+      formData.append("address",address.address);
+      formData.append("shipping",shipping.toString());
+      formData.append("paymentMethod",selectedPayment);
+      formData.append("paymentPhone", paymentPhone);
 
+      let formDataObject:any = {};
+        for (const [key, value] of formData.entries()) {
+          formDataObject[key] = value;
+        }
+        
+        sessionStorage.setItem("formDataPayment",JSON.stringify(formDataObject));
+        window.location.href = "/pay/mobile-money";
     }else if (s === '0') {
       
         if(productId){
