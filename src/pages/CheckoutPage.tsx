@@ -114,6 +114,7 @@ const CheckoutPage: React.FC = () => {
         attributeVariationId: item.selectedVariation?.attributes?.[0]?.id ?? null,
         productVariationId: item.selectedVariation?.id ?? null,
         quantity: item.quantity,
+        hasVariation:item.selectedVariation ? true : false,
         price: item.product.product_price,
         name: item.product.product_name
       }));
@@ -129,6 +130,7 @@ const CheckoutPage: React.FC = () => {
       if(totalQuantity){
         sessionStorage.setItem("quantity",totalQuantity.toString());
       }
+     
       sessionStorage.setItem("address",address.address);
       sessionStorage.setItem("shipping",shipping.toString());
       sessionStorage.setItem("paymentMethod",selectedPayment);
