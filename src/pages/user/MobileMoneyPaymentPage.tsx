@@ -22,7 +22,7 @@ export default function MobileMoneyPaymentPage() {
   if(formDataPayment.hasVariation && formDataPayment.s==0){
     variations=JSON.parse(formDataPayment.variations);
   }
-  
+  console.log(formDataPayment.productsPayments)
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
   const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '', {

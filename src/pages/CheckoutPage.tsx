@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import orange from "@/assets/orange.jpeg"
 import momo from "@/assets/momo.jpeg"
 import {
@@ -60,7 +60,10 @@ const CheckoutPage: React.FC = () => {
   });
 
   // Mock cart items
-
+  useEffect(()=>{
+    
+    setPhone(userDataAuth?.phone_number);
+  },)
   console.log(JSON.parse(variations || '{}'))
   // Mock data pour la démonstration
   const productLocation = s == "1" ? cartItems[0].product.residence : residence;
@@ -118,25 +121,23 @@ const CheckoutPage: React.FC = () => {
         price: item.product.product_price,
         name: item.product.product_name
       }));
-      sessionStorage.setItem('productsPayments', JSON.stringify(productsPayments));
-      sessionStorage.setItem('total', total.toString());
-      sessionStorage.setItem('shipping', shipping.toString());
-      sessionStorage.setItem('paymentMethod', selectedPayment);
 
       formData.append("s","1");
       if(quarter){
-        sessionStorage.setItem("quarter",quarter);
+        formData.append("quarter",quarter);
       }
       if(totalQuantity){
-        sessionStorage.setItem("quantity",totalQuantity.toString());
+          formData.append("quantity",totalQuantity.toString());
       }
      
-      sessionStorage.setItem("address",address.address);
-      sessionStorage.setItem("shipping",shipping.toString());
+     
+      
       sessionStorage.setItem("paymentMethod",selectedPayment);
       sessionStorage.setItem("paymentPhone", paymentPhone);
+      sessionStorage.setItem("phone",phone)
+      formData.append("amount",total.toString());
+      formData.append('productsPayments', JSON.stringify(productsPayments))
       
-      formData.append("price",total.toString());
       formData.append("address",total.toString());
       formData.append("phone",phone);
       formData.append("address",address.address);
