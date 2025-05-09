@@ -19,7 +19,7 @@ export default function MobileMoneyPaymentPage() {
  
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
   let variations=null;
-  if(formDataPayment.hasVariation){
+  if(formDataPayment.hasVariation && formDataPayment.s==0){
     variations=JSON.parse(formDataPayment.variations);
   }
   
@@ -38,22 +38,38 @@ export default function MobileMoneyPaymentPage() {
   useEffect(() => {
     const initializePayment = async () => {
       try {
-        const formData = {
-          phone:formDataPayment.phone,
-          paymentPhone:formDataPayment.paymentPhone,
-          productId: formDataPayment.productId,
-          s: formDataPayment.s,
-          quantity: formDataPayment.quantity,
-          methodChanel:formDataPayment.paymentMethod,
-          amount: formDataPayment.amount,
-          price: formDataPayment.price,
-          quarter_delivery: formDataPayment.quarter_delivery,
-          shipping: formDataPayment.shipping,
-          address: formDataPayment.address,
-          hasVariation:formDataPayment.hasVariation,
-          productVariationId: variations?.productVariationId || null,
-          attributeVariationId: variations?.attributeVariationId || null
+        let formData;
+        if(formDataPayment.s==0){
+          formData = {
+            phone:formDataPayment.phone,
+            paymentPhone:formDataPayment.paymentPhone,
+            productId: formDataPayment.productId,
+            s: formDataPayment.s,
+            quantity: formDataPayment.quantity,
+            methodChanel:formDataPayment.paymentMethod,
+            amount: formDataPayment.amount,
+            price: formDataPayment.price,
+            quarter_delivery: formDataPayment.quarter_delivery,
+            shipping: formDataPayment.shipping,
+            address: formDataPayment.address,
+            hasVariation:formDataPayment.hasVariation,
+            productVariationId: variations?.productVariationId || null,
+            attributeVariationId: variations?.attributeVariationId || null
+          }
+        }else{
+          formData = {
+            phone:formDataPayment.phone,
+            paymentPhone:formDataPayment.paymentPhone,
+            s: formDataPayment.s,
+            quantity: formDataPayment.quantity,
+            methodChanel:formDataPayment.paymentMethod,
+            price: formDataPayment.price,
+            quarter_delivery: formDataPayment.quarter_delivery,
+            shipping: formDataPayment.shipping,
+            address: formDataPayment.address,
+          }
         }
+       
         const response = await initPayment(formData);
         console.log(response)
         
