@@ -111,6 +111,8 @@ const CheckoutPage: React.FC = () => {
     if (s === '1') {
       productsPayments = cartItems.map(item => ({
         product_id: item.product.id,
+        attributeVariationId: item.selectedVariation?.attributes?.[0]?.id ?? null,
+        productVariationId: item.selectedVariation?.id ?? null,
         quantity: item.quantity,
         price: item.product.product_price,
         name: item.product.product_name

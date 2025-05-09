@@ -18,14 +18,14 @@ const VariationModal: React.FC<VariationModalProps> = ({
 }) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-
+  console.log(selectedColor)
   const handleAddToCart = () => {
     if (!product.variations) return;
 
     const selectedVariation = product.variations.find(
       (v:any) => v.color.id.toString() === selectedColor
     );
-
+    console.log(selectedVariation)
     if (selectedVariation) {
       onAddToCart(selectedVariation);
       onClose();
