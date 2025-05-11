@@ -19,10 +19,14 @@ export default function MobileMoneyPaymentPage() {
  
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
   let variations=null;
+  let productsPayments=null;
   if(formDataPayment.hasVariation && formDataPayment.s==0){
     variations=JSON.parse(formDataPayment.variations);
   }
-  console.log(formDataPayment.productsPayments)
+  if(formDataPayment.s==1){
+    productsPayments=JSON.parse(formDataPayment.productsPayments)
+  }
+  
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
   const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '', {
@@ -61,9 +65,10 @@ export default function MobileMoneyPaymentPage() {
             phone:formDataPayment.phone,
             paymentPhone:formDataPayment.paymentPhone,
             s: formDataPayment.s,
+            productsPayments:productsPayments,
             quantity: formDataPayment.quantity,
             methodChanel:formDataPayment.paymentMethod,
-            price: formDataPayment.price,
+            amount: formDataPayment.amount,
             quarter_delivery: formDataPayment.quarter_delivery,
             shipping: formDataPayment.shipping,
             address: formDataPayment.address,
