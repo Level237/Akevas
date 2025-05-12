@@ -1,5 +1,5 @@
 import { useState, memo, useRef } from 'react'
-import { Product, Variant, Color } from '@/types/products'
+import { Product } from '@/types/products'
 import { motion, useMotionValue, useAnimation, PanInfo } from 'framer-motion'
 import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useDispatch } from 'react-redux'
@@ -7,23 +7,35 @@ import { addItem } from '@/store/cartSlice'
 import { normalizeProduct } from '@/lib/normalizeProduct'
 import VariationModal from '@/components/ui/VariationModal'
 
-// Fonction pour récupérer les couleurs uniques des variations
-const getColorSwatches = (product: Product) => {
-  if (!product.variations || product.variations.length === 0) return [];
-  const seen = new Set();
-  const colors = [];
-  for (const variation of product.variations) {
-    if (variation.color && variation.color.hex && !seen.has(variation.color.hex)) {
-      colors.push({
-        name: variation.color.name,
-        hex: variation.color.hex,
-      });
-      seen.add(variation.color.hex);
-    }
-    if (colors.length === 4) break;
-  }
-  return colors;
-};
+// Ajout des types pour les variations
+interface Color {
+  id: number;
+  name: string;
+  hex: string;
+}
+
+interface Variant {
+  id: number;
+  color: Color;
+  images?: string[];
+  attributes?: Array<{
+    id: number;
+    value: string;
+    quantity: number;
+    price: string;
+  }>;
+}
+
+interface Product {
+  id: number;
+  product_name: string;
+  product_profile: string;
+  product_price: string;
+  product_quantity: number;
+  review_average: number;
+  shop_key: string;
+  variations?: Variant[];
+}
 
 const ProductListGrid = ({ products = [], isLoading }: { products: Product[], isLoading: boolean }) => {
   const dispatch = useDispatch();
@@ -39,6 +51,27 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
 
   // On normalise tous les produits avant de les afficher
   const normalizedProducts = safeProducts.map(normalizeProduct);
+
+  // Fonction pour récupérer les couleurs uniques des variations
+  const getColorSwatches = (product: Product) => {
+    if (!product.variations?.length) return [];
+    const seen = new Set();
+    const colors = [];
+    for (const variation of product.variations) {
+      if (
+        variation.color?.hex &&
+        !seen.has(variation.color.hex)
+      ) {
+        colors.push({
+          name: variation.color.name,
+          hex: variation.color.hex,
+        });
+        seen.add(variation.color.hex);
+      }
+      if (colors.length === 4) break;
+    }
+    return colors;
+  };
 
   const handleAddToCart = async (product: Product, variation?: any) => {
     setIsLoadingCart(prev => ({ ...prev, [product.id]: true }));
