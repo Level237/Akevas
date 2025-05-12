@@ -25,13 +25,27 @@ export interface Product {
     created_at: string,
 }
 
-export type Variant = {
-    id: string,
-    variant_name: string,
-    image: string,
-    price: string,
-    images: Image[][],
+export interface Color {
+    id: number;
+    name: string;
+    hex: string;
 }
+
+export interface Variant {
+    id: string;
+    variant_name: string;
+    image: string;
+    price: string;
+    images: Image[][];
+    color: Color;
+    attributes?: Array<{
+        id: number;
+        value: string;
+        quantity: number;
+        price: string;
+    }>;
+}
+
 export type Category = {
     id: string,
     category_name: string,
@@ -39,7 +53,6 @@ export type Category = {
     category_url: string,
     category_profile: string,
     category_description: string,
-    
     category_parent_id: string,
     category_created_at: string,
 }
