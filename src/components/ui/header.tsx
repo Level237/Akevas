@@ -14,7 +14,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import SearchResource from './search';
-import { CartState } from '@/store/cartSlice';
 
 // Lazy load du MobileCategoryMenu
 const MobileCategoryMenu = lazy(() => import('../categories/MobileCategoryMenu'));
@@ -229,7 +228,7 @@ console.log(userData)
   const handleSearchToggle = useCallback(() => {
     setUiState(prev => ({ ...prev, isSearchOpen: !prev.isSearchOpen }));
   }, []);
-  const totalQuantity = useSelector((state: RootState) => (state.cart as CartState).totalQuantity)
+  const totalQuantity = useSelector((state: RootState) => state.cart.totalQuantity)
 
   // Memoize les composants qui peuvent être réutilisés
   const headerActions = useMemo(() => (
