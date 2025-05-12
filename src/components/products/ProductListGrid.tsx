@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux'
 import { addItem } from '@/store/cartSlice'
 import { normalizeProduct } from '@/lib/normalizeProduct'
 import VariationModal from '@/components/ui/VariationModal'
+import AsyncLink from '../ui/AsyncLink'
 
 // Ajout des types pour les variations
 interface Color {
@@ -53,7 +54,7 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
   const normalizedProducts = safeProducts.map(normalizeProduct);
 
   // Fonction pour récupérer les couleurs uniques des variations
-  const getColorSwatches = (product: Product) => {
+  const getColorSwatches = (product: any) => {
     if (!product.variations?.length) return [];
     const seen = new Set();
     const colors = [];
@@ -186,17 +187,20 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
           normalizedProducts.map((product) => (
             <motion.div
               key={product.id}
-              className="m-3 max-sm:w-[259px] transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
+              className="m-3 cursor-pointer max-sm:w-[259px] transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
             >
-              <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <div className="group  bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
                 {/* Image et badges */}
-                <div className="relative aspect-square max-sm:aspect-[4/3]">
+                <AsyncLink to={`produit/${product.product_url}`}>
+                <div className="relative  aspect-[4/3] max-sm:aspect-[4/3]">
+                
                   <img
                     src={product.product_profile}
                     alt={product.product_name}
-                    className="w-full h-full object-cover"
+                    className="w-full  h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                 
+                  <div className="absolute cursor-pointer inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   {/* Badges */}
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
@@ -236,7 +240,7 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
                     </div>
                   )}
                 </div>
-
+                </AsyncLink>
                 {/* Informations produit */}
                 <div className="p-4 space-y-3">
                   <div>
