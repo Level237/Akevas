@@ -8,6 +8,7 @@ import { normalizeProduct } from '@/lib/normalizeProduct'
 import VariationModal from '@/components/ui/VariationModal'
 import AsyncLink from '../ui/AsyncLink'
 import { toast } from 'sonner'
+import OptimizedImage from '@/pages/OptimizedImage'
 
 // Ajout des types pour les variations
 interface Color {
@@ -197,7 +198,7 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
                 <AsyncLink to={`produit/${product.product_url}`}>
                 <div className="relative  aspect-[4/3] max-sm:aspect-[4/3]">
                 
-                  <img
+                  <OptimizedImage
                     src={product.product_profile}
                     alt={product.product_name}
                     className="w-full  h-full object-cover"

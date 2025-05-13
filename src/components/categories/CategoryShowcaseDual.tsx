@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react"
 import { motion } from "framer-motion"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { Link } from "react-router-dom"
+import OptimizedImage from "@/pages/OptimizedImage"
 
 interface Category {
   id: string
@@ -105,11 +106,11 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
                     category.color || "from-blue-500/30 to-purple-500/30"
                   } opacity-60 transition-opacity group-hover:opacity-80 z-10`} />
                   
-                  <img
+                  <OptimizedImage
                     src={category.category_profile|| "/placeholder.svg"}
                     alt={category.name}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    loading="lazy"
+                    
                   />
 
                   <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20">
