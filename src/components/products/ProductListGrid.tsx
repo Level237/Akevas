@@ -1,12 +1,13 @@
 import { useState, memo, useRef } from 'react'
-import { Product } from '@/types/products'
+
 import { motion, useMotionValue, useAnimation, PanInfo } from 'framer-motion'
-import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { addItem } from '@/store/cartSlice'
 import { normalizeProduct } from '@/lib/normalizeProduct'
 import VariationModal from '@/components/ui/VariationModal'
 import AsyncLink from '../ui/AsyncLink'
+import { toast } from 'sonner'
 
 // Ajout des types pour les variations
 interface Color {
@@ -85,6 +86,8 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
     await new Promise(resolve => setTimeout(resolve, 1000));
     setIsLoadingCart(prev => ({ ...prev, [product.id]: false }));
     setShowCartButton(prev => ({ ...prev, [product.id]: true }));
+
+   
   };
 
   const handleAddToCartClick = (product: Product) => {
@@ -277,12 +280,14 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
                         )}
                       </button>
                     ) : (
-                      <button 
-                        className="w-full px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors text-sm flex items-center justify-center gap-2"
-                      >
-                        <ShoppingCart className="w-4 h-4" />
-                        Voir le panier
-                      </button>
+                      <AsyncLink to="/cart" className="w-full">
+                        <button 
+                          className="w-full px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors text-sm flex items-center justify-center gap-2"
+                        >
+                          <ShoppingCart className="w-4 h-4" />
+                          Voir le panier
+                        </button>
+                      </AsyncLink>
                     )}
                   </div>
                 </div>

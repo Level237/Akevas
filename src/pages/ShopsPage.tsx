@@ -13,6 +13,7 @@ import { Category } from '@/types/products';
 import { Shop } from '@/types/shop';
 import { FixedSizeGrid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import OptimizedImage from './OptimizedImage';
 
 type SortOption = 'rating' | 'products' | 'followers' | 'newest';
 type CategoryFilter = 'all' | 'mode' | 'accessoires' | 'beaute';
@@ -86,54 +87,7 @@ const ErrorMessage = memo(() => (
 ErrorMessage.displayName = 'ErrorMessage';
 
 // Optimiser le chargement des images avec un composant dédié
-const OptimizedImage = memo(({ src, alt, className }: { src: string; alt: string; className?: string }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const imageRef = useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
-    if (imageRef.current?.complete) {
-      setIsLoaded(true);
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && imageRef.current) {
-            imageRef.current.src = src;
-          }
-        });
-      },
-      {
-        rootMargin: '50px',
-        threshold: 0.1,
-      }
-    );
-
-    if (imageRef.current) {
-      observer.observe(imageRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [src]);
-
-  return (
-    <div className={`relative ${className}`}>
-      <img
-        ref={imageRef}
-        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" // Placeholder
-        data-src={src}
-        alt={alt}
-        className={`${className} transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        onLoad={() => setIsLoaded(true)}
-        loading="lazy"
-      />
-      {!isLoaded && (
-        <div className={`absolute inset-0 bg-gray-200 animate-pulse ${className}`} />
-      )}
-    </div>
-  );
-});
-OptimizedImage.displayName = 'OptimizedImage';
 
 // Memoize individual shop card
 const ShopCard = memo(({ shop }: { shop: Shop }) => {
