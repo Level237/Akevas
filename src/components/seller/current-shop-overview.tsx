@@ -22,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import ShopReviews from '../stores/ShopReviews';
 import AsyncLink from '../ui/AsyncLink';
+import OptimizedImage from '../OptimizedImage';
 
 
 interface StoreProduct {
@@ -108,7 +109,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
         {/* Couverture et informations de la boutique */}
       <div className="relative block max-sm:hidden h-64 bg-gray-900">
         {shop.shop.images?.[0]?.path && (
-          <img
+          <OptimizedImage
             src={shop.shop.images?.[0]?.path}
             alt="Store cover"
             className="w-full h-full object-cover opacity-50"
@@ -120,8 +121,8 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
         <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="max-w-7xl mx-auto flex items-end gap-6">
             <div className="w-32 h-32 rounded-xl overflow-hidden border-4 border-white">
-              <img
-                src={shop.shop.shop_profile || null || undefined}
+              <OptimizedImage
+                src={shop.shop.shop_profile || ""}
                 alt={shop.shop.shop_name || ''}
                 className="w-full h-full object-cover"
               />
@@ -169,7 +170,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
           <div className="flex flex-col lg:flex-row items-start justify-end lg:items-end gap-4 lg:gap-8">
             {/* Store Logo */}
             <div className="w-24  h-24 lg:w-32 lg:h-32 rounded-xl overflow-hidden border-4 border-white  lg:mt-0">
-              <img
+              <OptimizedImage
                 src={shop.shop.shop_profile|| '/default-logo.jpg'}
                 alt="Store logo"
                 className="w-full h-full object-cover"
@@ -246,7 +247,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
             {shop.shop.products?.map((product) => (
               <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <Link to={`/product/${product.id}`} className="block aspect-square">
-                  <img
+                  <OptimizedImage
                     src={product.product_profile}
                     alt={product.product_name}
                     className="w-full h-full object-cover"
@@ -500,7 +501,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                   {viewMode === 'grid' ? (
                     <>
                       <div className="relative aspect-square">
-                        <img
+                        <OptimizedImage
                           src={product.product_profile}
                           alt={product.product_name}
                           className="w-full h-full object-cover"
@@ -544,7 +545,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                   ) : (
                     <>
                       <div className="w-48 h-48">
-                        <img
+                        <OptimizedImage
                           src={product.product_profile}
                           alt={product.product_name}
                           className="w-full h-full object-cover rounded-lg"

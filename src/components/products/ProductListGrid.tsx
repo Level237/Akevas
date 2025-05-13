@@ -8,7 +8,7 @@ import { normalizeProduct } from '@/lib/normalizeProduct'
 import VariationModal from '@/components/ui/VariationModal'
 import AsyncLink from '../ui/AsyncLink'
 import { toast } from 'sonner'
-import OptimizedImage from '@/pages/OptimizedImage'
+import OptimizedImage from '@/components/OptimizedImage'
 
 // Ajout des types pour les variations
 interface Color {

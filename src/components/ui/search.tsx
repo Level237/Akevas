@@ -1,3 +1,4 @@
+import OptimizedImage from "@/components/OptimizedImage";
 import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
 import { Clock, Search, TrendingUp, X } from "lucide-react"
@@ -20,7 +21,7 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
           <div className="space-y-4">
             {data.shops.map((shop: any) => (
               <Link key={shop.shop_id} to={`/shop/${shop.shop_id}`} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                <img
+                <OptimizedImage
                   src={`${shop.shop_profile}`}
                   alt={shop.shop_name}
                   className="w-16 h-16 object-cover rounded-lg"
@@ -42,7 +43,7 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
           <div className="grid grid-cols-2 gap-4">
             {data.products.map((product: any) => (
               <Link key={product.id} to={`/produit/${product.product_url}`} className="bg-gray-50 rounded-lg overflow-hidden">
-                <img
+                <OptimizedImage
                   src={`${product.product_profile}`}
                   alt={product.product_name}
                   className="w-full h-32 object-cover"

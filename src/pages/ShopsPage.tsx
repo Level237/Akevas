@@ -13,7 +13,7 @@ import { Category } from '@/types/products';
 import { Shop } from '@/types/shop';
 import { FixedSizeGrid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import OptimizedImage from './OptimizedImage';
+import OptimizedImage from '../components/OptimizedImage';
 
 type SortOption = 'rating' | 'products' | 'followers' | 'newest';
 type CategoryFilter = 'all' | 'mode' | 'accessoires' | 'beaute';

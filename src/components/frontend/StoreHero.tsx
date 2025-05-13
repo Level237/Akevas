@@ -4,7 +4,7 @@ import delivery from "../../assets/delivery-slider.png"
 import sellerImage from "../../assets/seller.png"
 import marketplace from "../../assets/marketplace.jpg"
 import { useGetProfileShopQuery } from "@/services/guardService";
-import OptimizedImage from "@/pages/OptimizedImage";
+import OptimizedImage from "@/components/OptimizedImage";
 // Ajoutez ces images ou utilisez vos propres images de produits
 
 // Créer des composants séparés pour une meilleure réutilisabilité
@@ -42,7 +42,7 @@ const ProductGrid = memo(({ productImages }:{productImages:any}) => (
           src={img}
           alt={`Product ${index + 1}`}
           
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+          className="w-full cursor-pointer h-full object-cover transition-transform duration-300 hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent hover:opacity-0 transition-opacity duration-300" />
       </motion.div>
@@ -156,11 +156,11 @@ export default function StoreHero() {
             {slides[2].isMarketplace && (
               <div className="grid grid-cols-2 gap-3 h-full">
                 {productImages?.slice(0, 4).map((img, index) => (
-                  <div key={index} className="relative rounded-xl overflow-hidden">
+                  <div key={index} className="relative  rounded-xl overflow-hidden">
                     <OptimizedImage
                       src={img}
-                      alt={`Product ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      alt={`Product  ${index + 1}`}
+                      className="w-full cursor-pointer h-full object-cover"
                     />
                   </div>
                 ))}

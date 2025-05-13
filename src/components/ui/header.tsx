@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import SearchResource from './search';
+import OptimizedImage from '@/components/OptimizedImage';
 
 // Lazy load du MobileCategoryMenu
 const MobileCategoryMenu = lazy(() => import('../categories/MobileCategoryMenu'));
@@ -272,7 +273,7 @@ console.log(userData)
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <AsyncLink to="/" className="flex-shrink-0">
-              <img src={logo} alt="AKEVAS" className="h-16 w-auto" />
+              <OptimizedImage src={logo} alt="logo AKEVAS" className="h-16 w-auto" />
             </AsyncLink>
 
             <div className="flex-1 flex justify-center">
@@ -302,7 +303,7 @@ console.log(userData)
 
             {/* Logo */}
             <Link to="/" className="flex-shrink-0">
-              <img src={logo} alt="Logo" className="h-16 w-auto lg:h-12" />
+              <OptimizedImage src={logo} alt="Logo" className="h-16 w-auto lg:h-12" />
             </Link>
 
             {/* Navigation Desktop */}

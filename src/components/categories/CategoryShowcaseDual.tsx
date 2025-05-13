@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from "react"
 import { motion } from "framer-motion"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { Link } from "react-router-dom"
-import OptimizedImage from "@/pages/OptimizedImage"
+import OptimizedImage from "@/components/OptimizedImage"
 
 interface Category {
   id: string

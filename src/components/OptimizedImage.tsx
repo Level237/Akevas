@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 
 
-const OptimizedImage = memo(({ src, alt, className }: { src: string; alt: string; className?: string }) => {
+const OptimizedImage = memo(({ src, alt, className }: { src: string ; alt: string; className?: string }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const imageRef = useRef<HTMLImageElement>(null);
   
