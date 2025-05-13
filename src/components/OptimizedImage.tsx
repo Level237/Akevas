@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 
 
-const OptimizedImage = memo(({ src, alt, className }: { src: string ; alt: string; className?: string }) => {
+const OptimizedImage = memo(({ src, alt, className,styles }: { src: string ; alt: string; className?: string,styles?:string }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const imageRef = useRef<HTMLImageElement>(null);
   
@@ -34,6 +34,7 @@ const OptimizedImage = memo(({ src, alt, className }: { src: string ; alt: strin
     return (
       <div className={`relative ${className}`}>
         <img
+      
           ref={imageRef}
           src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" // Placeholder
           data-src={src}

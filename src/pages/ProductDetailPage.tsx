@@ -22,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import AsyncLink from '@/components/ui/AsyncLink';
 import CheckoutDrawer from '@/components/ui/CheckoutDrawer';
 import { ProductReview } from '@/components/products/ProductReview';
+import OptimizedImage from '@/components/OptimizedImage';
 
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
@@ -293,11 +294,11 @@ const ProductDetailPage: React.FC = () => {
                               }
                               scroll-snap-align-start`}
                           >
-                            <img
+                            <OptimizedImage
                               src={image.path}
                               alt={`${product.product_name} ${idx + 1}`}
                               className="w-full h-full object-cover"
-                              title={image.path === product?.product_profile ? "Image principale du produit" : ""}
+                              
                             />
                           </button>
                         ))}
@@ -329,17 +330,11 @@ const ProductDetailPage: React.FC = () => {
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <img
+                      <OptimizedImage
                         src={getAllImages()[selectedImage]?.path || product.product_profile}
                         alt={product.product_name}
                         className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-100'}`}
-                        style={
-                          isZoomed
-                            ? {
-                              transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
-                            }
-                            : undefined
-                        }
+                       
                       />
                     </motion.div>
 
@@ -420,7 +415,7 @@ const ProductDetailPage: React.FC = () => {
                                 }`}
                               >
                                 <div className="w-12 h-12 mr-3 rounded-md overflow-hidden">
-                                  <img
+                                  <OptimizedImage
                                     src={variation.images?.[0]}
                                     alt={variation.color.name}
                                     className="w-full h-full object-cover"
@@ -570,7 +565,7 @@ const ProductDetailPage: React.FC = () => {
                     <div className="space-y-3 text-sm">
                       {/* Vendeur */}
                       <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
-                        Vendu par : <img src={product.shop_profile} alt="" className="w-5 h-5 rounded-full" />
+                        Vendu par : <OptimizedImage src={product.shop_profile} alt="" className="w-5 h-5 rounded-full" />
                         <span className="text-gray-600">{product.shop_key || "CRTORRS S..."}</span>
                       </div>
 

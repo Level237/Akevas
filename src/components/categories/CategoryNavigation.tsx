@@ -5,6 +5,7 @@ import { ChevronDown, Sparkle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AsyncLink from '../ui/AsyncLink';
 import { Category } from '@/types/products';
+import OptimizedImage from '../OptimizedImage';
 
 
 // Composant pour le skeleton loading
@@ -101,7 +102,7 @@ const CategoryDropdown = React.memo(({
           {/* Nouvelle section promotionnelle */}
           <div className="col-span-1 space-y-6">
             <div className="relative group overflow-hidden rounded-lg">
-              <img
+              <OptimizedImage
                 src={category.category_profile}
                 alt={category.category_name}
                 className="w-full h-[200px] object-cover transition-transform duration-300 group-hover:scale-105"
