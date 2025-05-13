@@ -45,7 +45,7 @@ interface StoreCategory {
 }
 export default function CurrentShopOverView({shop}:{shop:Seller}) {
   
-  console.log(shop)
+  
   const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews' | 'categories'>('products');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

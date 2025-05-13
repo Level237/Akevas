@@ -10,6 +10,7 @@ import StoreStories from '@/components/stores/store-stories';
 import ProductListGrid from '@/components/products/ProductListGrid';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 import CategoryShowcaseDual from '@/components/categories/CategoryShowcaseDual';
+import OptimizedImage from '@/components/OptimizedImage';
 const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)
     const {data:{data:currentGender}={},isLoading}=useGetCurrentHomeByGenderQuery(currentGenderId)
@@ -36,8 +37,8 @@ const CurrentHomeByGenderPage = () => {
       {/* Hero Section */}
       {!isLoading &&       <div className="relative h-[400px]">
         <div className="absolute inset-0">
-          <img 
-            src={currentGender.gender_profile} 
+          <OptimizedImage 
+            src={currentGender?.gender_profile}
             alt=                                                                                                                                                    {currentGender.gender_name}
             className="w-full h-full object-cover"
           />
