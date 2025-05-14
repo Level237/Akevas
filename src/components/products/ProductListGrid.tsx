@@ -9,6 +9,7 @@ import VariationModal from '@/components/ui/VariationModal'
 import AsyncLink from '../ui/AsyncLink'
 import { toast } from 'sonner'
 import OptimizedImage from '@/components/OptimizedImage'
+import { Product } from '@/types/products'
 
 // Ajout des types pour les variations
 interface Color {
@@ -29,18 +30,7 @@ interface Variant {
   }>;
 }
 
-interface Product {
-  id: number;
-  product_name: string;
-  product_profile: string;
-  product_price: string;
-  product_quantity: number;
-  review_average: number;
-  shop_key: string;
-  variations?: Variant[];
-}
-
-const ProductListGrid = ({ products = [], isLoading,gridColumn }: { products: Product[], isLoading: boolean,gridColumn?:any }) => {
+const ProductListGrid = ({ products = [], isLoading,gridColumn,type }: { products: Product[], isLoading: boolean,gridColumn?:any,type?:string }) => {
   const dispatch = useDispatch();
   const [isDragging, setIsDragging] = useState(false);
   const [showCartButton, setShowCartButton] = useState<Record<string, boolean>>({});
@@ -54,7 +44,7 @@ const ProductListGrid = ({ products = [], isLoading,gridColumn }: { products: Pr
 
   // On normalise tous les produits avant de les afficher
   const normalizedProducts = safeProducts.map(normalizeProduct);
-
+  console.log(normalizedProducts)
   // Fonction pour récupérer les couleurs uniques des variations
   const getColorSwatches = (product: any) => {
     if (!product.variations?.length) return [];
@@ -153,7 +143,7 @@ const ProductListGrid = ({ products = [], isLoading,gridColumn }: { products: Pr
         </div>
         
         {/* Boutons de navigation mobile */}
-        <div className="md:hidden flex justify-end gap-2 px-4 mb-4">
+        <div className={` ${!isLoading && normalizedProducts.length > 4 ? "flex" : "md:hidden"} justify-end gap-2 px-4 mb-4`}>
           <button 
             onClick={(e) => {
               e.stopPropagation();
@@ -185,13 +175,13 @@ const ProductListGrid = ({ products = [], isLoading,gridColumn }: { products: Pr
         animate={controls}
         style={{ x: dragX }}
         whileTap={{ cursor: "grabbing" }}
-        className={`flex flex-row gap-4 overflow-x-hidden overflow-y-hidden md:grid md:grid-cols-2 lg:grid-cols-3 ${gridColumn ? `xl:grid-cols-${gridColumn}` : "xl:grid-cols-4"} pb-4 md:pb-0 px-4 max-sm:gap-0 snap-x snap-mandatory md:snap-none touch-pan-x overscroll-x-contain cursor-grab isolate overflow-x-auto scrollbar-hide transition-all duration-300 ease-out`}
+        className={`flex flex-row gap-4 overflow-x-hidden overflow-y-hidden ${type!=="home" || !type && "md:grid"}  md:grid-cols-2 lg:grid-cols-3 ${gridColumn ? `xl:grid-cols-${gridColumn}` : "xl:grid-cols-4"} pb-4 md:pb-0 px-4 max-sm:gap-0 snap-x snap-mandatory md:snap-none touch-pan-x overscroll-x-contain cursor-grab isolate overflow-x-auto scrollbar-hide transition-all duration-300 ease-out`}
       >
         {!isLoading ? (
           normalizedProducts.map((product) => (
             <motion.div
               key={product.id}
-              className="m-3 cursor-pointer max-sm:w-[259px] transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
+              className="m-3 w-[270px] flex-shrink-0 cursor-pointer max-sm:w-[259px] transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
             >
               <div className="group  bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
                 {/* Image et badges */}
