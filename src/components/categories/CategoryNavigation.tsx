@@ -48,7 +48,7 @@ const CategoryDropdown = React.memo(({
         duration: 0.2,
         ease: [0.4, 0, 0.2, 1]
       }}
-      className="fixed mt-6 left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
+      className="fixed mt-3 left-0 right-0 z-50 mx-auto w-full bg-white shadow-xl overflow-hidden"
     >
       <div className="container mx-auto">
         <div className="grid grid-cols-4 gap-8 p-8">

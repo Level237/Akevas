@@ -5,6 +5,7 @@ import sellerImage from "../../assets/seller.png"
 import marketplace from "../../assets/marketplace.jpg"
 import { useGetProfileShopQuery } from "@/services/guardService";
 import OptimizedImage from "@/components/OptimizedImage";
+import { Link } from "react-router-dom";
 // Ajoutez ces images ou utilisez vos propres images de produits
 
 // Créer des composants séparés pour une meilleure réutilisabilité
@@ -31,7 +32,9 @@ const ProductGrid = memo(({ productImages }:{productImages:any}) => (
     transition={{ duration: 0.8, delay: 0.4 }}
   >
     {productImages?.map((img:any, index:any) => (
-      <motion.div
+
+      <Link to={`/shop/${img.url}`}>
+          <motion.div
         key={index}
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -39,13 +42,15 @@ const ProductGrid = memo(({ productImages }:{productImages:any}) => (
         className="relative overflow-hidden rounded-lg aspect-square shadow-lg"
       >
         <OptimizedImage
-          src={img}
+          src={img.profile}
           alt={`Product ${index + 1}`}
-          
           className="w-full cursor-pointer h-full object-cover transition-transform duration-300 hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent hover:opacity-0 transition-opacity duration-300" />
       </motion.div>
+
+      </Link>
+      
     ))}
   </motion.div>
 ));
@@ -56,12 +61,28 @@ export default function StoreHero() {
   let productImages;
   if(!isLoading){
     productImages = [
-      data[0].shop_profile,
-      data[1].shop_profile,
-      data[2].shop_profile,
-      data[3].shop_profile,
-      data[4].shop_profile,
-      data[5].shop_profile,
+      {
+        profile: data[0].shop_profile,
+        url:data[0].id,
+      },
+      {
+        profile: data[1].shop_profile,
+        url:data[1].id,
+      },
+      {
+        profile: data[2].shop_profile,
+        url:data[2].id,
+      },{
+        profile: data[3].shop_profile,
+        url:data[3].id,
+      },
+      {
+        profile: data[4].shop_profile,
+        url:data[4].id,
+      },{
+        profile: data[5].shop_profile,
+        url:data[5].id,
+      }
     ];
   }
   
@@ -157,11 +178,13 @@ export default function StoreHero() {
               <div className="grid grid-cols-2 gap-3 h-full">
                 {productImages?.slice(0, 4).map((img, index) => (
                   <div key={index} className="relative  rounded-xl overflow-hidden">
+                    <Link to={`/shop/${img.url}`}>
                     <OptimizedImage
-                      src={img}
-                      alt={`Product  ${index + 1}`}
+                      src={img.profile}
+                      alt={`Shop  ${index + 1}`}
                       className="w-full cursor-pointer h-full object-cover"
                     />
+                    </Link>
                   </div>
                 ))}
               </div>

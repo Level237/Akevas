@@ -195,7 +195,7 @@ const ProductListGrid = ({ products = [], isLoading }: { products: Product[], is
             >
               <div className="group  bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
                 {/* Image et badges */}
-                <AsyncLink to={`produit/${product.product_url}`}>
+                <AsyncLink to={`/produit/${product.product_url}`}>
                 <div className="relative  aspect-[4/3] max-sm:aspect-[4/3]">
                 
                   <OptimizedImage

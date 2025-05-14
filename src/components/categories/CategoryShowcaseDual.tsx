@@ -96,7 +96,7 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
               className="w-[300px] flex-shrink-0"
             >
               <Link 
-                to={`/categories/${category.category_url}`}
+                to={`/c/${category.category_url}`}
                 className="block group relative"
                 onMouseEnter={() => setActiveCategory(category.id)}
                 onMouseLeave={() => setActiveCategory(null)}
