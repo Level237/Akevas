@@ -255,7 +255,18 @@ console.log(userData)
         )}
       </DropdownAccount>
 
+      {!userData && <AsyncLink to="/cart">
 
+<div
+
+  className="relative text-gray-700 hover:text-[#ed7e0f]"
+>
+  <ShoppingCart className="w-6 h-6" />
+  <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+    {totalQuantity}
+  </span>
+</div>
+</AsyncLink>}
     </div>
   ), [userData, handleSearchToggle, totalQuantity]);
 
@@ -285,6 +296,7 @@ console.log(userData)
             </div>
 
             {headerActions}
+            
           </div>
         </div>
       </header>
