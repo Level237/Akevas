@@ -18,11 +18,13 @@ import {
   Mail
 } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Link } from 'react-router-dom';
+
 import { useState } from 'react';
 import ShopReviews from '../stores/ShopReviews';
-import AsyncLink from '../ui/AsyncLink';
+
 import OptimizedImage from '../OptimizedImage';
+import { normalizeProduct } from '@/lib/normalizeProduct';
+import ProductCard from '../products/ProductCard';
 
 
 interface StoreProduct {
@@ -43,6 +45,8 @@ interface StoreCategory {
   count: number;
   products: StoreProduct[];
 }
+
+
 export default function CurrentShopOverView({shop}:{shop:Seller}) {
   
   
@@ -51,6 +55,9 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
   
+  const safeProducts = shop.shop.products|| [];
+  const normalizedProducts = safeProducts.map(normalizeProduct);
+  console.log(normalizedProducts)
   // Mock data
   const store = {
     code: 'JP_STORE_8472',
@@ -244,26 +251,8 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
       <div className="container hidden max-sm:block mx-auto px-4 py-6">
         {activeTab === 'products' && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {shop.shop.products?.map((product) => (
-              <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <Link to={`/product/${product.id}`} className="block aspect-square">
-                  <OptimizedImage
-                    src={product.product_profile}
-                    alt={product.product_name}
-                    className="w-full h-full object-cover"
-                  />
-                </Link>
-                <div className="p-4">
-                  <Link to={`/product/${product.id}`} className="block">
-                    <h3 className="font-medium text-gray-900 mb-1 line-clamp-1">
-                      {product.product_name}
-                    </h3>
-                    <p className="text-[#ed7e0f] font-semibold">
-                      {product.product_price} FCFA
-                    </p>
-                  </Link>
-                </div>
-              </div>
+            {normalizedProducts?.map((product) => (
+             <ProductCard product={product} viewMode={viewMode} />
             ))}
           </div>
         )}
@@ -486,110 +475,8 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 : 'space-y-4'
             }>
 
-              {shop.shop.products?.map((product) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className={
-                    viewMode === 'grid'
-                      ? 'bg-white rounded-2xl shadow-sm overflow-hidden'
-                      : 'flex gap-6 bg-white rounded-2xl shadow-sm p-4'
-                  }
-                >
-                  {viewMode === 'grid' ? (
-                    <>
-                      <div className="relative aspect-square">
-                        <OptimizedImage
-                          src={product.product_profile}
-                          alt={product.product_name}
-                          className="w-full h-full object-cover"
-                        />
-                       
-                          <div className="absolute top-4 left-4">
-                            <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
-                              Premium
-                            </span>
-                          </div>
-                        
-                      </div>
-
-                      <div className="p-4">
-                        <h3 className="font-medium text-gray-900 mb-1">
-                          {product.product_name}
-                        </h3>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 text-yellow-400" />
-                            <span className="ml-1 text-sm text-gray-600">
-                             12
-                            </span>
-                          </div>
-                          {product.product_categories.map((category) => (
-                            <span className="text-sm text-gray-500">
-                              {category.category_name}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-gray-900">
-                            {product.product_price} FCFA
-                          </span>
-                          <AsyncLink to={`/produit/${product.product_url}`} className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
-                            Voir
-                          </AsyncLink>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-48 h-48">
-                        <OptimizedImage
-                          src={product.product_profile}
-                          alt={product.product_name}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      </div>
-
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-lg font-medium text-gray-900">
-                            {product.product_name}
-                          </h3>
-                          
-                            <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
-                              Premium
-                            </span>
-                        
-                        </div>
-
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 text-yellow-400" />
-                            <span className="ml-1 text-sm text-gray-600">
-                             12
-                            </span>
-                          </div>
-                          {product.product_categories.map((category) => (
-                            <span className="text-sm text-gray-500">
-                            {category.category_name}
-                          </span>
-                        ))}
-                        </div>
-
-                        <div className="flex items-center justify-between mt-4">
-                          <span className="text-xl font-bold text-gray-900">
-                            {product.product_price} FCFA
-                          </span>
-                          <button className="px-6 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
-                            Voir le produit
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </motion.div>
+              {normalizedProducts.map((product) => (
+               <ProductCard product={product} viewMode={viewMode} />
               ))}
             </div>}
             {activeTab === 'reviews' && (
