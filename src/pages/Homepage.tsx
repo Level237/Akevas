@@ -17,6 +17,7 @@ import { setInitialLoading } from '@/store/features/loadingSlice';
 import { RootState } from '@/store';
 import { AnimatePresence } from 'framer-motion';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
+import ErrorBoundary from '@/components/ui/error-boundary';
 
 
 const Homepage = () => {
@@ -78,6 +79,7 @@ const Homepage = () => {
   }
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-[#F8F9FC]">
       <section className=''>
         <TopBar />
@@ -114,6 +116,7 @@ const Homepage = () => {
     )}
     </AnimatePresence>
     </div>
+    </ErrorBoundary>
   );
 };
 

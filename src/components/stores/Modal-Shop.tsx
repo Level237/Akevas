@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { Category,Product } from "@/types/products";
 import AsyncLink from "../ui/AsyncLink";
 import { memo, useCallback, useMemo } from "react";
+import OptimizedImage from "../OptimizedImage";
 
 export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isModalOpen:boolean,setIsModalOpen:React.Dispatch<React.SetStateAction<boolean>>,shopId:string}) {
   const closeModal = useCallback(() => setIsModalOpen(false), [setIsModalOpen]);
@@ -249,7 +250,7 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
       className="group relative overflow-hidden rounded-lg border bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md"
     >
       <div className="relative mb-3 aspect-square overflow-hidden rounded-lg">
-        <img
+        <OptimizedImage
           src={product.product_profile}
           alt={product.product_name}
           className="object-cover transition-transform duration-300 group-hover:scale-105"
