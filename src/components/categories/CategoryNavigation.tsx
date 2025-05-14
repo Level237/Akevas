@@ -163,6 +163,7 @@ const CategoryNavigationContent = () => {
     refetchOnReconnect: false
   });
 
+  console.log(categoriesChildren)
   const handleMouseEnter = (categoryId: number) => {
     setActiveCategory(categoryId);
   };

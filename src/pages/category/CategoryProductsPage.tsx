@@ -110,29 +110,30 @@ const CategoryProductsPage = () => {
                             </div>
                         </div>
 
-                        {/* Active Filters */}
-                        <div className="flex gap-2 mb-6 flex-wrap">
-                            <Button variant="secondary" size="sm" className="rounded-full">
-                                Prix: 50€ - 200€ ×
-                            </Button>
-                            <Button variant="secondary" size="sm" className="rounded-full">
-                                Taille: M ×
-                            </Button>
-                        </div>
+                        
 
                         {/* Products Grid */}
-                        <ProductListGrid
-                            products={categoryData}
-                            isLoading={isLoading}
-                            gridColumn={3}
-                        />
+                        {!isLoading && (!categoryData || categoryData.length === 0) ? (
+                            <div className="text-center py-12">
+                                <h3 className="text-xl font-medium text-gray-900 mb-2">Aucun produit trouvé</h3>
+                                <p className="text-gray-500">Aucun produit n'est disponible dans cette catégorie pour le moment.</p>
+                            </div>
+                        ) : (
+                            <ProductListGrid
+                                products={categoryData}
+                                isLoading={isLoading}
+                                gridColumn={3}
+                            />
+                        )}
 
                         {/* Load More */}
-                        <div className="text-center mt-8">
-                            <Button variant="outline" className="px-8">
-                                Charger plus de produits
-                            </Button>
-                        </div>
+                        {categoryData && categoryData.length > 0 && (
+                            <div className="text-center mt-8">
+                                <Button variant="outline" className="px-8">
+                                    Charger plus de produits
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
