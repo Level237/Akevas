@@ -175,7 +175,7 @@ const ProductListGrid = ({ products = [], isLoading,gridColumn,type }: { product
         animate={controls}
         style={{ x: dragX }}
         whileTap={{ cursor: "grabbing" }}
-        className={`flex flex-row gap-4 overflow-x-hidden overflow-y-hidden ${type!=="home" || !type && "md:grid"}  md:grid-cols-2 lg:grid-cols-3 ${gridColumn ? `xl:grid-cols-${gridColumn}` : "xl:grid-cols-4"} pb-4 md:pb-0 px-4 max-sm:gap-0 snap-x snap-mandatory md:snap-none touch-pan-x overscroll-x-contain cursor-grab isolate overflow-x-auto scrollbar-hide transition-all duration-300 ease-out`}
+        className={`flex flex-row gap-4 overflow-x-hidden overflow-y-hidden ${type!=="grid" || !type && "md:grid"}  md:grid-cols-2 lg:grid-cols-3 ${gridColumn ? `xl:grid-cols-${gridColumn}` : "xl:grid-cols-4"} pb-4 md:pb-0 px-4 max-sm:gap-0 snap-x snap-mandatory md:snap-none touch-pan-x overscroll-x-contain cursor-grab isolate overflow-x-auto scrollbar-hide transition-all duration-300 ease-out`}
       >
         {!isLoading ? (
           normalizedProducts.map((product) => (
