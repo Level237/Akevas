@@ -5,7 +5,7 @@ import { Product } from "@/types/products";
 import { addItem } from "@/store/cartSlice";
 import AsyncLink from "../ui/AsyncLink";
 import { Heart, Star } from "lucide-react";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion} from 'framer-motion';
 
 
 const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }) => {
@@ -34,6 +34,8 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
       }
       return colors;
     }, [product.variations]);
+
+    const variationsCount = product.variations?.length || 0;
 
     const handleAddToCart = async (product: Product, variation?: any) => {
       setIsLoading(true);
@@ -92,7 +94,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                 {/* Affichage des couleurs si variations */}
                 {colorSwatches.length > 0 && (
                   <div className="flex items-center gap-2 px-4 mt-2 mb-1">
-                    {colorSwatches.map((color:any, idx:any) => (
+                    {colorSwatches.map((color:any) => (
                       <div
                         key={color.hex}
                         title={color.name}
@@ -103,8 +105,8 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                         }}
                       />
                     ))}
-                    {product.variations.length > 4 && (
-                      <span className="text-xs text-gray-500 ml-1">+{product.variations.length - 4}</span>
+                    {variationsCount > 4 && (
+                      <span className="text-xs text-gray-500 ml-1">+{variationsCount - 4}</span>
                     )}
                   </div>
                 )}
@@ -170,8 +172,8 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                         }}
                       />
                     ))}
-                    {product.variations.length > 4 && (
-                      <span className="text-xs text-gray-500 ml-1 bg-white/80 px-1 rounded">+{product.variations.length - 4}</span>
+                    {variationsCount > 4 && (
+                      <span className="text-xs text-gray-500 ml-1 bg-white/80 px-1 rounded">+{variationsCount - 4}</span>
                     )}
                   </div>
                 )}
