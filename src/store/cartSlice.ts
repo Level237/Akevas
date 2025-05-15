@@ -32,9 +32,7 @@ const cartSlice = createSlice({
             const { product, quantity, selectedVariation } = action.payload;
             
             // Créer une clé unique basée sur le produit et la couleur
-            const itemKey = selectedVariation 
-                ? `${product.id}-${selectedVariation.color.id}`
-                : product.id;
+            
 
             const item = state.cartItems.find(item => {
                 if (selectedVariation) {
@@ -113,9 +111,7 @@ const cartSlice = createSlice({
             });
 
             if (item) {
-                const itemPrice = selectedVariation 
-                    ? (selectedVariation.attributes?.[0]?.price || product.product_price)
-                    : product.product_price;
+               
 
                 item.quantity = quantity;
 
