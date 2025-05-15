@@ -74,7 +74,7 @@ const CheckoutPage: React.FC = () => {
     remoteDelivery: 3500
   };
   
-  const isLocalOrder = userDataAuth?.residence?.toLowerCase() === productLocation?.toLowerCase();
+  
   const otherLocation = productLocation === "Yaoundé" ? "Douala" : "Yaoundé";
   const filterOtherLocation=quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === otherLocation);
   const getDeliveryFee = () => {
@@ -491,7 +491,7 @@ const CheckoutPage: React.FC = () => {
                 {s == "1" && cartItems.map((item) => (
                   <div key={item.product.id} className="flex gap-4">
                     <img
-                      src={item.selectedVariation?.images[0] || item.product.product_profile}
+                      src={item.product.product_profile}
                       alt={item.product.product_name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />

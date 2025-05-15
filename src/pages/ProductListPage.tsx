@@ -11,7 +11,6 @@ import { ScrollRestoration } from 'react-router-dom';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetAllProductsQuery } from '@/services/guardService';
 import { Product } from '@/types/products';
-import { useDispatch } from 'react-redux';
 import { normalizeProduct } from '@/lib/normalizeProduct';
 import ProductCard from '@/components/products/ProductCard';
 

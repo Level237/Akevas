@@ -88,7 +88,7 @@ const CartPage: React.FC = () => {
                     >
                       <div className="w-24 h-24">
                         <img
-                          src={item.selectedVariation?.images?.[0] || item.product.product_profile}
+                          src={item.product.product_profile}
                           alt={item.product.product_name}
                           className="w-full h-full object-cover rounded-lg"
                         />

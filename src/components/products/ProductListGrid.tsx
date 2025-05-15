@@ -1,13 +1,13 @@
 import { useState, memo, useRef } from 'react'
 
 import { motion, useMotionValue, useAnimation, PanInfo } from 'framer-motion'
-import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight} from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { addItem } from '@/store/cartSlice'
 import { normalizeProduct } from '@/lib/normalizeProduct'
 import VariationModal from '@/components/ui/VariationModal'
 import AsyncLink from '../ui/AsyncLink'
-import { toast } from 'sonner'
+
 import OptimizedImage from '@/components/OptimizedImage'
 import { Product } from '@/types/products'
 
@@ -18,21 +18,12 @@ interface Color {
   hex: string;
 }
 
-interface Variant {
-  id: number;
-  color: Color;
-  images?: string[];
-  attributes?: Array<{
-    id: number;
-    value: string;
-    quantity: number;
-    price: string;
-  }>;
-}
+
 
 const ProductListGrid = ({ products = [], isLoading,gridColumn,type }: { products: Product[], isLoading: boolean,gridColumn?:any,type?:string }) => {
   const dispatch = useDispatch();
   const [isDragging, setIsDragging] = useState(false);
+  console.log(isDragging)
   const [showCartButton, setShowCartButton] = useState<Record<string, boolean>>({});
   const [isLoadingCart, setIsLoadingCart] = useState<Record<string, boolean>>({});
   const [showVariationModal, setShowVariationModal] = useState<Record<string, boolean>>({});

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { ChevronDown, Filter, Search, ChevronRight } from 'lucide-react';
+import { ChevronDown,Search, ChevronRight } from 'lucide-react';
 import TopBar from '@/components/ui/topBar';
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';

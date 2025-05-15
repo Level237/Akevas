@@ -6,6 +6,7 @@ import CurrentShopOverView, { CurrentShopOverViewSkeleton } from '@/components/s
 import { useGetShopQuery } from '@/services/guardService';
 
 import ErrorBoundary from '@/components/ui/error-boundary';
+import ErrorMessage from '@/components/ui/error-message';
 
 const StorePage: React.FC = () => {
   const { id } = useParams();

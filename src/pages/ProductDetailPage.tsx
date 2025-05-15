@@ -32,6 +32,7 @@ const ProductDetailPage: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  console.log(mousePosition)
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const { data: { data: similarProducts } = {}, isLoading: isLoadingSimilarProducts } = useGetSimilarProductsQuery(product?.id);
   const [showCartButton, setShowCartButton] = useState(false);
@@ -69,35 +70,7 @@ const ProductDetailPage: React.FC = () => {
     return [mainImage, ...productImages];
   };
   
-  // Fonction utilitaire pour obtenir les informations de la première variation
-  const getFirstVariationInfo = (product: any) => {
-    if (!product?.variations || product.variations.length === 0) {
-      return null;
-    }
 
-    const firstVariation = product.variations[0];
-
-    // Cas où la variation a des attributs (comme dans l'exemple "polor" et "pantouffle")
-    if (firstVariation.attributes && firstVariation.attributes.length > 0) {
-      const firstAttr = firstVariation.attributes[0];
-      return {
-        price: firstAttr.price,
-        quantity: firstAttr.quantity,
-        image: firstVariation.images?.[0] || product.product_profile
-      };
-    }
-
-    // Cas où la variation est simple (comme dans l'exemple "pljjfee")
-    if (firstVariation.isColorOnly) {
-      return {
-        price: firstVariation.price,
-        quantity: firstVariation.quantity,
-        image: firstVariation.images?.[0] || product.product_profile
-      };
-    }
-
-    return null;
-  };
 
   // Modifier l'useEffect pour initialiser la première variation et son premier attribut
   useEffect(() => {
