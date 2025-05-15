@@ -161,7 +161,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                 {/* Affichage des couleurs si variations (mode liste) */}
                 {colorSwatches.length > 0 && (
                   <div className="flex items-center gap-2 absolute bottom-2 left-2">
-                    {colorSwatches.map((color, idx) => (
+                    {colorSwatches.map((color) => (
                       <div
                         key={color.hex}
                         title={color.name}

@@ -12,11 +12,7 @@ import OptimizedImage from '@/components/OptimizedImage'
 import { Product } from '@/types/products'
 
 // Ajout des types pour les variations
-interface Color {
-  id: number;
-  name: string;
-  hex: string;
-}
+
 
 
 
