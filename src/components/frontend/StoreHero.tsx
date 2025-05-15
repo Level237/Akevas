@@ -178,7 +178,7 @@ export default function StoreHero() {
               <div className="grid grid-cols-2 gap-3 h-full">
                 {productImages?.slice(0, 4).map((img, index) => (
                   <div key={index} className="relative  rounded-xl overflow-hidden">
-                    <Link to={`/shop/${img.url}`}>
+                    <Link to={`/shop/${img.url}`} className="">
                     <OptimizedImage
                       src={img.profile}
                       alt={`Shop  ${index + 1}`}
@@ -194,11 +194,11 @@ export default function StoreHero() {
           {/* Bottom Actions */}
           <div className="space-y-4">
             <motion.a
-              href={slides[2].href}
+              href={slides[currentSlide].href}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="inline-flex z-[999999999999999999999999999] items-center justify-center w-full bg-white text-[#ed7e0f] 
+              className="inline-flex  items-center justify-center w-full bg-white text-[#ed7e0f] 
                        px-6 py-3.5 rounded-xl font-medium shadow-lg 
                        active:scale-95 transition-all duration-200"
               whileTap={{ scale: 0.98 }}
@@ -210,7 +210,7 @@ export default function StoreHero() {
       </div>
 
       {/* Slider Controls */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
+      <div className="absolute bottom-6 max-sm:bottom-[-10px] left-1/2 transform -translate-x-1/2 z-20">
         <SlideControls 
           slides={slides} 
           currentSlide={currentSlide} 
@@ -222,7 +222,7 @@ export default function StoreHero() {
 
   {/* Swipe Handlers */}
   <div 
-    className="absolute inset-0 z-30"
+    className="absolute inset-0 z-30 max-sm:z-0"
     
   />
 </motion.section>
