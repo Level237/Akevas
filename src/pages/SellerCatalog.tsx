@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Share2, Plus, ShoppingBag, Search, Grid, List, Copy, Check, Facebook, MessageCircle, Twitter, Send } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Product } from '@/types/products';
 import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';

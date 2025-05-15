@@ -59,7 +59,7 @@ export default function CheckoutRechargePage() {
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<'cm.orange' | 'cm.mtn'>('cm.orange');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-
+  console.log(setIsProcessing)
   const validatePhoneNumber = (number: string, method: 'cm.orange' | 'cm.mtn'): boolean => {
     const cleanNumber = number.replace(/\s+/g, '');
     if (cleanNumber.length !== 9) return false;

@@ -4,14 +4,12 @@ import {
   Plus,
   X,
   Save,
-  AlertCircle,
   Loader2,
   Image,
   Package,
   Palette,
-  Ruler
 } from 'lucide-react';
-import vendor from '@/assets/vendor.jpg'
+
 import { useAddProductMutation } from '@/services/sellerService';
 import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
@@ -87,15 +85,9 @@ const CreateProductPage: React.FC = () => {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
-  const [colorSearchTerm, setColorSearchTerm] = useState('');
-  const [sizeSearchTerm, setSizeSearchTerm] = useState('');
-  const [weightSearchTerm, setWeightSearchTerm] = useState('');
-  const [showColorSuggestions, setShowColorSuggestions] = useState(false);
-  const [showSizeSuggestions, setShowSizeSuggestions] = useState(false);
-  const [showWeightSuggestions, setShowWeightSuggestions] = useState(false);
-  const [activeTab, setActiveTab] = useState<'product' | 'attributes'>('product');
+  console.log(variants)
+  
   const [gender, setGender] = useState<number>(0)
-  const [showColorPicker, setShowColorPicker] = useState(false);
   const [productType, setProductType] = useState<'simple' | 'variable'>('simple');
   const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender)
@@ -103,11 +95,7 @@ const CreateProductPage: React.FC = () => {
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   //console.log(getAttributes?.[3]?.groups)
   // Ajout des pointures par catégorie
-  const shoeSizes = {
-    'Bébé': ['16', '17', '18'],
-    'Enfant': ['28', '30', '32', '34', '35', '36', '37'],
-    'Adulte': ['38', '39', '40', '41', '42', '43', '44', '45']
-  };
+
 
   //console.log(selectedSubCategories)
   // Liste des catégories disponibles
@@ -178,114 +166,9 @@ const CreateProductPage: React.FC = () => {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const addAttributeValue = (attributeId: number, value: string, valueId?: number, hex?: string) => {
-    const newAttributes = [...attributes];
-    const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
-
-    if (attrIndex !== -1) {
-      // Pour les valeurs qui ne viennent pas de l'API (taille et poids),
-      // on génère un ID unique négatif pour éviter les conflits avec les IDs de l'API
-      const newValueId = valueId || -(Date.now());
-
-      const newValue = {
-        id: newValueId,
-        value: value,
-        hex: hex
-      };
-
-      if (!newAttributes[attrIndex].values.some(v => v.value === value)) {
-        newAttributes[attrIndex].values.push(newValue);
-        setAttributes(newAttributes);
-        generateVariants(newAttributes);
-      }
-    }
-  };
-  //console.log(variants)
-  const removeAttributeValue = (attributeId: number, valueToRemove: string) => {
-    const newAttributes = [...attributes];
-    const attrIndex = newAttributes.findIndex(attr => attr.id === attributeId);
-
-    if (attrIndex !== -1) {
-      newAttributes[attrIndex].values = newAttributes[attrIndex].values.filter(
-        v => v.value !== valueToRemove
-      );
-      setAttributes(newAttributes);
-      generateVariants(newAttributes);
-    }
-  };
-
-  const generateVariants = (attrs: ProductAttribute[]) => {
-    const generateCombinations = (attributes: ProductAttribute[]): { name: string; ids: number[]; price: number }[] => {
-      if (attributes.length === 0) return [{ name: '', ids: [], price: Number(price) || 0 }];
-
-      const [first, ...rest] = attributes;
-      const restCombinations = generateCombinations(rest);
-
-      return first.values.flatMap(value =>
-        restCombinations.map(combo => ({
-          name: combo.name ? `${value.value}-${combo.name}` : value.value,
-          ids: [value.id, ...combo.ids],
-          price: Number(price) || 0 // Utiliser le prix général comme valeur initiale
-        }))
-      );
-    };
-
-    const activeAttrs = attrs.filter(attr => attr.values.length > 0);
-    const combinations = generateCombinations(activeAttrs);
-
-    const newVariants = combinations.map((combo, index) => ({
-      id: `variant-${index}`,
-      variant_name: combo.name,
-      attribute_value_id: combo.ids,
-      price: combo.price,
-      images: []
-    }));
-
-    setVariants(newVariants);
-  };
-
-  const handleVariantImageUpload = (variantId: string, files: FileList) => {
-    setVariants(variants.map(variant =>
-      variant.id === variantId
-        ? { ...variant, images: [...variant.images, ...Array.from(files)] }
-        : variant
-    ));
-  };
-
-  const removeVariantImage = (variantId: string, imageIndex: number) => {
-    setVariants(variants.map(variant =>
-      variant.id === variantId
-        ? { ...variant, images: variant.images.filter((_, idx) => idx !== imageIndex) }
-        : variant
-    ));
-  };
-
-  const getFilteredColors = () => {
-    if (!getAttributes || !getAttributes[0]?.values) return [];
-    return getAttributes[0].values.filter((color: any) =>
-      color.value.toLowerCase().includes(colorSearchTerm.toLowerCase()) &&
-      !attributes.find(attr => attr.id === getAttributes[0].id)?.values
-        .some(v => v.value === color.value)
-    );
-  };
-
-  const getFilteredSizes = () => {
-    if (!getAttributes || !getAttributes[1]?.values) return [];
-    return getAttributes[1].values.filter((size: any) =>
-      size.value.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
-      !attributes.find(attr => attr.id === getAttributes[1].id)?.values
-        .some(v => v.value === size.value)
-    );
-  };
 
 
-  const getFilteredWeights = () => {
-    if (!getAttributes || !getAttributes[2]) return [];
-    return getAttributes[2].values.filter((size: any) =>
-      size.value.toLowerCase().includes(sizeSearchTerm.toLowerCase()) &&
-      !attributes.find(attr => attr.id === getAttributes[2].id)?.values.some(v => v.value === size.value)
-    );
-  };
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -396,7 +279,7 @@ const CreateProductPage: React.FC = () => {
         formData.append('variations', JSON.stringify(Object.values(variationsByColor)));
         
         // Ajouter les images des variations par couleur
-        Object.values(variationsByColor).forEach((colorGroup, colorIndex) => {
+        Object.values(variationsByColor).forEach((colorGroup) => {
           colorGroup.images.forEach((image, imageIndex) => {
             formData.append(`color_${colorGroup.color.id}_image_${imageIndex}`, image);
           });
@@ -425,38 +308,9 @@ const CreateProductPage: React.FC = () => {
     setCity(value);
   };
 
-  // Fonction pour mettre à jour le prix d'un attribut
-  const updateAttributePrice = (attributeId: number, valueId: number, price: number) => {
-    setAttributes(prevAttributes => 
-      prevAttributes.map(attr => {
-        if (attr.id === attributeId) {
-          return {
-            ...attr,
-            values: attr.values.map(val => 
-              val.id === valueId ? { ...val, price } : val
-            )
-          };
-        }
-        return attr;
-      })
-    );
-  };
 
-  // Fonction pour gérer l'ajout de taille
-  const handleAddSize = (attributeId: number) => {
-    setAttributes(prevAttributes => 
-      prevAttributes.map(attr => {
-        if (attr.id === attributeId) {
-          return {
-            ...attr,
-            values: [...attr.values, { id: Date.now(), value: sizeSearchTerm, price: 0 }]
-          };
-        }
-        return attr;
-      })
-    );
-    setSizeSearchTerm('');
-  };
+
+
 
   const [variationFrames, setVariationFrames] = useState<Array<{
     id: string;
@@ -602,8 +456,7 @@ const CreateProductPage: React.FC = () => {
   // Fonction pour générer toutes les combinaisons possibles
   const generateVariations = () => {
     const colors = variationFrames.map(frame => frame.colorId).filter(Boolean);
-    const sizes = getUniqueSizes();
-    const shoeSizes = getUniqueShoeSizes();
+
 
     const newVariations: typeof variationFrames = [];
 
@@ -1643,8 +1496,7 @@ const CreateProductPage: React.FC = () => {
                     <div className="grid grid-cols-1 gap-4">
                       {variationFrames.map((frame) => {
                         const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
-                        const size = frame.sizes[0] ? getAttributes?.[1]?.values.find((s: any) => s.id === frame.sizes[0].id) : null;
-                        const shoeSize = frame.shoeSizes[0] ? getAttributes?.[3]?.values.find((s: any) => s.id === frame.shoeSizes[0].id) : null;
+                       
 
                         return (
                           <div key={frame.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all">

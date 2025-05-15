@@ -49,7 +49,7 @@ export default function StatisticsOverview(sellerData: { sellerData: Seller | nu
           
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
+            {stats.map((stat) => (
               <motion.div
                 
                 className={`p-6 rounded-2xl bg-gradient-to-r ${stat.gradient} text-white`}
