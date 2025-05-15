@@ -5,7 +5,7 @@ import TopBar from '@/components/ui/topBar'
 import StoreStories from '@/components/stores/store-stories'
 import PremiumProducts from '@/components/products/PremiumProducts'
 import MobileNav from '@/components/ui/mobile-nav'
-import FeaturedShopModal from '@/components/modals/FeaturedShopModal';
+
 import { useGetCategoriesWithParentIdNullQuery, useGetHomeShopsQuery } from '@/services/guardService';
 import CategoryShowcaseDual from '@/components/categories/CategoryShowcaseDual';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
@@ -15,7 +15,6 @@ import PageLoader from '@/components/ui/PageLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { setInitialLoading } from '@/store/features/loadingSlice';
 import { RootState } from '@/store';
-import { AnimatePresence } from 'framer-motion';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
 import ErrorBoundary from '@/components/ui/error-boundary';
 
@@ -26,7 +25,6 @@ const Homepage = () => {
   const [transition, startTransition] = useTransition();
   console.log(transition)
   const [localShops, setLocalShops] = useState<Shop[]>([])
-  const [shouldShow, setShouldShow] = useState(false);
   const { data: { data: shops } = {}, isLoading: shopsLoading } = useGetHomeShopsQuery("guard", {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
@@ -35,27 +33,11 @@ const Homepage = () => {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   })
-  console.log(shops)
+
   
-  const closePopup=()=>{
-    setShouldShow(false)
-  }
 
-  useEffect(() => {
-    // Check if modal has been shown before
-    const hasModalBeenShown = localStorage.getItem('featuredShopModalShown');
-    
-    if (!hasModalBeenShown) {
-      // Set timer for 4 minutes
-      const timer = setTimeout(() => {
-        setShouldShow(true);
-        // Mark modal as shown
-        localStorage.setItem('featuredShopModalShown', 'true');
-      }, 6000);
 
-      return () => clearTimeout(timer);
-    }
-  }, []);
+  
   useEffect(() => {
     if (shops) {
       startTransition(() => {

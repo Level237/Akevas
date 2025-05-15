@@ -128,6 +128,7 @@ const ProductCard = memo(({
 const ProductListGrid = ({ products = [], isLoading, gridColumn, type }: { products: Product[], isLoading: boolean, gridColumn?: any, type?: string }) => {
   const dispatch = useDispatch();
   const [isDragging, setIsDragging] = useState(false);
+  console.log(isDragging)
   const [showCartButton, setShowCartButton] = useState<Record<string, boolean>>({});
   const [isLoadingCart, setIsLoadingCart] = useState<Record<string, boolean>>({});
   const [showVariationModal, setShowVariationModal] = useState<Record<string, boolean>>({});
