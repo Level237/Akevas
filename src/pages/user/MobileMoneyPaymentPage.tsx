@@ -76,7 +76,15 @@ export default function MobileMoneyPaymentPage() {
         }
        
         const response = await initPayment(formData);
-        console.log(response)
+        if (response.data.statusCharge === "Accepted") {
+          setPaymentRef(response.data.reference);
+          setPaymentStatus('waiting');
+          setMessage("Confirmez votre transaction en composant #150*50#");
+          setPollingEnabled(true);
+        } else {
+          setPaymentStatus('failed');
+          setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");
+        }
         
       } catch (error) {
         setPaymentStatus('failed');
