@@ -79,7 +79,12 @@ export default function MobileMoneyPaymentPage() {
         if (response.data.statusCharge === "Accepted") {
           setPaymentRef(response.data.reference);
           setPaymentStatus('waiting');
-          setMessage("Confirmez votre transaction en composant #150*50#");
+          if(formDataPayment.paymentMethod==="cm.orange"){
+            setMessage("Confirmez votre transaction en composant #150*50#");
+          }else{
+            setMessage("Confirmez votre transaction en composant *126#");
+          }
+          
           setPollingEnabled(true);
         } else {
           setPaymentStatus('failed');
