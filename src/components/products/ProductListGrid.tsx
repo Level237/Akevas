@@ -1,5 +1,4 @@
-import { useState, memo, useRef } from 'react'
-
+import { useState, memo, useRef, useMemo, useCallback } from 'react'
 import { motion, useMotionValue, useAnimation, PanInfo } from 'framer-motion'
 import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight} from 'lucide-react'
 import { useDispatch } from 'react-redux'
@@ -7,13 +6,61 @@ import { addItem } from '@/store/cartSlice'
 import { normalizeProduct } from '@/lib/normalizeProduct'
 import VariationModal from '@/components/ui/VariationModal'
 import AsyncLink from '../ui/AsyncLink'
-
 import OptimizedImage from '@/components/OptimizedImage'
 import { Product } from '@/types/products'
 
-// Ajout des types pour les variations
+const ProductCard = memo(({ 
+  product, 
+  showCartButton,
+  isLoadingCart,
+  onAddToCartClick,
+  getColorSwatches
+}: {
+  product: Product,
+  showCartButton: Record<string, boolean>,
+  isLoadingCart: Record<string, boolean>,
+  onAddToCartClick: (product: Product) => void,
+  getColorSwatches: (product: any) => any[]
+}) => {
+  return (
+    <motion.div
+      className="m-3 w-[290px] flex-shrink-0 cursor-pointer max-sm:w-[259px] transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
+      layout
+    >
+      <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+        <AsyncLink to={`/produit/${product.product_url}`}>
+          <div className="relative aspect-[4/3] max-sm:aspect-[4/3]">
+            <OptimizedImage
+              src={product.product_profile}
+              alt={product.product_name}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute cursor-pointer inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            
+            <div className="absolute top-4 left-4 flex flex-col gap-2">
+              <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
+                Premium
+              </span>
+              <div className="flex items-center bg-white/90 px-2 py-1 rounded-full">
+                <Star className="w-4 h-4 text-yellow-400" />
+                <span className="ml-1 text-xs font-medium">{product.review_average}</span>
+              </div>
+            </div>
 
+            <button className="absolute top-4 right-4 p-2 rounded-full bg-white/90 text-gray-900 hover:bg-white transition-colors">
+              <Heart className="w-5 h-5" />
+            </button>
 
+            {product.variations && product.variations.length > 0 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 px-3 py-2 rounded-full">
+                {getColorSwatches(product).map((color) => (
+                  <div
+                    key={color.hex}
+                    title={color.name}
+                    className="w-4 h-4 rounded-full border border-gray-200"
+                    style={{
+                      backgroundColor: color.hex,
 
 
 const ProductListGrid = ({ products = [], isLoading,gridColumn,type }: { products: Product[], isLoading: boolean,gridColumn?:any,type?:string }) => {

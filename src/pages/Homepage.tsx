@@ -108,13 +108,7 @@ const Homepage = () => {
       <FloatingHelpButton />
       
       <MobileNav />
-      <AnimatePresence>
-      {shouldShow && (
-      <FeaturedShopModal
-        onClose={closePopup}
-      />
-    )}
-    </AnimatePresence>
+     
     </div>
     </ErrorBoundary>
   );
