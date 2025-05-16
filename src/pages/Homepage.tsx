@@ -63,9 +63,9 @@ const Homepage = () => {
   return (
     <NetworkBoundary>
     <ErrorBoundary>
-    <div className="relative overflow-x-hidden bg-[#F8F9FC]">
+    <div className=" overflow-x-hidden bg-[#F8F9FC]">
     
-      <section className=''>
+      <section className='relative'>
         <TopBar />
         <MobileNav />
           <Header />
