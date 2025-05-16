@@ -5,7 +5,7 @@ import MobileNav from '@/components/ui/mobile-nav';
 import CurrentShopOverView, { CurrentShopOverViewSkeleton } from '@/components/seller/current-shop-overview';
 import { useGetShopQuery } from '@/services/guardService';
 
-import ErrorBoundary from '@/components/ui/error-boundary';
+import ErrorBoundary from '@/components/errors/error-boundary';
 import ErrorMessage from '@/components/ui/error-message';
 
 const StorePage: React.FC = () => {

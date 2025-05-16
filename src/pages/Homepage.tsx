@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setInitialLoading } from '@/store/features/loadingSlice';
 import { RootState } from '@/store';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
-import ErrorBoundary from '@/components/ui/error-boundary';
+import ErrorBoundary, { NetworkBoundary } from '@/components/errors/error-boundary';
 
 
 const Homepage = () => {
@@ -61,6 +61,7 @@ const Homepage = () => {
   }
 
   return (
+    <NetworkBoundary>
     <ErrorBoundary>
     <div className="min-h-screen bg-[#F8F9FC]">
       <section className=''>
@@ -93,6 +94,7 @@ const Homepage = () => {
      
     </div>
     </ErrorBoundary>
+    </NetworkBoundary>
   );
 };
 
