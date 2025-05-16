@@ -7,9 +7,9 @@ const PageLoader = () => {
           <img 
             src={logo} 
             alt="Logo" 
-            className="w-24 h-24"
+            className="w-24 max-sm:w-16 max-sm:h-16 h-24"
           />
-          <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+          <div className="absolute -bottom-4 max-sm:-bottom-1 left-1/2 transform -translate-x-1/2">
             <div className="w-12 h-1 bg-gray-200 rounded-full overflow-hidden">
               <div className="w-full h-full bg-[#ed7e0f] animate-loading" />
             </div>

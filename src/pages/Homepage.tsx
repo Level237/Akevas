@@ -63,10 +63,11 @@ const Homepage = () => {
   return (
     <NetworkBoundary>
     <ErrorBoundary>
-    <div className="min-h-screen bg-[#F8F9FC]">
+    <div className="relative overflow-x-hidden bg-[#F8F9FC]">
+    
       <section className=''>
         <TopBar />
-
+        <MobileNav />
           <Header />
     
         <GenderNavigationMobile />
@@ -90,7 +91,7 @@ const Homepage = () => {
        
       <FloatingHelpButton />
       
-      <MobileNav />
+      
      
     </div>
     </ErrorBoundary>

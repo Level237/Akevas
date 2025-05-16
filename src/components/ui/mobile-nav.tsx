@@ -39,8 +39,8 @@ const MobileNav: React.FC = () => {
   );
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50 shadow-lg">
-      <div className="flex justify-around items-center h-14 max-w-screen-xl mx-auto">
+    <nav className="fixed w-[100vw] bottom-0 left-0 right-0 bg-white border-t md:hidden z-50 shadow-lg">
+      <div className="flex justify-around   items-center h-14 max-w-screen-xl mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
