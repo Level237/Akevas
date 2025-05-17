@@ -70,8 +70,8 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
             disableOnInteraction: false
         },
         breakpoints: {
-            640: { slidesPerView: 1 },
-            1024: { slidesPerView: 4 },
+            640: { slidesPerView: 2, spaceBetween: 16 },
+            1024: { slidesPerView: 4, spaceBetween: 24 },
         },
         preloadImages: false,
         lazy: true,
