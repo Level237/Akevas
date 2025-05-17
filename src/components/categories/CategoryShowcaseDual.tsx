@@ -93,7 +93,7 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="w-[200px] flex-shrink-0"
+              className="w-[300px] max-sm:w-[200px] flex-shrink-0"
             >
               <Link 
                 to={`/c/${category.category_url}`}

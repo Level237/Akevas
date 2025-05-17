@@ -31,7 +31,7 @@ const SlideControls = memo(({ slides, currentSlide, setCurrentSlide }:{slides:an
 // Optimized product grid with memoized image rendering
 const ProductGrid = memo(({ productImages }:{productImages:any}) => {
   const renderImage = useCallback((img:any, index:number) => (
-    <Link key={img.url} to={`/shop/${img.url}`}>
+    <Link rel="preload" key={img.url} to={`/shop/${img.url}`}>
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -42,7 +42,7 @@ const ProductGrid = memo(({ productImages }:{productImages:any}) => {
           src={img.profile}
           alt={`Product ${index + 1}`}
           className="w-full cursor-pointer h-full object-cover transition-transform duration-300 hover:scale-110"
-       
+         
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent hover:opacity-0 transition-opacity duration-300" />
       </motion.div>
@@ -269,6 +269,7 @@ export default function StoreHero() {
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
+                willChange: 'transform',
               }}
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.5 }}

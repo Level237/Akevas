@@ -34,7 +34,7 @@ const OptimizedImage = memo(({ src, alt, className }: { src: string ; alt: strin
     return (
       <div className={`relative ${className}`}>
         <img
-      
+        style={{ willChange: 'transform' }}
           ref={imageRef}
           src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" // Placeholder
           data-src={src}
