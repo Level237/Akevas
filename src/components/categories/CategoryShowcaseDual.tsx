@@ -53,27 +53,27 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
         {/* Header with Navigation Controls */}
         <div className="flex items-center  justify-between mb-16">
           <div className="flex-1">
-            <span className="inline-block px-4 py-1.5 bg-[#ed7e0f]/10 backdrop-blur-sm rounded-full text-[#ed7e0f]">
+            <span className="inline-block max-sm:hidden px-4 py-1.5 bg-[#ed7e0f]/10 backdrop-blur-sm rounded-full text-[#ed7e0f]">
               {title}
             </span>
-            <h2 className="text-2xl md:text-4xl font-bold mt-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            <h2 className="text-2xl max-sm:text-lg md:text-4xl font-bold mt-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
               Explorez nos catégories
             </h2>
           </div>
           <div className="flex  gap-4">
             <button 
               onClick={() => scroll('left')}
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors active:scale-95"
+              className="p-3  rounded-full bg-white/10 hover:bg-white/20 transition-colors active:scale-95"
               aria-label="Défiler vers la gauche"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-6 max-sm:w-5 max-sm:h-5 h-6" />
             </button>
             <button 
               onClick={() => scroll('right')}
               className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors active:scale-95"
               aria-label="Défiler vers la droite"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-6 max-sm:w-5 max-sm:h-5 h-6" />
             </button>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="w-[300px] flex-shrink-0"
+              className="w-[200px] flex-shrink-0"
             >
               <Link 
                 to={`/c/${category.category_url}`}
@@ -114,7 +114,7 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
                   />
 
                   <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20">
-                    <h3 className="text-2xl font-bold mb-2 transform transition-transform group-hover:-translate-y-2">
+                    <h3 className="text-2xl max-sm:text-lg font-bold mb-2 transform transition-transform group-hover:-translate-y-2">
                       {category.category_name}
                     </h3>
                     <p className="text-white/80 text-sm line-clamp-2 transform transition-transform group-hover:-translate-y-2">

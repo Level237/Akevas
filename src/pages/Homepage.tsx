@@ -67,7 +67,7 @@ const Homepage = () => {
     
       <section className='relative'>
         <TopBar />
-        <MobileNav />
+       
           <Header />
     
         <GenderNavigationMobile />
@@ -90,7 +90,7 @@ const Homepage = () => {
       </section>
        
       <FloatingHelpButton />
-      
+      <MobileNav />
       
      
     </div>

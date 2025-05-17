@@ -39,7 +39,7 @@ const MobileNav: React.FC = () => {
   );
 
   return (
-    <nav className="fixed w-[100vw] bottom-0 left-0 right-0 bg-white border-t md:hidden z-50 shadow-lg">
+    <nav className="fixed w-[100vw] bottom-0 left-0 right-0 bg-white border-t md:hidden z-[999999]">
       <div className="flex justify-around   items-center h-14 max-w-screen-xl mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
