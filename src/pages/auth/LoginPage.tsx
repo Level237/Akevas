@@ -12,7 +12,7 @@ export default function LoginPage() {
         <div className="relative">
 
 
-          <div className="flex justify-start mt-12">
+          <div className="flex justify-start mt-12 max-sm:mt-0">
 
           </div>
 
@@ -38,7 +38,7 @@ export default function LoginPage() {
 
 
         </Card>
-        <MobileNav />
+        
       </div>
     </div>
   );

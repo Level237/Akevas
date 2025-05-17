@@ -148,7 +148,7 @@ export default function StoreHero() {
           <motion.a
             href={slides[currentSlide].href}
             className="inline-flex items-center justify-center w-full bg-white text-[#ed7e0f] 
-                     px-6 py-3.5 rounded-xl font-medium shadow-lg 
+                     px-6 max-sm:text-sm max-sm:py-3 py-3.5 rounded-xl font-medium shadow-lg 
                      active:scale-95 transition-all duration-200"
           >
             {slides[currentSlide].buttonText}
@@ -168,7 +168,7 @@ export default function StoreHero() {
 
   return (
     <>
-      <motion.section className="w-full md:hidden relative h-[480px] overflow-hidden">
+      <motion.section className="w-full md:hidden relative h-[480px]  overflow-hidden">
         <AnimatePresence mode="wait">
           {renderMobileSlide()}
         </AnimatePresence>

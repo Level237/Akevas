@@ -11,12 +11,18 @@ function App() {
 
 
   return (
-    <LoaderProvider>
+    <>
+      <section className='relative'>
+        
+      <LoaderProvider>
       <Provider store={store}>
         <RouterProvider router={routes} />
       </Provider>
 
     </LoaderProvider>
+      </section>
+    </>
+    
   )
 }
 

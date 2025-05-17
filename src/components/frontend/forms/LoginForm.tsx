@@ -58,9 +58,9 @@ export default function LoginForm() {
           <img
             src={logo}
             alt="Logo"
-            className="h-24"
+            className="h-24 max-sm:h-16"
           />
-          <h1 className="text-3xl text-center font-semibold tracking-tight">Connexion</h1>
+          <h1 className="text-3xl max-sm:text-2xl text-center font-semibold tracking-tight">Connexion</h1>
           
         </div>
 
@@ -76,14 +76,14 @@ export default function LoginForm() {
           </div>}
 
           <div className="space-y-2 mt-3">
-            <label htmlFor="email">Numéro de Téléphone</label>
+            <label className="max-sm:text-sm" htmlFor="email">Numéro de Téléphone</label>
             <Input
               id="phone"
               placeholder="Enter your phone"
               required
               type="phone"
               autoComplete='billing home email webauthn'
-              className="py-6 rounded-xl bg-white"
+              className="py-6 max-sm:placeholder:text-sm rounded-xl bg-white"
               name="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -91,23 +91,23 @@ export default function LoginForm() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password">Password</label>
+            <label className="max-sm:text-sm" htmlFor="password">Password</label>
             <Input
               id="password"
               placeholder="Enter your password"
               required
               type="password"
-              className="py-6 rounded-xl bg-white"
+              className="py-6 max-sm:placeholder:text-sm rounded-xl bg-white"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          <div className="space-y-12 ">
+          <div className="space-y-12 max-sm:space-y-5">
 
 
-            <Button disabled={isLoading} type="submit" className="w-full mt-12 py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
+            <Button disabled={isLoading} type="submit" className="w-full max-sm:mt-4 mt-12 py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
               {isLoading ? <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
                 <span className="sr-only">Loading...</span>
               </div> : "Connexion"}

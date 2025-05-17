@@ -11,11 +11,11 @@ const PageLoader = () => {
           />
           <div className="absolute -bottom-4 max-sm:-bottom-1 left-1/2 transform -translate-x-1/2">
             <div className="w-12 h-1 bg-gray-200 rounded-full overflow-hidden">
-              <div className="w-full h-full bg-[#ed7e0f] animate-loading" />
+              <div className="w-full max-sm:w-12 h-full bg-[#ed7e0f] animate-loading" />
             </div>
           </div>
         </div>
-        <p className="text-[#ed7e0f] absolute bottom-12 text-lg font-medium">
+        <p className="text-[#ed7e0f] max-sm:text-sm absolute bottom-12 text-lg font-medium">
           Made with Akevas
         </p>
       </div>
