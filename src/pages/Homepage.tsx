@@ -61,8 +61,7 @@ const Homepage = () => {
   }
 
   return (
-    <NetworkBoundary>
-    <ErrorBoundary>
+    
     <div className="relative overflow-hidden bg-[#F8F9FC]">
     <MobileNav />
        
@@ -94,8 +93,7 @@ const Homepage = () => {
      
      
     </div>
-    </ErrorBoundary>
-    </NetworkBoundary>
+   
   );
 };
 

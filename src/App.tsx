@@ -5,6 +5,7 @@ import { routes } from './routes/routes'
 import { LoaderProvider } from './context/LoaderContext'
 import { Provider } from 'react-redux'
 import { store } from './store'
+import ErrorBoundary, { NetworkBoundary } from './components/errors/error-boundary'
 
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
 
   return (
     <>
-      <section className='relative'>
+     <NetworkBoundary>
+     <ErrorBoundary>
         
       <LoaderProvider>
       <Provider store={store}>
@@ -20,7 +22,8 @@ function App() {
       </Provider>
 
     </LoaderProvider>
-      </section>
+    </ErrorBoundary>
+    </NetworkBoundary>
     </>
     
   )
