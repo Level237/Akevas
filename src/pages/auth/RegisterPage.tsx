@@ -1,22 +1,24 @@
 import { Link, useNavigate } from "react-router-dom"
 import RegisterForm from "@/components/frontend/forms/RegisterForm"
 import logo from "@/assets/favicon.png"
-import { X } from "lucide-react"
+import { ArrowLeft, X } from "lucide-react"
 
 export default function SignupForm() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4 max-sm:p-0">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8 relative">
         {/* Close button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
-          aria-label="Fermer"
-        >
-          <X className="h-5 w-5 text-gray-500" />
-        </button>
+        <div className="absolute top-4 left-4 max-sm:block sm:hidden">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+          </div>
 
         <div className="space-y-6">
           <div className="flex flex-col items-center space-y-4">
