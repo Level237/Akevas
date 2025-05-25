@@ -57,7 +57,7 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
     const swiperConfig = useMemo(() => ({
         modules: [Navigation, Pagination, Autoplay, Virtual],
         spaceBetween: 1,
-        slidesPerView: 1,
+        slidesPerView: 2,
         effect: "slide",
         virtual: true,
         navigation: {
@@ -81,7 +81,7 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
 
     return (
         <div className="relative max-sm:mt-0 mt-12">
-            <div className="swiper-button-prev" style={{ left: '10px' }}>
+            <div className="swiper-button-prev max-sm:w-2"  style={{ left: '10px' }}>
                 <ArrowLeft />
             </div>
             <div className="swiper-button-next" style={{ right: '10px' }}>
@@ -91,7 +91,7 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
             <Swiper
                 {...swiperConfig}
                 style={{ width: '100%' }}
-                className='h-[450px] max-sm:h-[350px]'
+                className='h-[450px] max-sm:h-[285px]'
             >
                 {renderShops}
             </Swiper>

@@ -18,7 +18,7 @@ const StoreCard = ({
 
   return (
     <motion.div
-      className="w-[300px] max-sm:w-[95%] mx-auto max-sm:h-[300px] h-[400px] relative rounded-2xl overflow-hidden cursor-pointer"
+      className="w-[300px] max-sm:w-[95%] mx-auto max-sm:h-[250px] h-[400px] relative rounded-2xl overflow-hidden cursor-pointer"
       onClick={openModal}
       whileHover={{ scale: 1.03 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -52,13 +52,13 @@ const StoreCard = ({
         transition={{ duration: 0.5 }}
       >
         <div className="space-y-1 sm:space-y-2">
-          <h3 className="text-xl sm:text-2xl font-bold text-white">{shop.shop_key}</h3>
+          <h3 className="text-xl sm:text-lg max-sm:text-sm font-bold text-white">{shop.shop_key}</h3>
           {shop.categories?.[0]?.category_name && (
             <p className="text-xs sm:text-sm text-gray-300">{shop.categories[0].category_name}</p>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 max-sm:hidden gap-4 sm:gap-6">
           <div className="bg-white/10 rounded-lg p-2 sm:p-3" style={{ backdropFilter: 'blur(12px)' }}>
             <div className="flex items-center gap-1 sm:gap-2">
               <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400 fill-yellow-400" />
@@ -77,8 +77,9 @@ const StoreCard = ({
         </div>
 
         <Button
-          className="w-full bg-[#ed702d] border-0 text-white font-medium text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3 mt-2 sm:mt-4"
+          className="w-full max-sm:hidden bg-[#ed702d] border-0 text-white font-medium text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3 mt-2 sm:mt-4"
         >
+
           Découvrir la boutique
         </Button>
       </motion.div>
