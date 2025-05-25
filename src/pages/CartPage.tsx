@@ -11,6 +11,7 @@ import { removeItem, updateQuantity } from '@/store/cartSlice';
 import { Product } from '@/types/products';
 import { redirectToLogin } from '@/lib/redirectToLogin';
 import { useCheckAuthQuery } from '@/services/auth';
+import OptimizedImage from '@/components/OptimizedImage';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
   const { data } = useCheckAuthQuery()
@@ -43,30 +44,31 @@ const CartPage: React.FC = () => {
       <Header />
       <MobileNav />
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
+        <div className="mb-8 max-sm:mb-3">
           <Link
             to="/"
             className="inline-flex items-center text-gray-600 hover:text-gray-900"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Retour aux achats
+            <ArrowLeft className="w-5 max-sm:w-4 max-sm:h-4 h-5 mr-2" />
+            <span className='max-sm:text-sm'>Retour aux achats</span>
+            
           </Link>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Mon Panier</h1>
+        <h1 className="text-3xl max-sm:text-xl font-bold text-gray-900 mb-8">Mon Panier</h1>
 
         {cartItems.length === 0 ? (
           <div className="text-center">
-            <ShoppingCart className="w-16 text-[#ed7e0f] h-16 mx-auto mb-4" />
-            <h2 className="text-2xl font-medium text-gray-900 mb-4">
+            <ShoppingCart className="w-16 max-sm:w-12 text-[#ed7e0f] h-16 mx-auto mb-4" />
+            <h2 className="text-2xl max-sm:text-xl font-medium text-gray-900 mb-4">
               Votre panier est vide
             </h2>
-            <p className="text-gray-500 mb-8">
+            <p className="text-gray-500 mb-8 max-sm:text-sm">
               Découvrez nos produits et commencez vos achats
             </p>
             <Link
               to="/products"
-              className="inline-block bg-[#ed7e0f] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
+              className="inline-block bg-[#ed7e0f] max-sm:text-sm text-white px-8 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors"
             >
               Voir les produits
             </Link>
@@ -87,7 +89,7 @@ const CartPage: React.FC = () => {
                       className="flex gap-6 pb-6 border-b last:border-0 last:pb-0"
                     >
                       <div className="w-24 h-24">
-                        <img
+                        <OptimizedImage
                           src={item.product.product_profile}
                           alt={item.product.product_name}
                           className="w-full h-full object-cover rounded-lg"
@@ -97,7 +99,7 @@ const CartPage: React.FC = () => {
                       <div className="flex-1">
                         <div className="flex justify-between mb-2">
                           <div>
-                            <h3 className="font-medium text-gray-900">
+                            <h3 className="font-medium max-sm:text-sm text-gray-900">
                               {item.product.product_name}
                             </h3>
                             {item.selectedVariation && (
@@ -138,7 +140,7 @@ const CartPage: React.FC = () => {
 
 
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex max-sm:flex-col max-sm:items-start max-sm:gap-1 items-center justify-between">
                           <div className="flex items-center border rounded-lg max-sm:w-20">
                             <button
                               onClick={() => handleUpdateQuantity(item.product, item.quantity - 1, item.selectedVariation)}
@@ -177,10 +179,10 @@ const CartPage: React.FC = () => {
                   <div className="flex items-center gap-4">
                     <Truck className="w-8 h-8 text-[#ed7e0f]" />
                     <div>
-                      <h3 className="font-medium text-gray-900">
+                      <h3 className="font-medium max-sm:text-md text-gray-900">
                         Livraison gratuite
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm  text-gray-500">
                         Pour toute commande
                       </p>
                     </div>
@@ -190,10 +192,10 @@ const CartPage: React.FC = () => {
                   <div className="flex items-center gap-4">
                     <Shield className="w-8 h-8 text-[#ed7e0f]" />
                     <div>
-                      <h3 className="font-medium text-gray-900">
+                      <h3 className="font-medium max-sm:text-md text-gray-900">
                         Garantie premium
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm  text-gray-500">
                         30 jours satisfait ou remboursé
                       </p>
                     </div>
@@ -203,10 +205,10 @@ const CartPage: React.FC = () => {
                   <div className="flex items-center gap-4">
                     <CreditCard className="w-8 h-8 text-[#ed7e0f]" />
                     <div>
-                      <h3 className="font-medium text-gray-900">
+                      <h3 className="font-medium max-sm:text-md text-gray-900">
                         Paiement sécurisé
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm  text-gray-500">
                         Par carte ou PayPal
                       </p>
                     </div>
@@ -218,14 +220,14 @@ const CartPage: React.FC = () => {
             {/* Résumé de la commande */}
             <div className="lg:col-span-4 mt-8 lg:mt-0">
               <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">
+                <h2 className="text-lg font-medium max-sm:text-md text-gray-900 mb-6">
                   Résumé de la commande
                 </h2>
 
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Sous-total</span>
-                    <span className="font-medium">{totalPrice.toFixed(2)} FCFA</span>
+                    <span className="text-gray-500 max-sm:text-sm">Sous-total</span>
+                    <span className="font-medium max-sm:text-sm">{totalPrice.toFixed(2)} FCFA</span>
                   </div>
 
                   <div className="border-t pt-4">
@@ -236,11 +238,11 @@ const CartPage: React.FC = () => {
                   </div>
                 </div>
                 {hasToken ? <AsyncLink to="/checkout?s=1" >
-                  <button className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
+                  <button className="w-full max-sm:text-sm mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Procéder au paiement
                   </button>
                 </AsyncLink> :
-                  <button onClick={() => redirectToLogin({ redirectUrl: '/checkout', productIds: cartItems.map(item => item.product.id), s: "1" })} className="w-full mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
+                  <button  onClick={() => redirectToLogin({ redirectUrl: '/checkout', productIds: cartItems.map(item => item.product.id), s: "1" })} className="w-full max-sm:text-sm mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Procéder au paiement
                   </button>
                 }
