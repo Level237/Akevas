@@ -281,12 +281,12 @@ const ProductListPage: React.FC = () => {
 
           {/* Liste des produits */}
           <div className="lg:col-span-3">
-            <div className={viewMode === 'grid' ? 'grid grid-cols-1 max-sm:flex max-sm:flex-col max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
+            <div className={viewMode === 'grid' ? 'grid grid-cols-2   max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
               { !isLoading && normalizedProducts && normalizedProducts.map((product:Product) => (
                 <ProductCard product={product} viewMode={viewMode} />
               ))}
               <div>
-                <div className="flex items-center justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
+                <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
                     {currentPage > 1 && (
                         <button 
                             onClick={() => handlePageChange(currentPage - 1)}

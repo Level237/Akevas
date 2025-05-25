@@ -48,7 +48,7 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
   }
 
   return (
-    <section className="py-20 bg-gradient-to-b  -mt-28 max-sm:-mt-1 from-gray-900 to-black text-white">
+    <section className="py-20 bg-gradient-to-b   -mt-28 max-sm:-mt-1 from-gray-900 to-black text-white">
       <div className="container ml-auto px-4">
         {/* Header with Navigation Controls */}
         <div className="flex items-center  justify-between mb-16">
@@ -93,7 +93,7 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="w-[300px] max-sm:w-[200px] flex-shrink-0"
+              className="w-[300px] max-sm:w-[180px] flex-shrink-0"
             >
               <Link 
                 to={`/c/${category.category_url}`}
