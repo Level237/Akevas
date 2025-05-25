@@ -9,7 +9,7 @@ const GenderNavigationMobile = () => {
   // Détecter le scroll et la position actuelle
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 80);
+      setIsScrolled(window.scrollY > 8);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -32,9 +32,9 @@ const GenderNavigationMobile = () => {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`hidden max-sm:flex sticky top-[80px] left-0 right-0 z-40 transition-all duration-300 ${
+      className={`hidden max-sm:flex sticky top-[0px] top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/90 backdrop-blur-md shadow-md' 
+          ? 'bg-white/90 backdrop-blur-md    shadow-md' 
           : 'bg-white/80 backdrop-blur-sm'
       }`}
     >

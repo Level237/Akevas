@@ -13,7 +13,7 @@ function App() {
 
   return (
     <>
-     <NetworkBoundary>
+     
      <ErrorBoundary>
         
       <LoaderProvider>
@@ -23,7 +23,7 @@ function App() {
 
     </LoaderProvider>
     </ErrorBoundary>
-    </NetworkBoundary>
+    
     </>
     
   )

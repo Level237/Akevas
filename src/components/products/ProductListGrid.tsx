@@ -24,7 +24,7 @@ const ProductCard = memo(({
 }) => {
   return (
     <motion.div
-      className="m-3 w-[290px] flex-shrink-0 cursor-pointer max-sm:w-[259px] transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
+      className="m-3 w-[290px] flex-shrink-0 cursor-pointer max-sm:w-[180px] transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
       layout
     >
       <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -39,9 +39,7 @@ const ProductCard = memo(({
             <div className="absolute cursor-pointer inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             
             <div className="absolute top-4 left-4 flex flex-col gap-2">
-              <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
-                Premium
-              </span>
+              
               <div className="flex items-center bg-white/90 px-2 py-1 rounded-full">
                 <Star className="w-4 h-4 text-yellow-400" />
                 <span className="ml-1 text-xs font-medium">{product.review_average}</span>
@@ -53,12 +51,12 @@ const ProductCard = memo(({
             </button>
 
             {product.variations && product.variations.length > 0 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 px-3 py-2 rounded-full">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center max-sm:px-2 max-sm:py-1 gap-2 bg-white/90 px-3 py-2 rounded-full">
                 {getColorSwatches(product).map((color) => (
                   <div
                     key={color.hex}
                     title={color.name}
-                    className="w-4 h-4 rounded-full border border-gray-200"
+                    className="w-4 h-4 max-sm:w-3 max-sm:h-3 rounded-full border border-gray-200"
                     style={{
                       backgroundColor: color.hex,
                       boxShadow: "0 0 0 1px #ccc"
@@ -77,20 +75,20 @@ const ProductCard = memo(({
 
         <div className="p-4 space-y-3">
           <div>
-            <h3 className="font-medium text-gray-900 mb-1 truncate">
+            <h3 className="font-medium max-sm:text-sm text-gray-900 mb-1 truncate">
               {product.product_name}
             </h3>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">
+              <span className="text-sm max-sm:hidden text-gray-500">
                 Stock: {product.product_quantity}
               </span>
-              <span className="text-lg font-bold text-[#ed7e0f]">
+              <span className="text-lg max-sm:text-sm font-bold text-[#ed7e0f]">
                 {product.product_price} FCFA
               </span>
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex max-sm:hidden justify-end">
             {!showCartButton[product.id] ? (
               <button 
                 onClick={() => onAddToCartClick(product)}
@@ -226,7 +224,7 @@ const ProductListGrid = ({ products = [], isLoading, gridColumn, type }: { produ
     <section className="min-h-screen max-sm:min-h-[100%] w-full relative">
       <div className='flex justify-between mb-4 items-start'>
         <div className='flex items-start flex-col'>
-          <h2 className='text-2xl hidden max-sm:block font-bold text-gray-900'>
+          <h2 className='text-2xl  hidden max-sm:block font-bold text-gray-900'>
             Produits Premium
           </h2>
         </div>
