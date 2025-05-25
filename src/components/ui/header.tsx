@@ -238,12 +238,12 @@ console.log(userData)
         onClick={handleSearchToggle}
         className="text-gray-700 hover:text-[#ed7e0f]"
       >
-        <Search className="w-6 h-6" />
+        <Search className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
       </button>
       <DropdownAccount currentUser={userData}>
         {!userData && (
           <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
-            <User className="h-6 w-6" />
+            <User className="h-6 w-6 max-sm:w-5 max-sm:h-5" />
           </div>
         )}
 
@@ -261,8 +261,8 @@ console.log(userData)
 
   className="relative text-gray-700 hover:text-[#ed7e0f]"
 >
-  <ShoppingCart className="w-6 h-6" />
-  <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+  <ShoppingCart className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
+  <span className="absolute -top-2 max-sm:-top-3 -right-2  max-sm:h-[18px] bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 max-sm:text-xs flex items-center justify-center">
     {totalQuantity}
   </span>
 </div>
@@ -358,7 +358,7 @@ console.log(userData)
 
                   />
                   <button className="absolute right-0 top-0 h-full px-3 text-gray-500 hover:text-gray-700">
-                    <Search className="w-4 h-4" />
+                    <Search className="w-4  h-4" />
                   </button>
                 </div>
 

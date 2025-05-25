@@ -1,6 +1,6 @@
 import { useState, memo, useRef, useMemo, useCallback } from 'react'
 import { motion, useMotionValue, useAnimation, PanInfo } from 'framer-motion'
-import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight} from 'lucide-react'
+import {Star, ShoppingCart, ChevronLeft, ChevronRight} from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { addItem } from '@/store/cartSlice'
 import { normalizeProduct } from '@/lib/normalizeProduct'
@@ -46,9 +46,7 @@ const ProductCard = memo(({
               </div>
             </div>
 
-            <button className="absolute top-4 right-4 p-2 rounded-full bg-white/90 text-gray-900 hover:bg-white transition-colors">
-              <Heart className="w-5 h-5" />
-            </button>
+           
 
             {product.variations && product.variations.length > 0 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center max-sm:px-2 max-sm:py-1 gap-2 bg-white/90 px-3 py-2 rounded-full">

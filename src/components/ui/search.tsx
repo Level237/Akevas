@@ -171,7 +171,7 @@ export default function SearchResource({open}:{open:()=>void}){
                     className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ed7e0f]"
                     autoFocus
                   />
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Search className="absolute max-s left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 </div>
               </div>
 
