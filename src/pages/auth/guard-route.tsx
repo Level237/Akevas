@@ -1,28 +1,23 @@
-import { useSelector } from 'react-redux'
-import {  useNavigate} from 'react-router-dom'
-import { RootState } from '@/store'
+
+import {  Outlet, useNavigate} from 'react-router-dom'
 import { useEffect } from 'react'
+import { useCheckAuthQuery } from '@/services/auth'
+import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 
 //import { useCheckTokenQuery } from '@/services/checkService'
 export const GuardRoute = ({children}:{children:React.ReactNode}) => {
     const navigate = useNavigate()
-    const token = useSelector((state:RootState) => state.auth.usedToken)
-    //const {data,isLoading}=useCheckTokenQuery()
-
-    useEffect(() => {
-        if(token) {
-            //navigate(-1)
-        }
-    }, [token, navigate])
+    const { data, isLoading } = useCheckAuthQuery()
     
-    // Ne rendre le contenu que si l'utilisateur n'a pas de token
-    if (token) {
-        return null
+    if (isLoading) {
+        return <IsLoadingComponents isLoading={isLoading}/>
     }
 
-    return (
-        <div>
-            {children}
-        </div>
-    )
+    
+
+    
+        return (
+            data?.isAuthenticated === false && <Outlet />
+        )
+    
 }

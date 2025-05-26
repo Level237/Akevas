@@ -10,7 +10,7 @@ const RecentOrders = () => {
     return (
         <div>
             <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-6">Dernières commandes</h2>
+                <h2 className="text-xl font-semibold max-sm:text-md mb-6">Dernières commandes</h2>
                 <div className="space-y-4">
                     {!isLoading && data?.map((order: any, index: number) => (
                         <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
@@ -32,10 +32,10 @@ const RecentOrders = () => {
                     {data?.length === 0 && (
                         <div className="flex flex-col items-center justify-center py-12 space-y-4 text-center">
                             <Package className="w-12 h-12 text-gray-400" />
-                            <p className="text-lg font-semibold text-gray-700">Aucune commande récente</p>
-                            <p className="text-sm text-gray-500">Il semble que vous n'ayez pas encore passé de commande.</p>
+                            <p className="text-lg max-sm:text-sm font-semibold text-gray-700">Aucune commande récente</p>
+                            <p className="text-sm max-sm:text-xs text-gray-500">Il semble que vous n'ayez pas encore passé de commande.</p>
                             <Button variant="outline">
-                                <AsyncLink to="/products">Découvrir nos produits</AsyncLink>
+                                <AsyncLink className='max-sm:text-xs' to="/products">Découvrir nos produits</AsyncLink>
                             </Button>
                         </div>
                     )}

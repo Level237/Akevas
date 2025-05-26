@@ -23,7 +23,7 @@ export default function Header({ userData }: { userData: User | null | undefined
   ]
 
   return (
-    <header className="bg-white border-b">
+    <header className="bg-white border-b max-sm:sticky max-sm:top-0">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -33,8 +33,8 @@ export default function Header({ userData }: { userData: User | null | undefined
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-xl font-semibold">Bonjour, {userData?.userName}</h1>
-              <p className="text-gray-500 text-sm">Bienvenue sur votre espace personnel</p>
+              <h1 className="text-xl max-sm:text-sm font-semibold">Bonjour, {userData?.userName}</h1>
+              <p className="text-gray-500 max-sm:text-xs  text-sm">Bienvenue sur votre espace personnel</p>
             </div>
           </div>
 
