@@ -29,13 +29,16 @@ const RecentOrders = () => {
                     {isLoading && <div className="flex items-center justify-center h-full">
                         <Loader2 className="w-6 h-6 animate-spin" />
                     </div>}
-                    {data?.length === 0 && <div className="flex items-center justify-center h-full">
-                        <Package className="w-6 h-6" />
-                        <p className="text-sm text-gray-500">Aucune commande récente</p>
-                        <Button variant="outline" size="sm">
-                            <AsyncLink to="/products">Voir les produits</AsyncLink>
-                        </Button>
-                    </div>}
+                    {data?.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-12 space-y-4 text-center">
+                            <Package className="w-12 h-12 text-gray-400" />
+                            <p className="text-lg font-semibold text-gray-700">Aucune commande récente</p>
+                            <p className="text-sm text-gray-500">Il semble que vous n'ayez pas encore passé de commande.</p>
+                            <Button variant="outline">
+                                <AsyncLink to="/products">Découvrir nos produits</AsyncLink>
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </Card>
         </div>

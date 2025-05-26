@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+
 import { Card } from '@/components/ui/card';
 import { Package, Clock, DollarSign, ShoppingBag, Settings } from 'lucide-react';
 import { useGetUserStatsQuery } from '@/services/auth';
@@ -26,18 +26,18 @@ const UserDashboardPage = () => {
       {/* Section principale */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Dernières commandes */}
-        <motion.div
+        <div
           className="lg:col-span-2"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
+         
+          
         >
           <RecentOrders />
-        </motion.div>
+        </div>
 
         {/* Actions rapides */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
+        <div
+         
+         
         >
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-6">Actions rapides</h2>
@@ -57,7 +57,7 @@ const UserDashboardPage = () => {
               ))}
             </div>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </>
   );
