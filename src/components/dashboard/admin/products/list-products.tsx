@@ -29,13 +29,25 @@ export default function ListProducts({products,isLoading}:{products:Product[],is
                   
           {products.map((product) => (
             <TableRow key={product.id}>
-              <TableCell className="font-medium flex items-center gap-2"> <Avatar>
-                <AvatarImage src={product.product_profile} />
-                <AvatarFallback>{product.product_name.charAt(0)}</AvatarFallback>
-              </Avatar> {product.product_name}</TableCell>
+              <TableCell className="font-medium flex items-center gap-2">
+                <Avatar>
+                  <AvatarImage
+                    src={
+                      product.variations && product.variations.length > 0 && product.variations[0].images && product.variations[0].images.length > 0
+                        ? product.variations[0].images[0]
+                        : product.product_profile
+                    }
+                  />
+                  <AvatarFallback>{product.product_name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                {product.product_name}
+                {product.variations && product.variations.length > 0 && (
+                  <span className="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">Variations</span>
+                )}
+              </TableCell>
               <TableCell>{product.product_categories[0].category_name}</TableCell>
-              <TableCell>${parseFloat(product.product_price).toFixed(2)}</TableCell>
-              <TableCell>{product.product_quantity}</TableCell>
+              <TableCell>{product.variations && product.variations.length > 0 ? <span className="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">Varie</span> : parseFloat(product.product_price).toFixed(2) + "XAF" } </TableCell>
+              <TableCell>{product.variations && product.variations.length > 0 ? <span className="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">Varie</span> : product.product_quantity}</TableCell>
               <TableCell>
                 <Badge  className={product.status ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}>{product.status ? "Active" : "Inactive"}</Badge>
               </TableCell>
