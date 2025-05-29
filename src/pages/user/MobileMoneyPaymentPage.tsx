@@ -18,13 +18,14 @@ export default function MobileMoneyPaymentPage() {
   // Get phone from session storage (you could use a different method)
  
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
+  console.log(formDataPayment)
   let variations=null;
   let productsPayments=null;
   if(formDataPayment.hasVariation && formDataPayment.s==0){
-    variations=JSON.parse(formDataPayment.variations);
+    variations=formDataPayment.variations;
   }
   if(formDataPayment.s==1){
-    productsPayments=JSON.parse(formDataPayment.productsPayments)
+    productsPayments=formDataPayment.productsPayments
   }
   
   // RTK Query hooks
