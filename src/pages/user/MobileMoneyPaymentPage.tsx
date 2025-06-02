@@ -256,7 +256,7 @@ export default function MobileMoneyPaymentPage() {
                 <h3 className="text-xl font-semibold mb-2 text-red-600">Échec du paiement</h3>
                 <p className="text-gray-600 mb-6">{message}</p>
                 <Button 
-                  onClick={handleRetry} 
+                  onClick={handleRetry}
                   className={` ${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#e56800]" : "bg-blue-800 hover:bg-blue-800/80"} text-white `}
                 >
                   Réessayer
