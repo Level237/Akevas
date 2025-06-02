@@ -104,7 +104,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                   </span>
                   <div className="flex items-center bg-white/90 px-2 py-1 rounded-full">
                     <Star className="w-4 h-4 text-yellow-400" />
-                    <span className="ml-1 text-xs font-medium">12</span>
+                    <span className="ml-1 text-xs font-medium">{product.reviewCount}</span>
                   </div>
                 </div>
                 {/* Affichage des couleurs si variations */}

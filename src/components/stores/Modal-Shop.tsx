@@ -123,9 +123,9 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                         </div>
                           </div>
 
-                          <div className='max-sm:hidden'>
+                          {/*<div className='max-sm:hidden'>
                             <Button className='bg-transparent max-sm:text-sm hover:bg-black hover:text-white' variant={'outline'}>Suivre la boutique<UserPlus/></Button>
-                          </div>
+                          </div>*/}
                     </div>
                   </div>
                 </div>
@@ -160,7 +160,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                           className="rounded-lg border bg-gray-50 p-3 text-center"
                         >
                           <div className="text-sm font-medium">{category.category_name}</div>
-                          <div className="text-xs text-gray-500">{12} products</div>
+                          
                         </div>
                       ))}
                     </div>
@@ -172,7 +172,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                     {!isLoading && shop.shop.products_count > 0 && (
                     <div className="mb-6 flex items-center justify-between">
                       <h3 className="text-lg font-semibold">Featured Products</h3>
-                      <Button variant="outline">View All Products</Button>
+                     <AsyncLink to={`/shop/${shop.shop.shop_id}`}> <Button variant="outline">Voir tout les produits</Button></AsyncLink>
                     </div>
                     )}
                     <ProductGrid products={shop.shop.products} />
@@ -247,18 +247,18 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 12 * 0.1 }}
-      className="group relative overflow-hidden rounded-lg border bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md"
+      className="group relative cursor-pointer overflow-hidden rounded-lg border bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md"
     >
+      <a href={`/produit/${product.product_url}`}>
       <div className="relative mb-3 aspect-square overflow-hidden rounded-lg">
         <OptimizedImage
           src={product.product_profile}
           alt={product.product_name}
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        <button className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 opacity-0 transition-opacity duration-300 hover:bg-white group-hover:opacity-100">
-          <Heart className="h-4 w-4" />
-        </button>
+        
       </div>
+      </a>
       <h4 className="mb-2 line-clamp-2 text-sm font-medium">
         {product.product_name}
       </h4>
