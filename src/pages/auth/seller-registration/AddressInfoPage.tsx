@@ -6,6 +6,7 @@ import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { setAddressInfo } from '@/store/seller/registerSlice';
 const AddressInfoPage = () => {
@@ -33,8 +34,12 @@ console.log(formData);
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
 
     if (missingFields.length > 0) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      toast.error('Veuillez remplir tous les champs obligatoires', {
+        description: "Tous les champs marqués d'un * sont requis.",
+        duration: 4000, // ms
+      });
       return;
+      
     }
 
     setIsLoading(true);

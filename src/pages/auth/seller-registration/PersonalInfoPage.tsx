@@ -7,6 +7,7 @@ import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
 import { setPersonalInfo } from '@/store/seller/registerSlice';
 import { useCheckIfEmailExistsMutation } from '@/services/guardService';
 const PersonalInfoPage = () => {
@@ -36,12 +37,19 @@ const PersonalInfoPage = () => {
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (missingFields.length > 0) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      toast.error('Veuillez remplir tous les champs obligatoires', {
+        description: "Tous les champs marqués d'un * sont requis.",
+        duration: 4000, // ms
+      });
       return;
     }
 
     if (!formData.email.includes('@')) {
-      alert('Email invalide');
+      
+      toast.error('Email invalide', {
+        description: "Votre email doit etre un email valide.Exemple:martin@akevas.com",
+        duration: 4000, // ms
+      });
       return;
     }
     const form=new FormData()
@@ -51,8 +59,14 @@ const PersonalInfoPage = () => {
     const response=await checkIfEmailExists(form)
 
     if(response.error){
-      alert("ce mail ou ce numéro de téléphone existe déjà");
+     
+
+      toast.error("ce mail ou ce numéro de téléphone existe déjà", {
+        
+        duration: 4000, // ms
+      });
       return;
+      
     }
     
 
