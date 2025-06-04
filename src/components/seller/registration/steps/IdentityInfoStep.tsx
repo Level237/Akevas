@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IdentityStepProps } from "@/interfaces/steps/IdentityStepProps";
 import { Upload } from "lucide-react";
-
+import { toast } from 'sonner';
 
 const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
   const handleChange = (
@@ -11,11 +11,20 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
   ) => {
     const { name, type, files } = e.target;
     const reader = new FileReader();
-    if (type === 'file' && files) {
-      
-      
-      if(name === 'identity_card_in_front'){
+    if (type === 'file' && files && files[0]) {
+      const file = files[0];
+      const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
 
+      if (file.size > maxSize) {
+       
+        toast.error("Le fichier ne doit pas dépasser 2 Mo.", {
+          description: "Choisir un fichier en dessous de 2Mo",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if(name === 'identity_card_in_front'){
         reader.onload = (e) => {
           const base64 = e.target?.result as string;
           onUpdate({
@@ -25,7 +34,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
             },
           });
         };
-        reader.readAsDataURL(files[0]);
+        reader.readAsDataURL(file);
       }
       else if(name === 'identity_card_in_back'){
         reader.onload = (e) => {
@@ -37,7 +46,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
             },
           });
         }
-         reader.readAsDataURL(files[0]);
+         reader.readAsDataURL(file);
       }
       else if(name === 'identity_card_with_the_person'){
         reader.onload = (e) => {
@@ -49,7 +58,7 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
             },
           });
         }
-        reader.readAsDataURL(files[0]);
+        reader.readAsDataURL(file);
       }
      
     }

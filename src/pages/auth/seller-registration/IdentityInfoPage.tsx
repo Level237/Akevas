@@ -7,6 +7,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 import IdentityInfoStep from '@/components/seller/registration/steps/IdentityInfoStep';
 import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
 import { setIdentity } from '@/store/seller/registerSlice';
 const IdentityInfoPage = () => {
   const navigate = useNavigate();
@@ -30,8 +31,12 @@ const IdentityInfoPage = () => {
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (missingFields.length > 0) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      toast.error('Veuillez remplir tous les champs obligatoires', {
+        description: "Tous les champs marqués d'un * sont requis.",
+        duration: 4000, // ms
+      });
       return;
+
     }
 
 
