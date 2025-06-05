@@ -35,6 +35,7 @@ import CheckoutRechargePage from "@/pages/seller/CheckoutPage";
 import ConfirmationPage from "@/pages/seller/ConfirmationPage";
 import MobileMoneyPaymentPage from "@/pages/MobileMoneyPaymentPage";
 import StoreCustomizationPage from "@/pages/StoreCustomizationPage";
+import HelpCenterPage from "@/pages/HelpCenterPage";
 
 export const routes = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ export const routes = createBrowserRouter([
   {
     path: '/seller-registration/personal-info',
     element: <PersonalInfoPage />
+  },
+  {
+    path:'/help',
+    element:<HelpCenterPage/>
   },
   {
     path: '/seller-registration/security-info',
