@@ -2,17 +2,23 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import React, { useState } from "react"
-import { Package, ChevronRight } from 'lucide-react'
+import { Package, ChevronRight, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import AsyncLink from "./AsyncLink"
+import { useLogoutMutation } from "@/services/auth"
+import { logoutUser } from "@/lib/logout"
 
 
 
 const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode, currentUser: any | null }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [logout] = useLogoutMutation()
 
-
+  const handleLogout = async () => {
+    await logout('Auth');
+    logoutUser()
+  }
   const menuItems = [
     { icon: Package, text: "Mes Commandes", href: "/orders" },
     { icon: Package, text: "Mes pièces", href: "/seller/products" },
@@ -95,6 +101,18 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                     <ChevronRight className="h-4 w-4 text-gray-400" />
                   </motion.a>
                 ))}
+                {currentUser && (
+                  <motion.button
+                  onClick={handleLogout} 
+                    className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: (menuItems.length + settingsItems.length) * 0.05 }}
+                  >
+                    <LogOut className="h-4 w-4 mr-3" />
+                    Se déconnecter
+                  </motion.button>
+                )}
               </div>
             </motion.div>
           )}

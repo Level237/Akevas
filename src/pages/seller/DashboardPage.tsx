@@ -398,8 +398,8 @@ const DashboardPage = () => {
                     </div>
                   </AsyncLink>
 
-                  <a
-                    href="#"
+                  <AsyncLink
+                    to='/help'
                     className="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center">
@@ -417,7 +417,7 @@ const DashboardPage = () => {
                         </p>
                       </div>
                     </div>
-                  </a>
+                  </AsyncLink>
                 </div>
 
                 <button className="mt-6 w-full bg-gray-900 text-white rounded-lg px-4 py-2 hover:bg-gray-800 transition-colors">
