@@ -1,3 +1,8 @@
+
+
+
+
+
 import Header from '@/components/ui/header'
 import TopBar from '@/components/ui/topBar'
 
@@ -6,41 +11,6 @@ import MobileNav from '@/components/ui/mobile-nav'
 import vendor from '@/assets/vendor.jpg'
 import { Package, Truck, CreditCard } from 'lucide-react';
 import AsyncLink from '@/components/ui/AsyncLink';
-
-import { useEffect, useRef, useState } from "react";
-
-function useCountUp(target: number, duration = 1200) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<number>(0);
-
-  useEffect(() => {
-    let start = 0;
-    const end = target;
-    const increment = end / (duration / 16);
-
-    function animate() {
-      start += increment;
-      if (start < end) {
-        setCount(Math.floor(start));
-        ref.current = requestAnimationFrame(animate);
-      } else {
-        setCount(end);
-        cancelAnimationFrame(ref.current);
-      }
-    }
-    animate();
-    return () => cancelAnimationFrame(ref.current);
-  }, [target, duration]);
-
-  return count;
-}
-
-const stats = [
-  { value: 2000000, label: "Clients actifs", suffix: "+" },
-  { value: 50000, label: "Vendeurs satisfaits", suffix: "+" },
-  { value: 500000000, label: "Ventes mensuelles", suffix: "+" },
-  { value: 24, label: "Support dédié", suffix: "/7" },
-];
 
 const Homepage = () => {
 
@@ -174,30 +144,25 @@ const Homepage = () => {
       </div>
 
       {/* Stats Section */}
-      <div className="bg-[#ed7e0f] py-16">
+      <div className="bg-white py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            {stats.map((stat, idx) => {
-              const count = useCountUp(stat.value, 1200 + idx * 200);
-              // Format large numbers
-              const display =
-                stat.value >= 1000000
-                  ? `${Math.floor(count / 1000000)}M${stat.suffix}`
-                  : stat.value >= 1000
-                  ? `${Math.floor(count / 1000)}k${stat.suffix}`
-                  : `${count}${stat.suffix}`;
-              return (
-                <div
-                  key={stat.label}
-                  className="transition-all duration-300 hover:scale-105 hover:bg-white/10 rounded-xl py-8"
-                >
-                  <h3 className="text-4xl md:text-5xl font-extrabold text-white mb-2 transition-all duration-300 drop-shadow-lg">
-                    {display}
-                  </h3>
-                  <p className="text-white/90 text-lg font-medium">{stat.label}</p>
-                </div>
-              );
-            })}
+            <div>
+              <h3 className="text-4xl font-bold text-[#ed7e0f] mb-2">2M+</h3>
+              <p className="text-gray-600">Clients actifs</p>
+            </div>
+            <div>
+              <h3 className="text-4xl font-bold text-[#ed7e0f] mb-2">50k+</h3>
+              <p className="text-gray-600">Vendeurs satisfaits</p>
+            </div>
+            <div>
+              <h3 className="text-4xl font-bold text-[#ed7e0f] mb-2">500M+</h3>
+              <p className="text-gray-600">Ventes mensuelles</p>
+            </div>
+            <div>
+              <h3 className="text-4xl font-bold text-[#ed7e0f] mb-2">24/7</h3>
+              <p className="text-gray-600">Support dédié</p>
+            </div>
           </div>
         </div>
       </div>

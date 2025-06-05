@@ -48,8 +48,11 @@ export default function MobileMoneyPaymentPage() {
         if (response.data.statusCharge === "Accepted") {
           setPaymentRef(response.data.reference);
           setPaymentStatus('waiting');
-          setMessage("Confirmez votre transaction en composant #150*50#");
-          setPollingEnabled(true);
+          if(paymentMethod==="cm.orange"){
+            setMessage("Confirmez votre transaction en composant #150*50#");
+          }else{
+            setMessage("Confirmez votre transaction en composant *126#");
+          }
         } else {
           setPaymentStatus('failed');
           setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");

@@ -89,6 +89,8 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                   Réglages
                 </div>
                 {settingsItems.map((item, index) => (
+
+                  
                   <motion.a
                     key={index}
                     href={item.href}
