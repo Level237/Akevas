@@ -93,7 +93,22 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
                   />
                 ) : (
                   <div className="text-center p-4">
-                    <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                    <svg
+                      className="mx-auto h-10 w-16 text-[#ed7e0f]"
+                      viewBox="0 0 64 40"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      
+                      <rect x="2" y="4" width="60" height="32" rx="4" fill="#fff" stroke="#ed7e0f" strokeWidth="2"/>
+                      
+                      <circle cx="14" cy="20" r="6" fill="#ed7e0f" fillOpacity="0.7"/>
+                      <rect x="10" y="28" width="8" height="4" rx="2" fill="#ed7e0f" fillOpacity="0.5"/>
+                     
+                      <rect x="26" y="12" width="28" height="4" rx="2" fill="#ed7e0f" fillOpacity="0.2"/>
+                      <rect x="26" y="20" width="22" height="3" rx="1.5" fill="#ed7e0f" fillOpacity="0.2"/>
+                      <rect x="26" y="26" width="18" height="3" rx="1.5" fill="#ed7e0f" fillOpacity="0.2"/>
+                    </svg>
                     <p className="mt-2 text-sm text-gray-500">Recto de la CNI</p>
                   </div>
                 )}
@@ -127,7 +142,18 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
                   />
                 ) : (
                   <div className="text-center p-4">
-                    <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                    <svg
+                      className="mx-auto h-10 w-16 text-[#ed7e0f]"
+                      viewBox="0 0 64 40"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect x="2" y="4" width="60" height="32" rx="4" fill="#fff" stroke="#ed7e0f" strokeWidth="2"/>
+                      <rect x="8" y="10" width="48" height="6" rx="2" fill="#ed7e0f" fillOpacity="0.7"/>
+                      <rect x="8" y="20" width="40" height="3" rx="1.5" fill="#ed7e0f" fillOpacity="0.2"/>
+                      <rect x="8" y="26" width="32" height="3" rx="1.5" fill="#ed7e0f" fillOpacity="0.2"/>
+                      <rect x="8" y="32" width="24" height="3" rx="1.5" fill="#ed7e0f" fillOpacity="0.2"/>
+                    </svg>
                     <p className="mt-2 text-sm text-gray-500">Verso de la CNI</p>
                   </div>
                 )}
@@ -161,7 +187,21 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
                   />
                 ) : (
                   <div className="text-center p-4">
-                    <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                    <svg
+                      className="mx-auto h-12 w-16 text-[#ed7e0f]"
+                      viewBox="0 0 80 56"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect x="40" y="28" width="32" height="18" rx="3" fill="#fff" stroke="#ed7e0f" strokeWidth="2"/>
+                      <rect x="44" y="32" width="24" height="3" rx="1.5" fill="#ed7e0f" fillOpacity="0.2"/>
+                      <rect x="44" y="37" width="16" height="2.5" rx="1.2" fill="#ed7e0f" fillOpacity="0.2"/>
+                      <rect x="44" y="42" width="12" height="2.5" rx="1.2" fill="#ed7e0f" fillOpacity="0.2"/>
+                      <ellipse cx="40" cy="44" rx="4" ry="2" fill="#ed7e0f" fillOpacity="0.7"/>
+                      <circle cx="24" cy="32" r="8" fill="#ed7e0f" fillOpacity="0.7"/>
+                      <rect x="16" y="40" width="16" height="10" rx="5" fill="#ed7e0f" fillOpacity="0.5"/>
+                      <rect x="28" y="44" width="16" height="4" rx="2" fill="#ed7e0f" fillOpacity="0.7" transform="rotate(-10 28 44)"/>
+                    </svg>
                     <p className="mt-2 text-sm text-gray-500">profil + CNI</p>
                   </div>
                 )}

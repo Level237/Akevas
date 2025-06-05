@@ -4,19 +4,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Upload } from 'lucide-react';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useGetCategoriesQuery, useGetCategoryByGenderQuery } from '@/services/guardService';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { toast } from 'sonner';
+
 interface ShopInfoStepProps {
   data: SellerFormData['shopInfo'];
   onUpdate: (data: Partial<SellerFormData>) => void;
 }
-
-
-
-
-
 
 const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
   const {data:categories}=useGetCategoriesQuery('guard')
@@ -30,6 +26,20 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
     if(type === 'file' && files) {
        if (name === 'images') {
         // Traitement de plusieurs fichiers
+        const file = files[0];
+        const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
+        
+
+        if (file.size > maxSize) {
+       
+          toast.error("Le fichier ne doit pas dépasser 2 Mo.", {
+            description: "Choisir un fichier en dessous de 2Mo",
+            className:"bg-black",
+            duration: 4000, // ms
+          });
+          return;
+        }
+        
         if (files && files.length > 3) {
                     alert('Vous ne pouvez sélectionner que 3 images maximum');
                     e.target.value = '';
@@ -56,6 +66,20 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
         });
         return;
       } else if (name === 'logo') {
+
+        const file = files[0];
+        const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
+        
+
+        if (file.size > maxSize) {
+       
+          toast.error("Le fichier ne doit pas dépasser 2 Mo.", {
+            description: "Choisir un fichier en dessous de 2Mo",
+            className:"bg-black",
+            duration: 4000, // ms
+          });
+          return;
+        }
         // Traitement d'un seul fichier (logo)
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -177,7 +201,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
           <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200">
           <div className="space-y-3">
             <Label htmlFor="idCardFront" className="text-sm font-medium text-gray-700">
-              Indiquez le logo ou le profil de votre boutique <span className="text-red-500">*</span><span className='text-xs text-gray-400'> ( Envoyez des photos de bonnes qualité pour permettre une validation rapide de votre boutique )</span>
+              Indiquez le profil de votre boutique <span className="text-red-500">*</span><span className='text-xs text-gray-400'> ( Envoyez des photos de bonnes qualité pour permettre une validation rapide de votre boutique )</span>
             </Label>
             <div className="flex flex-col items-center gap-4">
               <div className="h-32 w-full rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 
@@ -210,7 +234,19 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
                   
                 ) : (
                   <div className="text-center p-4">
-                    <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                    {/* SVG logo entreprise */}
+                    <svg
+                      className="mx-auto h-10 w-10 text-[#ed7e0f]"
+                      fill="none"
+                      viewBox="0 0 48 48"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <rect x="8" y="20" width="32" height="20" rx="3" fill="#fff" stroke="#ed7e0f" />
+                      <rect x="16" y="28" width="8" height="12" rx="1" fill="#ed7e0f" stroke="#ed7e0f" />
+                      <rect x="28" y="28" width="8" height="6" rx="1" fill="#ed7e0f" stroke="#ed7e0f" />
+                      <path d="M8 20L24 8L40 20" stroke="#ed7e0f" strokeWidth={2.5} fill="none" />
+                    </svg>
                     <p className="mt-2 text-sm text-gray-500">Logo de votre boutique</p>
                   </div>
                 )}
@@ -265,7 +301,23 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
   </div>
 ) : (
   <div className="text-center p-4">
-    <Upload className="mx-auto h-8 w-8 text-gray-400" />
+    {/* SVG représentant un produit/vitrine */}
+    <svg
+      className="mx-auto h-10 w-10 text-[#ed7e0f]"
+      viewBox="0 0 48 48"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      {/* Présentoir */}
+      <rect x="8" y="32" width="32" height="8" rx="2" fill="#fff" stroke="#ed7e0f"/>
+      {/* Produit (sac/boîte) */}
+      <rect x="16" y="18" width="16" height="14" rx="3" fill="#ed7e0f" stroke="#ed7e0f"/>
+      {/* Poignée du sac */}
+      <path d="M20 18c0-2 8-2 8 0" stroke="#fff" strokeWidth={2} fill="none"/>
+      {/* Ombre sous le produit */}
+      <ellipse cx="24" cy="40" rx="10" ry="2" fill="#ed7e0f" fillOpacity="0.2"/>
+    </svg>
     <p className="mt-2 text-sm text-gray-500">Images de votre boutique</p>
     <p className="text-xs text-gray-400">Sélectionnez plusieurs images</p>
   </div>

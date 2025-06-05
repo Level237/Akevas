@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { setShopInfo } from '@/store/seller/registerSlice';
+import { toast } from 'sonner';
 const ShopInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +38,10 @@ const ShopInfoPage = () => {
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
 
     if (missingFields.length > 0) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      toast.error('Veuillez remplir tous les champs obligatoires', {
+        description: "Tous les champs marqués d'un * sont requis.",
+        duration: 4000, // ms
+      });
       return;
     }
 

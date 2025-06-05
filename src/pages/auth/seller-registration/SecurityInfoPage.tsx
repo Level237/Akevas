@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { useDispatch, } from 'react-redux';
 import { AppDispatch} from '@/store';
 import {setPassword} from '@/store/seller/registerSlice';
-
+import { toast } from 'sonner';
 
 const SecurityInfoPage = () => {
    
@@ -35,19 +35,22 @@ const SecurityInfoPage = () => {
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
 
     if (missingFields.length > 0) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      toast.error('Veuillez remplir tous les champs obligatoires', {
+        description: "Tous les champs marqués d'un * sont requis.",
+        duration: 4000, // ms
+      });
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       alert('Veuillez remplir tous les champs obligatoires');
+      toast.error('Les deux mots de passe ne correspondent pas', {
+        description: "Veuillez entrez un meme mot de passe.",
+        duration: 4000, // ms
+      });
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      alert('Les mots de passe ne correspondent pas');
-      return;
-    }
     setIsLoading(true);
 
     try {
