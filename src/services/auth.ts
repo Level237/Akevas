@@ -104,6 +104,13 @@ export const authService = createApi({
             query: () => '/api/v1/list/orders',
             providesTags: ['Auth'],
         }),
+        getListShopReviews:builder.query({
+            query:(shopId)=>({
+                url:`/api/list/reviews/shop/${shopId}`,
+                method:'GET'
+            }),
+            providesTags: ['Auth'],
+        }),
        
     })
 })
@@ -120,4 +127,5 @@ export const {
     useGetRecentOrdersQuery,
     useGetOrderDetailQuery,
     useGetOrdersQuery,
+    useGetListShopReviewsQuery
 } = authService

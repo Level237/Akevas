@@ -33,6 +33,8 @@ export interface Seller {
     town: string | null,
     quarter: string | null,
     state: string | null,
+    review_average: number | null,
+    reviewCount:number | null,
     level: string | null,
     cover: string | null,
     orders_count: number | null,

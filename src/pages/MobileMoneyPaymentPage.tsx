@@ -74,6 +74,7 @@ export default function MobileMoneyPaymentPage() {
   // Listen for payment verification updates
   useEffect(() => {
     if (!verificationData) return;
+    
     console.log(verificationData.status)
     if (verificationData.status === 'success') {
       setPaymentStatus('success');
@@ -86,7 +87,7 @@ export default function MobileMoneyPaymentPage() {
       }, 3000);
       timersRef.current.push(timer);
       
-    } else if (verificationData.status === 'failed') {
+    } else if (verificationData.status === 'canceled') {
       setPaymentStatus('failed');
       setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
       setPollingEnabled(false);

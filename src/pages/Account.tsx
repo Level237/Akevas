@@ -89,12 +89,12 @@ const AccountPage: React.FC = () => {
             <div className="space-y-6">
                 {/* Boutique */}
                 <section className="bg-white rounded-xl p-4">
-                    <h3 className="font-semibold text-gray-800 mb-4">Ma Boutique</h3>
+                    <h3 className="font-semibold text-gray-800 mb-4">Paramètres de la boutique</h3>
                     <div className="space-y-4">
                         <AsyncLink to="/shop-settings" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <Store className="text-[#ed7e0f]" size={20} />
-                                <span>Paramètres de la boutique</span>
+                                <span>Editer votre boutique</span>
                             </div>
                             <ChevronRight size={20} className="text-gray-400" />
                         </AsyncLink>
