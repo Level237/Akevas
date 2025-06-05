@@ -2,14 +2,12 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
-import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 import { Star, ThumbsUp, MessageCircle, Filter, Search, BarChart2 } from 'lucide-react';
-import { useState } from 'react';
 import { useGetListShopReviewsQuery } from '@/services/auth';
 
 const ReviewsPage = () => {
-  const { data: { data: sellerData } = {}, isLoading } = useCurrentSellerQuery<SellerResponse>('seller');
-  const [activeFilter, setActiveFilter] = useState('all');
+  const { data: { data: sellerData }} = useCurrentSellerQuery<SellerResponse>('seller');
+  
   const {data:reviewsData,isLoading:isLoadingReviews}=useGetListShopReviewsQuery(sellerData?.shop.shop_id)
   console.log(reviewsData)
   // Fonction pour calculer la moyenne des étoiles
