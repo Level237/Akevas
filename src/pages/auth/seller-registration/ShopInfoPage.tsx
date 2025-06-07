@@ -21,7 +21,7 @@ const ShopInfoPage = () => {
     category: [],
     gender: 0,
   });
-  console.log(formData);
+  console.log(formData.logo);
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.shopInfo) {
       setFormData(data.shopInfo);

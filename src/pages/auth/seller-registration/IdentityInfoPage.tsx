@@ -19,6 +19,7 @@ const IdentityInfoPage = () => {
     identity_card_with_the_person: null,
   });
 
+  console.log(formData);
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.identityInfo) {
       setFormData(data.identityInfo);

@@ -10,7 +10,7 @@ const ReviewsPage = () => {
   
   const {data:reviewsData,isLoading:isLoadingReviews}=useGetListShopReviewsQuery(sellerData?.shop.shop_id)
   console.log(reviewsData)
-  // Fonction pour calculer la moyenne des étoiles
+  
  
   return (
     <div className="min-h-screen bg-gray-50">

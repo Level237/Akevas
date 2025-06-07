@@ -21,7 +21,7 @@ const StoreGenerationPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const { firstName, lastName, gender, email, phone, birthDate, nationality, sellerType, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password, productType } = useSelector((state: RootState) => state.registerSeller);
-
+  
   const [newStore] = useNewStoreMutation();
   const [login] = useLoginMutation()
   const dispatch = useDispatch<AppDispatch>()
