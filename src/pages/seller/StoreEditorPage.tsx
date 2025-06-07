@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   MapPin, Store, User,
   Flag,
-  Edit2, Camera, Eye,Plus, Save,
+  Camera, Eye,Plus, Save,
   ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,18 +19,10 @@ export default function StoreEditorPage() {
   const [isUploading, setIsUploading] = useState(false);
 
   // Ajout des states pour gérer les modifications
-  const [formData, setFormData] = useState({
-    shopName: sellerData?.shop?.shop_name || '',
-    description: sellerData?.shop?.shop_description || '',
-    firstName: sellerData?.firstName || '',
-    lastName: sellerData?.lastName || '',
-    email: sellerData?.email || '',
-    phone: sellerData?.phone_number || '',
-    birthDate: sellerData?.birthDate || '',
-    nationality: sellerData?.nationality || '',
-  });
+  
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    console.log(type)
     const file = e.target.files?.[0];
     if (file) {
       const maxSize = 2 * 1024 * 1024; // 2 Mo
@@ -126,8 +118,8 @@ export default function StoreEditorPage() {
                       <p className="text-sm text-gray-500 mt-1">
                         Niveau {sellerData?.shop?.level} • {sellerData?.shop?.products_count} produits
                       </p>
-                    </div>
-                  </div>
+                </div>
+              </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -151,7 +143,7 @@ export default function StoreEditorPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
+                </div>
 
                   <div>
                     <label className="block text-sm font-medium mb-2">Description</label>
@@ -245,10 +237,10 @@ export default function StoreEditorPage() {
                         <Select>
                           <option>Sélectionnez votre nationalité</option>
                         </Select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              </div>
+            </div>
+          </div>
+        </div>
               )}
 
               {activeSection === 'identity' && (
@@ -325,9 +317,9 @@ export default function StoreEditorPage() {
                             </div>
                           )}
                         </div>
-                    </div>
-                  </div>
-                </div>
+            </div>
+          </div>
+        </div>
               )}
 
               {activeSection === 'location' && (
@@ -346,14 +338,14 @@ export default function StoreEditorPage() {
                             <SelectItem value="Yaoundé">Yaoundé</SelectItem>
                           </SelectContent>
                         </Select>
-                      </div>
-                      <div>
+      </div>
+            <div>
                         <label className="block text-sm font-medium mb-2">Quartier</label>
-                        <Input 
+              <Input
                           defaultValue={sellerData?.shop?.quarter}
                           placeholder="Votre quartier"
-                        />
-                      </div>
+              />
+            </div>
                     </div>
                   </div>
                 </div>
@@ -405,7 +397,7 @@ export default function StoreEditorPage() {
                       </div>
                     </div>
 
-                    <div>
+            <div>
                       <label className="block text-sm font-medium mb-2">Images de la boutique</label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {sellerData?.shop?.images?.map((image: any, index: number) => (
