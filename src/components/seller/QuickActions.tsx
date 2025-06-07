@@ -34,7 +34,7 @@ export function QuickActions({ sellerData }: QuickActionsProps) {
       title: "Boutique",
       description: "Personnalisation",
       icon: <Settings className="w-4 h-4 text-gray-700" />,
-      link: "/seller/shop/edit",
+      link: "/shop/editor",
       metric: "Éditer"
     }
   ]

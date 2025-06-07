@@ -8,7 +8,7 @@ export default function StatisticsOverview(sellerData: { sellerData: Seller | nu
   const stats = [
     {
       title: "Visites",
-      value: "0",
+      value: sellerData?.sellerData?.shop.visitTotal || "0",
       icon: <Users className="w-6 h-6" />,
       gradient: "from-blue-500 to-blue-600"
     },

@@ -35,6 +35,7 @@ export interface Seller {
     state: string | null,
     review_average: number | null,
     reviewCount:number | null,
+    visitTotal:number | null,
     level: string | null,
     cover: string | null,
     orders_count: number | null,
