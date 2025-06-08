@@ -16,13 +16,14 @@ function App() {
     <>
      
      <ErrorBoundary>
-        
+        <NetworkBoundary>
       <LoaderProvider>
       <Provider store={store}>
         <RouterProvider router={routes} />
       </Provider>
       <Toaster richColors position="top-center" />
     </LoaderProvider>
+    </NetworkBoundary>
     </ErrorBoundary>
     
     </>

@@ -16,11 +16,6 @@ import ProductCard from '@/components/products/ProductCard';
 import { toast } from "sonner";
 import OptimizedImage from '@/components/OptimizedImage';
 
-interface FilterOption {
-  id: string;
-  label: string;
-  count: number;
-}
 
 
 

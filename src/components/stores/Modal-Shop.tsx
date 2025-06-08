@@ -1,7 +1,7 @@
 import { Separator } from "../ui/separator";
 import { motion } from "framer-motion";
 import { useGetShopQuery } from "@/services/guardService";
-import { ExternalLink,Star, X,ShoppingBag, Clock, MapPin, UserPlus, Badge, Heart } from "lucide-react";
+import { ExternalLink,Star, X,ShoppingBag, Clock, MapPin,Badge } from "lucide-react";
 import { StoreBadges } from "../seller/store-badge";
 import { Button } from "../ui/button";
 import { Category,Product } from "@/types/products";

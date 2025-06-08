@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { useAdminListProductsQuery } from '@/services/adminService'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import OptimizedImage from '@/components/OptimizedImage'
 export default function ListProducts({products,isLoading}:{products:Product[],isLoading:boolean}) {
   console.log(products)
   if(isLoading){
@@ -27,17 +28,23 @@ export default function ListProducts({products,isLoading}:{products:Product[],is
         </TableHeader>
         <TableBody>
                   
-          {products.map((product) => (
+          {products.map((product:any) => (
             <TableRow key={product.id}>
               <TableCell className="font-medium flex items-center gap-2">
                 <Avatar>
-                  <AvatarImage
-                    src={
-                      product.variations && product.variations.length > 0 && product.variations[0].images && product.variations[0].images.length > 0
-                        ? product.variations[0].images[0]
-                        : product.product_profile
-                    }
+                  {product.variations && product.variations.length > 0 && product.variations[0].images && product.variations[0].images.length > 0
+                  ? <OptimizedImage
+                    src={product.variations[0].images[0]}
+                    alt={product.product_name}
+                    className="h-full w-full"
                   />
+                : 
+                <AvatarImage
+                src={product.product_profile}
+              />
+                
+                  }
+                  
                   <AvatarFallback>{product.product_name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 {product.product_name}

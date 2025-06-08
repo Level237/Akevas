@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setInitialLoading } from '@/store/features/loadingSlice';
 import { RootState } from '@/store';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
-import ErrorBoundary, { NetworkBoundary } from '@/components/errors/error-boundary';
 import InstallButton from '@/components/InstallButton';
 
 

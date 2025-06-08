@@ -12,7 +12,6 @@ import GenderNavigationMobile from '@/components/categories/GenderNavigationMobi
 import CategoryShowcaseDual from '@/components/categories/CategoryShowcaseDual';
 import OptimizedImage from '@/components/OptimizedImage';
 import { SectionHeader } from '@/components/products/PremiumProducts';
-import AppFooter from '@/components/ui/AppFooter';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
 import InstallButton from '@/components/InstallButton';
   const CurrentHomeByGenderPage = () => {
