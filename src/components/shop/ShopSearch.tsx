@@ -59,7 +59,7 @@ const ShopSearchResults = ({ shops, isLoading }: { shops: any[]; isLoading: bool
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-white group-hover:text-orange-400 transition-colors">
-                {shop.shop_name}
+                {shop.shop_key}
               </h3>
               <p className="text-sm text-gray-400 line-clamp-2">
                 {shop.shop_description}

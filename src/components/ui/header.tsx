@@ -15,6 +15,7 @@ import { RootState } from '@/store';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import SearchResource from './search';
 import OptimizedImage from '@/components/OptimizedImage';
+import SearchBar from '@/components/search/SearchBar';
 
 // Lazy load du MobileCategoryMenu
 const MobileCategoryMenu = lazy(() => import('../categories/MobileCategoryMenu'));
@@ -340,30 +341,7 @@ console.log(userData)
 
             <div className="flex flex-1 items-center justify-end gap-8">
               {/* Barre de recherche redimensionnable */}
-              <div className={`transition-all duration-300 ease-in-out 
-                 w-[500px] 
-              `}>
-                <div className="relative w-full">
-                  <button
-                    
-                    className="absolute left-0 top-0 h-full px-2 flex items-center gap-1 text-gray-500 hover:text-gray-700 border-r"
-                  >
-                    
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                  <input
-                    type="text"
-                    placeholder="Rechercher..."
-                    className="w-full pl-24 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent text-sm"
-
-                  />
-                  <button className="absolute right-0 top-0 h-full px-3 text-gray-500 hover:text-gray-700">
-                    <Search className="w-4  h-4" />
-                  </button>
-                </div>
-
-            
-              </div>
+              <SearchBar className="hidden md:block" />
 
               {/* Navigation par genre */}
               <nav className="flex items-center gap-6">

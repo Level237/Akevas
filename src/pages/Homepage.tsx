@@ -37,7 +37,7 @@ const Homepage = () => {
   
 
 
-  
+
   useEffect(() => {
     if (shops) {
       startTransition(() => {
