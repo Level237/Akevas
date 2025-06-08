@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 
 const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }) => {
+  console.log(product)
     const [isLoading, setIsLoading] = useState(false);
     const [showCartButton, setShowCartButton] = useState(false);
     const [showVariationModal, setShowVariationModal] = useState(false);
@@ -40,6 +41,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
     const variationsCount = product.variations?.length || 0;
 
     const handleAddToCart = async (product: Product, variation?: any) => {
+      
       setIsLoading(true);
       dispatch(addItem({ 
         product, 
@@ -49,8 +51,13 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
       
       await new Promise(resolve => setTimeout(resolve, 1000));
       toast.success("Produit ajouté au panier avec succès", {
-        position: "bottom-center", 
+        position: "top-center", 
         duration: 6000,
+        style: {
+          backgroundColor: "#ed7e0f",
+          color: "#fff",
+          zIndex: 98888000
+        },
         action: {
           label: "Voir le panier",
           onClick: () => window.location.href = "/cart"

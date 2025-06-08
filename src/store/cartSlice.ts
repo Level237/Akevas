@@ -53,12 +53,14 @@ const cartSlice = createSlice({
 
             // Calculer le prix en fonction de la variation si elle existe
             const itemPrice = selectedVariation 
-                ? (selectedVariation.attributes?.[0]?.price || product.product_price)
+                ? (selectedVariation.price)
                 : product.product_price;
-
+                
+            
             state.totalQuantity += quantity;
-            state.totalPrice += parseFloat(itemPrice) * quantity;
-
+            console.log(state.totalPrice)
+            state.totalPrice += itemPrice * quantity;
+            
             localStorage.setItem('totalQuantity', state.totalQuantity.toString());
             localStorage.setItem('totalPrice', state.totalPrice.toString());
             localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
@@ -83,7 +85,7 @@ const cartSlice = createSlice({
                 }
 
                 const itemPrice = selectedVariation 
-                    ? (selectedVariation.attributes?.[0]?.price || product.product_price)
+                    ? selectedVariation.price
                     : product.product_price;
 
                 state.totalQuantity -= 1;

@@ -35,10 +35,11 @@ const CartPage: React.FC = () => {
     dispatch(updateQuantity({ 
       product, 
       quantity,
-      selectedVariation: selectedVariation || undefined 
+      selectedVariation: selectedVariation || undefined
     }));
   }
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
+  //console.log(cartItems[0].selectedVariation.images[0])
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       <Header />
@@ -79,7 +80,7 @@ const CartPage: React.FC = () => {
             <div className="lg:col-span-8">
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div className="p-6 space-y-6">
-                  {cartItems.map((item) => (
+                  {cartItems.map((item:any) => (
                     <motion.div
                       key={item.product.id}
                       layout
@@ -89,11 +90,20 @@ const CartPage: React.FC = () => {
                       className="flex gap-6 pb-6 border-b last:border-0 last:pb-0"
                     >
                       <div className="w-24 h-24">
-                        <OptimizedImage
+                        {item.selectedVariation ? (
+                          <OptimizedImage
+                            src={item.selectedVariation.images[0]}
+                            alt={item.product.product_name}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ):(
+                          <OptimizedImage
                           src={item.product.product_profile}
                           alt={item.product.product_name}
                           className="w-full h-full object-cover rounded-lg"
                         />
+                        )}
+                      
                       </div>
 
                       <div className="flex-1">
@@ -160,8 +170,8 @@ const CartPage: React.FC = () => {
                           </div>
                           <span className="font-medium max-sm:text-sm text-gray-900">
                             {(
-                              (item.selectedVariation?.attributes?.[0]?.price 
-                                ? parseFloat(item.selectedVariation.attributes[0].price)
+                              (item.selectedVariation 
+                                ? parseFloat(item.selectedVariation?.price)
                                 : parseFloat(item.product.product_price)
                               ) * item.quantity
                             ).toFixed(2)} Fcfa

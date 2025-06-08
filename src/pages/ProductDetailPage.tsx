@@ -23,6 +23,7 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import CheckoutDrawer from '@/components/ui/CheckoutDrawer';
 import { ProductReview } from '@/components/products/ProductReview';
 import OptimizedImage from '@/components/OptimizedImage';
+import { toast } from 'sonner';
 
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
@@ -36,7 +37,7 @@ const ProductDetailPage: React.FC = () => {
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const { data: { data: similarProducts } = {}, isLoading: isLoadingSimilarProducts } = useGetSimilarProductsQuery(product?.id);
   const [showCartButton, setShowCartButton] = useState(false);
-  console.log(product)
+ console.log(product)
   const dispatch = useDispatch();
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -45,15 +46,27 @@ const ProductDetailPage: React.FC = () => {
   console.log(selectedVariant)
   const handleAddToCart = useCallback(async () => {
     setIsLoadingCart(true);
-    
+    console.log(quantity)
     dispatch(addItem({ 
       product, 
       quantity,
-      selectedVariation: selectedVariant 
+      selectedVariation: selectedVariant
     }));
-    
+    console.log(selectedVariant)
     await new Promise(resolve => setTimeout(resolve, 1000));
-
+    toast.success("Produit ajouté au panier avec succès", {
+      position: "top-center", 
+      duration: 6000,
+      style: {
+        backgroundColor: "#ed7e0f",
+        color: "#fff",
+        zIndex: 98888000
+      },
+      action: {
+        label: "Voir le panier",
+        onClick: () => window.location.href = "/cart"
+      }
+    })
     setIsLoadingCart(false);
     setShowCartButton(true);
   }, [dispatch, product, quantity, selectedVariant]);
@@ -362,7 +375,7 @@ const ProductDetailPage: React.FC = () => {
                   </div>
 
                   <h1 className="text-2xl font-bold text-gray-900">{product.product_name}</h1>
-                  <span className="text-4xl font-bold text-[#ed7e0f]">
+                  <span className="text-4xl max-sm:text-3xl font-bold text-[#ed7e0f]">
                     {currentInfo.price} FCFA
                   </span>
                   {/* Description courte */}
@@ -564,7 +577,7 @@ const ProductDetailPage: React.FC = () => {
                     {/* Prix total */}
                     <div className="text-center">
                       <p className="text-sm text-gray-500">Prix total</p>
-                      <p className="text-2xl font-bold text-[#ed7e0f] mt-1">
+                      <p className="text-2xl max-sm:text-xl font-bold text-[#ed7e0f] mt-1">
                         {currentInfo.price} FCFA
                       </p>
                     </div>

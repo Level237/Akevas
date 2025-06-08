@@ -196,7 +196,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Star className="w-4 h-4 text-yellow-400" />
-                  <span>{store?.rating} (120 avis)</span>
+                  <span>{shop.shop.review_average} ({shop.shop.reviewCount} avis)</span>
                 </div>
               </div>
             </div>

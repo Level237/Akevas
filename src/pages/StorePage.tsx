@@ -14,7 +14,7 @@ const StorePage: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen mb-16 bg-gray-50">
         <Header />
         <ScrollRestoration />
       

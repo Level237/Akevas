@@ -18,7 +18,7 @@ const VariationModal: React.FC<VariationModalProps> = ({
 }) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  console.log(selectedColor)
+  console.log(product)
   const handleAddToCart = () => {
     if (!product.variations) return;
 
