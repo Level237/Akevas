@@ -16,6 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCheckIfEmailExistsMutation, useGetQuartersQuery, useGetTownsQuery } from "@/services/guardService";
 import { useState } from "react";
 import Cookies from "universal-cookie";
+import { motion } from "framer-motion";
+import { Eye, EyeOff } from "lucide-react";
 
 
 const formSchema = z.object({
@@ -87,107 +89,136 @@ export default function RegisterForm() {
   const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_id: number }) => quarter.town_id === parseInt(townId));
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   return (
-
-
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-
-        <div className="grid max-sm:grid-cols-1 w-[100%] grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nom d'utilisateur</FormLabel>
-                <FormControl>
-                  <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Nom d'utilisateur" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input className="h-12 px-4 w-full rounded-xl bg-white" placeholder="Email" type="email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="grid max-sm:grid-cols-1 w-[100%] grid-cols-2 gap-4">
-
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Téléphone</FormLabel>
-                <FormControl>
-                  <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Téléphone" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="town"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ville</FormLabel>
-                <Select onValueChange={(value) => {
-                  field.onChange(value);
-                  setTownId(value);
-
-                }} defaultValue={field.value}>
+        {/* Section Informations personnelles */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
+          <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Nom d'utilisateur</FormLabel>
                   <FormControl>
-                    <SelectTrigger className="h-12 px-4 rounded-xl bg-white">
-                      <SelectValue placeholder="Sélectionnez une ville" />
-                    </SelectTrigger>
+                    <Input 
+                      className="h-12 px-4 rounded-xl bg-white/50 backdrop-blur-sm border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all"
+                      placeholder="John Doe"
+                      {...field}
+                    />
                   </FormControl>
-                  <SelectContent>
-                    {townsLoading ? (
-                      <SelectItem value="loading">Chargement des villes...</SelectItem>
-                    ) : (
-                      towns?.towns.map((town: { id: string, town_name: string }) => (
-                        <SelectItem key={town.id} value={String(town.id)}>
-                          {town.town_name}
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Email</FormLabel>
+                  <FormControl>
+                    <Input 
+                      className="h-12 px-4 rounded-xl bg-white/50 backdrop-blur-sm border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all"
+                      placeholder="john@example.com"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Téléphone</FormLabel>
+                  <FormControl>
+                    <Input 
+                      className="h-12 px-4 rounded-xl bg-white/50 backdrop-blur-sm border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all"
+                      placeholder="+237 6XX XXX XXX"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="town"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Ville</FormLabel>
+                  <Select 
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setTownId(value);
+                    }} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="h-12 px-4 rounded-xl bg-white/50 backdrop-blur-sm border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all">
+                        <SelectValue placeholder="Sélectionnez une ville" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="rounded-xl border-gray-200">
+                      {townsLoading ? (
+                        <SelectItem value="loading">
+                          <div className="flex items-center gap-2">
+                            <div className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full" />
+                            Chargement...
+                          </div>
                         </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+                      ) : (
+                        towns?.towns.map((town: { id: string, town_name: string }) => (
+                          <SelectItem key={town.id} value={String(town.id)}>
+                            {town.town_name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
             name="quarter"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quartier</FormLabel>
+                <FormLabel className="text-gray-700">Quartier</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger className="h-12 px-4 rounded-xl bg-white">
+                    <SelectTrigger className="h-12 px-4 rounded-xl bg-white/50 backdrop-blur-sm border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all">
                       <SelectValue placeholder="Sélectionnez un quartier" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl border-gray-200">
                     {quartersLoading ? (
-                      <SelectItem value="loading">Chargement des quartiers...</SelectItem>
+                      <SelectItem value="loading">
+                        <div className="flex items-center gap-2">
+                          <div className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full" />
+                          Chargement...
+                        </div>
+                      </SelectItem>
                     ) : (
                       filteredQuarters?.map((quarter: { id: string, quarter_name: string }) => (
                         <SelectItem key={quarter.id} value={String(quarter.id)}>
@@ -195,55 +226,93 @@ export default function RegisterForm() {
                         </SelectItem>
                       ))
                     )}
-                    {filteredQuarters?.length === 0 && (
-                      <SelectItem value="no-quarters">Aucun quartier trouvé,veuillez verifier votre ville</SelectItem>
-                    )}
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mot de passe</FormLabel>
-                <FormControl>
-                  <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Entrez votre mot de passe" type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+
+          <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Mot de passe</FormLabel>
+                  <div className="relative">
+                    <FormControl>
+                      <Input 
+                        className="h-12 px-4 rounded-xl bg-white/50 backdrop-blur-sm border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all pr-10"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                    </FormControl>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Confirmer le mot de passe</FormLabel>
+                  <div className="relative">
+                    <FormControl>
+                      <Input 
+                        className="h-12 px-4 rounded-xl bg-white/50 backdrop-blur-sm border-gray-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all pr-10"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                    </FormControl>
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  <FormMessage className="text-red-500" />
+                </FormItem>
+              )}
+            />
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Button 
+            disabled={isLoading} 
+            className="w-full h-12 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium transition-all duration-300 transform hover:scale-[1.02]"
+            type="submit"
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                <span>Inscription en cours...</span>
+              </div>
+            ) : (
+              "S'inscrire"
             )}
-          />
-        </div>
-
-
-
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirmer le mot de passe</FormLabel>
-              <FormControl>
-                <Input className="h-12 px-4 rounded-xl bg-white" placeholder="Confirmez votre mot de passe" type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button disabled={isLoading} className="w-full h-12 rounded-xl bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white" type="submit">
-          {isLoading ? <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
-            <span className="sr-only">Loading...</span>
-          </div> : "S'inscrire"}
-        </Button>
+          </Button>
+        </motion.div>
       </form>
     </Form>
-
-
-
   );
 } 

@@ -4,6 +4,7 @@ import { useLoginMutation } from "@/services/auth";
 import { useState } from "react";
 import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
+import { toast } from "sonner";
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('productId');
@@ -19,7 +20,11 @@ export default function LoginForm() {
   const [errorMessage, setErrorMessage] = useState('');
   const [login, { isLoading, isError, error }] = useLoginMutation()
   if (error) {
-    console.log(error)
+    toast.error("Vous n'avez pas accès à cette application", {
+      position: "bottom-center", 
+      duration: 6000,
+      
+    })
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
