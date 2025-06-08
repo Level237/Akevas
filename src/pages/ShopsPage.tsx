@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Star, MapPin, Package, Clock, Shield, Search, Heart, Users, ShoppingBag, TrendingUp } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import AsyncLink from '@/components/ui/AsyncLink';
 import { ScrollRestoration } from 'react-router-dom';
 import img from "../assets/dress.jpg"
@@ -11,8 +10,6 @@ import MobileNav from '@/components/ui/mobile-nav';
 import { useGetAllShopsQuery } from '@/services/guardService';
 import { Category } from '@/types/products';
 import { Shop } from '@/types/shop';
-import { FixedSizeGrid } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import OptimizedImage from '@/components/OptimizedImage';
 import ShopSearch from '@/components/shop/ShopSearch';
 
@@ -88,9 +85,6 @@ const ErrorMessage = memo(() => (
 ));
 ErrorMessage.displayName = 'ErrorMessage';
 
-// Optimiser le chargement des images avec un composant dédié
-
-
 // Memoize individual shop card
 const ShopCard = memo(({ shop }: { shop: Shop }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -124,14 +118,7 @@ const ShopCard = memo(({ shop }: { shop: Shop }) => {
   }
 
   return (
-    <motion.div
-      ref={cardRef}
-      layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="bg-white rounded-2xl shadow-sm overflow-hidden group hover:shadow-md transition-shadow"
-    >
+    <div ref={cardRef} className="bg-white rounded-2xl shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
       {/* Cover Image */}
       <div className="relative h-48">
         <OptimizedImage
@@ -234,7 +221,7 @@ const ShopCard = memo(({ shop }: { shop: Shop }) => {
         </div>
 
       </div>
-    </motion.div>
+    </div>
   );
 });
 ShopCard.displayName = 'ShopCard';
@@ -364,39 +351,6 @@ const ShopsPage = () => {
       }
     });
   }, [shopList, searchQuery, categoryFilter, selectedFilter, sortBy]);
-
-  // Calculer le nombre de colonnes en fonction de la largeur de l'écran
-  const getColumnCount = (width: number) => {
-    if (width >= 1024) return 3; // lg breakpoint
-    return 1;
-  };
-
-  // Ajouter des constantes pour les espacements
-  const GRID_GAP = 24; // Espacement entre les éléments en pixels
-
-  // Composant Cell modifié pour inclure les marges
-  const Cell = ({ columnIndex, rowIndex, style, data }: any) => {
-    const { items, columnCount } = data;
-    const index = rowIndex * columnCount + columnIndex;
-    if (index >= items.length) return null;
-
-    const shop = items[index];
-    
-    // Ajuster le style pour inclure les marges
-    const adjustedStyle = {
-      ...style,
-      left: Number(style.left) + GRID_GAP,
-      top: Number(style.top) + GRID_GAP,
-      width: Number(style.width) - GRID_GAP,
-      height: Number(style.height) - GRID_GAP,
-    };
-
-    return (
-      <div style={adjustedStyle}>
-        <ShopCard shop={shop} />
-      </div>
-    );
-  };
 
   // Memoize pagination handler
   const handlePageChange = useCallback((pageNumber: number) => {
@@ -530,101 +484,91 @@ const ShopsPage = () => {
           setSelectedFilter={setSelectedFilter}
         />
 
-        {/* Shops Grid */}
-        <div className="h-[800px]">
+        {/* Shops Grid - Correction de la hauteur */}
+        <div className="mb-8"> {/* Remplacer la hauteur fixe par une marge en bas */}
           {isLoading && (
-            Array(6).fill(null).map((_, index) => (
-              <ShopCardSkeleton key={`skeleton-${index}`} />
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array(6).fill(null).map((_, index) => (
+                <ShopCardSkeleton key={`skeleton-${index}`} />
+              ))}
+            </div>
           )}
           
           {isError && <ErrorMessage />}
 
           {!isLoading && !isError && (
-            <AutoSizer>
-              {({ width }) => {
-                const columnCount = getColumnCount(width);
-                const rowCount = Math.ceil(filteredShops.length / columnCount);
-                const columnWidth = (width / columnCount);
-                const rowHeight = 500;
-
-                return (
-                  <div style={{ padding: `${GRID_GAP/2}px 0`, width: '100%', height: '100vh'}}>
-                    <FixedSizeGrid
-                      columnCount={columnCount}
-                      columnWidth={columnWidth}
-                      height={1000} // Ajuster la hauteur pour le padding
-                      rowCount={rowCount}
-                      rowHeight={rowHeight}
-                      width={width}
-                      style={{padding: `${GRID_GAP/2}px 0`,overflow: 'hidden'}}
-                      itemData={{
-                        items: filteredShops,
-                        columnCount
-                      }}
-                    >
-                      {Cell}
-                    </FixedSizeGrid>
-                  </div>
-                );
-              }}
-            </AutoSizer>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredShops.map((shop) => (
+                <motion.div
+                  key={shop.shop_id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ShopCard shop={shop} />
+                </motion.div>
+              ))}
+            </div>
           )}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination - Maintenant correctement positionnée */}
         {!isLoading && !isError && (
-          <div className="flex items-center mt-72 justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
-            {parseInt(currentPage) > 1 && (
-                <button 
+          <div className="py-8 border-t">
+            <div className="flex items-center justify-center gap-2">
+              {parseInt(currentPage) > 1 && (
+                <Button
+                  variant="outline"
                   onClick={() => handlePageChange(parseInt(currentPage) - 1)}
-                  className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                  className="hidden sm:flex"
                 >
-                    Précédent
-                </button>
-            )}
-            
-            <div className="flex items-center gap-1">
+                  Précédent
+                </Button>
+              )}
+              
+              <div className="flex items-center gap-1">
                 {Array.from({ length: totalPages }, (_, index) => {
-                    const pageNumber = index + 1;
-                    
-                    // Afficher seulement les pages proches de la page courante
-                    if (
-                        pageNumber === 1 ||
-                        pageNumber === totalPages ||
-                        (pageNumber >= parseInt(currentPage) - 2 && pageNumber <= parseInt(currentPage) + 2)
-                    ) {
-                        return (
-                            <button
-                                key={pageNumber}
-                                onClick={() => handlePageChange(pageNumber)}
-                                className={`w-10 h-10 rounded-lg ${
-                                    parseInt(currentPage) === pageNumber
-                                        ? 'bg-[#ed7e0f] text-white'
-                                        : 'bg-white hover:bg-gray-50'
-                                }`}
-                            >
-                                {pageNumber}
-                            </button>
-                        );
-                    } else if (
-                        pageNumber === parseInt(currentPage) - 3 ||
-                        pageNumber === parseInt(currentPage) + 3
-                    ) {
-                        return <span key={pageNumber}>...</span>;
-                    }
-                    return null;
+                  const pageNumber = index + 1;
+                  
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    (pageNumber >= parseInt(currentPage) - 2 && pageNumber <= parseInt(currentPage) + 2)
+                  ) {
+                    return (
+                      <Button
+                        key={pageNumber}
+                        variant={parseInt(currentPage) === pageNumber ? "default" : "outline"}
+                        onClick={() => handlePageChange(pageNumber)}
+                        className={`w-10 h-10 ${
+                          parseInt(currentPage) === pageNumber
+                            ? 'bg-[#ed7e0f] text-white'
+                            : ''
+                        }`}
+                      >
+                        {pageNumber}
+                      </Button>
+                    );
+                  } else if (
+                    pageNumber === parseInt(currentPage) - 3 ||
+                    pageNumber === parseInt(currentPage) + 3
+                  ) {
+                    return <span key={pageNumber} className="px-2">...</span>;
+                  }
+                  return null;
                 })}
-            </div>
+              </div>
 
-            {parseInt(currentPage) < totalPages && (
-                <button
-                onClick={() => handlePageChange(parseInt(currentPage) + 1)}
-                className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+              {parseInt(currentPage) < totalPages && (
+                <Button
+                  variant="outline"
+                  onClick={() => handlePageChange(parseInt(currentPage) + 1)}
+                  className="hidden sm:flex"
                 >
-                    Suivant
-                </button>
-            )}
+                  Suivant
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </main>
