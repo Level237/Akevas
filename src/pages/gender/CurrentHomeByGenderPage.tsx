@@ -12,7 +12,10 @@ import GenderNavigationMobile from '@/components/categories/GenderNavigationMobi
 import CategoryShowcaseDual from '@/components/categories/CategoryShowcaseDual';
 import OptimizedImage from '@/components/OptimizedImage';
 import { SectionHeader } from '@/components/products/PremiumProducts';
-const CurrentHomeByGenderPage = () => {
+import AppFooter from '@/components/ui/AppFooter';
+import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
+import InstallButton from '@/components/InstallButton';
+  const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)
     const {data:{data:currentGender}={},isLoading}=useGetCurrentHomeByGenderQuery(currentGenderId)
     console.log(currentGender)
@@ -68,27 +71,10 @@ const CurrentHomeByGenderPage = () => {
       {/* Catégories populaires */}
       <CategoryShowcaseDual categories={currentGender?.categories} isLoading={isLoading} title="Catégories" titleCategory={`Découvrez nos catégories ${currentGender?.gender_name}`} />
 
-
+      <InstallButton/>
 
       {/* Newsletter */}
-      <div className="bg-gray-100 py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold mb-4">Restez informé</h2>
-          <p className="text-gray-600 mb-6">
-            Inscrivez-vous à notre newsletter pour recevoir nos dernières offres
-          </p>
-          <div className="max-w-md mx-auto flex gap-4">
-            <input 
-              type="email" 
-              placeholder="Votre email" 
-              className="flex-1 px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[#ed7e0f]"
-            />
-            <button className="bg-[#ed7e0f] text-white px-6 py-2 rounded-lg hover:bg-[#ed7e0f]/90">
-              S'inscrire
-            </button>
-          </div>
-        </div>
-      </div>
+      <FloatingHelpButton />
     </div>
   );
 };
