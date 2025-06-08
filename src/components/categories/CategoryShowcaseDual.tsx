@@ -87,7 +87,7 @@ export default function CategoryShowcase({categories, isLoading, title, titleCat
             WebkitOverflowScrolling: 'touch'
           }}
         >
-          {categories.map((category:any, index) => (
+          {!isLoading && categories.map((category:any, index) => (
             <motion.div
               key={category.id}
               initial={{ opacity: 0, y: 20 }}

@@ -132,7 +132,7 @@ export default function StoreHero() {
           <motion.div className="my-6 h-48 relative">
             {slides[2].isMarketplace && (
               <div className="grid grid-cols-2 gap-3 h-full">
-                {productImages?.slice(0, 4).map((img:any, index:number) => (
+                {!isLoading && productImages?.slice(0, 4).map((img:any, index:number) => (
                   <Link key={index} to={`/shop/${img.url}`} className="relative rounded-xl overflow-hidden">
                     <OptimizedImage
                       src={img.profile}
