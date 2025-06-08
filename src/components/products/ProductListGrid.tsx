@@ -8,6 +8,7 @@ import VariationModal from '@/components/ui/VariationModal'
 import AsyncLink from '../ui/AsyncLink'
 import OptimizedImage from '@/components/OptimizedImage'
 import { Product } from '@/types/products'
+import { toast } from 'sonner'
 
 const ProductCard = memo(({ 
   product, 
@@ -162,8 +163,16 @@ const ProductListGrid = ({ products = [], isLoading, gridColumn, type }: { produ
       quantity: 1,
       selectedVariation: variation 
     }));
-    
+   
     await new Promise(resolve => setTimeout(resolve, 1000));
+    toast.success("Produit ajouté au panier avec succès", {
+      position: "bottom-center", 
+      duration: 6000,
+      action: {
+        label: "Voir le panier",
+        onClick: () => window.location.href = "/cart"
+      }
+    })
     setIsLoadingCart(prev => ({ ...prev, [product.id]: false }));
     setShowCartButton(prev => ({ ...prev, [product.id]: true }));
   }, [dispatch]);

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, ChevronDown, Store, Package2, X, Loader2 } from 'lucide-react';
+import { Search,Store, Package2, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchByQueryQuery } from '@/services/guardService';
 import OptimizedImage from '@/components/OptimizedImage';
@@ -160,7 +160,7 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
                       <Package2 className="w-4 h-4 text-orange-500" />
                       Produits ({data.products.length})
                     </h3>
-                    <div className="grid grid-cols-5 gap-4">
+                    <div className="grid grid-cols-4 gap-4">
                       {data.products.map((product: any) => (
                         <Link
                           key={product.id}

@@ -6,6 +6,7 @@ import { LoaderProvider } from './context/LoaderContext'
 import { Provider } from 'react-redux'
 import { store } from './store'
 import ErrorBoundary, { NetworkBoundary } from './components/errors/error-boundary'
+import { Toaster } from 'sonner'
 
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
       <Provider store={store}>
         <RouterProvider router={routes} />
       </Provider>
-
+      <Toaster richColors position="top-center" />
     </LoaderProvider>
     </ErrorBoundary>
     

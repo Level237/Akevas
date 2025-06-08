@@ -25,9 +25,10 @@ const VariationModal: React.FC<VariationModalProps> = ({
     const selectedVariation = product.variations.find(
       (v:any) => v.color.id.toString() === selectedColor
     );
-    console.log(selectedVariation)
+    
     if (selectedVariation) {
       onAddToCart(selectedVariation);
+      
       onClose();
     }
   };

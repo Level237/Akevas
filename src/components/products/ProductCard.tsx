@@ -7,6 +7,7 @@ import AsyncLink from "../ui/AsyncLink";
 import { Heart, Star } from "lucide-react";
 import { motion} from 'framer-motion';
 import OptimizedImage from "../OptimizedImage";
+import { toast } from "sonner";
 
 
 const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }) => {
@@ -47,6 +48,14 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
       }));
       
       await new Promise(resolve => setTimeout(resolve, 1000));
+      toast.success("Produit ajouté au panier avec succès", {
+        position: "bottom-center", 
+        duration: 6000,
+        action: {
+          label: "Voir le panier",
+          onClick: () => window.location.href = "/cart"
+        }
+      })
       setIsLoading(false);
       setShowCartButton(true);
     };
