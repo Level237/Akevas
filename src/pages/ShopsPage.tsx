@@ -14,6 +14,7 @@ import { Shop } from '@/types/shop';
 import { FixedSizeGrid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import OptimizedImage from '@/components/OptimizedImage';
+import ShopSearch from '@/components/shop/ShopSearch';
 
 
 type SortOption = 'rating' | 'products' | 'followers' | 'newest';
@@ -311,6 +312,7 @@ const ShopsPage = () => {
   const params = new URLSearchParams(window.location.search);
   const currentPage = params.get("page") || "1";
   const [totalPages, setTotalPages] = useState(0);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const { data: { shopList, totalPagesResponse } = {}, isLoading, isError } = useGetAllShopsQuery(currentPage);
 
@@ -424,42 +426,34 @@ const ShopsPage = () => {
                 className="w-full max-w-3xl space-y-8"
               >
                 <div className="space-y-4">
-                  <motion.h1 
+                  <h1 
                     className="text-4xl sm:text-5xl md:text-6xl text-center font-bold bg-gradient-to-r from-white via-white to-orange-400 text-transparent bg-clip-text"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
+                    
                   >
                     Marketplace
-                  </motion.h1>
-                  <motion.p 
+                  </h1>
+                  <p 
                     className="text-lg sm:text-xl text-center text-gray-300 max-w-2xl mx-auto leading-relaxed"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
+                   
                   >
                     Découvrez nos meilleures boutiques et trouvez des produits uniques qui correspondent à votre style
-                  </motion.p>
+                  </p>
                 </div>
 
                 {/* Barre de recherche stylisée */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
+                <div
                   className="relative max-w-2xl mx-auto w-full"
                 >
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Rechercher une boutique..."
-                      className="w-full px-6 py-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all duration-300"
-                    />
-                    <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-orange-500 to-orange-600 p-2 rounded-xl hover:opacity-90 transition-opacity">
-                      <Search className="w-5 h-5 text-white" />
-                    </button>
-                  </div>
-                </motion.div>
+                  <button
+                    onClick={() => setIsSearchOpen(true)}
+                    className="w-full px-6 py-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-left text-gray-400 hover:border-orange-500/30 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Search className="w-5 h-5" />
+                      <span>Rechercher une boutique...</span>
+                    </div>
+                  </button>
+                </div>
 
                 {/* Statistiques */}
                 <motion.div
@@ -490,6 +484,13 @@ const ShopsPage = () => {
           {/* Effet de particules ou de lumière */}
           <div className="absolute inset-0 bg-[url('/particles.png')] opacity-30 animate-pulse" />
         </motion.div>
+
+      {/* Composant de recherche */}
+      <ShopSearch 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+      />
+
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hero Section */}
        
