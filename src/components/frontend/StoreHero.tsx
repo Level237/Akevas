@@ -6,6 +6,7 @@ import marketplace from "../../assets/marketplace.jpg"
 import { useGetProfileShopQuery } from "@/services/guardService";
 import OptimizedImage from "@/components/OptimizedImage";
 import { Link } from "react-router-dom";
+import AsyncLink from "../ui/AsyncLink";
 
 // Optimized slide controls with useCallback
 const SlideControls = memo(({ slides, currentSlide, setCurrentSlide }:{slides:any,currentSlide:any,setCurrentSlide:any}) => {
@@ -275,15 +276,15 @@ export default function StoreHero() {
               transition={{ duration: 0.5 }}
             />
 
-            <div className="absolute -bottom-3 w-full p-6 z-20 backdrop-blur-lg rounded-b-3xl">
+            <div className="absolute -bottom-1 w-full p-6 z-20 backdrop-blur-lg rounded-b-3xl">
               <div className="text-center">
                 <motion.p className="text-white/90 text-sm mb-4 leading-relaxed">
                   Découvrez notre marketplace de boutiques
                 </motion.p>
-                <motion.button className="bg-white text-black px-6 py-3 rounded-full font-semibold w-full 
+                <AsyncLink to="/shops" className="bg-white text-black px-12 py-3 rounded-full font-semibold w-full 
                                        shadow-lg hover:shadow-xl text-sm transition-all duration-300">
                   En savoir plus
-                </motion.button>
+                </AsyncLink>
               </div>
             </div>
           </motion.section>

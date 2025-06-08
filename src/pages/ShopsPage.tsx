@@ -17,7 +17,7 @@ import OptimizedImage from '@/components/OptimizedImage';
 import ShopSearch from '@/components/shop/ShopSearch';
 
 
-type SortOption = 'rating' | 'products' | 'followers' | 'newest';
+type SortOption = 'rating' | 'allShops' | 'followers' | 'newest';
 type CategoryFilter = 'all' | 'mode' | 'accessoires' | 'beaute';
 
 // Memoize skeleton component
@@ -241,8 +241,6 @@ ShopCard.displayName = 'ShopCard';
 
 // Memoize filters component
 const Filters = memo(({ 
-  searchQuery, 
-  setSearchQuery, 
   sortBy, 
   setSortBy, 
   categoryFilter, 
@@ -251,36 +249,58 @@ const Filters = memo(({
   setSelectedFilter 
 }: any) => (
   <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Search */}
-      <div className="flex-1">
-        <div className="relative">
-          <Search className="absolute text-gray-400 left-3 top-1/2 transform -translate-y-1/2" />
-          <Input
-            type="text"
-            placeholder="Rechercher une boutique..."
-            className="pl-10 py-6 w-full"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+    <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-center gap-3 flex-wrap">
+
+      <Button
+          variant="outline" 
+          className={`flex items-center gap-2 transition-all ${
+            sortBy === 'allShops' ? 'bg-orange-50 text-[#ed7e0f] border-[#ed7e0f]' : ''
+          }`}
+          onClick={() => setSortBy('allShops')}
+        >
+          <Package className="w-4 h-4" />
+          Toutes les boutiques
+        </Button>
+        <Button
+          variant="outline"
+          className={`flex items-center gap-2 transition-all ${
+            sortBy === 'rating' ? 'bg-orange-50 text-[#ed7e0f] border-[#ed7e0f]' : ''
+          }`}
+          onClick={() => setSortBy('rating')}
+        >
+          <Star className="w-4 h-4" />
+          Mieux notés
+        </Button>
+
+     
+
+        <Button
+          variant="outline"
+          className={`flex items-center gap-2 transition-all ${
+            sortBy === 'followers' ? 'bg-orange-50 text-[#ed7e0f] border-[#ed7e0f]' : ''
+          }`}
+          onClick={() => setSortBy('followers')}
+        >
+          <Users className="w-4 h-4" />
+          Plus suivis
+        </Button>
+
+        <Button
+          variant="outline"
+          className={`flex items-center gap-2 transition-all ${
+            sortBy === 'newest' ? 'bg-orange-50 text-[#ed7e0f] border-[#ed7e0f]' : ''
+          }`}
+          onClick={() => setSortBy('newest')}
+        >
+          <TrendingUp className="w-4 h-4" />
+          Plus récents
+        </Button>
       </div>
 
-      {/* Filter Buttons */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex items-center gap-3">
         <select
-          className="px-4 py-2 border rounded-lg bg-white"
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as SortOption)}
-        >
-          <option value="rating">Mieux notés</option>
-          <option value="products">Plus de produits</option>
-          <option value="followers">Plus suivis</option>
-          <option value="newest">Plus récents</option>
-        </select>
-
-        <select
-          className="px-4 py-2 border rounded-lg bg-white"
+          className="px-4 py-2 border rounded-lg bg-white hover:border-[#ed7e0f] transition-colors"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as CategoryFilter)}
         >
@@ -293,7 +313,9 @@ const Filters = memo(({
         <Button
           variant={selectedFilter === 'premium' ? 'default' : 'outline'}
           onClick={() => setSelectedFilter(selectedFilter === 'premium' ? 'all' : 'premium')}
-          className="flex items-center py-6 gap-2"
+          className={`flex items-center gap-2 transition-all ${
+            selectedFilter === 'premium' ? 'bg-[#ed7e0f] hover:bg-[#ed7e0f]/90' : ''
+          }`}
         >
           <Shield className="w-4 h-4" />
           Premium
@@ -307,7 +329,7 @@ Filters.displayName = 'Filters';
 const ShopsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'premium'>('all');
-  const [sortBy, setSortBy] = useState<SortOption>('rating');
+  const [sortBy, setSortBy] = useState<SortOption>('allShops');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const params = new URLSearchParams(window.location.search);
   const currentPage = params.get("page") || "1";
