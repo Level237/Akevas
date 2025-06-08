@@ -13,7 +13,7 @@ interface Category {
   color?: string
 }
 
-export default function CategoryShowcase({categories, isLoading, title}: {categories: Category[], isLoading: boolean, title: string}) {
+export default function CategoryShowcase({categories, isLoading, title, titleCategory}: {categories: Category[], isLoading: boolean, title: string, titleCategory: string}) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -57,7 +57,7 @@ export default function CategoryShowcase({categories, isLoading, title}: {catego
               {title}
             </span>
             <h2 className="text-2xl max-sm:text-lg md:text-4xl font-bold mt-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-              Explorez nos catégories
+              {titleCategory}
             </h2>
           </div>
           <div className="flex  gap-4">

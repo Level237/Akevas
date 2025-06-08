@@ -66,7 +66,7 @@ const CurrentHomeByGenderPage = () => {
         </div>
       </div>
       {/* Catégories populaires */}
-      <CategoryShowcaseDual categories={currentGender?.categories} isLoading={isLoading} title="Catégories" />
+      <CategoryShowcaseDual categories={currentGender?.categories} isLoading={isLoading} title="Catégories" titleCategory={`Découvrez nos catégories ${currentGender?.gender_name}`} />
 
 
 

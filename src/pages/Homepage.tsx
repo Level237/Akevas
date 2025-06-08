@@ -84,7 +84,7 @@ const Homepage = () => {
           <PremiumProducts />
         
         
-          <CategoryShowcaseDual categories={categories} isLoading={categoriesLoading} title="Catégories" />
+          <CategoryShowcaseDual categories={categories} isLoading={categoriesLoading} title="Catégories" titleCategory="Découvrez nos catégories" />
         
 
       </section>

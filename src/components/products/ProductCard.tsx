@@ -11,7 +11,6 @@ import { toast } from "sonner";
 
 
 const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }) => {
-  console.log(product)
     const [isLoading, setIsLoading] = useState(false);
     const [showCartButton, setShowCartButton] = useState(false);
     const [showVariationModal, setShowVariationModal] = useState(false);
@@ -85,7 +84,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
           className={viewMode === 'grid' ? '' : 'flex gap-6 bg-white rounded-2xl shadow-sm p-4 '}
         >
           {viewMode === 'grid' ? (
-            <div className="group max-sm:px-1 bg-white max-sm:w-[11rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div className="group max-sm:px-1 bg-white  max-sm:w-[11rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
               
               <AsyncLink to={`/produit/${product.product_url}`}>
               <div className="relative aspect-square ">
