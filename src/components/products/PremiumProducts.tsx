@@ -5,14 +5,14 @@ import { useGetHomeProductsQuery } from '@/services/guardService';
 import ProductListGrid from './ProductListGrid';
 
 // Extraire l'en-tête dans un composant séparé mémoïsé
-const SectionHeader = React.memo(() => (
+export const SectionHeader = React.memo(({title,description}: {title: string,description:string}) => (
   <div className="flex max-sm:hidden justify-between items-baseline mb-6">
     <div>
       <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-black">
-        Produits Premium
+        {title}
       </h2>
       <p className="text-xl md:text-2xl max-sm:text-sm text-gray-600">
-        Découvrez notre sélection de produits premium
+        {description}
       </p>
     </div>
     <AsyncLink
@@ -45,7 +45,7 @@ const PremiumProducts: React.FC = () => {
   return (
     <section className="pt-24 max-sm:pt-12  bg-gray-200">
       <div className="max-w-8xl mx-auto px-4 max-sm:pr-0 sm:px-6 lg:px-8">
-        <SectionHeader />
+        <SectionHeader title='Produits Premium' description='Découvrez notre sélection de produits premium'/>
         <ProductListGrid
           products={memoizedProducts}
           isLoading={isLoading}

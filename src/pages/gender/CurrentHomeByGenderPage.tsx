@@ -11,6 +11,7 @@ import ProductListGrid from '@/components/products/ProductListGrid';
 import GenderNavigationMobile from '@/components/categories/GenderNavigationMobile';
 import CategoryShowcaseDual from '@/components/categories/CategoryShowcaseDual';
 import OptimizedImage from '@/components/OptimizedImage';
+import { SectionHeader } from '@/components/products/PremiumProducts';
 const CurrentHomeByGenderPage = () => {
     const [currentGenderId,setCurrentGenderId]=useState<number>(0)
     const {data:{data:currentGender}={},isLoading}=useGetCurrentHomeByGenderQuery(currentGenderId)
@@ -46,8 +47,8 @@ const CurrentHomeByGenderPage = () => {
         </div>
         <div className="relative container mx-auto px-4 h-full flex items-center">
           <div className="max-w-2xl text-white">
-            <h1 className="text-5xl font-bold mb-4">Collection-{currentGender.gender_name}</h1>
-            <p className="text-xl opacity-90">
+            <h1 className="text-5xl max-sm:text-3xl font-bold mb-4">Collection {currentGender.gender_name}</h1>
+            <p className="text-xl max-sm:text-sm opacity-90">
               {currentGender.gender_description}
             </p>
           </div>
@@ -59,6 +60,7 @@ const CurrentHomeByGenderPage = () => {
               {/* Tendances du moment */}
       <div className="bg-gray-200 py-16">
         <div className="container mx-auto px-4">
+        <SectionHeader title={`Produits ${currentGender?.gender_name}`} description={`Découvrez nos meilleurs produits ${currentGender?.gender_name}`} />
           
           <ProductListGrid products={currentGender?.products} isLoading={isLoading} />
         </div>

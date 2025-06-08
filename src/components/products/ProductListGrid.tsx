@@ -25,7 +25,7 @@ const ProductCard = memo(({
 }) => {
   return (
     <motion.div
-      className="m-3 w-[290px] flex-shrink-0 cursor-pointer max-sm:w-[178px] transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
+      className="m-3 w-[290px] flex-shrink-0 cursor-pointer max-sm:w-72 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
       layout
     >
       <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -236,7 +236,7 @@ const ProductListGrid = ({ products = [], isLoading, gridColumn, type }: { produ
           </h2>
         </div>
         
-        <div className={`${!isLoading && normalizedProducts.length > 4 ? "flex" : "md:hidden"} justify-end gap-2 px-4 mb-4`}>
+        <div className={`${!isLoading && normalizedProducts.length > 3 ? "flex" : "md:hidden"} justify-end gap-2 px-4 mb-4`}>
           <button 
             onClick={(e) => {
               e.stopPropagation();
