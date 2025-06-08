@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, memo, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Star, MapPin, Package, Clock, Shield, Search,Heart, Users } from 'lucide-react';
+import { Star, MapPin, Package, Clock, Shield, Search, Heart, Users, ShoppingBag, TrendingUp } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -384,20 +384,116 @@ const ShopsPage = () => {
       <Header />
       <ScrollRestoration />
       <MobileNav />
-      
+      <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="w-full relative overflow-hidden bg-black min-h-[70vh] flex items-center"
+        >
+          {/* Fond dynamique avec overlay */}
+          <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-20" />
+            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 z-10" />
+            <motion.div
+              animate={{
+                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.4, 0.3],
+              }}
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                repeatType: "reverse",
+              }}
+              className="absolute inset-0 z-0"
+            >
+              <img 
+                src={img} 
+                alt="background" 
+                className="w-full h-full object-cover object-center filter brightness-50"
+              />
+            </motion.div>
+          </div>
+
+          {/* Contenu principal */}
+          <div className="container mx-auto max-w-6xl px-4 md:px-6 lg:px-8 relative z-30">
+            <div className="flex flex-col items-center justify-center">
+              {/* Texte et recherche */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="w-full max-w-3xl space-y-8"
+              >
+                <div className="space-y-4">
+                  <motion.h1 
+                    className="text-4xl sm:text-5xl md:text-6xl text-center font-bold bg-gradient-to-r from-white via-white to-orange-400 text-transparent bg-clip-text"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    Marketplace
+                  </motion.h1>
+                  <motion.p 
+                    className="text-lg sm:text-xl text-center text-gray-300 max-w-2xl mx-auto leading-relaxed"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    Découvrez nos meilleures boutiques et trouvez des produits uniques qui correspondent à votre style
+                  </motion.p>
+                </div>
+
+                {/* Barre de recherche stylisée */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="relative max-w-2xl mx-auto w-full"
+                >
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Rechercher une boutique..."
+                      className="w-full px-6 py-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all duration-300"
+                    />
+                    <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-orange-500 to-orange-600 p-2 rounded-xl hover:opacity-90 transition-opacity">
+                      <Search className="w-5 h-5 text-white" />
+                    </button>
+                  </div>
+                </motion.div>
+
+                {/* Statistiques */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex justify-center gap-8 pt-4 flex-wrap"
+                >
+                  {[
+                    { icon: ShoppingBag, value: '2000+', label: 'Boutiques' },
+                    { icon: TrendingUp, value: '50k+', label: 'Produits' },
+                  ].map((stat, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="p-3 rounded-xl bg-white/10 backdrop-blur-sm">
+                        <stat.icon className="w-5 h-5 text-orange-400" />
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-white">{stat.value}</div>
+                        <div className="text-sm text-gray-400">{stat.label}</div>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Effet de particules ou de lumière */}
+          <div className="absolute inset-0 bg-[url('/particles.png')] opacity-30 animate-pulse" />
+        </motion.div>
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hero Section */}
-        <div className="relative rounded-3xl overflow-hidden mb-8 bg-gradient-to-r from-[#1a1a1a] to-[#2d2d2d] text-white">
-          <div className="absolute inset-0 opacity-10">
-            <img src={img} alt="background" className="w-full h-full object-cover" />
-          </div>
-          <div className="relative z-10 p-8 lg:p-12">
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4">Marketplace</h1>
-            <p className="text-xl text-gray-300 max-w-2xl">
-              Découvrez nos meilleures boutiques et trouvez des produits uniques
-            </p>
-          </div>
-        </div>
+       
+        
 
         {/* Filters */}
         <Filters

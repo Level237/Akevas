@@ -62,7 +62,7 @@ const Homepage = () => {
 
   return (
     
-    <div className="relative overflow-hidden bg-[#F8F9FC]">
+    <div className="relative min-h-screen overflow-hidden bg-[#F8F9FC]">
     <MobileNav />
        
       <section className=''>
