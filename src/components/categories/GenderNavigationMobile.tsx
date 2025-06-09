@@ -30,56 +30,71 @@ const GenderNavigationMobile = () => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className={`hidden max-sm:flex sticky top-[0px] top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className={`hidden max-sm:h-12 max-sm:flex sticky top-20 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled 
-          ? 'bg-white/90 backdrop-blur-md    shadow-md' 
-          : 'bg-white/80 backdrop-blur-sm'
+          ? 'bg-white/95 shadow-lg backdrop-blur-xl' 
+          : 'bg-white/60 backdrop-blur-xl'
       }`}
     >
-      <div className="w-full flex items-center justify-between px-4 py-3 overflow-x-auto no-scrollbar">
+      <div className={`w-full flex items-center justify-center gap-2 px-4 transition-all duration-500 ${
+        isScrolled ? 'py-3' : 'py-4'
+      } overflow-x-auto no-scrollbar`}>
         {tabs.map((tab) => (
           <AsyncLink
             key={tab.id}
             to={`/home?g=${tab.id}`}
-            className={`relative flex-shrink-0 px-6 py-2 rounded-full transition-all duration-300 ${
+            className={`relative flex items-center justify-center transition-all duration-300 ${
+              isScrolled ? 'w-[105px] h-[36px]' : 'w-[110px] h-[40px]'
+            } ${
               activeTab === tab.id 
-                ? 'bg-[#ed7e0f]/10' 
-                : 'hover:bg-orange-50'
-            }`}
-            
+                ? `${isScrolled 
+                    ? 'bg-gradient-to-br from-[#ed7e0f] via-[#ff9f40] to-[#ed7e0f] text-white shadow-lg shadow-orange-200/30' 
+                    : 'bg-black/5 border border-orange-200'
+                  }` 
+                : 'hover:bg-black/5 border border-transparent'
+            } rounded-xl`}
           >
-            <motion.span
+            <motion.div
               layout
-              className={`text-sm font-semibold transition-colors ${
-                activeTab === tab.id 
-                  ? 'text-[#ed7e0f]' 
-                  : 'text-gray-700'
-              }`}
+              className="relative flex items-center justify-center w-full h-full"
             >
-              {tab.label}
-            </motion.span>
-            {activeTab === tab.id && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ed7e0f]"
-                initial={false}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              />
-            )}
+              <motion.span
+                layout
+                className={`font-bold tracking-wide transition-all duration-300 ${
+                  isScrolled ? 'text-xs' : 'text-sm'
+                } ${
+                  activeTab === tab.id 
+                    ? isScrolled ? 'text-white' : 'text-[#ed7e0f]'
+                    : 'text-gray-700'
+                }`}
+              >
+                {tab.label}
+              </motion.span>
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="activeGlow"
+                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#ed7e0f]/20 to-transparent blur-xl"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+            </motion.div>
           </AsyncLink>
         ))}
       </div>
       
-      {/* Indicateur de défilement subtil */}
+      {/* Séparateur élégant */}
       <motion.div 
         initial={{ scaleX: 0 }}
         animate={{ 
           scaleX: isScrolled ? 1 : 0,
           opacity: isScrolled ? 1 : 0
         }}
-        className="h-[1px] bg-gradient-to-r from-transparent via-[#ed7e0f]/30 to-transparent"
+        transition={{ duration: 0.6 }}
+        className="h-[1px] bg-gradient-to-r from-transparent via-[#ed7e0f]/20 to-transparent"
       />
     </motion.div>
   );

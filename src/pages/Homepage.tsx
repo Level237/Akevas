@@ -62,36 +62,23 @@ const Homepage = () => {
 
   return (
     
-    <div className="relative min-h-screen overflow-hidden bg-[#F8F9FC]">
-    
-       
-      <section className=''>
-        <TopBar />
-       
-          <Header />
-    
-        <GenderNavigationMobile />
-        <StoreHero />
-
-          <MobileNav/>
-
-       
-          <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={shopsLoading} />
-        
-
-        
-        
-          <PremiumProducts />
-        
-        
-          <CategoryShowcaseDual categories={categories} isLoading={categoriesLoading} title="Catégories" titleCategory="Découvrez nos catégories" />
-        
-
-      </section>
+    <div className="relative min-h-screen bg-[#F8F9FC]">
+      <TopBar />
+      <Header />
       
+      <main className="relative">
+        <GenderNavigationMobile />
+        <div className="relative">
+          <StoreHero />
+          <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={shopsLoading} />
+          <PremiumProducts />
+          <CategoryShowcaseDual categories={categories} isLoading={categoriesLoading} title="Catégories" titleCategory="Découvrez nos catégories" />
+        </div>
+      </main>
+
+      <MobileNav/>
       <FloatingHelpButton />
       <InstallButton/>
-     
     </div>
    
   );
