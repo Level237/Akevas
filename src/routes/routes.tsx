@@ -43,7 +43,8 @@ import AddShopPage from "@/pages/admin/shops/add-shop";
 import CatalogPage from "@/pages/CatalogPage";
 import LegalTermsPage from "@/pages/LegalTerms";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicy";
-export const routes = createBrowserRouter([
+import TermsOfUsePage from "@/pages/TermsOfUse";
+  export const routes = createBrowserRouter([
   {
     path: '/',
     element: <Homepage />
@@ -55,6 +56,10 @@ export const routes = createBrowserRouter([
   {
     path:'/privacy-policy', 
     element:<PrivacyPolicyPage/>
+  },
+  {
+    path: '/terms-of-use',
+    element: <TermsOfUsePage />
   },
   {
     path: '/c/:url',
