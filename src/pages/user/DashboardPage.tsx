@@ -10,7 +10,7 @@ import AsyncLink from '@/components/ui/AsyncLink';
 const UserDashboardPage = () => {
 
   const { data } = useGetUserStatsQuery("Auth");
-
+  console.log(data)
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
 
   return (

@@ -41,10 +41,20 @@ import SucessPaymentPage from "@/pages/payment/notchpay/SucessPaymentPage";
 import MobileMoneyPaymentPage from "@/pages/user/MobileMoneyPaymentPage";
 import AddShopPage from "@/pages/admin/shops/add-shop";
 import CatalogPage from "@/pages/CatalogPage";
+import LegalTermsPage from "@/pages/LegalTerms";
+import PrivacyPolicyPage from "@/pages/PrivacyPolicy";
 export const routes = createBrowserRouter([
   {
     path: '/',
     element: <Homepage />
+  },
+  {
+    path: '/legal-terms',
+    element: <LegalTermsPage />
+  },
+  {
+    path:'/privacy-policy', 
+    element:<PrivacyPolicyPage/>
   },
   {
     path: '/c/:url',
