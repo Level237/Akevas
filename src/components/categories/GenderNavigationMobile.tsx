@@ -33,7 +33,7 @@ const GenderNavigationMobile = () => {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`hidden max-sm:h-12 max-sm:flex sticky top-20 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`hidden max-sm:h-16 max-sm:flex sticky top-20 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled 
           ? 'bg-white/95 shadow-lg backdrop-blur-xl' 
           : 'bg-white/60 backdrop-blur-xl'

@@ -409,7 +409,7 @@ const ShopsPage = () => {
                     Marketplace
                   </h1>
                   <p 
-                    className="text-lg sm:text-xl text-center text-gray-300 max-w-2xl mx-auto leading-relaxed"
+                    className="text-lg max-sm:text-sm sm:text-xl text-center text-gray-300 max-w-2xl mx-auto leading-relaxed"
                    
                   >
                     Découvrez nos meilleures boutiques et trouvez des produits uniques qui correspondent à votre style
@@ -418,15 +418,15 @@ const ShopsPage = () => {
 
                 {/* Barre de recherche stylisée */}
                 <div
-                  className="relative max-w-2xl mx-auto w-full"
+                  className="relative max-w-2xl  mx-auto w-full"
                 >
                   <button
                     onClick={() => setIsSearchOpen(true)}
-                    className="w-full px-6 py-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-left text-gray-400 hover:border-orange-500/30 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+                    className="w-full px-6 py-4 max-sm:py-2.5  rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-left text-gray-400 hover:border-orange-500/30 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
                   >
                     <div className="flex items-center gap-3">
                       <Search className="w-5 h-5" />
-                      <span>Rechercher une boutique...</span>
+                      <span className='max-sm:text-sm'>Rechercher une boutique...</span>
                     </div>
                   </button>
                 </div>
@@ -447,7 +447,7 @@ const ShopsPage = () => {
                         <stat.icon className="w-5 h-5 text-orange-400" />
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-white">{stat.value}</div>
+                        <div className="text-2xl max-sm:text-sm font-bold text-white">{stat.value}</div>
                         <div className="text-sm text-gray-400">{stat.label}</div>
                       </div>
                     </div>

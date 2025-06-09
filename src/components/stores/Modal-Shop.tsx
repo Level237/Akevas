@@ -142,7 +142,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                 <div className="md:col-span-3">
                   <div className="mb-6">
                     <div className='flex max-sm:mb-6 items-center justify-between'>
-                    <h3 className="mb-4 max-sm:mb-0 text-lg font-semibold">Categories de la boutique</h3>
+                    <h3 className="mb-4 max-sm:mb-0 text-lg max-sm:text-sm font-semibold">Catégories de la boutique</h3>
                     <AsyncLink to={`/shop/${shop.shop.shop_id}`}>
                     <Button className="px-12 ma max-sm:flex hidden bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 gap-2">
                       Visiter
@@ -171,7 +171,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                   <div>
                     {!isLoading && shop.shop.products_count > 0 && (
                     <div className="mb-6 flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">Featured Products</h3>
+                      <h3 className="text-lg max-sm:text-sm font-semibold">Featured Products</h3>
                      <AsyncLink to={`/shop/${shop.shop.shop_id}`}> <Button variant="outline">Voir tout les produits</Button></AsyncLink>
                     </div>
                     )}
@@ -233,7 +233,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
 )
 const ProductGrid = memo(function ProductGrid({ products }: { products: Product[] }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
@@ -247,10 +247,10 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 12 * 0.1 }}
-      className="group relative cursor-pointer overflow-hidden rounded-lg border bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md"
+      className="group relative cursor-pointer  overflow-hidden rounded-lg border bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md"
     >
       <a href={`/produit/${product.product_url}`}>
-      <div className="relative mb-3 aspect-square overflow-hidden rounded-lg">
+      <div className="relative mb-3 aspect-square max-sm:w-full overflow-hidden rounded-lg">
         <OptimizedImage
           src={product.product_profile}
           alt={product.product_name}
@@ -263,7 +263,7 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
         {product.product_name}
       </h4>
       <div className="flex items-center justify-between">
-        <span className="text-lg font-bold">{product.product_price} FCFA</span>
+        <span className="text-lg max-sm:text-sm font-bold">{product.product_price} FCFA</span>
         <Badge className="text-xs">
           12 sold
         </Badge>
