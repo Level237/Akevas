@@ -20,6 +20,7 @@ function App() {
       <LoaderProvider>
       <Provider store={store}>
         <RouterProvider router={routes} />
+        
       </Provider>
       <Toaster richColors position="top-center" />
     </LoaderProvider>

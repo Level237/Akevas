@@ -63,7 +63,7 @@ const Homepage = () => {
   return (
     
     <div className="relative min-h-screen overflow-hidden bg-[#F8F9FC]">
-    <MobileNav />
+    
        
       <section className=''>
         <TopBar />
@@ -73,7 +73,7 @@ const Homepage = () => {
         <GenderNavigationMobile />
         <StoreHero />
 
-
+          <MobileNav/>
 
        
           <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={shopsLoading} />
@@ -88,7 +88,7 @@ const Homepage = () => {
         
 
       </section>
-       
+      
       <FloatingHelpButton />
       <InstallButton/>
      
