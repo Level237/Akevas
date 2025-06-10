@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronUp, ChevronDown, X } from 'lucide-react';
+import { ChevronUp, ChevronDown} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import OptimizedImage from '../OptimizedImage';
 

@@ -17,7 +17,7 @@ const CategoryProductsPage = () => {
     const { data: category } = useGetCategoryByUrlQuery(url);
     const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard");
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-    const [showMobileFilters, setShowMobileFilters] = useState(false);
+    
 
     const hasProducts = !isLoading && categoryData && categoryData.length > 0;
 
