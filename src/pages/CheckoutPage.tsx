@@ -26,6 +26,8 @@ interface DeliveryAddress {
   deliveryOption: DeliveryOption;
 }
 
+const TAX_RATE = 0.05; // 19% de TVA (à ajuster selon vos besoins)
+
 const CheckoutPage: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('cm.orange');
   const [quarter, setQuarter] = useState<string>('');
@@ -557,9 +559,23 @@ const CheckoutPage: React.FC = () => {
                   <span className="text-gray-500">Livraison</span>
                   <span className="font-medium text-green-600">{shipping.toFixed(2)} Fcfa</span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">TVA (19%)</span>
+                  <span className="font-medium">
+                    {s == "1" ? 
+                      (cartItems.reduce((sum, item) => {
+                        const price = item.selectedVariation?.attributes?.[0]?.price 
+                          ? parseFloat(item.selectedVariation.attributes[0].price)
+                          : parseFloat(item.product.product_price);
+                        return sum + (price * item.quantity);
+                      }, 0) * TAX_RATE).toFixed(2)
+                      : (parseInt(totalPrice || '0') * TAX_RATE).toFixed(2)
+                    } Fcfa
+                  </span>
+                </div>
                 <div className="border-t pt-4">
                   <div className="flex justify-between">
-                    <span className="text-lg font-medium">Total</span>
+                    <span className="text-lg font-medium">Total (TTC)</span>
                     <span className="text-lg font-bold">
                       {s == "1" ? 
                         (cartItems.reduce((sum, item) => {
@@ -567,11 +583,12 @@ const CheckoutPage: React.FC = () => {
                             ? parseFloat(item.selectedVariation.attributes[0].price)
                             : parseFloat(item.product.product_price);
                           return sum + (price * item.quantity);
-                        }, 0) + shipping).toFixed(2)
-                        : total.toFixed(2)
+                        }, 0) * (1 + TAX_RATE) + shipping).toFixed(2)
+                        : (total * (1 + TAX_RATE)).toFixed(2)
                       } Fcfa
                     </span>
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">TVA incluse</p>
                 </div>
               </div>
 
