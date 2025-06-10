@@ -236,7 +236,7 @@ const ProductListGrid = ({ products = [], isLoading, gridColumn, type }: { produ
           </h2>
         </div>
         
-        <div className={`${!isLoading && normalizedProducts.length > 3 ? "flex" : "md:hidden"} justify-end gap-2 px-4 mb-4`}>
+        <div className={`${!isLoading && normalizedProducts.length > 3 ? "flex" : "max-sm:hidden"} justify-end gap-2 px-4 mb-4`}>
           <button 
             onClick={(e) => {
               e.stopPropagation();

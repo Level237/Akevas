@@ -1,18 +1,40 @@
 import { useParams } from 'react-router-dom';
-import { ChevronDown,Search, ChevronRight } from 'lucide-react';
+import { ChevronDown, Search, ChevronRight, PackageX, Filter } from 'lucide-react';
 import TopBar from '@/components/ui/topBar';
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ProductListGrid from '@/components/products/ProductListGrid';
-import { useGetCategoryProductsByUrlQuery, useGetCategoryByUrlQuery } from '@/services/guardService';
+import { useGetCategoryProductsByUrlQuery, useGetCategoryByUrlQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
 import AsyncLink from '@/components/ui/AsyncLink';
+import defaultHeroImage from "@/assets/dress.jpg"
+import Footer from '@/components/ui/footer';
+import CategoryFilters from '@/components/filters/CategoryFilters';
+import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 const CategoryProductsPage = () => {
     const { url } = useParams<{ url: string }>();
     const { data: categoryData, isLoading } = useGetCategoryProductsByUrlQuery(url);
     const { data: category } = useGetCategoryByUrlQuery(url);
+    const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard");
+    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+    const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+    const hasProducts = !isLoading && categoryData && categoryData.length > 0;
+
+    const handleCategoryToggle = (categoryId: number) => {
+        setSelectedCategories(prev =>
+            prev.includes(categoryId)
+                ? prev.filter(id => id !== categoryId)
+                : [...prev, categoryId]
+        );
+    };
+
+    const clearFilters = () => {
+        setSelectedCategories([]);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -20,25 +42,37 @@ const CategoryProductsPage = () => {
             <Header />
             <MobileNav />
 
-            {/* Hero Section */}
-            <div className="relative h-[200px] md:h-[250px]">
+            {/* Hero Section Amélioré */}
+            <div className="relative h-[200px] md:h-[300px] overflow-hidden">
                 <div className="absolute inset-0">
                     <img
-                        src={category?.category_profile}
-                        alt={category?.category_name}
-                        className="w-full h-full object-cover"
+                        src={category?.category_profile || defaultHeroImage}
+                        alt={category?.category_name || "Catégorie"}
+                        className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                        onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = defaultHeroImage;
+                        }}
                     />
-                    <div className="absolute inset-0 bg-black/40" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
                 </div>
                 <div className="relative container mx-auto px-4 h-full flex items-center">
-                    <div>
-                        <h1 className="text-4xl font-bold text-white mb-2">{category?.category_name}</h1>
-                        <div className="flex items-center text-gray-200 text-sm">
-                            <AsyncLink to="/" className="hover:text-white">Accueil</AsyncLink>
+                    <div className="max-w-2xl">
+                        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 animate-fade-in">
+                            {category?.category_name || "Catégorie"}
+                        </h1>
+                        <div className="flex items-center text-gray-200 text-sm backdrop-blur-sm bg-black/10 px-4 py-2 rounded-full inline-flex">
+                            <AsyncLink to="/" className="hover:text-white transition-colors">
+                                Accueil
+                            </AsyncLink>
                             <ChevronRight className="h-4 w-4 mx-2" />
-                            <span>Catégories</span>
+                            <AsyncLink to="/categories" className="hover:text-white transition-colors">
+                                Catégories
+                            </AsyncLink>
                             <ChevronRight className="h-4 w-4 mx-2" />
-                            <span className="text-white">{category?.category_name}</span>
+                            <span className="text-white font-medium">
+                                {category?.category_name || "Catégorie"}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -46,97 +80,39 @@ const CategoryProductsPage = () => {
 
             <div className="container mx-auto px-4 py-8">
                 <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Sidebar - Categories */}
-                    <div className="lg:w-1/4">
-                        <div className="bg-white rounded-xl shadow-sm p-6 sticky top-8">
-                            <h2 className="text-xl font-semibold mb-6">Catégories</h2>
-                            <div className="space-y-2">
-                                {/* Example categories - replace with actual data */}
-                                {['Électronique', 'Mode', 'Maison', 'Sport', 'Beauté'].map((cat, index) => (
-                                    <button 
-                                        key={index}
-                                        className={`w-full text-left px-4 py-2 rounded-lg transition-colors
-                                            ${url === cat.toLowerCase() 
-                                                ? 'bg-[#ed7e0f] text-white' 
-                                                : 'hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        {cat}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <div className="mt-8">
-                                <h3 className="font-semibold mb-4">Filtres</h3>
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="text-sm text-gray-600 mb-2 block">Prix</label>
-                                        <div className="flex gap-2">
-                                            <Input type="number" placeholder="Min" className="w-1/2" />
-                                            <Input type="number" placeholder="Max" className="w-1/2" />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="text-sm text-gray-600 mb-2 block">Marques</label>
-                                        <div className="space-y-2">
-                                            {['Nike', 'Adidas', 'Puma'].map((brand, index) => (
-                                                <label key={index} className="flex items-center">
-                                                    <input type="checkbox" className="mr-2" />
-                                                    {brand}
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    {/* Filtres Desktop */}
+                    <div className="hidden lg:block lg:w-1/4">
+                        <CategoryFilters
+                            categories={categories || []}
+                            isLoading={categoriesLoading}
+                            selectedCategories={selectedCategories}
+                            onCategoryToggle={handleCategoryToggle}
+                            onClearFilters={clearFilters}
+                        />
                     </div>
 
-                    {/* Main Content */}
+                    {/* Contenu principal */}
                     <div className="lg:w-3/4">
-                        {/* Search and Sort */}
-                        <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-                            <div className="flex flex-col md:flex-row gap-4 items-center">
-                                <div className="relative flex-grow">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                    <Input className="pl-10" placeholder="Rechercher dans cette catégorie..." />
-                                </div>
-
-                                <Button variant="outline" className="flex items-center gap-2">
-                                    Trier par
-                                    <ChevronDown className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        </div>
-
-                        
+                        {/* Barre de recherche et bouton filtres mobile */}
+                  
 
                         {/* Products Grid */}
-                        {!isLoading && (!categoryData || categoryData.length === 0) ? (
-                            <div className="text-center py-12">
-                                <h3 className="text-xl font-medium text-gray-900 mb-2">Aucun produit trouvé</h3>
-                                <p className="text-gray-500">Aucun produit n'est disponible dans cette catégorie pour le moment.</p>
-                            </div>
-                        ) : (
-                            <ProductListGrid
-                                products={categoryData}
-                                isLoading={isLoading}
-                                gridColumn={3}
-                            />
-                        )}
+                        <ProductListGrid
+                            products={categoryData}
+                            isLoading={isLoading}
+                            gridColumn={3}
+                        />
 
                         {/* Load More */}
-                        {categoryData && categoryData.length > 0 && (
-                            <div className="text-center mt-8">
-                                <Button variant="outline" className="px-8">
-                                    Charger plus de produits
-                                </Button>
-                            </div>
-                        )}
+                        
                     </div>
                 </div>
             </div>
+
+            {/* Filtres Mobile */}
+          
+
+            <Footer/>
         </div>
     );
 };

@@ -13,6 +13,7 @@ import OptimizedImage from '@/components/OptimizedImage';
 import { SectionHeader } from '@/components/products/PremiumProducts';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
 import InstallButton from '@/components/InstallButton';
+import Footer from '@/components/ui/footer';
 
 const CurrentHomeByGenderPage = () => {
   const [currentGenderId,setCurrentGenderId]=useState<number>(0)
@@ -131,6 +132,7 @@ const CurrentHomeByGenderPage = () => {
 
       {/* Newsletter */}
       <FloatingHelpButton />
+      <Footer />
     </div>
   );
 };

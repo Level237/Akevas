@@ -17,6 +17,8 @@ import { setInitialLoading } from '@/store/features/loadingSlice';
 import { RootState } from '@/store';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
 import InstallButton from '@/components/InstallButton';
+import Footer from '@/components/ui/footer';
+
 
 
 const Homepage = () => {
@@ -79,6 +81,7 @@ const Homepage = () => {
       <MobileNav/>
       <FloatingHelpButton />
       <InstallButton/>
+      <Footer />
     </div>
    
   );

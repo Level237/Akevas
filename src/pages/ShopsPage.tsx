@@ -12,6 +12,7 @@ import { Category } from '@/types/products';
 import { Shop } from '@/types/shop';
 import OptimizedImage from '@/components/OptimizedImage';
 import ShopSearch from '@/components/shop/ShopSearch';
+import Footer from '@/components/ui/footer';
 
 
 type SortOption = 'rating' | 'allShops' | 'followers' | 'newest';
@@ -571,7 +572,9 @@ const ShopsPage = () => {
             </div>
           </div>
         )}
+        
       </main>
+      <Footer />
     </div>
   );
 };
