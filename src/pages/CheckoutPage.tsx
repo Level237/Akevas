@@ -560,7 +560,7 @@ const CheckoutPage: React.FC = () => {
                   <span className="font-medium text-green-600">{shipping.toFixed(2)} Fcfa</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">TVA (19%)</span>
+                  <span className="text-gray-500">TVA</span>
                   <span className="font-medium">
                     {s == "1" ? 
                       (cartItems.reduce((sum, item) => {
