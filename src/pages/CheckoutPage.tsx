@@ -86,6 +86,7 @@ const CheckoutPage: React.FC = () => {
   const subtotal = cartItems.reduce((sum, item) => sum + parseInt(item.product.product_price) * item.quantity, 0);
   const shipping = getDeliveryFee();
   const total = s == "1" ? subtotal + shipping : parseInt(totalPrice || '0') + shipping;
+  const totalWithTax = total * (1 + TAX_RATE); // Calculate total with tax
   const totalQuantity=cartItems.reduce((sum, item) => sum + parseInt(item.quantity.toString()), 0);
  console.log(totalQuantity)
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,10 +138,10 @@ const CheckoutPage: React.FC = () => {
       sessionStorage.setItem("paymentMethod",selectedPayment);
       sessionStorage.setItem("paymentPhone", paymentPhone);
       sessionStorage.setItem("phone",phone)
-      formData.append("amount",total.toString());
+      formData.append("amount",totalWithTax.toString()); // Use total with tax
       formData.append('productsPayments', JSON.stringify(productsPayments))
       
-      formData.append("address",total.toString());
+      formData.append("address",totalWithTax.toString()); // Use total with tax
       formData.append("phone",phone);
       formData.append("address",address.address);
       formData.append("shipping",shipping.toString());
@@ -168,8 +169,8 @@ const CheckoutPage: React.FC = () => {
         if(price){
           formData.append("price",price);
         }
-        if(total){
-          formData.append("amount",total.toString());
+        if(totalWithTax){ // Use total with tax
+          formData.append("amount",totalWithTax.toString());
         }
         if(variations){
           formData.append('hasVariation','true');
@@ -577,15 +578,7 @@ const CheckoutPage: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="text-lg font-medium">Total (TTC)</span>
                     <span className="text-lg font-bold">
-                      {s == "1" ? 
-                        (cartItems.reduce((sum, item) => {
-                          const price = item.selectedVariation?.attributes?.[0]?.price 
-                            ? parseFloat(item.selectedVariation.attributes[0].price)
-                            : parseFloat(item.product.product_price);
-                          return sum + (price * item.quantity);
-                        }, 0) * (1 + TAX_RATE) + shipping).toFixed(2)
-                        : (total * (1 + TAX_RATE)).toFixed(2)
-                      } Fcfa
+                      {totalWithTax.toFixed(2)} Fcfa
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">TVA incluse</p>
@@ -653,9 +646,10 @@ const CheckoutPage: React.FC = () => {
                       'Expédition et livraison à domicile'
                   }</p>
                   <p>Frais de livraison: {shipping} FCFA</p>
+                  <p>TVA: {totalWithTax.toFixed(2)} FCFA</p>
                 </div>
                 <div>
-                  <p className="font-medium">Montant total: {total} FCFA</p>
+                  <p className="font-medium">Montant total: {totalWithTax.toFixed(2)} FCFA</p>
                 </div>
               </div>
 

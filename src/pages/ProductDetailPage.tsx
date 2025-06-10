@@ -552,7 +552,10 @@ const ProductDetailPage: React.FC = () => {
                       {/* Vendeur */}
                       <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
                         Vendu par : <OptimizedImage src={product.shop_profile} alt="" className="w-5 h-5 rounded-full" />
-                        <span className="text-gray-600">{product.shop_key || "CRTORRS S..."}</span>
+                        <span className="text-gray-600 text-xs">{product.shop_key || "CRTORRS S..."}</span>
+                        <AsyncLink to={`/shop/${product.shop_key}`} className="text-[#ed7e0f] text-xs hover:underline ml-2">
+                          Visiter la boutique
+                        </AsyncLink>
                       </div>
 
                       {/* Livraison */}
