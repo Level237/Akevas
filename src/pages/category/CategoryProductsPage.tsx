@@ -1,10 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { ChevronDown, Search, ChevronRight, PackageX, Filter } from 'lucide-react';
+import { ChevronRight, PackageX} from 'lucide-react';
 import TopBar from '@/components/ui/topBar';
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import ProductListGrid from '@/components/products/ProductListGrid';
 import { useGetCategoryProductsByUrlQuery, useGetCategoryByUrlQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
 import AsyncLink from '@/components/ui/AsyncLink';
@@ -12,7 +10,6 @@ import defaultHeroImage from "@/assets/dress.jpg"
 import Footer from '@/components/ui/footer';
 import CategoryFilters from '@/components/filters/CategoryFilters';
 import { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
 
 const CategoryProductsPage = () => {
     const { url } = useParams<{ url: string }>();
@@ -79,38 +76,36 @@ const CategoryProductsPage = () => {
             </div>
 
             <div className="container mx-auto px-4 py-8">
-                <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Filtres Desktop */}
-                    <div className="hidden lg:block lg:w-1/4">
-                        <CategoryFilters
-                            categories={categories || []}
-                            isLoading={categoriesLoading}
-                            selectedCategories={selectedCategories}
-                            onCategoryToggle={handleCategoryToggle}
-                            onClearFilters={clearFilters}
-                        />
+                {hasProducts ? (
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        {/* Filtres Desktop */}
+                        <div className="hidden lg:block lg:w-1/4">
+                            <CategoryFilters
+                                categories={categories || []}
+                                isLoading={categoriesLoading}
+                                selectedCategories={selectedCategories}
+                                onCategoryToggle={handleCategoryToggle}
+                                onClearFilters={clearFilters}
+                            />
+                        </div>
+
+                        {/* Contenu principal */}
+                        <div className="lg:w-3/4">
+                            <ProductListGrid
+                                products={categoryData}
+                                isLoading={isLoading}
+                                gridColumn={3}
+                            />
+                        </div>
                     </div>
-
-                    {/* Contenu principal */}
-                    <div className="lg:w-3/4">
-                        {/* Barre de recherche et bouton filtres mobile */}
-                  
-
-                        {/* Products Grid */}
-                        <ProductListGrid
-                            products={categoryData}
-                            isLoading={isLoading}
-                            gridColumn={3}
-                        />
-
-                        {/* Load More */}
-                        
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-12">
+                        <PackageX className="w-16 h-16 text-gray-400 mb-4" />
+                        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Aucun produit trouvé</h2>
+                        <p className="text-gray-600">Aucun produit n'est disponible dans cette catégorie pour le moment.</p>
                     </div>
-                </div>
+                )}
             </div>
-
-            {/* Filtres Mobile */}
-          
 
             <Footer/>
         </div>

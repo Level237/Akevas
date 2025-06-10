@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import orange from '@/assets/orange.jpeg'
 import mtn from '@/assets/momo.jpeg'
 import { Button } from './button';
+import AsyncLink from './AsyncLink';
 
 
 const Footer = () => {
@@ -106,9 +107,9 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-gray-700 text-sm text-gray-400">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex space-x-4">
-              <Link to="/legal-terms" className="hover:text-primary-500">Mentions légales</Link>
-              <Link to="/privacy-policy" className="hover:text-primary-500">Confidentialité</Link>
-              <Link to="/terms-of-use" className="hover:text-primary-500">CGV</Link>
+              <AsyncLink to="/legal-terms" className="hover:text-primary-500">Mentions légales</AsyncLink>
+              <AsyncLink to="/privacy-policy" className="hover:text-primary-500">Confidentialité</AsyncLink>
+              <AsyncLink to="/terms-of-use" className="hover:text-primary-500">CGV</AsyncLink>
             </div>
             <p className="mt-2 md:mt-0">© 2024 AKEVAS - La mode africaine réinventée</p>
           </div>
