@@ -108,10 +108,11 @@ export default function MobileMoneyPaymentPage() {
   }, []);
   
   // Listen for payment verification updates
+  //console.log(verificationData)
   useEffect(() => {
     if (!verificationData) return;
     console.log(verificationData.status)
-    if (verificationData.status === 'success') {
+    if (verificationData.status === 'complete') {
       setPaymentStatus('success');
       setMessage("Paiement confirmé! Redirection vers votre compte...");
       setPollingEnabled(false);
