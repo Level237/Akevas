@@ -158,7 +158,7 @@ export default function MobileMoneyPaymentPage() {
         animate={{ opacity: 1, scale: 1 }}
         whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => navigate('/seller/recharge')}
+        onClick={() => navigate('/')}
         className={`fixed top-6 right-6 z-50 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl border  ${formDataPayment.paymentMethod==="cm.orange" ? "border-orange-100" : "border-[#Ffff00]"} transition-all duration-300 group`}
       >
         <X className="w-5 h-5 text-gray-600 group-hover:text-[#ed7e0f] transition-colors" />
