@@ -551,7 +551,7 @@ const ProductDetailPage: React.FC = () => {
                     <div className="space-y-3 text-sm">
                       {/* Vendeur */}
                       <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
-                        Vendu par : <OptimizedImage src={product.shop_profile} alt="" className="w-5 h-5 rounded-full" />
+                        <span className="text-gray-600 text-xs">Vendu par :</span> <OptimizedImage src={product.shop_profile} alt="" className="w-5 h-5 rounded-full" />
                         <span className="text-gray-600 text-xs">{product.shop_key || "CRTORRS S..."}</span>
                         <AsyncLink to={`/shop/${product.shop_key}`} className="text-[#ed7e0f] text-xs hover:underline ml-2">
                           Visiter la boutique
@@ -578,8 +578,8 @@ const ProductDetailPage: React.FC = () => {
                     <div className="border-t my-4"></div>
 
                     {/* Prix total */}
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500">Prix total</p>
+                    <div className="text-center flex items-center justify-between">
+                      <p className="text-sm text-gray-500">Prix total :</p>
                       <p className="text-2xl max-sm:text-xl font-bold text-[#ed7e0f] mt-1">
                         {currentInfo.price} FCFA
                       </p>

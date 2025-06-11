@@ -53,7 +53,7 @@ const cartSlice = createSlice({
 
             // Calculer le prix en fonction de la variation si elle existe
             const itemPrice = selectedVariation 
-                ? (selectedVariation.price)
+                ? (selectedVariation.price) || (selectedVariation.attributes[0].price)
                 : product.product_price;
                 
             
