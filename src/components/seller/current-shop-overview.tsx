@@ -311,7 +311,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 <h2 className="text-lg font-medium text-gray-900 mb-4">
                   À propos de la boutique
                 </h2>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 text-sm mb-6">
                   {shop.shop.shop_description}
                 </p>
 
