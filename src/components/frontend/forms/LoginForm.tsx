@@ -5,6 +5,7 @@ import { useState } from "react";
 import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
 import { Link } from "react-router-dom";
+import { toast } from 'sonner';
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('productId');
@@ -19,9 +20,12 @@ export default function LoginForm() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [, setErrorMessage] = useState('');
-  const [login, { isLoading, isError, error }] = useLoginMutation()
+  const [login, { isLoading,error }] = useLoginMutation()
   if (error) {
-    console.log(error)
+    toast.error('Votre numero de telephone ou votre mot de passe est incorrect', {
+      description: "Veuillez verifier vos informations",
+      duration: 4000, // ms
+    });
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -81,9 +85,7 @@ export default function LoginForm() {
 
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
-            {'data' in error ? JSON.stringify(error.data) : 'le numero de telephone ou le mot de passe est incorrect'}
-          </div>}
+         
 
           <div className="space-y-2 mt-3">
             <label htmlFor="email">Numéro de Téléphone</label>
