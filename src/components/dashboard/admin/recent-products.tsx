@@ -16,6 +16,21 @@ export function RecentProducts({ products, isLoading }: RecentProductsProps) {
     return <IsLoadingComponents isLoading={isLoading} />
   }
 
+
+  const getRandomVariationImages = (product: any) => {
+    if (!product.variations || product.variations.length === 0) return [];
+    // Prendre une variation au hasard
+    const randomVariation = product.variations[Math.floor(Math.random() * product.variations.length)];
+    // Mélanger les images de cette variation
+    const images = [...randomVariation.images];
+    for (let i = images.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [images[i], images[j]] = [images[j], images[i]];
+    }
+    console.log(images)
+    return images;
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -28,15 +43,34 @@ export function RecentProducts({ products, isLoading }: RecentProductsProps) {
           {!isLoading && products.map((product) => (
             <div key={product.id} className="flex items-center space-x-4">
               <div className="relative w-16 h-16">
-                <img
-                  src={product.product_profile || "/placeholder.svg"}
-                  alt={product.product_name}
-                  className="object-cover rounded-md"
-                />
+
+              {getRandomVariationImages(product).slice(0, ).map((img, idx) => (
+                        <img
+                          key={img}
+                          src={img}
+                          alt={product.product_name}
+                          className="absolute rounded-lg object-cover border-2 border-white shadow"
+                          style={{
+                            left: `${idx * 12}px`,
+                            zIndex: 10 - idx,
+                            width: '36px',
+                            height: '36px',
+                            top: `${idx * 4}px`,
+                            background: '#fff'
+                          }}
+                        />
+                      ))}
+                 {getRandomVariationImages(product).length === 0 && (
+                        <img
+                          src={product.product_profile}
+                          alt={product.product_name}
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
+                      )}
               </div>
               <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium leading-none">{product.product_name}</p>
-                <p className="text-sm text-muted-foreground">{parseFloat(product.product_price).toFixed(2)} FCFA</p>
+                
+                <p className="text-sm text-muted-foreground">{product.variations && product.variations.length > 0 ? "prix variable" : product?.product_price?.toLocaleString()}</p>
                 <p className="text-xs text-muted-foreground">Added {new Date(product.created_at).toLocaleDateString()}</p>
               </div>
             </div>
