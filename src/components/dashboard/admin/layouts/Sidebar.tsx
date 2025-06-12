@@ -20,21 +20,26 @@ import {
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
 import { logoutUser } from "@/lib/logout"
+import AsyncLink from "@/components/ui/AsyncLink"
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
   { icon: Truck, label: "Livreurs", href: "/admin/delivery" },
-  { icon: Store, label: "Boutiques", href: "#",
+  { icon: Store, label: "Boutiques", href: "#boutiques",
     subItems: [
       { label: "Listes", href: "/admin/shops" },
       { label: "Nouvelle boutique", href: "/admin/shop/new" },] },
+  { icon: Store, label: "Categories", href: "#categories",
+        subItems: [
+          { label: "Listes", href: "/admin/categories" },
+          { label: "Nouvelle categorie", href: "/admin/category/new" },] },
   { icon: Users, label: "Clients", href: "/admin/customers" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
   { 
     icon: Star, 
     label: "Commentaires", 
-    href: "#",
+    href: "#com",
     subItems: [
       { label: "Produits", href: "/admin/reviews/products" },
       { label: "Boutiques", href: "/admin/reviews/shops" },
@@ -85,10 +90,10 @@ export function Sidebar() {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16 border-b">
-            <Link to="/" className="flex items-center space-x-2">
+            <AsyncLink to="/" className="flex items-center space-x-2">
               <Package className="h-6 w-6 text-[#ed7e0f]" />
               <span className="text-xl font-bold text-gray-900">Akevas</span>
-            </Link>
+            </AsyncLink>
           </div>
 
           <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
@@ -128,7 +133,7 @@ export function Sidebar() {
                 {item.subItems && expandedItems.includes(item.href) && (
                   <div className="ml-8 mt-1 space-y-1">
                     {item.subItems.map((subItem) => (
-                      <Link
+                      <AsyncLink
                         key={subItem.href}
                         to={subItem.href}
                         className={cn(
@@ -139,7 +144,7 @@ export function Sidebar() {
                         )}
                       >
                         <span>{subItem.label}</span>
-                      </Link>
+                      </AsyncLink>
                     ))}
                   </div>
                 )}
