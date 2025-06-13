@@ -16,7 +16,8 @@ import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+
 
 
 // Nouvelle interface pour mieux typer les attributs
@@ -76,6 +77,7 @@ const CreateProductPage: React.FC = () => {
   const [city, setCity] = useState('');
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
   const [isLoading, setIsLoading] = useState(false);
+  console.log(setIsLoading)
   const [selectedProductType, setSelectedProductType] = useState<'simple' | 'variable' | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
 
@@ -733,11 +735,7 @@ const CreateProductPage: React.FC = () => {
     }
   }, [searchParams]);
 
-  const handleProductTypeSelect = async (type: 'simple' | 'variable') => {
-    setProductType(type);
-    // Mettre à jour l'URL sans recharger la page
-    navigate(`/seller/create-product?type=${type}`, { replace: true });
-  };
+
 
   const handleConfirmProductType = async () => {
     if (!selectedProductType) return;
