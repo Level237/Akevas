@@ -471,8 +471,11 @@ const CreateProductPage: React.FC = () => {
         console.log(`${key}:`, value);
       }
       
-      const response = await addProduct(formData);
-      console.log(response)
+      await addProduct(formData);
+      toast.success('Produit créé avec succès', {
+        description: "Vous pouvez désormais accéder à votre liste de produits",
+        duration: 4000, // ms
+      });
       navigate('/seller/products')
     } catch (error) {
       
@@ -737,9 +740,10 @@ const CreateProductPage: React.FC = () => {
   };
 
   const handleConfirmProductType = async () => {
+    if (!selectedProductType) return;
+    setProductType(selectedProductType);
     setShowModal(false);
-    // Mettre à jour l'URL sans recharger la page
-    navigate(`/seller/create-product?type=${productType}`, { replace: true });
+    navigate(`/seller/create-product?type=${selectedProductType}`, { replace: true });
   };
 
   // Effet pour générer les variations structurées
@@ -847,7 +851,7 @@ const CreateProductPage: React.FC = () => {
               <div className="space-y-4">
                 {/* Produit Simple */}
               <button
-                onClick={() => handleProductTypeSelect('simple')}
+                onClick={() => setSelectedProductType('simple')}
                   className={`w-full transition-all ${
                     selectedProductType === 'simple'
                       ? 'bg-[#ed7e0f]/5 ring-2 ring-[#ed7e0f]'
@@ -878,7 +882,7 @@ const CreateProductPage: React.FC = () => {
 
                 {/* Produit Variable */}
               <button
-                onClick={() => handleProductTypeSelect('variable')}
+                onClick={() => setSelectedProductType('variable')}
                   className={`w-full transition-all ${
                     selectedProductType === 'variable'
                       ? 'bg-[#ed7e0f]/5 ring-2 ring-[#ed7e0f]'
