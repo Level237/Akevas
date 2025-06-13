@@ -1,4 +1,4 @@
-import { Search, Bell, Settings, Menu, X } from "lucide-react"
+import { Search, Bell, Settings } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,7 +15,7 @@ import { useState } from "react"
 
 export function Header() {
   const { data: userData } = useGetUserQuery('Auth')
-  const [showMobileMenu, setShowMobileMenu] = useState(false)
+  
   const [notifications] = useState([
     {
       id: 1,

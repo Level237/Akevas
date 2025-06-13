@@ -10,7 +10,7 @@ export default function ProductDetailPageAdmin() {
   const { url } = useParams<{ url: string }>();
   const navigate = useNavigate();
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
-  const [togglePublish, { isLoading: isToggling }] = useTogglePublishMutation();
+  const [togglePublish] = useTogglePublishMutation();
   const [isImageOpen, setIsImageOpen] = useState<string | null>(null);
 
   if (isLoading) {
