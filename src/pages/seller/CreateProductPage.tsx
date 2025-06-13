@@ -16,6 +16,7 @@ import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 
 // Nouvelle interface pour mieux typer les attributs
@@ -66,9 +67,10 @@ interface Variation {
 }
 
 const CreateProductPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const [showModal, setShowModal] = useState(true);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const typeFromUrl = searchParams.get('type');
+  const [showModal, setShowModal] = useState(true);
   const [name, setName] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [city, setCity] = useState('');
@@ -90,7 +92,7 @@ const CreateProductPage: React.FC = () => {
   console.log(variants)
   
   const [gender, setGender] = useState<number>(0)
-  const [productType, setProductType] = useState<'simple' | 'variable'>('simple');
+  const [productType, setProductType] = useState<'simple' | 'variable'>(typeFromUrl === 'variable' ? 'variable' : 'simple');
   const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender)
   const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender })
@@ -722,30 +724,22 @@ const CreateProductPage: React.FC = () => {
 
   useEffect(() => {
     const type = searchParams.get('type');
-    if (type === 'simple' || type === 'variable') {
-      setSelectedProductType(type);
+    if (type === 'variable' || type === 'simple') {
+      setProductType(type);
       setShowModal(false);
     }
   }, [searchParams]);
 
   const handleProductTypeSelect = async (type: 'simple' | 'variable') => {
-    setSelectedProductType(type);
+    setProductType(type);
+    // Mettre à jour l'URL sans recharger la page
+    navigate(`/seller/create-product?type=${type}`, { replace: true });
   };
 
   const handleConfirmProductType = async () => {
-    if (!selectedProductType) return;
-    
-    setIsLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simuler un chargement
-      setProductType(selectedProductType);
     setShowModal(false);
-      navigate(`?type=${selectedProductType}`);
-    } catch (error) {
-      console.error('Erreur lors de la sélection du type de produit:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    // Mettre à jour l'URL sans recharger la page
+    navigate(`/seller/create-product?type=${productType}`, { replace: true });
   };
 
   // Effet pour générer les variations structurées
@@ -831,7 +825,7 @@ const CreateProductPage: React.FC = () => {
   }, [variationFrames, getAttributes, attributes, globalColorPrice, sizePrices, shoeSizePrices]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50  max-sm:pb-16">
       {/* Modal de sélection du type de produit */}
       {showModal && (
         <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
@@ -947,34 +941,74 @@ const CreateProductPage: React.FC = () => {
         {/* Header avec boutons d'action */}
         <header className="sticky top-0 z-40 bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-            <div>
+            {/* Version mobile */}
+            <div className="md:hidden">
+              <div className="flex items-center justify-between mb-4">
+                <button 
+                  type="button" 
+                  onClick={() => navigate("/seller/products")}
+                  className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
+                >
+                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
+                  {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
+                </h1>
+                <button
+                  type="submit"
+                  className="p-2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500"
+                >
+                  {isLoadingAddProduct ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Save className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+              <p className="text-sm text-gray-600 text-center">
+                {productType === 'simple' 
+                  ? 'Ajoutez un nouveau produit sans variations' 
+                  : 'Créez un produit avec plusieurs variations'}
+              </p>
+            </div>
+
+            {/* Version desktop */}
+            <div className="hidden md:flex items-center justify-between">
+              <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
                   {productType === 'simple' ? 'Créer un produit simple' : 'Créer un produit variable'}
-              </h1>
+                </h1>
                 <p className="text-gray-600 mt-1">
                   {productType === 'simple' 
                     ? 'Ajoutez un nouveau produit sans variations' 
                     : 'Créez un produit avec plusieurs variations'}
-              </p>
-            </div>
+                </p>
+              </div>
               <div className="flex items-center gap-3">
-                <button type="button" className="px-4 py-2 text-gray-700 bg-white border rounded-xl hover:bg-gray-50">
+                <button 
+                  type="button" 
+                  onClick={() => navigate(-1)}
+                  className="px-4 py-2 text-gray-700 bg-white border rounded-xl hover:bg-gray-50"
+                >
                   Annuler
-              </button>
-              <button
+                </button>
+                <button
                   type="submit"
                   className="px-6 py-2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium flex items-center gap-2"
                 >
-                  {isLoadingAddProduct ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                  {isLoadingAddProduct ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
                     <>
                       <Save className="w-4 h-4" />
                       Publier
                     </>
                   )}
-              </button>
+                </button>
+              </div>
             </div>
-          </div>
           </div>
         </header>
 
@@ -988,7 +1022,7 @@ const CreateProductPage: React.FC = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 text-2xl font-medium border-0 border-b focus:ring-0 focus:border-[#ed7e0f]"
+                  className="w-full max-sm:placeholder:text-lg px-4 py-3 text-2xl font-medium border-0 border-b focus:ring-0 focus:border-[#ed7e0f]"
                   placeholder="Nom du produit"
                 />
 
@@ -1000,7 +1034,7 @@ const CreateProductPage: React.FC = () => {
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                        className="w-full max-sm:placeholder:text-md px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                     placeholder="Prix (Fcfa)"
                   
                   />
@@ -1011,7 +1045,7 @@ const CreateProductPage: React.FC = () => {
                     type="number"
                     value={stock}
                     onChange={(e) => setStock(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                        className="w-full max-sm:placeholder:text-sm px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                         placeholder="Quantité disponible"
                   
                   />
@@ -1025,7 +1059,7 @@ const CreateProductPage: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={6}
-                  className="w-full px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                  className="w-full max-sm:placeholder:text-md px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                   placeholder="Description détaillée du produit..."
                 />
                 </div>
@@ -1034,7 +1068,7 @@ const CreateProductPage: React.FC = () => {
               {/* Catégories et sous-catégories */}
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                 <div>
-                  <label className="block text-lg font-semibold mb-4">Genre produit</label>
+                  <label className="block text-lg max-sm:text-sm font-semibold mb-4">Genre produit</label>
                   <Select name='gender' onValueChange={handleChangeGender}>
                     <SelectTrigger className="bg-gray-50 border-0">
                       <SelectValue placeholder="Choisir un genre" />
@@ -1051,7 +1085,7 @@ const CreateProductPage: React.FC = () => {
               {gender !== 0 && (
                   <>
                     <div>
-                    <label className="block text-lg font-semibold mb-4">Catégories</label>
+                    <label className="block max-sm:text-sm text-lg font-semibold mb-4">Catégories</label>
                       {isLoadingCategoriesByGender ? (
                         <div className="flex items-center justify-center h-20">
                           <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
@@ -1139,14 +1173,14 @@ const CreateProductPage: React.FC = () => {
                 <>
                   {/* Photo mise en avant pour produit simple */}
                   <div className="bg-white rounded-2xl shadow-sm p-6">
-                    <h2 className="text-lg font-semibold mb-4">Photo mise en avant</h2>
-                    <div className="aspect-square w-64 h-64 rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
+                    <h2 className="text-lg max-sm:text-sm font-semibold mb-4">Photo mise en avant</h2>
+                    <div className="aspect-square w-64 max-sm:w-44 h-64 max-sm:h-44 rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
                   {featuredImage ? (
                         <div className="relative group h-64">
                       <img
                         src={URL.createObjectURL(featuredImage)}
                         alt="Featured product"
-                        className="w-full h-full object-cover"
+                        className="w-full max-sm:w-44 h-full max-sm:h-44 object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <button
@@ -1175,7 +1209,7 @@ const CreateProductPage: React.FC = () => {
 
                   {/* Galerie d'images pour produit simple */}
                   <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
+                <h2 className="text-lg font-semibold max-sm:text-sm mb-4">Galerie d'images</h2>
                     <div className="grid grid-cols-3 gap-4">
                       {images.map((image, index) => (
                         <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
@@ -1197,8 +1231,8 @@ const CreateProductPage: React.FC = () => {
                   ))}
 
                       <label className="aspect-square rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed border-gray-200">
-                        <Upload className="w-8 h-8 text-gray-400" />
-                        <span className="mt-2 text-sm text-gray-500">Ajouter</span>
+                        <Upload className="w-8 h-8 max-sm:w-5 max-sm:h-5 text-gray-400" />
+                        <span className="mt-2 text-sm max-sm:text-xs text-gray-500">Ajouter</span>
                     <input
                       type="file"
                           className="hidden"
@@ -1216,13 +1250,13 @@ const CreateProductPage: React.FC = () => {
               <div className="bg-white rounded-2xl shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Attributs du produit</h2>
-                    <p className="text-sm text-gray-500 mt-1">Configurez les variations de votre produit</p>
+                    <h2 className="text-lg font-semibold max-sm:text-sm text-gray-900">Attributs du produit</h2>
+                    <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les variations de votre produit</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      className="px-3 py-1.5 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                      className="px-3 py-1.5 max-sm:text-xs text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                       onClick={() => {
                         setAttributes([]);
                         setVariants([]);
@@ -1239,6 +1273,7 @@ const CreateProductPage: React.FC = () => {
                   <div className="grid grid-cols-3 gap-3">
                     <button
                       type="button"
+                     
                       onClick={() => {
                         setAttributes(attributes.filter(attr => !attr.affectsPrice));
                         setVariants([]);
@@ -1256,7 +1291,7 @@ const CreateProductPage: React.FC = () => {
                           addVariationFrame();
                         }
                       }}
-                      className={`p-4 h-24 rounded-xl border-2 transition-all ${
+                      className={`p-4 h-24 rounded-xl max-sm:text-xs border-2 transition-all ${
                         !attributes.some(attr => attr.affectsPrice)
                           ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
                           : 'border-gray-200 hover:border-gray-300'
@@ -1384,8 +1419,8 @@ const CreateProductPage: React.FC = () => {
 
               <div className="bg-white rounded-2xl shadow-sm p-6">
                 <div className="mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900">Variations du produit</h2>
-                  <p className="text-sm text-gray-500 mt-1">Configurez les différentes variations de votre produit</p>
+                  <h2 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variations du produit</h2>
+                  <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les différentes variations de votre produit</p>
                 </div>
 
                 {/* Liste des cadres de variation */}
@@ -1395,11 +1430,11 @@ const CreateProductPage: React.FC = () => {
                       <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-[#ed7e0f]/10 flex items-center justify-center">
-                            <span className="text-[#ed7e0f] font-semibold">
+                            <span className="text-[#ed7e0f] font-semibold max-sm:text-xs">
                               {variationFrames.indexOf(frame) + 1}
                             </span>
                           </div>
-                          <h3 className="text-lg font-semibold text-gray-900">Variation {variationFrames.indexOf(frame) + 1}</h3>
+                          <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variation {variationFrames.indexOf(frame) + 1}</h3>
                         </div>
                         <button
                           type="button"
@@ -1415,7 +1450,7 @@ const CreateProductPage: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {/* Sélection de la couleur */}
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Couleur</label>
+                            <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Couleur</label>
                             <Select
                               value={frame.colorId?.toString()}
                               onValueChange={(value) => updateVariationFrame(frame.id, { colorId: Number(value) })}
@@ -1443,7 +1478,7 @@ const CreateProductPage: React.FC = () => {
                           {/* Champ quantité pour couleur uniquement */}
                           {!attributes.some(attr => attr.affectsPrice) && (
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Quantité</label>
+                              <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quantité</label>
                               <input
                                 type="number"
                                 min={1}
@@ -1459,7 +1494,7 @@ const CreateProductPage: React.FC = () => {
                           {/* Sélection de la taille ou pointure */}
                           {attributes.some(attr => attr.name === 'Taille') && (
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Taille</label>
+                              <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Taille</label>
                               <div className="space-y-3">
                                 <Select
                                   onValueChange={(value) => {
@@ -1508,7 +1543,7 @@ const CreateProductPage: React.FC = () => {
 
                           {attributes.some(attr => attr.name === 'Pointure') && (
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Pointure</label>
+                              <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Pointure</label>
                               <div className="space-y-3">
                                 <Select
                                   onValueChange={(value) => {
@@ -1558,7 +1593,7 @@ const CreateProductPage: React.FC = () => {
 
                         {/* Section images */}
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Images de la variation</label>
+                          <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Images de la variation</label>
                           <div className="grid grid-cols-4 gap-3">
                             {frame.images.map((image, idx) => (
                               <div key={idx} className="relative group aspect-square">
@@ -1600,15 +1635,15 @@ const CreateProductPage: React.FC = () => {
                     onClick={addVariationFrame}
                     className="px-4 py-3 bg-transparent border border-[#ed7e0f] hover:bg-[#ed7e0f]/5 text-[#ed7e0f] rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
                   >
-                    <Plus className="w-5 h-5" />
-                    Ajouter une variation
+                    <Plus className="w-5 max-sm:w-4 h-5" />
+                    <span className="max-sm:text-xs">Ajouter une variation</span>
                   </button>
                 </div>
               </div>
 
                 {/* Section des prix par taille/pointure */}
                 <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Prix des variations</h3>
+                  <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900 mb-4">Prix des variations</h3>
                   
                   {/* Prix global pour les variations de couleur uniquement */}
                   {!attributes.some(attr => attr.affectsPrice) && (

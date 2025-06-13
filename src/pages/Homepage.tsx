@@ -51,9 +51,9 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
-        <TopBar />
-          <Header />
-    
+      <TopBar />
+      <Header />
+      
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-[#ed7e0f] to-[#6e0a13] py-20">
         <div className="container mx-auto px-4">
@@ -232,7 +232,7 @@ const Homepage = () => {
           </p>
         </div>
       </div>
-       
+
       <MobileNav />
     </div>
   );

@@ -249,11 +249,11 @@ export default function ProductListOverview({ products, isLoading }: { products:
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-gray-500">Prix:</span>
-                <div className="font-medium">{product?.product_price?.toLocaleString()} FCFA</div>
+                <div className="font-medium max-sm:text-xs"> {product.variations && product.variations.length > 0 ? "prix variable" : product?.product_price?.toLocaleString() + " FCFA"}</div>
               </div>
               <div>
                 <span className="text-gray-500">Stock:</span>
-                <div className="font-medium">{product.product_quantity}</div>
+                <div className="font-medium max-sm:text-xs">{product.variations && product.variations.length > 0 ? "Quantité variable" : product.product_quantity}</div>
               </div>
               <div>
                 <span className="text-gray-500">Status:</span>
