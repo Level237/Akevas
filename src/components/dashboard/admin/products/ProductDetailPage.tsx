@@ -4,12 +4,13 @@ import { Loader2, X, Check } from "lucide-react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductByUrlQuery } from "@/services/guardService";
-
+import { useTogglePublishMutation } from "@/services/adminService";
+import { toast } from "sonner";
 export default function ProductDetailPageAdmin() {
   const { url } = useParams<{ url: string }>();
   const navigate = useNavigate();
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
-
+  const [togglePublish, { isLoading: isToggling }] = useTogglePublishMutation();
   const [isImageOpen, setIsImageOpen] = useState<string | null>(null);
 
   if (isLoading) {
@@ -29,8 +30,10 @@ export default function ProductDetailPageAdmin() {
   }
 
   const handleTogglePublish = async () => {
-    //await togglePublish({ product_id: product.id, publish: !product.is_published });
-    // Optionnel: refetch ou navigate pour rafraîchir l'état
+    const res = await togglePublish({ product_id: product.id});
+    console.log(res);
+        toast.success("Produit mise a jour avec succès");
+        window.location.reload();
   };
 
   return (
@@ -40,7 +43,7 @@ export default function ProductDetailPageAdmin() {
         <div>
           <h1 className="text-2xl font-bold mb-1">{product.product_name}</h1>
           <div className="flex items-center gap-2">
-            {product.is_published ? (
+            {product.status==1 ? (
               <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs">Publié</span>
             ) : (
               <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700 text-xs">Non publié</span>
@@ -50,11 +53,12 @@ export default function ProductDetailPageAdmin() {
         </div>
         <div className="flex gap-2">
           <Button
-            variant={product.is_published ? "destructive" : "default"}
+            
+            className={product.status===1 ? "bg-red-500" : "bg-green-500"}
             onClick={handleTogglePublish}
             //disabled={isToggling}
           >
-            {!product.status ? (
+            {product.status===1 ? (
               <>
                 <X className="w-4 h-4 mr-2" />
                 Dépublier le produit
@@ -78,12 +82,23 @@ export default function ProductDetailPageAdmin() {
             {/* Colonne images */}
             <div className="md:w-1/3 flex flex-col items-center gap-4">
               <div className="w-full aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center border">
-                <img
+                {
+                    product.variations.length > 0 ? (   
+                        <img
+                  src={product.variations[0].images[0] || "/placeholder.svg"}
+                  alt={product.product_name}
+                  className="object-cover w-full h-full cursor-pointer"
+                  onClick={() => setIsImageOpen(product.product_profile)}
+                />
+                    ) : (
+                        <img
                   src={product.product_profile || "/placeholder.svg"}
                   alt={product.product_name}
                   className="object-cover w-full h-full cursor-pointer"
                   onClick={() => setIsImageOpen(product.product_profile)}
                 />
+                    )
+                }
               </div>
               {/* Galerie verticale */}
               {product.images && product.images.length > 0 && (
@@ -123,7 +138,7 @@ export default function ProductDetailPageAdmin() {
                 <div>
                   <span className="text-gray-500">Statut :</span>
                   <div>
-                    {product.is_published ? (
+                    {product.status==1 ? (
                       <span className="text-green-600 font-semibold">Publié</span>
                     ) : (
                       <span className="text-gray-500 font-semibold">Non publié</span>
@@ -148,7 +163,7 @@ export default function ProductDetailPageAdmin() {
                           {variation.images?.[0] && (
                             <img src={variation.images[0]} alt="var" className="w-12 h-12 object-cover rounded" />
                           )}
-                          <span className="font-medium">{variation.color_name}</span>
+                          <span className="font-medium">{variation.color.name}</span>
                           {variation.size && <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{variation.size}</span>}
                           {variation.shoe_size && <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{variation.shoe_size}</span>}
                         </div>
@@ -175,15 +190,41 @@ export default function ProductDetailPageAdmin() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {/* Image principale */}
             <div className="relative group cursor-pointer" onClick={() => setIsImageOpen(product.product_profile)}>
-              <img 
-                src={product.product_profile || "/placeholder.svg"}
-                alt="Image principale"
-                className="w-full aspect-square object-cover rounded-lg transition-transform group-hover:scale-105"
-              />
+            {
+                    product.variations.length > 0 ? (   
+                        <img
+                  src={product.variations[0].images[0] || "/placeholder.svg"}
+                  alt={product.product_name}
+                  className="object-cover w-full h-full cursor-pointer"
+                  onClick={() => setIsImageOpen(product.product_profile)}
+                />
+                    ) : (
+                        <img
+                  src={product.product_profile || "/placeholder.svg"}
+                  alt={product.product_name}
+                  className="object-cover w-full h-full cursor-pointer"
+                  onClick={() => setIsImageOpen(product.product_profile)}
+                />
+                    )
+                }
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity rounded-lg" />
             </div>
 
             {/* Images additionnelles */}
+
+            
+            {product.variations?.map((variation: any) => (
+              variation.images?.map((img: string, idx: number) => (
+                <div key={`${variation.id}-${idx}`} className="relative group cursor-pointer" onClick={() => setIsImageOpen(img)}>
+                  <img 
+                    src={img}
+                    alt={`Image ${idx + 1}`}
+                    className="w-full aspect-square object-cover rounded-lg transition-transform group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity rounded-lg" />
+                </div>
+              ))
+            ))}
             {product.product_images?.map((img: any, idx: number) => (
               <div key={idx} className="relative group cursor-pointer" onClick={() => setIsImageOpen(img.path)}>
                 <img 

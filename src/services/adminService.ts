@@ -124,6 +124,13 @@ export const adminService = createApi({
                 body:body
             })
 
+        }),
+        togglePublish:builder.mutation({
+            query:({product_id})=>({
+                url:`/api/v1/published/product/${product_id}`,
+                method:"POST",
+                
+            })
         })
     })
 })
@@ -150,5 +157,6 @@ export const {
     useAdminListShopReviewsQuery,
     useDeclineOrValidateShopReviewMutation,
     useSendCoinsToShopMutation,
-    useAddShopMutation
+    useAddShopMutation,
+    useTogglePublishMutation
 } = adminService
