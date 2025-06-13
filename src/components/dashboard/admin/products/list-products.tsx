@@ -1,13 +1,15 @@
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Edit, Trash2,Package } from 'lucide-react'
+import { Edit, Trash2,Package,Eye } from 'lucide-react'
 import { Product } from '@/types/products'
 import { Badge } from '@/components/ui/badge'
 import { useAdminListProductsQuery } from '@/services/adminService'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import OptimizedImage from '@/components/OptimizedImage'
+import { useNavigate } from 'react-router-dom'
 export default function ListProducts({products,isLoading}:{products:Product[],isLoading:boolean}) {
+  const navigate = useNavigate()
   console.log(products)
   if(isLoading){
     return <IsLoadingComponents isLoading={isLoading}/>
@@ -64,6 +66,9 @@ export default function ListProducts({products,isLoading}:{products:Product[],is
                 </Button>
                 <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600">
                   <Trash2 className="h-4 w-4" />
+                </Button>
+                <Button onClick={()=>navigate(`/admin/products/${product.product_url}`)} variant="ghost" size="icon" className="text-blue-500 hover:text-blue-600">
+                  <Eye className="h-4 w-4" />
                 </Button>
               </TableCell>
             </TableRow>

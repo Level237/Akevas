@@ -44,6 +44,7 @@ import CatalogPage from "@/pages/CatalogPage";
 import LegalTermsPage from "@/pages/LegalTerms";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicy";
 import TermsOfUsePage from "@/pages/TermsOfUse";
+import ProductDetailPageAdmin from "@/components/dashboard/admin/products/ProductDetailPage";
   export const routes = createBrowserRouter([
   {
     path: '/',
@@ -128,6 +129,10 @@ import TermsOfUsePage from "@/pages/TermsOfUse";
       }, {
         path: "admin/delivery",
         element: <ListDeveryPage />
+      },
+      {
+        path: "admin/products/:url",
+        element: <ProductDetailPageAdmin />
       },
       {
         path: "admin/delivery/:id",
