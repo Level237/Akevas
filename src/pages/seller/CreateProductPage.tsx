@@ -15,6 +15,8 @@ import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCateg
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
+import { toast } from 'sonner';
+
 
 // Nouvelle interface pour mieux typer les attributs
 interface ProductAttribute {
@@ -166,62 +168,237 @@ const CreateProductPage: React.FC = () => {
     setImages(images.filter((_, i) => i !== index));
   };
 
-
-
-
+ 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validation des champs requis
-    if (!name.trim()) {
-      alert("Le nom du produit est requis");
-      return;
+    // Validation pour les produits simples
+    if (productType === 'simple') {
+      if (!name.trim()) {
+        toast.error('Le nom du produit est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (!price || Number(price) <= 0) {
+        toast.error('Le prix du produit est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+       
+        return;
+      }
+
+      if (!stock || Number(stock) <= 0) {
+        toast.error('La quantité du produit est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (!description.trim()) {
+        toast.error('La description du produit est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+      
+        return;
+      }
+
+      if (gender === 0) {
+        toast.error('Le genre du produit est obligatoire', {
+            description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (selectedCategories.length === 0) {
+        toast.error('La catégorie du produit est obligatoire', {
+          description: "Veuillez sélectionner au moins une catégorie",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (selectedSubCategories.length === 0) {
+        toast.error('La sous-catégorie du produit est obligatoire', {
+          description: "Veuillez sélectionner au moins une sous-catégorie",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (!whatsappNumber.trim()) {
+        toast.error('Le numéro de téléphone est obligatoire', {
+            description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (!city) {
+        toast.error('La ville du produit est obligatoire', {
+            description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (!featuredImage) {
+        toast.error('L\'image de profil du produit est obligatoire', {
+            description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (images.length === 0) {
+        toast.error('Veuillez ajouter des images', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
     }
 
-    if (selectedProductType === 'simple' && (!price || Number(price) <= 0)) {
-      alert("Le prix doit être supérieur à 0");
-      return;
+    // Validation pour les produits variables
+    if (productType === 'variable') {
+      if (!name.trim()) {
+        toast.error('Le nom du produit est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (!description.trim()) {
+        toast.error('La description du produit est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (gender === 0) {
+        toast.error('Le genre du produit est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (selectedCategories.length === 0) {
+        toast.error('La catégorie du produit est obligatoire', {
+          description: "Veuillez sélectionner au moins une catégorie",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (selectedSubCategories.length === 0) {
+        toast.error('La sous-catégorie du produit est obligatoire', {
+          description: "Veuillez sélectionner au moins une sous-catégorie",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (!whatsappNumber.trim()) {
+        toast.error('Le numéro de téléphone est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      if (!city) {
+        toast.error('La ville du produit est obligatoire', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      // Validation des variations
+      if (variationFrames.length === 0) {
+        toast.error('Veuillez ajouter des variations', {
+          description: "Veuillez remplir tous les champs obligatoires",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      // Vérifier que chaque variation a une couleur et des images
+      const invalidVariations = variationFrames.some(frame => 
+        !frame.colorId || frame.images.length === 0
+      );
+
+      if (invalidVariations) {
+        toast.error('Veuillez remplir tous les champs obligatoires', {
+          description: "Tous les champs marqués d'un * sont requis.",
+          duration: 4000, // ms
+        });
+        return;
+      }
+
+      // Vérifier les quantités pour les variations
+      if (!attributes.some(attr => attr.affectsPrice)) {
+        const invalidQuantities = variationFrames.some(frame => 
+          !frame.quantity || frame.quantity <= 0
+        );
+
+        if (invalidQuantities) {
+          toast.error('Veuillez remplir tous les champs obligatoires', {
+            description: "Tous les champs marqués d'un * sont requis.",
+            duration: 4000, // ms
+          });
+          return;
+        }
+      } else {
+        // Vérifier les quantités pour les tailles/pointures
+        const invalidSizes = variationFrames.some(frame => 
+          frame.sizes.some(size => !size.quantity || size.quantity <= 0) ||
+          frame.shoeSizes.some(size => !size.quantity || size.quantity <= 0)
+        );
+
+        if (invalidSizes) {
+          toast.error('Veuillez remplir tous les champs obligatoires', {
+            description: "Tous les champs marqués d'un * sont requis.",
+            duration: 4000, // ms
+          });
+          return;
+        }
+      }
+
+      // Vérifier les prix
+      if (!attributes.some(attr => attr.affectsPrice)) {
+        if (!globalColorPrice || globalColorPrice <= 0) {
+          toast.error('Veuillez remplir tous les champs obligatoires', {
+            description: "Tous les champs marqués d'un * sont requis.",
+            duration: 4000, // ms
+          });
+            return;
+        }
+      } else {
+        const invalidPrices = Object.values(sizePrices).some(price => !price || price <= 0) ||
+                            Object.values(shoeSizePrices).some(price => !price || price <= 0);
+
+        if (invalidPrices) {
+          toast.error('Veuillez remplir tous les champs obligatoires', {
+            description: "Tous les champs marqués d'un * sont requis.",
+            duration: 4000, // ms
+          });
+          return;
+        }
+      }
     }
 
-    if (selectedProductType === 'simple' && (!stock || Number(stock) <= 0)) {
-      alert("Le stock doit être supérieur à 0");
-      return;
-    }
-
-    if (gender === 0) {
-      alert("Le genre du produit est requis");
-      return;
-    }
-
-    if (selectedCategories.length === 0) {
-      alert("Veuillez sélectionner au moins une catégorie");
-      return;
-    }
-
-    if (selectedSubCategories.length === 0) {
-      alert("Veuillez sélectionner au moins une sous-catégorie");
-      return;
-    }
-
-    if (!city) {
-      alert("La ville cible est requise");
-      return;
-    }
-
-    if (!whatsappNumber.trim()) {
-      alert("Le numéro WhatsApp est requis");
-      return;
-    }
-
-    if (selectedProductType === 'simple' && !featuredImage) {
-      alert("Une photo mise en avant est requise");
-      return;
-    }
-
-    // Afficher les variations structurées
- 
-
+    // Si toutes les validations sont passées, continuer avec la soumission
     try {
       const formData = new FormData()
       formData.append('product_name', name);
@@ -296,7 +473,17 @@ const CreateProductPage: React.FC = () => {
       console.log(response)
       navigate('/seller/products')
     } catch (error) {
-      console.log(error)
+      
+
+      toast.error('Une erreur est survenue lors de la création du produit', {
+        description: "Veuillez réessayer",
+        action: {
+          label: "Réessayer",
+          onClick: () => window.location.href = "/seller/create-product"
+        },
+        duration: 4000, // ms
+      });
+      console.error(error);
     }
   };
 
@@ -803,7 +990,6 @@ const CreateProductPage: React.FC = () => {
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-4 py-3 text-2xl font-medium border-0 border-b focus:ring-0 focus:border-[#ed7e0f]"
                   placeholder="Nom du produit"
-                  required
                 />
 
                 {productType === 'simple' && (
@@ -816,7 +1002,7 @@ const CreateProductPage: React.FC = () => {
                     onChange={(e) => setPrice(e.target.value)}
                         className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                     placeholder="Prix (Fcfa)"
-                    required
+                  
                   />
                     </div>
                     <div>
@@ -827,7 +1013,7 @@ const CreateProductPage: React.FC = () => {
                     onChange={(e) => setStock(e.target.value)}
                         className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                         placeholder="Quantité disponible"
-                    required
+                  
                   />
                 </div>
                   </div>
@@ -849,7 +1035,7 @@ const CreateProductPage: React.FC = () => {
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                 <div>
                   <label className="block text-lg font-semibold mb-4">Genre produit</label>
-                  <Select name='gender' onValueChange={handleChangeGender} required>
+                  <Select name='gender' onValueChange={handleChangeGender}>
                     <SelectTrigger className="bg-gray-50 border-0">
                       <SelectValue placeholder="Choisir un genre" />
                     </SelectTrigger>
@@ -919,14 +1105,14 @@ const CreateProductPage: React.FC = () => {
                         onChange={(e) => setWhatsappNumber(e.target.value)}
                         className="w-full pl-12 pr-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                         placeholder="Ex: +225 0123456789"
-                        required
+                        
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Ville cible</label>
-                    <Select name='city' onValueChange={handleCityChange} required>
+                    <Select name='city' onValueChange={handleCityChange} >
                       <SelectTrigger className="bg-gray-50 border-0">
                         <SelectValue placeholder="Sélectionnez votre ville de livraison" />
                       </SelectTrigger>
@@ -1265,7 +1451,7 @@ const CreateProductPage: React.FC = () => {
                                 onChange={e => updateVariationFrame(frame.id, { quantity: Number(e.target.value) })}
                                 className="w-full px-4 py-2 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
                                 placeholder="Quantité pour cette couleur"
-                                required
+                               
                               />
                             </div>
                           )}
