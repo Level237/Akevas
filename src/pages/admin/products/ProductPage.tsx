@@ -7,6 +7,7 @@ import { ListProductsContainer } from "@/components/dashboard/admin/products/lis
 
 
 export default function AdminProductListPage() {
+  
   return (
     <main className="p-4 md:p-6 mt-16">
     <div className="flex justify-between items-center mb-6">

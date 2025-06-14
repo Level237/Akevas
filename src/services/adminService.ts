@@ -131,6 +131,10 @@ export const adminService = createApi({
                 method:"POST",
                 
             })
+        }),
+        allCategories:builder.query({
+            query:()=>'/api/v1/admin/all/categories',
+            providesTags:['admin']
         })
     })
 })
@@ -158,5 +162,6 @@ export const {
     useDeclineOrValidateShopReviewMutation,
     useSendCoinsToShopMutation,
     useAddShopMutation,
-    useTogglePublishMutation
+    useTogglePublishMutation,
+    useAllCategoriesQuery
 } = adminService

@@ -46,6 +46,7 @@ import PrivacyPolicyPage from "@/pages/PrivacyPolicy";
 import TermsOfUsePage from "@/pages/TermsOfUse";
 import ProductDetailPageAdmin from "@/components/dashboard/admin/products/ProductDetailPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import ListCategoriesPage from "@/pages/admin/categories/ListCategoriesPage";
 
 export const routes = createBrowserRouter([
   {
@@ -165,6 +166,10 @@ export const routes = createBrowserRouter([
       {
         path:"admin/shop/new",
         element:<AddShopPage/>
+      },
+      {
+        path: "admin/categories",
+        element: <ListCategoriesPage />
       }
     ]
   },
