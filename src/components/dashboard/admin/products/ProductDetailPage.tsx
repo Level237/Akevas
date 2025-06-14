@@ -88,7 +88,7 @@ export default function ProductDetailPageAdmin() {
                   src={product.variations[0].images[0] || "/placeholder.svg"}
                   alt={product.product_name}
                   className="object-cover w-full h-full cursor-pointer"
-                  onClick={() => setIsImageOpen(product.product_profile)}
+                  onClick={() => setIsImageOpen(product.variations[0].images[0])}
                 />
                     ) : (
                         <img
@@ -196,7 +196,7 @@ export default function ProductDetailPageAdmin() {
                   src={product.variations[0].images[0] || "/placeholder.svg"}
                   alt={product.product_name}
                   className="object-cover w-full h-full cursor-pointer"
-                  onClick={() => setIsImageOpen(product.product_profile)}
+                  onClick={() => setIsImageOpen(product.variations[0].images[0])}
                 />
                     ) : (
                         <img

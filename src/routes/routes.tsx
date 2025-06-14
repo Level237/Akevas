@@ -45,10 +45,16 @@ import LegalTermsPage from "@/pages/LegalTerms";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicy";
 import TermsOfUsePage from "@/pages/TermsOfUse";
 import ProductDetailPageAdmin from "@/components/dashboard/admin/products/ProductDetailPage";
-  export const routes = createBrowserRouter([
+import NotFoundPage from "@/pages/NotFoundPage";
+
+export const routes = createBrowserRouter([
   {
     path: '/',
     element: <Homepage />
+  },
+  {
+    path:"*",
+    element:<NotFoundPage/>
   },
   {
     path: '/legal-terms',
@@ -209,5 +215,8 @@ import ProductDetailPageAdmin from "@/components/dashboard/admin/products/Produc
   {
     path:'/pay/mobile-money',
     element:<MobileMoneyPaymentPage/>
-  }
-]);
+  },
+  
+],
+
+);
