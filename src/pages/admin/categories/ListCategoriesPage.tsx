@@ -31,7 +31,7 @@ export default function ListCategoriesPage() {
         <h1 className="text-2xl font-bold text-gray-900">Catégories</h1>
         <Button 
           className="bg-[#ed7e0f] hover:bg-[#d66d00] text-white"
-          onClick={() => navigate('/admin/categories/new')}
+          onClick={() => navigate('/admin/category/new')}
         >
           Ajouter une catégorie
         </Button>
