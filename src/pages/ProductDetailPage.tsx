@@ -379,7 +379,7 @@ const ProductDetailPage: React.FC = () => {
                     {currentInfo.price} FCFA
                   </span>
                   {/* Description courte */}
-                  <p className="text-gray-800 font-bold line-clamp-3">{product.product_description}</p>
+                  <p className="text-gray-800  line-clamp-3">{product.product_description}</p>
                   {/* Variants */}
                   {product?.variations && product.variations.length > 0 && (
                     <div className="space-y-6">

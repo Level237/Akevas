@@ -170,11 +170,11 @@ const CartPage: React.FC = () => {
                           </div>
                           <span className="font-medium max-sm:text-sm text-gray-900">
                             
-                            {item.selectedVariation.isColorOnly===true &&
+                            {item.selectedVariation && item.selectedVariation.isColorOnly===true &&
                              parseFloat(item.selectedVariation?.price) * item.quantity
                           }
-                          {(item.selectedVariation.isColorOnly===false &&
-                             parseFloat(item.selectedVariation?.attributes[0].price) * item.quantity)
+                          {item.selectedVariation && item.selectedVariation.isColorOnly===false &&
+                             parseFloat(item.selectedVariation?.attributes[0].price) * item.quantity
                           }
                           {!item.selectedVariation && parseFloat(item.product.product_price) * item.quantity}
                           </span>
