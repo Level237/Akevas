@@ -64,6 +64,7 @@ export default function MobileMoneyPaymentPage() {
         }else{
           formData = {
             phone:formDataPayment.phone,
+            type:"product",
             paymentPhone:formDataPayment.paymentPhone,
             s: formDataPayment.s,
             productsPayments:productsPayments,
