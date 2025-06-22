@@ -14,9 +14,32 @@ export default function MobileMoneyPaymentPage() {
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
   const [pollingEnabled, setPollingEnabled] = useState(false);
   const pollingInterval = 5000; // 5 seconds interval for polling
-  
+  const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
- 
+  const delay = Math.floor(Math.random() * (30000 - 20000 + 1)) + 20000;
+
+   const pollStatus = async () => {
+    if (!verificationData) return;
+   
+    if (verificationData.status === 'complete') {
+      setPaymentStatus('success');
+      setMessage("Paiement confirmé! Redirection vers votre compte...");
+      setPollingEnabled(false);
+      clearTimeout(timeoutRef.current);
+      // Redirect after success
+      const timer = window.setTimeout(() => {
+        //navigate('/seller/confirmation');
+      }, 3000);
+      timersRef.current.push(timer);
+      
+    } else if (verificationData.status === 'failed') {
+      setPaymentStatus('failed');
+      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
+      setPollingEnabled(false);
+    }else{
+      timeoutRef.current = setTimeout(pollStatus, delay);
+    }
+  };
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
   console.log(formDataPayment)
   let variations=null;
@@ -30,10 +53,7 @@ export default function MobileMoneyPaymentPage() {
   
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
-  const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '', {
-    pollingInterval: pollingEnabled ? pollingInterval : 0,
-    skip: !pollingEnabled || !paymentRef
-  });
+  const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '');
  
   
   // Timer refs for cleanup
@@ -111,25 +131,10 @@ export default function MobileMoneyPaymentPage() {
   // Listen for payment verification updates
   //console.log(verificationData)
   useEffect(() => {
-    if (!verificationData) return;
-    console.log(verificationData.status)
-    if (verificationData.status === 'complete') {
-      setPaymentStatus('success');
-      setMessage("Paiement confirmé! Redirection vers votre compte...");
-      setPollingEnabled(false);
-      
-      // Redirect after success
-      const timer = window.setTimeout(() => {
-        //navigate('/seller/confirmation');
-      }, 3000);
-      timersRef.current.push(timer);
-      
-    } else if (verificationData.status === 'failed') {
-      setPaymentStatus('failed');
-      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
-      setPollingEnabled(false);
-    }
+    pollStatus();
     // Continue polling if status is pending
+
+    return () => clearTimeout(timeoutRef.current); // nettoyage
   }, [verificationData]);
   
   // Cleanup on unmount
