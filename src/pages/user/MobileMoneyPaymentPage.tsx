@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useInitProductPaymentMutation, useVerifyPaymentQuery } from '@/services/auth';
+import { useConfirmPaymentMutation, useInitProductPaymentMutation, useVerifyPaymentQuery, useWebhookPaymentMutation } from '@/services/auth';
 
 
 export default function MobileMoneyPaymentPage() {
@@ -12,8 +12,8 @@ export default function MobileMoneyPaymentPage() {
   const [paymentStatus, setPaymentStatus] = useState<'initializing' | 'waiting' | 'failed' | 'success'>('initializing');
   const [message, setMessage] = useState("Patientez, votre paiement est en cours d'initialisation...");
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
-  const [pollingEnabled, setPollingEnabled] = useState(false);
-  const pollingInterval = 5000; // 5 seconds interval for polling
+  const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
+  
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
   const delay = Math.floor(Math.random() * (30000 - 20000 + 1)) + 20000;
@@ -23,11 +23,13 @@ export default function MobileMoneyPaymentPage() {
    
     if (verificationData.status === 'complete') {
       setPaymentStatus('success');
-      setMessage("Paiement confirmé! Redirection vers votre compte...");
-      setPollingEnabled(false);
+      
+      setIsGeneratingTicket(true);
+      
       clearTimeout(timeoutRef.current);
       // Redirect after success
       const timer = window.setTimeout(() => {
+        setIsGeneratingTicket(false);
         //navigate('/seller/confirmation');
       }, 3000);
       timersRef.current.push(timer);
@@ -35,8 +37,9 @@ export default function MobileMoneyPaymentPage() {
     } else if (verificationData.status === 'failed') {
       setPaymentStatus('failed');
       setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
-      setPollingEnabled(false);
-    }else{
+      
+    }
+    else{
       timeoutRef.current = setTimeout(pollStatus, delay);
     }
   };
@@ -55,6 +58,7 @@ export default function MobileMoneyPaymentPage() {
   const [initPayment] = useInitProductPaymentMutation();
   const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '');
  
+  const [webhookPayment] = useWebhookPaymentMutation();
   
   // Timer refs for cleanup
   const timersRef = useRef<number[]>([]);
@@ -100,6 +104,8 @@ export default function MobileMoneyPaymentPage() {
         const response = await initPayment(formData);
         console.log(response)
         if (response.data.statusCharge === "Accepted") {
+          const confirmResponse = await webhookPayment(formData);
+          console.log(confirmResponse)
           setPaymentRef(response.data.reference);
           setPaymentStatus('waiting');
           if(formDataPayment.paymentMethod==="cm.orange"){
@@ -108,7 +114,7 @@ export default function MobileMoneyPaymentPage() {
             setMessage("Confirmez votre transaction en composant *126#");
           }
           
-          setPollingEnabled(true);
+          
         } else {
           setPaymentStatus('failed');
           setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");
@@ -128,8 +134,7 @@ export default function MobileMoneyPaymentPage() {
     };
   }, []);
   
-  // Listen for payment verification updates
-  //console.log(verificationData)
+  
   useEffect(() => {
     pollStatus();
     // Continue polling if status is pending
@@ -289,6 +294,21 @@ export default function MobileMoneyPaymentPage() {
                 </motion.div>
                 <h3 className="text-xl font-semibold mb-2 text-green-600">Paiement réussi!</h3>
                 <p className="text-gray-600">{message}</p>
+
+                {isGeneratingTicket && (
+                  <div className="flex flex-col items-center mt-6">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+                      className="w-10 h-10 mb-2 text-blue-500"
+                    >
+                      <RefreshCw size={40} />
+                    </motion.div>
+                    <span className="text-sm text-gray-500 font-medium">
+                      Veuillez patienter, votre ticket de paiement est en train d'être généré...
+                    </span>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
