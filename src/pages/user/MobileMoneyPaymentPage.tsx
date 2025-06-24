@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useConfirmPaymentMutation, useInitProductPaymentMutation, useVerifyPaymentQuery, useWebhookPaymentMutation } from '@/services/auth';
+import { useInitProductPaymentMutation, useVerifyPaymentMutation, useWebhookPaymentMutation } from '@/services/auth';
 
 
 export default function MobileMoneyPaymentPage() {
@@ -13,15 +13,23 @@ export default function MobileMoneyPaymentPage() {
   const [message, setMessage] = useState("Patientez, votre paiement est en cours d'initialisation...");
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
+  const [step, setStep] = useState<'start' | 'processing'>('start');
   
+  type VerifyPaymentResponse = { status: string };
+  const [verifyPayment] = useVerifyPaymentMutation();
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
   const delay = Math.floor(Math.random() * (30000 - 20000 + 1)) + 20000;
-
+  let responseData :any;
    const pollStatus = async () => {
-    if (!verificationData) return;
-   
-    if (verificationData.status === 'complete') {
+    
+    if (paymentRef && paymentRef.length > 0) {
+      responseData = await verifyPayment({reference:paymentRef});
+    }
+    
+    if (!responseData) return;
+   console.log(responseData)
+    if (responseData && responseData.status === 'complete') {
       setPaymentStatus('success');
       
       setIsGeneratingTicket(true);
@@ -34,7 +42,7 @@ export default function MobileMoneyPaymentPage() {
       }, 3000);
       timersRef.current.push(timer);
       
-    } else if (verificationData.status === 'failed') {
+    } else if (responseData.status === 'failed') {
       setPaymentStatus('failed');
       setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
       
@@ -54,25 +62,27 @@ export default function MobileMoneyPaymentPage() {
     productsPayments=formDataPayment.productsPayments
   }
   
+  
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
-  const { data: verificationData} = useVerifyPaymentQuery(paymentRef || '');
+
  
   const [webhookPayment] = useWebhookPaymentMutation();
   
   // Timer refs for cleanup
   const timersRef = useRef<number[]>([]);
   
-  // Initialize payment on component mount
-  useEffect(() => {
-    const initializePayment = async () => {
-      try {
-        let formData;
+  // Add this ref in the component with the other states
+  const hasInitialized = useRef(false);
+  const initializePayment = async () => {
+
+    let formData;
         if(formDataPayment.s==0){
           formData = {
             phone:formDataPayment.phone,
             paymentPhone:formDataPayment.paymentPhone,
             productId: formDataPayment.productId,
+            reference:paymentRef,
             s: formDataPayment.s,
             quantity: formDataPayment.quantity,
             methodChanel:formDataPayment.paymentMethod,
@@ -88,9 +98,9 @@ export default function MobileMoneyPaymentPage() {
         }else{
           formData = {
             phone:formDataPayment.phone,
-            type:"product",
             paymentPhone:formDataPayment.paymentPhone,
             s: formDataPayment.s,
+            reference:paymentRef,
             productsPayments:productsPayments,
             quantity: formDataPayment.quantity,
             methodChanel:formDataPayment.paymentMethod,
@@ -100,34 +110,42 @@ export default function MobileMoneyPaymentPage() {
             address: formDataPayment.address,
           }
         }
+    setStep('processing');
+    setPaymentStatus('initializing');
+    try {
+      const response = await initPayment(formData);
+      console.log(response);
+      console.log('leveljdkk')
+      if (response.data.statusCharge === "Accepted" ) {
        
-        const response = await initPayment(formData);
-        console.log(response)
-        if (response.data.statusCharge === "Accepted") {
-          const confirmResponse = await webhookPayment(formData);
-          console.log(confirmResponse)
-          setPaymentRef(response.data.reference);
-          setPaymentStatus('waiting');
-          if(formDataPayment.paymentMethod==="cm.orange"){
-            setMessage("Confirmez votre transaction en composant #150*50#");
-          }else{
-            setMessage("Confirmez votre transaction en composant *126#");
-          }
-          
-          
-        } else {
-          setPaymentStatus('failed');
-          setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");
-        }
         
-      } catch (error) {
+        const confirmResponse = await webhookPayment(formData);
+        console.log(confirmResponse);
+        setPaymentRef(response.data.reference);
+        setPaymentStatus('waiting');
+        
+        if(formDataPayment.paymentMethod === "cm.orange") {
+          setMessage("Confirmez votre transaction en composant #150*50#");
+        } else {
+          setMessage("Confirmez votre transaction en composant *126#");
+        }
+      } else {
         setPaymentStatus('failed');
-        setMessage("Impossible d'initialiser le paiement. Veuillez réessayer plus tard.");
+        setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");
       }
-    };
+    } catch (error) {
+      setPaymentStatus('failed');
+      setMessage("Impossible d'initialiser le paiement. Veuillez réessayer plus tard.");
+    }
+  };
+  // Initialize payment on component mount
+  useEffect(() => {
+
     
-    const timer = window.setTimeout(initializePayment, 1500);
-    timersRef.current.push(timer);
+   
+    
+   
+   
     
     return () => {
       timersRef.current.forEach(timer => window.clearTimeout(timer));
@@ -140,7 +158,7 @@ export default function MobileMoneyPaymentPage() {
     // Continue polling if status is pending
 
     return () => clearTimeout(timeoutRef.current); // nettoyage
-  }, [verificationData]);
+  }, [verifyPayment]);
   
   // Cleanup on unmount
   useEffect(() => {
@@ -209,109 +227,125 @@ export default function MobileMoneyPaymentPage() {
         
         {/* Status content */}
         <div className="p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
-          <AnimatePresence mode="wait">
-            {paymentStatus === 'initializing' && (
-              <motion.div
-                key="initializing"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center"
+          {step === 'start' ? (
+            <div className="flex flex-col items-center justify-center p-8">
+              <Phone className="w-12 h-12 text-blue-500 mb-4" />
+              <h2 className="text-xl font-bold mb-2">Démarrer le paiement</h2>
+              <p className="mb-6 text-gray-600">
+                Cliquez sur le bouton ci-dessous pour lancer le processus de paiement mobile money.
+              </p>
+              <Button
+                onClick={initializePayment}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
               >
+                Démarrer le paiement
+              </Button>
+            </div>
+          ) : (
+            <AnimatePresence mode="wait">
+              {paymentStatus === 'initializing' && (
                 <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                  className={`w-16 h-16 mb-5  ${formDataPayment.paymentMethod==="cm.orange" ? "text-[#ff7900]" : "text-blue-600"}`}
+                  key="initializing"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center"
                 >
-                  <RefreshCw size={64} />
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                    className={`w-16 h-16 mb-5  ${formDataPayment.paymentMethod==="cm.orange" ? "text-[#ff7900]" : "text-blue-600"}`}
+                  >
+                    <RefreshCw size={64} />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold mb-2">Initialisation du paiement</h3>
+                  <p className="text-gray-600">{message}</p>
                 </motion.div>
-                <h3 className="text-xl font-semibold mb-2">Initialisation du paiement</h3>
-                <p className="text-gray-600">{message}</p>
-              </motion.div>
-            )}
-            
-            {paymentStatus === 'waiting' && (
-              <motion.div
-                key="waiting"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center"
-              >
+              )}
+              
+              {paymentStatus === 'waiting' && (
                 <motion.div
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: [0.8, 1.1, 0.8] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className={`w-16 h-16 mb-5 ${formDataPayment.paymentMethod==="cm.orange" ? "text-[#ff7900]" : "text-blue-600"}`}
+                  key="waiting"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center"
                 >
-                  <Clock size={64} />
-                </motion.div>
-                <h3 className="text-xl font-semibold mb-2">En attente de confirmation</h3>
-                <p className="text-gray-600 mb-4">{message}</p>
-                <div className={` p-3 rounded-xl text-sm ${formDataPayment.paymentMethod==="cm.orange" ? "bg-orange-100 text-orange-800" : "text-blue-800 bg-blue-100"}  font-medium`}>
-                  #150*50#
-                </div>
-              </motion.div>
-            )}
-            
-            {paymentStatus === 'failed' && (
-              <motion.div
-                key="failed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center"
-              >
-                <div className="w-16 h-16 mb-5 text-red-500">
-                  <AlertCircle size={64} />
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-red-600">Échec du paiement</h3>
-                <p className="text-gray-600 mb-6">{message}</p>
-                <Button 
-                  onClick={handleRetry}
-                  className={` ${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#e56800]" : "bg-blue-800 hover:bg-blue-800/80"} text-white `}
-                >
-                  Réessayer
-                </Button>
-              </motion.div>
-            )}
-            
-            {paymentStatus === 'success' && (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center"
-              >
-                <motion.div
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 10 }}
-                  className="w-16 h-16 mb-5 text-green-500"
-                >
-                  <CheckCircle size={64} />
-                </motion.div>
-                <h3 className="text-xl font-semibold mb-2 text-green-600">Paiement réussi!</h3>
-                <p className="text-gray-600">{message}</p>
-
-                {isGeneratingTicket && (
-                  <div className="flex flex-col items-center mt-6">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-                      className="w-10 h-10 mb-2 text-blue-500"
-                    >
-                      <RefreshCw size={40} />
-                    </motion.div>
-                    <span className="text-sm text-gray-500 font-medium">
-                      Veuillez patienter, votre ticket de paiement est en train d'être généré...
-                    </span>
+                  <motion.div
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: [0.8, 1.1, 0.8] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                    className={`w-16 h-16 mb-5 ${formDataPayment.paymentMethod==="cm.orange" ? "text-[#ff7900]" : "text-blue-600"}`}
+                  >
+                    <Clock size={64} />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold mb-2">En attente de confirmation</h3>
+                  <p className="text-gray-600 mb-4">{message}</p>
+                  <div className={` p-3 rounded-xl text-sm ${formDataPayment.paymentMethod==="cm.orange" ? "bg-orange-100 text-orange-800" : "text-blue-800 bg-blue-100"}  font-medium`}>
+                    #150*50#
                   </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+                </motion.div>
+              )}
+              
+              {paymentStatus === 'failed' && (
+                <motion.div
+                  key="failed"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center"
+                >
+                  <div className="w-16 h-16 mb-5 text-red-500">
+                    <AlertCircle size={64} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-red-600">Échec du paiement</h3>
+                  <p className="text-gray-600 mb-6">{message}</p>
+                  <Button 
+                    onClick={handleRetry}
+                    className={` ${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#e56800]" : "bg-blue-800 hover:bg-blue-800/80"} text-white `}
+                  >
+                    Réessayer
+                  </Button>
+                </motion.div>
+              )}
+              
+              {paymentStatus === 'success' && (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                    className="w-16 h-16 mb-5 text-green-500"
+                  >
+                    <CheckCircle size={64} />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold mb-2 text-green-600">Paiement réussi!</h3>
+                  <p className="text-gray-600">{message}</p>
+
+                  {isGeneratingTicket && (
+                    <div className="flex flex-col items-center mt-6">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+                        className="w-10 h-10 mb-2 text-blue-500"
+                      >
+                        <RefreshCw size={40} />
+                      </motion.div>
+                      <span className="text-sm text-gray-500 font-medium">
+                        Veuillez patienter, votre ticket de paiement est en train d'être généré...
+                      </span>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
         </div>
         
         {/* Footer with transaction info */}

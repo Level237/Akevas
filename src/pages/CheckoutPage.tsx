@@ -154,7 +154,7 @@ const CheckoutPage: React.FC = () => {
         }
         
         sessionStorage.setItem("formDataPayment",JSON.stringify(formDataObject));
-        window.location.href = "/pay/mobile-money";
+        //window.location.href = "/pay/mobile-money";
     }else if (s === '0') {
       
         if(productId){

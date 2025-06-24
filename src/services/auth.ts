@@ -149,10 +149,11 @@ export const authService = createApi({
                 body:body
             }),
         }),
-        verifyPayment:builder.query({
-            query:($ref)=>({
-                url:`/api/get/payment/status/${$ref}`,
-                method:'GET',
+        verifyPayment:builder.mutation({
+            query:(formData)=>({
+                url:`/api/get/payment/status`,
+                method:'POST',
+                body:formData
             })
         }),
         webhookPayment:builder.mutation({
@@ -184,5 +185,5 @@ export const {
     useGetListShopReviewsQuery,
     useInitProductPaymentMutation,
     useStatePaymentMutation,
-    useVerifyPaymentQuery
+    useVerifyPaymentMutation
 } = authService
