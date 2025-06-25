@@ -20,36 +20,44 @@ export default function MobileMoneyPaymentPage() {
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
   const delay = Math.floor(Math.random() * (30000 - 20000 + 1)) + 20000;
-  let responseData :any;
+  let isActive = true;
+
    const pollStatus = async () => {
-    
-    if (paymentRef && paymentRef.length > 0) {
-      responseData = await verifyPayment({reference:paymentRef});
+   
+    if(!isActive){
+      return;
     }
+    else{
+      const responseData = await verifyPayment({reference:paymentRef});
+    
     
     if (!responseData) return;
    console.log(responseData)
     if (responseData && responseData.status === 'complete') {
       setPaymentStatus('success');
-      
+      isActive=false;
       setIsGeneratingTicket(true);
       
       clearTimeout(timeoutRef.current);
       // Redirect after success
       const timer = window.setTimeout(() => {
         setIsGeneratingTicket(false);
+        
         //navigate('/seller/confirmation');
       }, 3000);
       timersRef.current.push(timer);
       
     } else if (responseData.status === 'failed') {
       setPaymentStatus('failed');
+      isActive=false;
       setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
       
     }
     else{
       timeoutRef.current = setTimeout(pollStatus, delay);
     }
+    }
+      
   };
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
   console.log(formDataPayment)
@@ -158,7 +166,7 @@ export default function MobileMoneyPaymentPage() {
     // Continue polling if status is pending
 
     return () => clearTimeout(timeoutRef.current); // nettoyage
-  }, [verifyPayment]);
+  }, [paymentRef]);
   
   // Cleanup on unmount
   useEffect(() => {
