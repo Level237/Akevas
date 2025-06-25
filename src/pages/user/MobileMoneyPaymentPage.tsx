@@ -14,16 +14,60 @@ export default function MobileMoneyPaymentPage() {
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
   const [step, setStep] = useState<'start' | 'processing'>('start');
-  
-  type VerifyPaymentResponse = { status: string };
+  let formData;
+  const [webhookPayment] = useWebhookPaymentMutation();
   const [verifyPayment] = useVerifyPaymentMutation();
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
   const delay = Math.floor(Math.random() * (30000 - 20000 + 1)) + 20000;
   let isActive = true;
 
+  const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
+  console.log(formDataPayment)
+  let variations=null;
+  let productsPayments=null;
+  if(formDataPayment.hasVariation && formDataPayment.s==0){
+    variations=formDataPayment.variations;
+  }
+  if(formDataPayment.s==1){
+    productsPayments=formDataPayment.productsPayments
+  }
+
    const pollStatus = async () => {
    
+    if(formDataPayment.s==0){
+      formData = {
+        phone:formDataPayment.phone,
+        paymentPhone:formDataPayment.paymentPhone,
+        productId: formDataPayment.productId,
+        reference:paymentRef,
+        s: formDataPayment.s,
+        quantity: formDataPayment.quantity,
+        methodChanel:formDataPayment.paymentMethod,
+        amount: formDataPayment.amount,
+        price: formDataPayment.price,
+        quarter_delivery: formDataPayment.quarter_delivery,
+        shipping: formDataPayment.shipping,
+        address: formDataPayment.address,
+        hasVariation:formDataPayment.hasVariation,
+        productVariationId: variations?.productVariationId || null,
+        attributeVariationId: variations?.attributeVariationId || null
+      }
+    }else{
+      formData = {
+        phone:formDataPayment.phone,
+        paymentPhone:formDataPayment.paymentPhone,
+        s: formDataPayment.s,
+        reference:paymentRef,
+        productsPayments:productsPayments,
+        quantity: formDataPayment.quantity,
+        methodChanel:formDataPayment.paymentMethod,
+        amount: formDataPayment.amount,
+        quarter_delivery: formDataPayment.quarter_delivery,
+        shipping: formDataPayment.shipping,
+        address: formDataPayment.address,
+      }
+    }
     if(!isActive){
       return;
     }
@@ -33,7 +77,7 @@ export default function MobileMoneyPaymentPage() {
     
     if (!responseData) return;
    console.log(responseData)
-    if (responseData && responseData.status === 'complete') {
+    if (responseData && responseData.data.status === 'complete') {
       setPaymentStatus('success');
       isActive=false;
       setIsGeneratingTicket(true);
@@ -47,50 +91,42 @@ export default function MobileMoneyPaymentPage() {
       }, 3000);
       timersRef.current.push(timer);
       
-    } else if (responseData.status === 'failed') {
+    } else if (responseData.data.status === 'failed') {
       setPaymentStatus('failed');
       isActive=false;
       setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
       
-    }
-    else{
+    }else if(responseData.data.status==="processing"){
+      const confirmResponse = await webhookPayment(formData);
       timeoutRef.current = setTimeout(pollStatus, delay);
+        console.log(confirmResponse);
     }
+   
     }
       
   };
-  const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
-  console.log(formDataPayment)
-  let variations=null;
-  let productsPayments=null;
-  if(formDataPayment.hasVariation && formDataPayment.s==0){
-    variations=formDataPayment.variations;
-  }
-  if(formDataPayment.s==1){
-    productsPayments=formDataPayment.productsPayments
-  }
+ 
   
   
   // RTK Query hooks
   const [initPayment] = useInitProductPaymentMutation();
 
  
-  const [webhookPayment] = useWebhookPaymentMutation();
+  
   
   // Timer refs for cleanup
   const timersRef = useRef<number[]>([]);
   
   // Add this ref in the component with the other states
-  const hasInitialized = useRef(false);
+  
   const initializePayment = async () => {
-
     let formData;
+    
         if(formDataPayment.s==0){
           formData = {
             phone:formDataPayment.phone,
             paymentPhone:formDataPayment.paymentPhone,
             productId: formDataPayment.productId,
-            reference:paymentRef,
             s: formDataPayment.s,
             quantity: formDataPayment.quantity,
             methodChanel:formDataPayment.paymentMethod,
@@ -108,7 +144,7 @@ export default function MobileMoneyPaymentPage() {
             phone:formDataPayment.phone,
             paymentPhone:formDataPayment.paymentPhone,
             s: formDataPayment.s,
-            reference:paymentRef,
+            
             productsPayments:productsPayments,
             quantity: formDataPayment.quantity,
             methodChanel:formDataPayment.paymentMethod,
@@ -127,8 +163,7 @@ export default function MobileMoneyPaymentPage() {
       if (response.data.statusCharge === "Accepted" ) {
        
         
-        const confirmResponse = await webhookPayment(formData);
-        console.log(confirmResponse);
+        
         setPaymentRef(response.data.reference);
         setPaymentStatus('waiting');
         
