@@ -229,14 +229,14 @@ export default function MobileMoneyPaymentPage() {
         <div className="p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
           {step === 'start' ? (
             <div className="flex flex-col items-center justify-center p-8">
-              <Phone className="w-12 h-12 text-blue-500 mb-4" />
+              <Phone className={`w-12 h-12 mb-5 ${formDataPayment.paymentMethod==="cm.orange" ? "text-[#ff7900]" : "text-blue-600"} `} />
               <h2 className="text-xl font-bold mb-2">Démarrer le paiement</h2>
               <p className="mb-6 text-gray-600">
                 Cliquez sur le bouton ci-dessous pour lancer le processus de paiement mobile money.
               </p>
               <Button
                 onClick={initializePayment}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
+                className={` ${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#ff7900]/80" : "bg-blue-600 hover:bg-blue-700"}  text-white px-6 py-2 rounded-lg`}
               >
                 Démarrer le paiement
               </Button>
