@@ -163,12 +163,20 @@ export const authService = createApi({
                 body:body
             }),
         }),
+        controlPayment:builder.mutation({
+            query:(body)=>({
+                url:'/api/v1/control/payment',
+                method:'POST',
+                body:body
+            })
+        })
     })
 })
 
 export const {
     useLoginMutation,
     useWebhookPaymentMutation,
+    useControlPaymentMutation,
     useGetUserQuery,
     useLogoutMutation,
     useNewStoreMutation,

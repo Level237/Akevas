@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useInitProductPaymentMutation, useVerifyPaymentMutation, useWebhookPaymentMutation } from '@/services/auth';
+import { useControlPaymentMutation, useInitProductPaymentMutation, useVerifyPaymentMutation, useWebhookPaymentMutation } from '@/services/auth';
 
 
 export default function MobileMoneyPaymentPage() {
@@ -13,9 +13,11 @@ export default function MobileMoneyPaymentPage() {
   const [message, setMessage] = useState("Patientez, votre paiement est en cours d'initialisation...");
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
+  const [isControlPayment,setIsControlPayment,]=useState(false)
   const [step, setStep] = useState<'start' | 'processing'>('start');
   let formData;
   const [webhookPayment] = useWebhookPaymentMutation();
+  const [controlPayment] = useControlPaymentMutation();
   const [verifyPayment] = useVerifyPaymentMutation();
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
@@ -82,7 +84,7 @@ export default function MobileMoneyPaymentPage() {
       setPaymentStatus('success');
       isActive=false;
       setIsGeneratingTicket(true);
-      
+      setIsControlPayment(true)
       clearTimeout(timeoutRef.current);
       // Redirect after success
       const timer = window.setTimeout(() => {
@@ -207,6 +209,45 @@ export default function MobileMoneyPaymentPage() {
       window.location.reload();
     }
   };
+
+  useEffect(() => {
+    let controlTimeout: NodeJS.Timeout | null = null;
+    let isUnmounted = false;
+    const doControlPayment = async () => {
+      // On reconstitue le formData comme pour le paiement
+      let controlFormData;
+     
+        controlFormData = {
+          reference: paymentRef,
+        };
+     
+      
+      try {
+        const response = await controlPayment(controlFormData);
+        if (!isUnmounted && response && response.data) {
+          if (response.data.status === 200) {
+            setIsControlPayment(false);
+            setIsGeneratingTicket(false);
+          } else if (response.data.status === 400) {
+            // On continue à contrôler
+            controlTimeout = setTimeout(doControlPayment, 3000);
+          }
+        }
+      } catch (e) {
+        // En cas d'erreur, on continue à contrôler
+        if (!isUnmounted) {
+          controlTimeout = setTimeout(doControlPayment, 3000);
+        }
+      }
+    };
+    if (isControlPayment) {
+      doControlPayment();
+    }
+    return () => {
+      isUnmounted = true;
+      if (controlTimeout) clearTimeout(controlTimeout);
+    };
+  }, [isControlPayment]);
 
   return (
     <div className={`relative min-h-screen bg-gradient-to-br ${formDataPayment.paymentMethod==="cm.orange" ? "from-orange-50 to-orange-100" : "from-[#Ffff00] to-orange-[#Ffff00]"  }  flex items-center justify-center p-4`}>
