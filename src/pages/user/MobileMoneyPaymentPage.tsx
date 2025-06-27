@@ -30,12 +30,13 @@ export default function MobileMoneyPaymentPage() {
   let variations=null;
   let productsPayments=null;
   if(formDataPayment.hasVariation && formDataPayment.s==0){
-    variations=formDataPayment.variations;
+    variations=JSON.parse(formDataPayment.variations);
+    
   }
   if(formDataPayment.s==1){
     productsPayments=formDataPayment.productsPayments
   }
-
+  
    const pollStatus = async () => {
    
     if(formDataPayment.s==0){
