@@ -19,9 +19,10 @@ export default function MobileMoneyPaymentPage() {
   const [verifyPayment] = useVerifyPaymentMutation();
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
-  const delay = Math.floor(Math.random() * (30000 - 20000 + 1)) + 20000;
+  // Créer un délai aléatoire entre 5 et 8 secondes
+  const delay = Math.floor(Math.random() * (8000 - 5000 + 1)) + 5000;
   let isActive = true;
-
+  let isActiveWebhook = false;
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
   console.log(formDataPayment)
   let variations=null;
@@ -46,7 +47,7 @@ export default function MobileMoneyPaymentPage() {
         methodChanel:formDataPayment.paymentMethod,
         amount: formDataPayment.amount,
         price: formDataPayment.price,
-        quarter_delivery: formDataPayment.quarter_delivery,
+        quarter_delivery: formDataPayment.quarter_delivery || null,
         shipping: formDataPayment.shipping,
         address: formDataPayment.address,
         hasVariation:formDataPayment.hasVariation,
@@ -97,9 +98,15 @@ export default function MobileMoneyPaymentPage() {
       setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
       
     }else if(responseData.data.status==="processing"){
-      const confirmResponse = await webhookPayment(formData);
-      timeoutRef.current = setTimeout(pollStatus, delay);
+
+      if(!isActiveWebhook){
+        const confirmResponse = await webhookPayment(formData);
         console.log(confirmResponse);
+        isActiveWebhook=true;
+      }
+      
+      timeoutRef.current = setTimeout(pollStatus, delay);
+        
     }
    
     }
@@ -181,19 +188,8 @@ export default function MobileMoneyPaymentPage() {
       setMessage("Impossible d'initialiser le paiement. Veuillez réessayer plus tard.");
     }
   };
-  // Initialize payment on component mount
-  useEffect(() => {
+  
 
-    
-   
-    
-   
-   
-    
-    return () => {
-      timersRef.current.forEach(timer => window.clearTimeout(timer));
-    };
-  }, []);
   
   
   useEffect(() => {
@@ -204,11 +200,7 @@ export default function MobileMoneyPaymentPage() {
   }, [paymentRef]);
   
   // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      timersRef.current.forEach(timer => window.clearTimeout(timer));
-    };
-  }, []);
+
   
   const handleRetry = () => {
     if (paymentStatus === 'failed') {
@@ -372,17 +364,29 @@ export default function MobileMoneyPaymentPage() {
                   <p className="text-gray-600">{message}</p>
 
                   {isGeneratingTicket && (
-                    <div className="flex flex-col items-center mt-6">
+                    <div className="flex flex-col items-center mt-8 gap-4">
                       <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-                        className="w-10 h-10 mb-2 text-blue-500"
+                        className="relative flex items-center justify-center w-16 h-16"
+                        initial={{ scale: 0.8, opacity: 0.7 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 18 }}
                       >
-                        <RefreshCw size={40} />
+                        <motion.span
+                          className="absolute inset-0 rounded-full border-4 border-blue-400 border-t-transparent animate-spin"
+                          style={{ borderTopColor: "#3b82f6" }}
+                          animate={{ rotate: 360 }}
+                          transition={{ repeat: Infinity, duration: 1.1, ease: "linear" }}
+                        />
+                        <RefreshCw size={36} className="text-blue-500 z-10" />
                       </motion.div>
-                      <span className="text-sm text-gray-500 font-medium">
-                        Veuillez patienter, votre ticket de paiement est en train d'être généré...
-                      </span>
+                      <div className="flex flex-col items-center">
+                        <span className="text-base font-semibold text-blue-700 mb-1">
+                          Génération du ticket en cours...
+                        </span>
+                        <span className="text-xs text-gray-500 font-medium">
+                          Merci de patienter pendant la finalisation de votre paiement.
+                        </span>
+                      </div>
                     </div>
                   )}
                 </motion.div>
