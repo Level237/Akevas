@@ -87,12 +87,7 @@ export default function MobileMoneyPaymentPage() {
       setIsControlPayment(true)
       clearTimeout(timeoutRef.current);
       // Redirect after success
-      const timer = window.setTimeout(() => {
-        setIsGeneratingTicket(false);
-        
-        //navigate('/seller/confirmation');
-      }, 3000);
-      timersRef.current.push(timer);
+      
       
     } else if (responseData.data.status === 'failed') {
       setPaymentStatus('failed');
@@ -102,8 +97,7 @@ export default function MobileMoneyPaymentPage() {
     }else if(responseData.data.status==="processing"){
 
       if(!isActiveWebhook){
-        const confirmResponse = await webhookPayment(formData);
-        console.log(confirmResponse);
+        await webhookPayment(formData);
         isActiveWebhook=true;
       }
       
