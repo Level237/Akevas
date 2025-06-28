@@ -9,7 +9,7 @@ import { useControlPaymentMutation, useInitProductPaymentMutation, useVerifyPaym
 
 export default function MobileMoneyPaymentPage() {
   const navigate = useNavigate();
-  const [paymentStatus, setPaymentStatus] = useState<'initializing' | 'waiting' | 'failed' | 'success'>('initializing');
+  const [paymentStatus, setPaymentStatus] = useState<'initializing' | 'waiting' | 'failed' | 'success'|'loading'>('initializing');
   const [message, setMessage] = useState("Patientez, votre paiement est en cours d'initialisation...");
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
@@ -91,9 +91,15 @@ export default function MobileMoneyPaymentPage() {
       
       
     } else if (responseData.data.status === 'failed') {
-      setPaymentStatus('failed');
+      
       isActive=false;
-      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
+      setIsGeneratingTicket(true);
+      setPaymentStatus('loading');
+      setTimeout(() => {
+        
+        setIsControlPayment(true)
+      }, 10000)
+      clearTimeout(timeoutRef.current);
       
     }else if(responseData.data.status==="processing"){
 
@@ -219,13 +225,19 @@ export default function MobileMoneyPaymentPage() {
       
       try {
         const response = await controlPayment(controlFormData);
+        console.log(response)
         if (!isUnmounted && response && response.data) {
           if (response.data.status === 200) {
+            console.log('good')
+            setPaymentStatus('success')
             setIsControlPayment(true);
             setIsGeneratingTicket(false);
           } else if (response.data.status === 400) {
             // On continue à contrôler
-           
+           console.log("nothing")
+           setIsControlPayment(false);
+           setIsGeneratingTicket(true);
+           setPaymentStatus('loading');
             controlTimeout = setTimeout(doControlPayment, 3000);
           }
         }
@@ -381,26 +393,7 @@ export default function MobileMoneyPaymentPage() {
                 </motion.div>
               )}
               
-              {paymentStatus === 'success' && (
-                <motion.div
-                  key="success"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col items-center"
-                >
-                  <motion.div
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 10 }}
-                    className="w-16 h-16 mb-5 text-green-500"
-                  >
-                    <CheckCircle size={64} />
-                  </motion.div>
-                  <h3 className="text-xl font-semibold mb-2 text-green-600">Paiement réussi!</h3>
-                  <p className="text-gray-600">{message}</p>
-
-                  {isGeneratingTicket && !isControlPayment && (
+              {isGeneratingTicket && !isControlPayment && paymentStatus==="loading" && (
                     <div className="flex flex-col items-center mt-8 gap-4">
                       <motion.div
                         className="relative flex items-center justify-center w-16 h-16"
@@ -426,36 +419,33 @@ export default function MobileMoneyPaymentPage() {
                       </div>
                     </div>
                   )}
-
-                  {!isControlPayment && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex flex-col items-center mt-8 gap-4"
-                    >
-                      <div className="w-16 h-16 mb-4 text-green-500">
-                        <CheckCircle size={64} />
-                      </div>
-                      <div className="flex flex-col items-center text-center">
-                        <span className="text-lg font-semibold text-green-700 mb-2">
-                          Ticket de paiement prêt !
-                        </span>
-                        <span className="text-sm text-gray-600 mb-6">
-                          Votre ticket de paiement a été généré avec succès. Téléchargez-le pour vos archives.
-                        </span>
-                      </div>
-                      <Button
-                        onClick={() => {
-                          // TODO: Implémenter la logique de téléchargement du ticket
-                          console.log('Téléchargement du ticket pour la référence:', paymentRef);
-                        }}
-                        className={`${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#ff7900]/80" : "bg-blue-600 hover:bg-blue-700"} text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300`}
-                      >
-                        Télécharger le ticket
-                      </Button>
-                    </motion.div>
-                  )}
-                </motion.div>
+              {paymentStatus === 'success' && (
+                <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col items-center mt-8 gap-4"
+              >
+                <div className="w-16 h-16 mb-4 text-green-500">
+                  <CheckCircle size={64} />
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-lg font-semibold text-green-700 mb-2">
+                    Ticket de paiement prêt !
+                  </span>
+                  <span className="text-sm text-gray-600 mb-6">
+                    Votre ticket de paiement a été généré avec succès. Téléchargez-le pour vos archives.
+                  </span>
+                </div>
+                <Button
+                  onClick={() => {
+                    // TODO: Implémenter la logique de téléchargement du ticket
+                    console.log('Téléchargement du ticket pour la référence:', paymentRef);
+                  }}
+                  className={`${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#ff7900]/80" : "bg-blue-600 hover:bg-blue-700"} text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300`}
+                >
+                  Télécharger le ticket
+                </Button>
+              </motion.div>
               )}
             </AnimatePresence>
           )}
