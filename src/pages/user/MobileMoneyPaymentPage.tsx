@@ -82,16 +82,6 @@ export default function MobileMoneyPaymentPage() {
     if (!responseData) return;
    console.log(responseData)
     if (responseData && responseData.data.status === 'complete') {
-      setPaymentStatus('success');
-      isActive=false;
-      setIsGeneratingTicket(true);
-      setIsControlPayment(true)
-      clearTimeout(timeoutRef.current);
-      // Redirect after success
-      
-      
-    } else if (responseData.data.status === 'failed') {
-      
       isActive=false;
       setIsGeneratingTicket(true);
       setPaymentStatus('loading');
@@ -100,6 +90,14 @@ export default function MobileMoneyPaymentPage() {
         setIsControlPayment(true)
       }, 10000)
       clearTimeout(timeoutRef.current);
+      // Redirect after success
+      
+      
+    } else if (responseData.data.status === 'failed') {
+      setPaymentStatus('failed');
+      isActive=false;
+      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
+      
       
     }else if(responseData.data.status==="processing"){
 
@@ -443,7 +441,7 @@ export default function MobileMoneyPaymentPage() {
                   }}
                   className={`${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#ff7900]/80" : "bg-blue-600 hover:bg-blue-700"} text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300`}
                 >
-                  Télécharger le ticket
+                  Voir le ticket
                 </Button>
               </motion.div>
               )}
