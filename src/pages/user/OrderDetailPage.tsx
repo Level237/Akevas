@@ -14,6 +14,52 @@ const OrderDetailPage = () => {
     const { id } = useParams();
     const { data: order, isLoading } = useGetOrderDetailQuery(id);
     console.log(order);
+    
+    // Fonction pour détecter si c'est une commande avec produits variés
+    const isVariedOrder = (orderDetails: any[]) => {
+        return orderDetails.some((detail: any) => detail.product_variation);
+    };
+
+    // Fonction pour obtenir les détails des produits
+    const getProductDetails = (orderDetails: any[]) => {
+        if (isVariedOrder(orderDetails)) {
+            // Pour les produits variés
+            const variedDetails = orderDetails.filter((detail: any) => detail.product_variation);
+            return variedDetails.map((detail: any) => ({
+                id: detail.id,
+                name: detail.product_variation?.product_name || 'Produit inconnu',
+                color: detail.product_variation?.color?.name || '',
+                quantity: detail.variation_quantity,
+                price: detail.variation_price,
+                image: detail.product_variation?.images?.[0]?.path || '',
+                total: parseInt(detail.variation_quantity) * parseFloat(detail.variation_price)
+            }));
+        } else {
+            // Pour les produits simples
+            return orderDetails.map((detail: any) => ({
+                id: detail.id,
+                name: detail.product?.name || 'Produit inconnu',
+                quantity: detail.quantity || 1,
+                price: detail.price || 0,
+                image: detail.product?.product_profile || '',
+                total: (detail.quantity || 1) * (detail.price || 0)
+            }));
+        }
+    };
+
+    // Fonction pour calculer le total des articles
+    const calculateItemsTotal = (orderDetails: any[]) => {
+        if (isVariedOrder(orderDetails)) {
+            return orderDetails.reduce((total: number, detail: any) => {
+                return total + (parseInt(detail.variation_quantity) * parseFloat(detail.variation_price));
+            }, 0);
+        } else {
+            return orderDetails.reduce((total: number, detail: any) => {
+                return total + ((detail.quantity || 1) * (detail.price || 0));
+            }, 0);
+        }
+    };
+
     const getStatusColor = (status: string) => {
         const statusColors = {
             'en_attente': 'bg-yellow-100 text-yellow-800',
@@ -29,6 +75,10 @@ const OrderDetailPage = () => {
         return <Skeleton className="w-full h-[600px]" />;
     }
 
+    const productDetails = getProductDetails(order?.order_details || []);
+    const itemsTotal = calculateItemsTotal(order?.order_details || []);
+    const isVaried = isVariedOrder(order?.order_details || []);
+
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
             <motion.div
@@ -38,9 +88,16 @@ const OrderDetailPage = () => {
             >
                 {/* En-tête de la commande */}
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">
-                        Commande #{order?.id}
-                    </h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl font-bold">
+                            Commande #{order?.id}
+                        </h1>
+                        {isVaried && (
+                            <Badge className="bg-purple-100 text-purple-800">
+                                Produits variés
+                            </Badge>
+                        )}
+                    </div>
                     <Badge className={getStatusColor(order?.status === "0" ? "en_attente" : order?.status === "1" ? "confirmé" : order?.status === "2" ? "en_cours" : order?.status === "3" ? "livré" : "annulé")}>
                         {order?.status === "0" ? "En attente" : order?.status === "1" ? "En cours de livraison" : order?.status === "2" ? "Livré" : "Annulé"}
                     </Badge>
@@ -60,8 +117,16 @@ const OrderDetailPage = () => {
                                 <span className="font-medium">{order?.created_at.split('T')[0]}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Total</span>
-                                <span className="font-medium">{order?.total_amount} XAF</span>
+                                <span className="text-gray-600">Total des articles</span>
+                                <span className="font-medium">{itemsTotal} XAF</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Frais de livraison</span>
+                                <span className="font-medium">{order?.shipping || 0} XAF</span>
+                            </div>
+                            <div className="flex justify-between border-t pt-2">
+                                <span className="text-gray-800 font-semibold">Total</span>
+                                <span className="font-bold text-lg">{order?.total_amount} XAF</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Méthode de paiement</span>
@@ -88,26 +153,53 @@ const OrderDetailPage = () => {
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6">Articles commandés</h2>
                     <div className="space-y-4">
-                        {!isLoading && order?.order_details.map((item: any) => (
-                            <div
+                        {productDetails.map((item: any) => (
+                            <motion.div
                                 key={item.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
                                 className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
                             >
                                 <img
-                                    src={item.product.product_profile}
-                                    alt={item.product.name}
+                                    src={item.image}
+                                    alt={item.name}
                                     className="w-20 h-20 object-cover rounded-md"
                                 />
                                 <div className="flex-1">
                                     <h3 className="font-medium">{item.name}</h3>
-                                    <p className="text-gray-600">Quantité: {item.quantity}</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <p className="text-gray-600">Quantité: {item.quantity}</p>
+                                        {item.color && (
+                                            <Badge variant="outline" className="text-xs">
+                                                {item.color}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Prix unitaire: {item.price} XAF
+                                    </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-medium">{item.price} XAF</p>
-                                    <p className="text-gray-600">Total: {order?.total_amount} XAF</p>
+                                    <p className="font-medium">{item.total} XAF</p>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
+                    </div>
+                    
+                    {/* Résumé des totaux */}
+                    <div className="mt-6 pt-4 border-t">
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-600">Sous-total ({productDetails.length} article(s))</span>
+                            <span className="font-medium">{itemsTotal} XAF</span>
+                        </div>
+                        <div className="flex justify-between items-center mt-2">
+                            <span className="text-gray-600">Frais de livraison</span>
+                            <span className="font-medium">{order?.shipping || 0} XAF</span>
+                        </div>
+                        <div className="flex justify-between items-center mt-3 pt-3 border-t">
+                            <span className="text-lg font-semibold">Total</span>
+                            <span className="text-lg font-bold">{order?.total_amount} XAF</span>
+                        </div>
                     </div>
                 </Card>
 
