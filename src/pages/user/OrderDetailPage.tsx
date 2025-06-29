@@ -143,7 +143,7 @@ const OrderDetailPage = () => {
                         </h2>
                         <div className="space-y-2">
                             <p className="font-medium">{order?.userName}</p>
-                            <p className="text-gray-600">{order?.residence}</p>
+                            <p className="text-gray-600">{order?.emplacement}</p>
                             <p className="text-gray-600">{order?.userPhone}</p>
                         </div>
                     </Card>
