@@ -48,6 +48,7 @@ import ProductDetailPageAdmin from "@/components/dashboard/admin/products/Produc
 import NotFoundPage from "@/pages/NotFoundPage";
 import ListCategoriesPage from "@/pages/admin/categories/ListCategoriesPage";
 import CreateCategoryPage from "@/pages/admin/categories/CreateCategoryPage";
+import PaymentTicketPage from "@/pages/user/PaymentTicketPage";
 
 export const routes = createBrowserRouter([
   {
@@ -220,6 +221,10 @@ export const routes = createBrowserRouter([
         path:'/checkout/state',
         element:<SucessPaymentPage/>
       },
+      {
+        path:"/user/payment/:ref",
+        element:<PaymentTicketPage/>
+      }
     ]
   },
   {

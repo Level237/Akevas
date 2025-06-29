@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useControlPaymentMutation, useInitProductPaymentMutation, useVerifyPaymentMutation, useWebhookPaymentMutation } from '@/services/auth';
 
 
@@ -434,15 +434,13 @@ export default function MobileMoneyPaymentPage() {
                     Votre ticket de paiement a été généré avec succès. Téléchargez-le pour vos archives.
                   </span>
                 </div>
-                <Button
-                  onClick={() => {
-                    // TODO: Implémenter la logique de téléchargement du ticket
-                    console.log('Téléchargement du ticket pour la référence:', paymentRef);
-                  }}
+                <Link
+                  
+                  to={`/user/payment/${paymentRef}`}
                   className={`${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#ff7900]/80" : "bg-blue-600 hover:bg-blue-700"} text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300`}
                 >
                   Voir le ticket
-                </Button>
+                </Link>
               </motion.div>
               )}
             </AnimatePresence>

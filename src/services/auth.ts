@@ -169,6 +169,12 @@ export const authService = createApi({
                 method:'POST',
                 body:body
             })
+        }),
+        showPaymentWithReference:builder.query({
+            query:(ref)=>({
+                url:`/api/v1/show/payment/${ref}`,
+                method:"GET"
+            })
         })
     })
 })
@@ -193,5 +199,6 @@ export const {
     useGetListShopReviewsQuery,
     useInitProductPaymentMutation,
     useStatePaymentMutation,
+    useShowPaymentWithReferenceQuery,
     useVerifyPaymentMutation
 } = authService
