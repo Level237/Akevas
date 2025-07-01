@@ -16,7 +16,7 @@ function App() {
     <>
      
      <ErrorBoundary>
-        <NetworkBoundary>
+       
       <LoaderProvider>
       <Provider store={store}>
         <RouterProvider router={routes} />
@@ -24,7 +24,7 @@ function App() {
       </Provider>
       <Toaster richColors position="top-center" />
     </LoaderProvider>
-    </NetworkBoundary>
+   
     </ErrorBoundary>
     
     </>

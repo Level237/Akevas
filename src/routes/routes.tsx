@@ -176,6 +176,10 @@ export const routes = createBrowserRouter([
       {
         path: "admin/category/new",
         element: <CreateCategoryPage />
+      },
+      {
+        path:"/admin/order/:id",
+        element:<OrderDetailPage/>
       }
     ]
   },
@@ -224,7 +228,8 @@ export const routes = createBrowserRouter([
       {
         path:"/user/payment/:ref",
         element:<PaymentTicketPage/>
-      }
+      },
+      
     ]
   },
   {

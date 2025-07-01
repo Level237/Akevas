@@ -2,7 +2,7 @@ import React from 'react';
 import { useGetRecentOrdersQuery } from '@/services/auth';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Package } from 'lucide-react';
+import { ArrowRight, Loader2, Package } from 'lucide-react';
 import AsyncLink from '@/components/ui/AsyncLink';
 
 const isVariedOrder = (orderDetails: any[]) => {
@@ -70,11 +70,18 @@ const getStatusText = (status: string) => {
 };
 
 const RecentOrders = () => {
-    const { data, isLoading, error } = useGetRecentOrdersQuery("Auth");
+    const { data, isLoading} = useGetRecentOrdersQuery("Auth");
     return (
         <div>
             <Card className="p-6">
-                <h2 className="text-xl font-semibold max-sm:text-md mb-6">Dernières commandes</h2>
+                <div className='flex flex-row items-center justify-between'>
+                        <h2 className="text-xl font-semibold max-sm:text-md mb-6">Dernières commandes</h2>
+
+                        <Button className='bg-[#ed7e0f] hover:bg-[#ed7e0f]' size="sm" asChild>
+                            <AsyncLink to="/user/orders">Voir plus <ArrowRight/></AsyncLink>
+                        </Button>
+                </div>
+                
                 <div className="space-y-4">
                     {!isLoading && data?.map((order: any) => {
                         const productDetails = getProductDetails(order.order_details);
