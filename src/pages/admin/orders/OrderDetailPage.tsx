@@ -71,6 +71,7 @@ const calculateItemsTotal = (orderDetails: any[]) => {
 export default function AdminOrderDetailPage() {
     const { id } = useParams();
     const { data: order, isLoading } = useAdminDetailOrderQuery(id);
+    console.log(order)
 
     if (isLoading || !order) {
         return <Skeleton className="w-full h-[600px]" />;

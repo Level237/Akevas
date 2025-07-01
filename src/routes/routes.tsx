@@ -49,6 +49,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import ListCategoriesPage from "@/pages/admin/categories/ListCategoriesPage";
 import CreateCategoryPage from "@/pages/admin/categories/CreateCategoryPage";
 import PaymentTicketPage from "@/pages/user/PaymentTicketPage";
+import AdminOrderDetailPage from "@/pages/admin/orders/OrderDetailPage";
 
 export const routes = createBrowserRouter([
   {
@@ -179,7 +180,7 @@ export const routes = createBrowserRouter([
       },
       {
         path:"/admin/order/:id",
-        element:<OrderDetailPage/>
+        element:<AdminOrderDetailPage/>
       }
     ]
   },
