@@ -9,7 +9,7 @@ import { formatDate } from "@/lib/formatDate";
 import AsyncLink from "@/components/ui/AsyncLink";
 const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }) => {
     return (
-        <div>
+        <div >
             <Table>
 
                 <TableHeader>
