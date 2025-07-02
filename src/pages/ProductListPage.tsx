@@ -9,7 +9,7 @@ import {
 import Header from '@/components/ui/header';
 import { ScrollRestoration } from 'react-router-dom';
 import MobileNav from '@/components/ui/mobile-nav';
-import { useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
+import { useFilterProductsQuery, useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
 import { Product } from '@/types/products';
 import { normalizeProduct } from '@/lib/normalizeProduct';
 import ProductCard from '@/components/products/ProductCard';
@@ -52,9 +52,8 @@ const ProductListPage: React.FC = () => {
     refetchOnMountOrArgChange: 30
   })
 
-  console.log(categories)
+  
   const safeProducts = productList || [];
-
   const normalizedProducts = safeProducts.map(normalizeProduct);
   const toggleSection = useCallback((sectionId: string) => {
     setExpandedSections(prev =>

@@ -70,6 +70,11 @@ export const adminService = createApi({
             query: () => '/api/v1/admin/orders',
             providesTags: ['admin'],
         }),
+        adminRecentOrders: builder.query({
+            query: () => '/api/v1/admin/recent/orders',
+            providesTags: ['admin'],
+        }),
+
         adminDetailOrder:builder.query({
             query:(id)=>({
                 url:`/api/v1/admin/order/${id}`,
@@ -170,5 +175,6 @@ export const {
     useSendCoinsToShopMutation,
     useAddShopMutation,
     useTogglePublishMutation,
-    useAllCategoriesQuery
+    useAllCategoriesQuery,
+    useAdminRecentOrdersQuery
 } = adminService

@@ -1,10 +1,10 @@
-
 import { RecentProducts } from "@/components/dashboard/admin/recent-products"
 
 import { UserStats } from "@/components/dashboard/admin/user-stats"
 import RecentGridUser from "@/components/dashboard/admin/users/recent-grid-user"
 import { useAdminActiveSellerStatsQuery, useAdminActiveStatsQuery, useAdminDeliveryStatsQuery, useRecentProductsQuery } from "@/services/adminService"
 import { Users, TrendingUp, Package, ShoppingCart, DollarSign } from "lucide-react"
+import RecentOrdersAdmin from "@/components/dashboard/admin/orders/recent-orders"
 
 
 
@@ -69,6 +69,7 @@ export default function DashboardAdminPage() {
 
       <div className="grid gap-6 mb-6">
         <RecentGridUser />
+        <RecentOrdersAdmin />
         <RecentProducts products={recentProducts} isLoading={isLoading} />
       </div>
 
