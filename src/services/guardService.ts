@@ -78,6 +78,13 @@ export const guardService = createApi({
             }),
             providesTags: ['guard'],
         }),
+        filterProducts: builder.query({
+            query: ({ arrayId}) => ({
+                url: `/api/filter/products/${arrayId}`,
+                method: "GET",
+            }),
+            providesTags: ['guard'],
+        }),
         getHomeShops: builder.query({
             query: () => ({
                 url: `/api/home/shops`,
@@ -215,5 +222,6 @@ export const {
     useSearchByQueryQuery,
     useGetProfileShopQuery,
     useGetModalShopQuery,
-    useGetCatalogSellerQuery
+    useGetCatalogSellerQuery,
+    useFilterProductsQuery
 } = guardService
