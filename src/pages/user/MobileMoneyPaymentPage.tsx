@@ -34,7 +34,8 @@ export default function MobileMoneyPaymentPage() {
     
   }
   if(formDataPayment.s==1){
-    productsPayments=formDataPayment.productsPayments
+    productsPayments=JSON.parse(formDataPayment.productsPayments)
+    console.log(productsPayments)
   }
   
    const pollStatus = async () => {
