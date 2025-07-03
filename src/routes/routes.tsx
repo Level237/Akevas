@@ -50,6 +50,8 @@ import ListCategoriesPage from "@/pages/admin/categories/ListCategoriesPage";
 import CreateCategoryPage from "@/pages/admin/categories/CreateCategoryPage";
 import PaymentTicketPage from "@/pages/user/PaymentTicketPage";
 import AdminOrderDetailPage from "@/pages/admin/orders/OrderDetailPage";
+import ContactPage from "@/pages/ContactPage";
+
 
 export const routes = createBrowserRouter([
   {
@@ -237,7 +239,10 @@ export const routes = createBrowserRouter([
     path:'/pay/mobile-money',
     element:<MobileMoneyPaymentPage/>
   },
-  
+  {
+    path: '/contact',
+    element: <ContactPage />
+  },
 ],
 
 );
