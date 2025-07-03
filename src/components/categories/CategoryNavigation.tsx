@@ -124,7 +124,7 @@ const CategoryDropdown = React.memo(({
               <h4 className="font-medium text-orange-800 mb-2">Offre Spéciale</h4>
               <p className="text-sm text-orange-700 mb-3">Jusqu'à -50% sur la nouvelle collection</p>
               <AsyncLink
-                to="/promotions"
+                to=""
                 className="text-sm text-orange-500 hover:text-orange-600 font-medium inline-flex items-center gap-1"
               >
                 Voir les offres

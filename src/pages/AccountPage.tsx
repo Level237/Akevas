@@ -59,15 +59,15 @@ const AccountPage = () => {
             items: [
                 { icon: User, label: "Profil", href: "/user/profile", description: "Gérer vos informations" },
                 { icon: ShoppingBag, label: "Commandes", href: "/user/orders", description: "Historique des commandes" },
-                { icon: Bell, label: "Notifications", href: "/user/notifications", description: "Centre de notifications" },
-                { icon: CreditCard, label: "Paiement", href: "/user/payment", description: "Moyens de paiement" },
+                { icon: Bell, label: "Notifications", href: "", description: "Centre de notifications" },
+                { icon: CreditCard, label: "Paiement", href: "", description: "Moyens de paiement" },
             ]
         },
         {
             category: "Sécurité",
             items: [
-                { icon: Lock, label: "Mot de passe", href: "/user/password", description: "Modifier votre mot de passe" },
-                { icon: Settings, label: "Préférences", href: "/user/settings", description: "Paramètres du compte" },
+                { icon: Lock, label: "Mot de passe", href: "", description: "Modifier votre mot de passe" },
+                { icon: Settings, label: "Préférences", href: "", description: "Paramètres du compte" },
             ]
         }
     ]
