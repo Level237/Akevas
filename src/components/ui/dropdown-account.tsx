@@ -19,9 +19,9 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
   ]
 
   const settingsItems = [
-    { text: "Contactez le support" },
-    { text: "Conditions d'utilisation" },
-    { text: "Politique de confidentialité" },
+    { text: "Contactez le support", link: "/contact" },
+    { text: "Conditions d'utilisation", link: "/terms-of-use" },
+    { text: "Politique de confidentialité", link: "/privacy-policy" },
   ]
 
   const handleMouseEnter = () => {
@@ -86,7 +86,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                 {settingsItems.map((item, index) => (
                   <motion.a
                     key={index}
-                    href="#"
+                    href={item.link}
                     className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
