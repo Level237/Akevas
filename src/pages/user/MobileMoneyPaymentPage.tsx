@@ -68,7 +68,7 @@ export default function MobileMoneyPaymentPage() {
         quantity: formDataPayment.quantity,
         methodChanel:formDataPayment.paymentMethod,
         amount: formDataPayment.amount,
-        quarter_delivery: formDataPayment.quarter_delivery,
+        quarter_delivery: formDataPayment.quarter_delivery || null,
         shipping: formDataPayment.shipping,
         address: formDataPayment.address,
       }

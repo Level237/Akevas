@@ -61,50 +61,22 @@ class ErrorBoundary extends React.Component<Props, State> {
 
 const NetworkBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [hasInternet, setHasInternet] = useState(true);
-  const [checking, setChecking] = useState(false);
-
-  // Fonction pour tester la connexion internet réelle
-  const checkInternet = async () => {
-    setChecking(true);
-    try {
-      // On ping un serveur fiable (Cloudflare ici, tu peux mettre ton backend)
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 3000);
-      await fetch("https://1.1.1.1/cdn-cgi/trace", { signal: controller.signal });
-      clearTimeout(timeout);
-      setHasInternet(true);
-    } catch {
-      setHasInternet(false);
-    } finally {
-      setChecking(false);
-    }
-  };
 
   useEffect(() => {
-    // Vérifie à l'initialisation et à chaque changement d'état réseau
-    checkInternet();
     const handleOnline = () => {
       setIsOnline(true);
-      checkInternet();
+      window.location.reload();
     };
-    const handleOffline = () => {
-      setIsOnline(false);
-      setHasInternet(false);
-    };
+    const handleOffline = () => setIsOnline(false);
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    // Ping toutes les 15 secondes si online
-    let interval: NodeJS.Timeout | null = null;
-    if (isOnline) {
-      interval = setInterval(checkInternet, 15000);
-    }
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      if (interval) clearInterval(interval);
     };
-  }, [isOnline]);
+  }, []);
 
   if (!isOnline) {
     return (
@@ -112,7 +84,8 @@ const NetworkBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) 
         <div className="max-w-md mx-auto p-8 bg-white dark:bg-[#1a0d03] rounded-2xl shadow-[0_8px_30px_rgba(237,126,15,0.12)] dark:shadow-[0_8px_30px_rgba(237,126,15,0.08)]">
           <div className="flex flex-col items-center text-center">
             <div className="w-20 h-20 mb-8 rounded-full bg-[#fff8f0] dark:bg-[#2d1705] flex items-center justify-center">
-              <WifiOff className="w-12 h-12 text-[#ed7e0f]" />
+            <WifiOff className="w-12 h-12 text-[#ed7e0f]"/>
+            
             </div>
             <h2 className="text-3xl font-bold text-[#ed7e0f] mb-4">
               Pas de connexion internet
@@ -120,33 +93,6 @@ const NetworkBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) 
             <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
               Veuillez vérifier votre connexion. La page se rechargera automatiquement dès que la connexion sera rétablie.
             </p>
-            <div className="mt-8 flex space-x-2">
-              <div className="w-3 h-3 bg-[#ed7e0f] rounded-full animate-bounce"></div>
-              <div className="w-3 h-3 bg-[#ed7e0f] rounded-full animate-bounce delay-150"></div>
-              <div className="w-3 h-3 bg-[#ed7e0f] rounded-full animate-bounce delay-300"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isOnline && !hasInternet) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#fff8f0] to-[#fff1e0] dark:from-[#2d1705] dark:to-[#1a0d03]">
-        <div className="max-w-md mx-auto p-8 bg-white dark:bg-[#1a0d03] rounded-2xl shadow-[0_8px_30px_rgba(237,126,15,0.12)] dark:shadow-[0_8px_30px_rgba(237,126,15,0.08)]">
-          <div className="flex flex-col items-center text-center">
-            <div className="w-20 h-20 mb-8 rounded-full bg-[#fff8f0] dark:bg-[#2d1705] flex items-center justify-center">
-              <WifiOff className="w-12 h-12 text-[#ed7e0f]" />
-            </div>
-            <h2 className="text-3xl font-bold text-[#ed7e0f] mb-4">
-              Connexion instable ou sans internet
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-              Vous êtes connecté à un réseau (WiFi ou autre), mais il n'y a pas d'accès internet stable.<br />
-              Merci de vérifier votre connexion ou de changer de réseau.
-            </p>
-            {checking && <div className="mt-4 text-[#ed7e0f]">Vérification de la connexion...</div>}
             <div className="mt-8 flex space-x-2">
               <div className="w-3 h-3 bg-[#ed7e0f] rounded-full animate-bounce"></div>
               <div className="w-3 h-3 bg-[#ed7e0f] rounded-full animate-bounce delay-150"></div>
