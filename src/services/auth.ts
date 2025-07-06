@@ -111,7 +111,13 @@ export const authService = createApi({
             }),
             providesTags: ['Auth'],
         }),
-
+        controlPayment:builder.mutation({
+            query:(body)=>({
+                url:'/api/v1/control/payment',
+                method:'POST',
+                body:body
+            })
+        }),
         validatePaymentCoin:builder.mutation({
             query: (formData) => ({
                 url: "/api/v1/validate/payment/coins",
@@ -130,6 +136,7 @@ export const {
     useGetUserQuery,
     useLogoutMutation,
     useNewStoreMutation,
+    useControlPaymentMutation,
     useRegisterMutation,
     useCheckAuthQuery,
     usePayStripeMutation,

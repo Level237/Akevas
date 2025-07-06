@@ -5,7 +5,7 @@ import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useInitCoinPaymentMutation, useVerifyCoinPaymentQuery } from '@/services/sellerService';
-import { useValidatePaymentCoinMutation } from '@/services/auth';
+import { useControlPaymentMutation, useValidatePaymentCoinMutation } from '@/services/auth';
 
 export default function MobileMoneyPaymentPage() {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ export default function MobileMoneyPaymentPage() {
   const [pollingEnabled, setPollingEnabled] = useState(false);
   const pollingInterval = 5000; // 5 seconds interval for polling
   const [isControlPayment,setIsControlPayment,]=useState(false)
+  const [controlPayment] = useControlPaymentMutation();
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
   const [step, setStep] = useState<'start' | 'processing'>('start');
   let isActiveWebhook = false;
@@ -86,6 +87,52 @@ export default function MobileMoneyPaymentPage() {
     }
       
   };
+
+  useEffect(() => {
+    let controlTimeout: NodeJS.Timeout | null = null;
+    let isUnmounted = false;
+    const doControlPayment = async () => {
+      // On reconstitue le formData comme pour le paiement
+      let controlFormData;
+     
+        controlFormData = {
+          reference: paymentRef,
+        };
+     
+      
+      try {
+        const response = await controlPayment(controlFormData);
+        console.log(response)
+        if (!isUnmounted && response && response.data) {
+          if (response.data.status === 200) {
+            console.log('good')
+            setPaymentStatus('success')
+            setIsControlPayment(true);
+            setIsGeneratingTicket(false);
+          } else if (response.data.status === 400) {
+            // On continue à contrôler
+           console.log("nothing")
+           setIsControlPayment(false);
+           setIsGeneratingTicket(true);
+           setPaymentStatus('loading');
+            controlTimeout = setTimeout(doControlPayment, 3000);
+          }
+        }
+      } catch (e) {
+        // En cas d'erreur, on continue à contrôler
+        if (!isUnmounted) {
+          controlTimeout = setTimeout(doControlPayment, 3000);
+        }
+      }
+    };
+    if (isControlPayment) {
+      doControlPayment();
+    }
+    return () => {
+      isUnmounted = true;
+      if (controlTimeout) clearTimeout(controlTimeout);
+    };
+  }, [isControlPayment]);
 
   useEffect(() => {
     pollStatus();
