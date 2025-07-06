@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCategories, setCurrentGenderId } from '@/store/features/categorySlice';
 import { RootState } from '@/store';
 import { motion } from "framer-motion";
+import OptimizedImage from "../OptimizedImage";
 
 // Déplacer le composant de catégories dans un composant séparé
 const CategoryGrid = React.memo(({ categories }: { categories: Category[] }) => (
@@ -16,15 +17,15 @@ const CategoryGrid = React.memo(({ categories }: { categories: Category[] }) => 
         {categories.map((category: Category) => (
             <AsyncLink
                 key={category.id}
-                to={`/category/${category.category_url}`}
+                to={`/c/${category.category_url}`}
                 className="group relative overflow-hidden rounded-xl"
             >
                 <div className="aspect-square overflow-hidden rounded-xl">
-                    <img
+                    <OptimizedImage
                         src={category.category_profile}
                         alt={category.category_name}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
+                        
                     />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
