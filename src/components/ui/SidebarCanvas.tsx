@@ -1,4 +1,4 @@
-import { Home, Store, ShoppingBag, ShoppingCart, User, Bell, Plus, ShoppingBasket } from 'lucide-react';
+import { Home, Store, ShoppingBag, ShoppingCart, User, Bell,ShoppingBasket } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import AsyncLink from './AsyncLink';
 
