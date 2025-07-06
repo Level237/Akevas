@@ -91,14 +91,14 @@ const AccountPage: React.FC = () => {
                 <section className="bg-white rounded-xl p-4">
                     <h3 className="font-semibold text-gray-800 mb-4">Paramètres de la boutique</h3>
                     <div className="space-y-4">
-                        <AsyncLink to="/shop-settings" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                        <AsyncLink to="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <Store className="text-[#ed7e0f]" size={20} />
                                 <span>Editer votre boutique</span>
                             </div>
                             <ChevronRight size={20} className="text-gray-400" />
                         </AsyncLink>
-                        <AsyncLink to="/shop-hours" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                        <AsyncLink to="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <Clock className="text-[#ed7e0f]" size={20} />
                                 <span>Horaires d'ouverture</span>
@@ -119,7 +119,7 @@ const AccountPage: React.FC = () => {
                 <section className="bg-white rounded-xl p-4">
                     <h3 className="font-semibold text-gray-800 mb-4">Mon Compte</h3>
                     <div className="space-y-4">
-                        <AsyncLink to="/profile-settings" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                        <AsyncLink to="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <User className="text-[#ed7e0f]" size={20} />
                                 <span>Informations personnelles</span>
@@ -133,7 +133,7 @@ const AccountPage: React.FC = () => {
                             </div>
                             <ChevronRight size={20} className="text-gray-400" />
                         </AsyncLink>
-                        <AsyncLink to="/payment-methods" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                        <AsyncLink to="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <CreditCard className="text-[#ed7e0f]" size={20} />
                                 <span>Moyens de paiement</span>
@@ -147,7 +147,7 @@ const AccountPage: React.FC = () => {
                 <section className="bg-white rounded-xl p-4">
                     <h3 className="font-semibold text-gray-800 mb-4">Finances</h3>
                     <div className="space-y-4">
-                        <AsyncLink to="/wallet" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                        <AsyncLink to="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <Wallet className="text-[#ed7e0f]" size={20} />
                                 <span>Mon portefeuille</span>
@@ -175,7 +175,7 @@ const AccountPage: React.FC = () => {
                             </div>
                             <ChevronRight size={20} className="text-gray-400" />
                         </AsyncLink>
-                        <AsyncLink to="/security" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                        <AsyncLink to="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <Shield className="text-[#ed7e0f]" size={20} />
                                 <span>Sécurité du compte</span>
