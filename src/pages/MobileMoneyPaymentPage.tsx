@@ -5,6 +5,7 @@ import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useInitCoinPaymentMutation, useVerifyCoinPaymentQuery } from '@/services/sellerService';
+import { useValidatePaymentCoinMutation } from '@/services/auth';
 
 export default function MobileMoneyPaymentPage() {
   const navigate = useNavigate();
@@ -16,12 +17,15 @@ export default function MobileMoneyPaymentPage() {
   const [isControlPayment,setIsControlPayment,]=useState(false)
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
   const [step, setStep] = useState<'start' | 'processing'>('start');
+  let isActiveWebhook = false;
+  const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
   const phone = sessionStorage.getItem('phone') || '';
-  
+  const delay = Math.floor(Math.random() * (8000 - 5000 + 1)) + 5000;
   // Get credits and amount from URL or session
   const coins = parseInt(sessionStorage.getItem('coins') || '0');
   const amount = parseInt(sessionStorage.getItem('amount') || '0');
+  let isActive = true;
   const paymentMethod=sessionStorage.getItem('paymentMethod')
   console.log(paymentMethod)
   // RTK Query hooks
@@ -31,10 +35,65 @@ export default function MobileMoneyPaymentPage() {
     skip: !pollingEnabled || !paymentRef
   });
  
-  
+  const [validatePaymentCoin] = useValidatePaymentCoinMutation();
   // Timer refs for cleanup
   const timersRef = useRef<number[]>([]);
   
+
+  const pollStatus = async () => {
+   
+   
+    if(!isActive){
+      return;
+    }
+    else{
+      const responseData = await verificationData({reference:paymentRef});
+    
+    
+    if (!responseData) return;
+   console.log(responseData)
+    if (responseData && responseData.data.status === 'complete') {
+      isActive=false;
+
+      await validatePaymentCoin({reference:paymentRef,amount:amount})
+      setIsGeneratingTicket(true);
+      setPaymentStatus('loading');
+      setTimeout(() => {
+        
+        setIsControlPayment(true)
+      }, 10000)
+      clearTimeout(timeoutRef.current);
+      // Redirect after success
+      
+      
+    } else if (responseData.data.status === 'failed') {
+      setPaymentStatus('failed');
+      isActive=false;
+      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
+      
+      
+    }else if(responseData.data.status==="processing"){
+
+      if(!isActiveWebhook){
+        //await webhookPayment(formData);
+        isActiveWebhook=true;
+      }
+      
+      timeoutRef.current = setTimeout(pollStatus, delay);
+        
+    }
+   
+    }
+      
+  };
+
+  useEffect(() => {
+    pollStatus();
+    // Continue polling if status is pending
+
+    return () => clearTimeout(timeoutRef.current); // nettoyage
+  }, [paymentRef]);
+
   const initializePayment = async () => {
     try {
       const formData = {
