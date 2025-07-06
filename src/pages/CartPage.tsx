@@ -43,7 +43,7 @@ const CartPage: React.FC = () => {
   //console.log(cartItems[0].selectedVariation.images[0])
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
-      <div className="ml-12">
+      <div className="ml-12 max-sm:ml-0">
       <Header />
       </div>
      

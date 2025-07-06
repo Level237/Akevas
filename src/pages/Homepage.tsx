@@ -67,7 +67,7 @@ const Homepage = () => {
     
     <div className="relative min-h-screen bg-[#F8F9FC]">
       <SidebarCanvas />
-      <div className="ml-12">
+      <div className="ml-12 max-sm:ml-0">
         <TopBar />
         <Header />
         

@@ -15,7 +15,7 @@ export default function SidebarCanvas() {
 
   return (
     <aside
-      className="fixed top-0 left-0 h-screen w-16 flex flex-col items-center py-4 bg-white rounded-tr-3xl rounded-br-3xl shadow-xl z-50 border-r border-[#ed7e0f]/10"
+      className="fixed max-sm:hidden top-0 left-0 h-screen w-16 flex flex-col items-center py-4 bg-white rounded-tr-3xl rounded-br-3xl shadow-xl z-50 border-r border-[#ed7e0f]/10"
       style={{ minWidth: 84 }}
     >
       {/* Logo / Create */}
