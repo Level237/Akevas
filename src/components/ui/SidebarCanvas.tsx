@@ -1,4 +1,4 @@
-import { Home, Store, ShoppingBag, ShoppingCart, User, Bell, Plus } from 'lucide-react';
+import { Home, Store, ShoppingBag, ShoppingCart, User, Bell, Plus, ShoppingBasket } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import AsyncLink from './AsyncLink';
 
@@ -19,8 +19,8 @@ export default function SidebarCanvas() {
       style={{ minWidth: 84 }}
     >
       {/* Logo / Create */}
-      <AsyncLink to="/" className="mb-8 mt-2 flex items-center justify-center w-10 h-10 rounded-2xl bg-[#ed7e0f] shadow-lg hover:scale-105 transition-transform">
-        <Plus className="w-6 h-6 text-white" />
+      <AsyncLink to="/products" className="mb-8 mt-2 flex items-center justify-center w-10 h-10 rounded-2xl bg-[#ed7e0f] shadow-lg hover:scale-105 transition-transform">
+        <ShoppingBasket className="w-4 h-4 text-white" />
         <span className="sr-only">Créer</span>
       </AsyncLink>
       {/* Navigation */}
