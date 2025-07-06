@@ -18,6 +18,7 @@ import { RootState } from '@/store';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
 import InstallButton from '@/components/InstallButton';
 import Footer from '@/components/ui/footer';
+import SidebarCanvas from '@/components/ui/SidebarCanvas';
 
 
 
@@ -65,23 +66,26 @@ const Homepage = () => {
   return (
     
     <div className="relative min-h-screen bg-[#F8F9FC]">
-      <TopBar />
-      <Header />
-      
-      <main className="relative">
-        <GenderNavigationMobile />
-        <div className="relative">
-          <StoreHero />
-          <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={shopsLoading} />
-          <PremiumProducts />
-          <CategoryShowcaseDual categories={categories} isLoading={categoriesLoading} title="Catégories" titleCategory="Découvrez nos catégories" />
-        </div>
-      </main>
+      <SidebarCanvas />
+      <div className="ml-12">
+        <TopBar />
+        <Header />
+        
+        <main className="relative">
+          <GenderNavigationMobile />
+          <div className="relative ">
+            <StoreHero />
+            <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={shopsLoading} />
+            <PremiumProducts />
+            <CategoryShowcaseDual categories={categories} isLoading={categoriesLoading} title="Catégories" titleCategory="Découvrez nos catégories" />
+          </div>
+        </main>
 
-      <MobileNav/>
-      <FloatingHelpButton />
-      <InstallButton/>
-      <Footer />
+        <MobileNav/>
+        <FloatingHelpButton />
+        <InstallButton/>
+        <Footer />
+      </div>
     </div>
    
   );

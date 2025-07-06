@@ -9,8 +9,8 @@ const StoreStories = React.memo(({ title, description, shops, isLoading }: { tit
   return (
     <>
       <section className="w-full   overflow-x-hidden max-sm:mt-12 mt-[-3rem]   bg-[#6e0a13] py-8">
-        <div className="overflow-x-hidden max-sm:py-5  px-4">
-          <div className="flex justify-between items-baseline mb-6">
+        <div className="overflow-x-hidden ml-20 max-sm:py-5  px-4">
+          <div className="flex  justify-between items-baseline mb-6">
             <div className="mx-2">
               <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-white">{title}</h2>
               <p className="text-xl md:text-2xl max-sm:text-sm  text-gray-200">{description}</p>

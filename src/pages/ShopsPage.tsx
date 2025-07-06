@@ -13,6 +13,7 @@ import { Shop } from '@/types/shop';
 import OptimizedImage from '@/components/OptimizedImage';
 import ShopSearch from '@/components/shop/ShopSearch';
 import Footer from '@/components/ui/footer';
+import SidebarCanvas from '@/components/ui/SidebarCanvas';
 
 
 type SortOption = 'rating' | 'allShops' | 'followers' | 'newest';
@@ -121,6 +122,7 @@ const ShopCard = memo(({ shop }: { shop: Shop }) => {
   return (
     <div ref={cardRef} className="bg-white rounded-2xl shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
       {/* Cover Image */}
+      
       <div className="relative h-48">
         <OptimizedImage
           src={shop.images[0].path}
@@ -359,9 +361,10 @@ const ShopsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ml-12 bg-gray-50">
       <Header />
       <ScrollRestoration />
+      <SidebarCanvas/>
       <MobileNav />
       <motion.div 
           initial={{ opacity: 0 }}
@@ -468,7 +471,7 @@ const ShopsPage = () => {
         onClose={() => setIsSearchOpen(false)} 
       />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto py-8">
         {/* Hero Section */}
        
         

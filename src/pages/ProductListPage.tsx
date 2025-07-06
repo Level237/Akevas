@@ -9,12 +9,13 @@ import {
 import Header from '@/components/ui/header';
 import { ScrollRestoration } from 'react-router-dom';
 import MobileNav from '@/components/ui/mobile-nav';
-import { useFilterProductsQuery, useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
+import { useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
 import { Product } from '@/types/products';
 import { normalizeProduct } from '@/lib/normalizeProduct';
 import ProductCard from '@/components/products/ProductCard';
 import { toast } from "sonner";
 import OptimizedImage from '@/components/OptimizedImage';
+import SidebarCanvas from '@/components/ui/SidebarCanvas';
 
 
 
@@ -118,7 +119,7 @@ const ProductListPage: React.FC = () => {
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       <Header />
-      
+      <SidebarCanvas />
         <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* En-tête avec filtres mobiles et tri */}

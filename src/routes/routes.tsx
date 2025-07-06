@@ -192,7 +192,7 @@ export const routes = createBrowserRouter([
     element: <Homepage />,
 
   }, {
-    path: 'shops',
+    path: '/shops',
     element: <ShopsPage />
   },
   {
