@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useGetRecentOrdersQuery } from '@/services/auth';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

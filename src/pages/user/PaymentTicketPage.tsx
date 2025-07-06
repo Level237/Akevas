@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -31,7 +31,7 @@ export default function PaymentTicketPage() {
   const order = payment.order;
   const status = statusMap[order.status] || statusMap['0'];
   const details = order.order_details;
-  const isVaried = details.some((d: any) => d.product_variation);
+  
 
   return (
     <>

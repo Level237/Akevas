@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Edit, Trash2, Folder, Eye } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback} from '@/components/ui/avatar'
 import OptimizedImage from '@/components/OptimizedImage'
 import { useNavigate } from 'react-router-dom'
 

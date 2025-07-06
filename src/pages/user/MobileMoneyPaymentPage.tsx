@@ -124,7 +124,7 @@ export default function MobileMoneyPaymentPage() {
   
   
   // Timer refs for cleanup
-  const timersRef = useRef<number[]>([]);
+
   
   // Add this ref in the component with the other states
   
