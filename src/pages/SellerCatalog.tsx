@@ -272,12 +272,13 @@ const SellerCatalog: React.FC = () => {
                                             >
                                                 Modifier
                                             </AsyncLink>
-                                            <AsyncLink
-                                                to={`/produit/${product.product_url}`}
+                                            <a
+                                                href={`https:/main.akevas.com/produit/${product.product_url}`}
+                                                target='_blank'
                                                 className="flex-1 text-center py-2.5 text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
                                             >
                                                 Voir
-                                            </AsyncLink>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
