@@ -12,13 +12,11 @@ export default function MobileMoneyPaymentPage() {
   const [paymentStatus, setPaymentStatus] = useState<'initializing' | 'waiting' | 'failed' | 'success'|'loading'>('initializing');
   const [message, setMessage] = useState("Patientez, votre paiement est en cours d'initialisation...");
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
-  const [pollingEnabled, setPollingEnabled] = useState(false);
-  const pollingInterval = 5000; // 5 seconds interval for polling
   const [isControlPayment,setIsControlPayment,]=useState(false)
   const [controlPayment] = useControlPaymentMutation();
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
   const [step, setStep] = useState<'start' | 'processing'>('start');
-  let isActiveWebhook = false;
+
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
   const phone = sessionStorage.getItem('phone') || '';

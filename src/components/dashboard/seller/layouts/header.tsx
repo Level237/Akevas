@@ -1,4 +1,4 @@
-import { Coins, LogOut, Menu, User, Bell, ChevronDown } from 'lucide-react'
+import { Coins, LogOut, Menu, User, Bell} from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { AvatarImage } from '@radix-ui/react-avatar'
 import React, { useState } from 'react'
@@ -10,7 +10,7 @@ import { useLogoutMutation } from '@/services/auth'
 import AsyncLink from '@/components/ui/AsyncLink'
 import { logoutUser } from '@/lib/logout'
 import logo from '@/assets/favicon.png'
-import { CheckStateSeller } from '@/components/dashboard/seller/CheckStateSeller'
+
 import { Link } from 'react-router-dom'
 
 export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isMobile: boolean, setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>, sellerData: Seller | null | undefined }) {
@@ -133,19 +133,3 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
   )
 }
 
-// Composant pour les liens de navigation
-const NavLink = ({ children, to, active = false }: { children: React.ReactNode, to: string, active?: boolean }) => {
-  return (
-    <AsyncLink to={to}>
-      <div className={`relative px-2 py-1 ${active ? 'text-[#ed7e0f] font-medium' : 'text-gray-600 hover:text-[#ed7e0f]'} transition-colors cursor-pointer`}>
-        {children}
-        {active && (
-          <motion.div 
-            layoutId="activeIndicator"
-            className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#ed7e0f] rounded-full"
-          />
-        )}
-      </div>
-    </AsyncLink>
-  )
-}
