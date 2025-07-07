@@ -259,12 +259,11 @@ export default function RechargePage() {
                    type="button"
                    onClick={() => navigate(`/checkout/recharge?credits=${customCredits}`)}
                    className="bg-[#ed7e0f] hover:bg-[#d97100]"
-                   disabled={!customCredits || customCredits <= 0 || isInsufficientCoins(customCredits)}
+                   
                  >
-                   {isInsufficientCoins(Number(customCredits)) ? 
-                     "Votre nombre de coins est insuffisant" : 
-                     "Confirmer et Payer"
-                   }
+                   
+                     Confirmer et Payer
+                   
                  </Button>
               </DialogFooter>
             </DialogContent>
@@ -282,12 +281,11 @@ export default function RechargePage() {
               onClick={() => navigate(`/checkout/recharge?credits=${creditPackages.find(p => p.id === selectedPackage)?.credits}`)} 
               size="lg" 
               className="bg-[#ed7e0f] hover:bg-[#d97100] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
-              disabled={isInsufficientCoins(creditPackages.find(p => p.id === selectedPackage)?.credits || 0)}
+              
             >
-              {isInsufficientCoins(creditPackages.find(p => p.id === selectedPackage)?.credits || 0) ? 
-                "Votre nombre de coins est insuffisant" :
-                `Procéder au paiement (${creditPackages.find(p => p.id === selectedPackage)?.credits} coins)`
-              }
+            
+                Procéder au paiement ({creditPackages.find(p => p.id === selectedPackage)?.credits} coins)
+              
             </Button>
           </motion.div>
         )}
