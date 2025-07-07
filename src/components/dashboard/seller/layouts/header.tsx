@@ -96,6 +96,9 @@ export default function Header({ isMobile, setIsSidebarOpen, sellerData }: { isM
                   </AvatarFallback>
                   <AvatarImage className="object-cover" src={sellerData?.shop?.shop_profile || ""} />
                 </Avatar>
+                  <p className="text-sm font-medium text-gray-900 group-hover:text-[#ed7e0f] transition-colors">
+                    {sellerData?.shop.shop_name}
+                  </p>
               </motion.div>
               <AnimatePresence>
                 {userMenuOpen && (
