@@ -40,7 +40,7 @@ export default function MobileMoneyPaymentPage() {
 
   const pollStatus = async () => {
    
-   console.log('begin')
+   
     if(!isActive){
       return;
     }
@@ -65,13 +65,9 @@ export default function MobileMoneyPaymentPage() {
       
       
     } else if (responseData.data.status === 'failed') {
-      await validatePaymentCoin({reference:paymentRef,amount:amount})
-      setIsGeneratingTicket(true);
-      setPaymentStatus('loading');
-      setTimeout(() => {
-        
-        setIsControlPayment(true)
-      }, 10000)
+      setPaymentStatus('failed');
+      isActive=false;
+      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
       
       
     }else if(responseData.data.status==="processing"){
