@@ -1,17 +1,40 @@
 import { Home, Store, ShoppingBag, ShoppingCart, User, Bell,ShoppingBasket, Plus } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import AsyncLink from './AsyncLink';
-
-const navItems = [
-  { icon: Home, label: 'Accueil', path: '/' },
-  { icon: Store, label: 'Boutiques', path: '/shops' },
-  { icon: ShoppingBag, label: 'Produits', path: '/products' },
-  { icon: ShoppingCart, label: 'Panier', path: '/cart' },
-  { icon: User, label: 'Compte', path: '/account' },
-];
+import { useCurrentSellerQuery } from '@/services/sellerService';
 
 export default function SidebarLeft() {
   const location = useLocation();
+  const { data: { data: seller } = {} } = useCurrentSellerQuery('seller');
+  const shopId = seller?.shop?.shop_id;
+
+  const navItems = [
+    {
+      icon: Home,
+      label: 'Accueil',
+      path: '/'
+    },
+    {
+      icon: Store,
+      label: 'Ma Boutique',
+      path: `/shop/${shopId}`
+    },
+    {
+      icon: ShoppingBag,
+      label: 'Catalogue',
+      path: '/catalogue'
+    },
+    {
+      icon: ShoppingCart,
+      label: 'Commandes',
+      path: '/orders'
+    },
+    {
+      icon: User,
+      label: 'Profil',
+      path: '/account'
+    }
+  ];
 
   return (
     <aside
@@ -19,7 +42,7 @@ export default function SidebarLeft() {
       style={{ minWidth: 84 }}
     >
       {/* Logo / Create */}
-      <AsyncLink to="seller/create-product" className="mb-8 mt-2 flex items-center justify-center w-10 h-10 rounded-2xl bg-[#ed7e0f] shadow-lg hover:scale-105 transition-transform">
+      <AsyncLink to="/seller/create-product" className="mb-8 mt-2 flex items-center justify-center w-10 h-10 rounded-2xl bg-[#ed7e0f] shadow-lg hover:scale-105 transition-transform">
         <Plus className="w-4 h-4 text-white" />
         <span className="sr-only">Créer</span>
       </AsyncLink>

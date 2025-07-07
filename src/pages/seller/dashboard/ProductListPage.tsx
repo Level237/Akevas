@@ -30,7 +30,7 @@ const DashboardProductListPage = () => {
       <div className="bg-white rounded-2xl shadow-sm">
         <div className="p-6">
           {/* Actions Bar */}
-          <div className="flex flex-col items-center justify-center md:flex-row gap-4 mb-6">
+          <div className="flex flex-col ml-12 items-center justify-start md:flex-row gap-4 mb-6">
             <div className="w-[50%]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
