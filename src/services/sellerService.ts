@@ -43,10 +43,11 @@ export const sellerService=createApi({
                 }),
                 invalidatesTags:['seller']
             }),
-            verifyCoinPayment:builder.query({
-                query:($ref)=>({
-                    url:`/api/get/payment/status/${$ref}`,
-                    method:'GET',
+            verifyCoinPayment:builder.mutation({
+                query:(formData)=>({
+                    url:`/api/get/payment/status`,
+                    method:'POST',
+                    body:formData
                 })
             }),
             boostShop:builder.mutation({
@@ -65,6 +66,6 @@ useAddProductMutation,
 useGetProductsQuery,
 useUpdateDocsMutation,
 useInitCoinPaymentMutation,
-useVerifyCoinPaymentQuery,
+useVerifyCoinPaymentMutation,
 useBoostShopMutation
 }=sellerService

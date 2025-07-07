@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import { useInitCoinPaymentMutation, useVerifyCoinPaymentQuery } from '@/services/sellerService';
+import { useInitCoinPaymentMutation, useVerifyCoinPaymentMutation} from '@/services/sellerService';
 import { useControlPaymentMutation, useValidatePaymentCoinMutation } from '@/services/auth';
 
 export default function MobileMoneyPaymentPage() {
@@ -31,10 +31,7 @@ export default function MobileMoneyPaymentPage() {
   console.log(paymentMethod)
   // RTK Query hooks
   const [initPayment] = useInitCoinPaymentMutation();
-  const { data: verificationData } = useVerifyCoinPaymentQuery(paymentRef || '', {
-    pollingInterval: pollingEnabled ? pollingInterval : 0,
-    skip: !pollingEnabled || !paymentRef
-  });
+  const [verificationData] = useVerifyCoinPaymentMutation();
  
   const [validatePaymentCoin] = useValidatePaymentCoinMutation();
   // Timer refs for cleanup
@@ -43,7 +40,7 @@ export default function MobileMoneyPaymentPage() {
 
   const pollStatus = async () => {
    
-   
+   console.log('begin')
     if(!isActive){
       return;
     }
@@ -68,17 +65,18 @@ export default function MobileMoneyPaymentPage() {
       
       
     } else if (responseData.data.status === 'failed') {
-      setPaymentStatus('failed');
-      isActive=false;
-      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
+      await validatePaymentCoin({reference:paymentRef,amount:amount})
+      setIsGeneratingTicket(true);
+      setPaymentStatus('loading');
+      setTimeout(() => {
+        
+        setIsControlPayment(true)
+      }, 10000)
       
       
     }else if(responseData.data.status==="processing"){
 
-      if(!isActiveWebhook){
-        //await webhookPayment(formData);
-        isActiveWebhook=true;
-      }
+      
       
       timeoutRef.current = setTimeout(pollStatus, delay);
         
@@ -174,28 +172,7 @@ export default function MobileMoneyPaymentPage() {
  
   
   // Listen for payment verification updates
-  useEffect(() => {
-    if (!verificationData) return;
-    
-    console.log(verificationData.status)
-    if (verificationData.status === 'success') {
-      setPaymentStatus('success');
-      setMessage("Paiement confirmé! Redirection vers votre compte...");
-      setPollingEnabled(false);
-      
-      // Redirect after success
-      const timer = window.setTimeout(() => {
-        //navigate('/seller/confirmation');
-      }, 3000);
-      timersRef.current.push(timer);
-      
-    } else if (verificationData.status === 'canceled') {
-      setPaymentStatus('failed');
-      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
-      setPollingEnabled(false);
-    }
-    // Continue polling if status is pending
-  }, [verificationData]);
+ 
   
   // Cleanup on unmount
   useEffect(() => {
