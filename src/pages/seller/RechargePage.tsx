@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
-import { useCurrentSellerQuery } from '@/services/sellerService';
+
 
 const creditPackages = [
   { id: 1, credits: 500, price: 500, popular: false },
@@ -27,7 +27,7 @@ export default function RechargePage() {
   const [customCredits, setCustomCredits] = useState<number | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const navigate = useNavigate();
-  const {data: { data: sellerData } = {}} = useCurrentSellerQuery('seller');
+  
 
   const calculatePrice = useCallback((credits: number | null) => {
     if (credits === null || credits <= 0) return "0.00";
