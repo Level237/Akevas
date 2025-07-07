@@ -42,7 +42,7 @@
     "react-router-dom": "^6.27.0",
     "react-slick": "^0.30.2",
     "react-top-loading-bar": "^3.0.2",
-    "recharts": "^2.15.1",
+    "recharts": "^2.15.4",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.15",
     "swiper": "^11.2.4",
