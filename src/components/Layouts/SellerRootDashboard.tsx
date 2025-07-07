@@ -5,6 +5,7 @@ import Header from '@/components/dashboard/seller/layouts/header';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
 import MobileNav from '../ui/mobile-nav';
+import SidebarLeft from '../ui/SidebarLeft';
 
 
 
@@ -34,7 +35,7 @@ export default function SellerRootDashboard({ children }: { children: React.Reac
         onClose={() => setIsSidebarOpen(false)}
         isMobile={isMobile}
       />
-
+      <SidebarLeft/>
       {/* En-tête avec navigation */}
       <Header sellerData={sellerData} isMobile={isMobile} setIsSidebarOpen={setIsSidebarOpen} />
 

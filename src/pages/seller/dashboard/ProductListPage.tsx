@@ -20,9 +20,9 @@ const DashboardProductListPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Mes produits</h1>
-        <p className="text-gray-600 mt-1">
+      <div className="mb-6 ">
+        <h1 className="text-2xl ml-20 font-bold text-gray-900">Mes produits</h1>
+        <p className="text-gray-600 ml-20 mt-1">
           Gérez votre catalogue de produits
         </p>
       </div>
@@ -30,8 +30,8 @@ const DashboardProductListPage = () => {
       <div className="bg-white rounded-2xl shadow-sm">
         <div className="p-6">
           {/* Actions Bar */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1">
+          <div className="flex flex-col items-center justify-center md:flex-row gap-4 mb-6">
+            <div className="w-[50%]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
