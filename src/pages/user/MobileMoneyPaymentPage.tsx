@@ -22,7 +22,8 @@ export default function MobileMoneyPaymentPage() {
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
   // Créer un délai aléatoire entre 5 et 8 secondes
-  const delay = Math.floor(Math.random() * (8000 - 5000 + 1)) + 5000;
+  // Réduction du délai pour la vérification du paiement (plus rapide)
+  const delay = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
   let isActive = true;
   let isActiveWebhook = false;
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
@@ -139,15 +140,15 @@ export default function MobileMoneyPaymentPage() {
   
   const initializePayment = async () => {
     const formData = {
-            phone:formDataPayment.phone,
-            amount: formDataPayment.amount,
+            phone:formDataPayment.paymentPhone,
+            amount: "10",
         }
     setStep('processing');
     setPaymentStatus('initializing');
     try {
       const response = await initPayment(formData);
       console.log(response);
-      if (response.data.statusCharge === "success" ) {
+      if (response.data.status === "success" ) {
        
         
         
@@ -190,6 +191,9 @@ export default function MobileMoneyPaymentPage() {
   
   const handleRetry = () => {
     if (paymentStatus === 'failed') {
+      window.location.reload();
+    }
+    if (paymentStatus === 'low') {
       window.location.reload();
     }
   };
