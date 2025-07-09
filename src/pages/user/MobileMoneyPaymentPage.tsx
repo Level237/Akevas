@@ -9,7 +9,7 @@ import { useControlPaymentMutation, useInitPayinMutation,useVerifyPayinMutation,
 
 export default function MobileMoneyPaymentPage() {
   const navigate = useNavigate();
-  const [paymentStatus, setPaymentStatus] = useState<'initializing' | 'waiting' | 'failed' | 'success'|'loading'>('initializing');
+  const [paymentStatus, setPaymentStatus] = useState<'initializing' | 'waiting' | 'failed' | 'success' | 'loading' | 'low'>('initializing');
   const [message, setMessage] = useState("Patientez, votre paiement est en cours d'initialisation...");
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
@@ -108,6 +108,7 @@ export default function MobileMoneyPaymentPage() {
       
     }
     
+    
     else if(responseData.data.status==="PENDING"){
 
       if(!isActiveWebhook){
@@ -158,7 +159,13 @@ export default function MobileMoneyPaymentPage() {
         } else {
           setMessage("Confirmez votre transaction en composant *126#");
         }
-      } else {
+      } else if(response.data.status==="low"){
+        setPaymentStatus('low');
+     console.log('ff')
+      setMessage("Votre compte est insuffisant");
+      }
+      
+      else {
         setPaymentStatus('failed');
         setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");
       }
@@ -359,6 +366,27 @@ export default function MobileMoneyPaymentPage() {
                     <AlertCircle size={64} />
                   </div>
                   <h3 className="text-xl font-semibold mb-2 text-red-600">Échec du paiement</h3>
+                  <p className="text-gray-600 mb-6">{message}</p>
+                  <Button 
+                    onClick={handleRetry}
+                    className={` ${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#e56800]" : "bg-blue-800 hover:bg-blue-800/80"} text-white `}
+                  >
+                    Réessayer
+                  </Button>
+                </motion.div>
+              )}
+              {paymentStatus === 'low' && (
+                <motion.div
+                  key="low"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center"
+                >
+                  <div className="w-16 h-16 mb-5 text-yellow-500">
+                    <AlertCircle size={64} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-yellow-600">Solde insuffisant</h3>
                   <p className="text-gray-600 mb-6">{message}</p>
                   <Button 
                     onClick={handleRetry}
