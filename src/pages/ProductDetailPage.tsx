@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ShoppingCart,
+  MessageCircle,
 } from 'lucide-react';
 
 import Header from '@/components/ui/header';
@@ -211,6 +212,14 @@ const ProductDetailPage: React.FC = () => {
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
     setMousePosition({ x, y });
+  };
+
+  // Fonction pour ouvrir WhatsApp
+  const openWhatsApp = () => {
+    const message = `Bonjour ! J'aimerai avoir plus de détails sur ce produit : ${product?.product_name}\n\nLien du produit : ${window.location.href}`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/237690394365?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -618,6 +627,20 @@ const ProductDetailPage: React.FC = () => {
                           Voir le panier
                         </AsyncLink>
                       )}
+
+                      {/* Section WhatsApp */}
+                      <div className="border-t pt-4">
+                        <button
+                          onClick={openWhatsApp}
+                          className="w-full bg-green-500 text-white px-6 py-3.5 flex items-center justify-center gap-2 rounded-xl font-medium hover:bg-green-600 transition-colors"
+                        >
+                          <MessageCircle className="w-5 h-5" />
+                          Contacter par WhatsApp
+                        </button>
+                        <p className="text-xs text-gray-500 text-center mt-2">
+                          Réponse rapide garantie
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
