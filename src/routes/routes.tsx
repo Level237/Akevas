@@ -24,7 +24,6 @@ import UserDashboardPage from "@/pages/user/DashboardPage";
 import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
 import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
 import PaymentPage from "@/pages/payment/PaymentPage";
-import SuccessPage from "@/pages/payment/SuccessPage";
 import OrderDetailPage from "@/pages/user/OrderDetailPage";
 import OrdersPage from "@/pages/user/OrdersPage";
 import ListCustomerPage from "@/pages/admin/customers/ListCustomerPage";
@@ -51,9 +50,10 @@ import CreateCategoryPage from "@/pages/admin/categories/CreateCategoryPage";
 import PaymentTicketPage from "@/pages/user/PaymentTicketPage";
 import AdminOrderDetailPage from "@/pages/admin/orders/OrderDetailPage";
 import ContactPage from "@/pages/ContactPage";
-import PaymentSuccessPage from '@/pages/payment/PaymentSuccessPage';
-import PaymentCancelPage from '@/pages/payment/PaymentCancelPage';
-import PaymentErrorPage from '@/pages/payment/PaymentErrorPage';
+import PaymentSuccessPage from "@/pages/payment/PaymentSuccessPage";
+import PaymentCancelPage from "@/pages/payment/PaymentCancelPage";
+import PaymentErrorPage from "@/pages/payment/PaymentErrorPage";
+
 
 
 export const routes = createBrowserRouter([
@@ -116,10 +116,6 @@ export const routes = createBrowserRouter([
   {
     path: '/payment',
     element: <PaymentPage />
-  },
-  {
-    path: '/checkout/success',
-    element: <SuccessPage />
   },
   {
     path: '/payment/success',
