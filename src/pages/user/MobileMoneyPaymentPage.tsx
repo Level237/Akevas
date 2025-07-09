@@ -23,7 +23,7 @@ export default function MobileMoneyPaymentPage() {
   // Get phone from session storage (you could use a different method)
   // Créer un délai aléatoire entre 5 et 8 secondes
   // Réduction du délai pour la vérification du paiement (plus rapide)
-  const delay = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
+  const delay = 1500;
   let isActive = true;
   let isActiveWebhook = false;
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
