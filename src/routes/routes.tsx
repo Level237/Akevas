@@ -51,6 +51,9 @@ import CreateCategoryPage from "@/pages/admin/categories/CreateCategoryPage";
 import PaymentTicketPage from "@/pages/user/PaymentTicketPage";
 import AdminOrderDetailPage from "@/pages/admin/orders/OrderDetailPage";
 import ContactPage from "@/pages/ContactPage";
+import PaymentSuccessPage from '@/pages/payment/PaymentSuccessPage';
+import PaymentCancelPage from '@/pages/payment/PaymentCancelPage';
+import PaymentErrorPage from '@/pages/payment/PaymentErrorPage';
 
 
 export const routes = createBrowserRouter([
@@ -118,6 +121,18 @@ export const routes = createBrowserRouter([
     path: '/checkout/success',
     element: <SuccessPage />
   },
+  {
+    path: '/payment/success',
+    element: <PaymentSuccessPage />,
+},
+{
+  path: '/payment/cancel',
+  element: <PaymentCancelPage />,
+},
+{
+  path: '/payment/error',
+  element: <PaymentErrorPage />,
+},
   {
     path: '/shop/:id',
     element: <StorePage />
