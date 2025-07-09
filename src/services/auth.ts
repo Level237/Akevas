@@ -142,6 +142,16 @@ export const authService = createApi({
             }),
             invalidatesTags:['Auth']
         }),
+
+        //Coolpay
+        initPayin:builder.mutation({
+            query:(body)=>({
+                url:`/api/v1/payin`,
+                method:'POST',
+                body:body
+            }),
+            invalidatesTags:['Auth']
+        }),
         statePayment:builder.mutation({
             query:(body)=>({
                 url:`/api/v1/success/payment`,
@@ -156,6 +166,16 @@ export const authService = createApi({
                 body:formData
             })
         }),
+
+        //verfifyPayment Coolpay
+        verifyPayin:builder.mutation({
+            query:(formData)=>({
+                url:`/api/status/payin`,
+                method:'POST',
+                body:formData
+            })
+        }),
+
         webhookPayment:builder.mutation({
             query:(body)=>({
                 url:`/api/v1/payment/product`,
@@ -200,5 +220,7 @@ export const {
     useInitProductPaymentMutation,
     useStatePaymentMutation,
     useShowPaymentWithReferenceQuery,
-    useVerifyPaymentMutation
+    useVerifyPaymentMutation,
+    useInitPayinMutation,
+    useVerifyPayinMutation
 } = authService

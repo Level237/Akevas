@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import { useControlPaymentMutation, useInitProductPaymentMutation, useVerifyPaymentMutation, useWebhookPaymentMutation } from '@/services/auth';
+import { useControlPaymentMutation, useInitPayinMutation,useVerifyPayinMutation,useVerifyPaymentMutation, useWebhookPaymentMutation } from '@/services/auth';
 
 
 export default function MobileMoneyPaymentPage() {
@@ -18,7 +18,7 @@ export default function MobileMoneyPaymentPage() {
   let formData;
   const [webhookPayment] = useWebhookPaymentMutation();
   const [controlPayment] = useControlPaymentMutation();
-  const [verifyPayment] = useVerifyPaymentMutation();
+  const [verifyPayin] = useVerifyPayinMutation();
   const timeoutRef = useRef<any>(null);
   // Get phone from session storage (you could use a different method)
   // Créer un délai aléatoire entre 5 et 8 secondes
@@ -77,12 +77,12 @@ export default function MobileMoneyPaymentPage() {
       return;
     }
     else{
-      const responseData = await verifyPayment({reference:paymentRef});
+      const responseData = await verifyPayin({transaction_ref:paymentRef});
     
     
     if (!responseData) return;
    console.log(responseData)
-    if (responseData && responseData.data.status === 'complete') {
+    if (responseData && responseData.data.status === 'SUCCESS') {
       isActive=false;
       setIsGeneratingTicket(true);
       setPaymentStatus('loading');
@@ -94,13 +94,21 @@ export default function MobileMoneyPaymentPage() {
       // Redirect after success
       
       
-    } else if (responseData.data.status === 'failed') {
+    } else if (responseData.data.status === 'CANCELED') {
       setPaymentStatus('failed');
       isActive=false;
-      setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
+      setMessage("Paiement annulé. Veuillez réessayer.");
       
       
-    }else if(responseData.data.status==="processing"){
+    }else if (responseData.data.status === 'FAILED') {
+      setPaymentStatus('failed');
+      isActive=false;
+      setMessage("Paiement échoué Veuillez réessayer.");
+      
+      
+    }
+    
+    else if(responseData.data.status==="PENDING"){
 
       if(!isActiveWebhook){
         await webhookPayment(formData);
@@ -118,7 +126,7 @@ export default function MobileMoneyPaymentPage() {
   
   
   // RTK Query hooks
-  const [initPayment] = useInitProductPaymentMutation();
+  const [initPayment] = useInitPayinMutation();
 
  
   
@@ -129,47 +137,16 @@ export default function MobileMoneyPaymentPage() {
   // Add this ref in the component with the other states
   
   const initializePayment = async () => {
-    let formData;
-    
-        if(formDataPayment.s==0){
-          formData = {
+    const formData = {
             phone:formDataPayment.phone,
-            paymentPhone:formDataPayment.paymentPhone,
-            productId: formDataPayment.productId,
-            s: formDataPayment.s,
-            quantity: formDataPayment.quantity,
-            methodChanel:formDataPayment.paymentMethod,
             amount: formDataPayment.amount,
-            price: formDataPayment.price,
-            quarter_delivery: formDataPayment.quarter_delivery,
-            shipping: formDataPayment.shipping,
-            address: formDataPayment.address,
-            hasVariation:formDataPayment.hasVariation,
-            productVariationId: variations?.productVariationId || null,
-            attributeVariationId: variations?.attributeVariationId || null
-          }
-        }else{
-          formData = {
-            phone:formDataPayment.phone,
-            paymentPhone:formDataPayment.paymentPhone,
-            s: formDataPayment.s,
-            
-            productsPayments:productsPayments,
-            quantity: formDataPayment.quantity,
-            methodChanel:formDataPayment.paymentMethod,
-            amount: formDataPayment.amount,
-            quarter_delivery: formDataPayment.quarter_delivery,
-            shipping: formDataPayment.shipping,
-            address: formDataPayment.address,
-          }
         }
     setStep('processing');
     setPaymentStatus('initializing');
     try {
       const response = await initPayment(formData);
       console.log(response);
-      console.log('leveljdkk')
-      if (response.data.statusCharge === "Accepted" ) {
+      if (response.data.statusCharge === "success" ) {
        
         
         
