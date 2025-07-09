@@ -16,6 +16,7 @@ import { CategoryNavigation } from '../categories/CategoryNavigation';
 import SearchResource from './search';
 import OptimizedImage from '@/components/OptimizedImage';
 import SearchBar from '@/components/search/SearchBar';
+import MegaMenu from './MegaMenu';
 
 // Lazy load du MobileCategoryMenu
 const MobileCategoryMenu = lazy(() => import('../categories/MobileCategoryMenu'));
@@ -294,6 +295,7 @@ console.log(userData)
               }}>
                 <CategoryNavigation />
               </React.Profiler>
+              
             </div>
 
             {headerActions}
@@ -345,6 +347,7 @@ console.log(userData)
 
               {/* Navigation par genre */}
               <nav className="flex items-center gap-6">
+               
                 {genders.map((gender) => (
                   <AsyncLink
                     key={gender.id}
@@ -403,8 +406,14 @@ console.log(userData)
           </div>
 
           {/* Navigation avec menus déroulants */}
-          <div className="flex justify-center w-full">
+          <div className="flex justify-center gap-12 items-center w-full">
+            <div className='w-12'>
+            <MegaMenu />
+            </div>
+            <div className='flex-1'>
             <CategoryNavigation />
+            </div>
+            
           </div>
         </div>
       </header>
