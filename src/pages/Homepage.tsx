@@ -18,7 +18,7 @@ import { RootState } from '@/store';
 import FloatingHelpButton from '@/components/ui/FloatingHelpButton';
 import InstallButton from '@/components/InstallButton';
 import Footer from '@/components/ui/footer';
-import SidebarCanvas from '@/components/ui/SidebarCanvas';
+
 
 
 
@@ -66,8 +66,8 @@ const Homepage = () => {
   return (
     
     <div className="relative min-h-screen bg-[#F8F9FC]">
-      <SidebarCanvas />
-      <div className="ml-12 max-sm:ml-0">
+      
+      <div className=" max-sm:ml-0">
         <TopBar />
         <Header />
         
