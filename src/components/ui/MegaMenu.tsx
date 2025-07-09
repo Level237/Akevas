@@ -59,15 +59,15 @@ const MegaMenu: React.FC = () => {
         ref={buttonRef}
         onClick={() => setOpen((o) => !o)}
         className={
-          `flex items-center gap-2 px-3 py-2 rounded-full bg-white border border-gray-200 hover:bg-[#f7f7f7] hover:shadow-lg transition-all duration-150 focus:outline-none active:scale-95`
+          `flex items-center gap-2 px-3 py-2 rounded-full bg-white  hover:bg-[#f7f7f7] hover:shadow-lg transition-all duration-150 focus:outline-none active:scale-95`
         }
         aria-haspopup="true"
         aria-expanded={open}
         type="button"
         style={{ boxShadow: open ? '0 4px 16px rgba(0,0,0,0.10)' : undefined }}
       >
-        <MenuIcon className="w-5 h-5 text-[#ed7e0f]" />
-        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        <MenuIcon className="w-6 h-6 text-[#ed7e0f]" />
+       
       </button>
       <AnimatePresence>
         {open && (

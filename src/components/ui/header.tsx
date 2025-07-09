@@ -139,7 +139,7 @@ const MobileMenuOverlay = React.memo(({
           initial="hidden"
           animate="visible"
           exit="hidden"
-          className="fixed inset-0 bg-black/50 z-50 lg:hidden"
+          className="fixed inset-0 z-[9999] bg-black/50  lg:hidden"
           onClick={onClose}
         >
           <motion.div
@@ -148,7 +148,7 @@ const MobileMenuOverlay = React.memo(({
             animate="visible"
             exit="hidden"
             onAnimationComplete={handleAnimationComplete}
-            className="absolute top-0 left-0 bottom-0 w-full max-w-sm bg-white"
+            className="absolute  top-0 left-0 bottom-0 w-full max-w-sm bg-white"
             onClick={e => e.stopPropagation()}
           >
             {/* Menu Header */}
