@@ -118,11 +118,9 @@ const ProductListPage: React.FC = () => {
 
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
-      <div className='ml-12 max-sm:ml-0'>
       <Header />
-      </div>
       
-      <SidebarCanvas />
+      
         <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* En-tête avec filtres mobiles et tri */}

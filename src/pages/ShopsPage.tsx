@@ -361,10 +361,10 @@ const ShopsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen ml-12 max-sm:ml-0 bg-gray-50">
+    <div className="min-h-screen  max-sm:ml-0 bg-gray-50">
       <Header />
       <ScrollRestoration />
-      <SidebarCanvas/>
+      
       <MobileNav />
       <motion.div 
           initial={{ opacity: 0 }}
