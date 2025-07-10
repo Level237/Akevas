@@ -27,5 +27,5 @@ jobs:
           server: ftp.viens-yamo.com
           username: akevasftp@akevas.com
           password: jMylEA6+(oHD
-          local-dir: ./build/
+          local-dir: ./dist/
           server-dir: /public_html/main/
