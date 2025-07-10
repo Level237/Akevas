@@ -1,8 +1,9 @@
 {
-  "name": "akiba",
+  "name": "akevas",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://main.akevas.com",
   "scripts": {
     "dev": "vite",
     "preinstall": "npx only-allow pnpm",

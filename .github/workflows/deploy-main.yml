@@ -1,0 +1,28 @@
+name: Deploy to Akevas.com
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Akevas
+        uses:  actions/checkout@3
+
+      - name: Install Dependancies
+        run:  npm install
+
+      - name: Build App
+        run:  npm run build
+
+      - name: Deploy via FTP
+        uses: Level237/Akevas-deploy-main@v1
+        with:
+          server: ftp.viens-yamo.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./build
+          server-dir: /public_html/main
