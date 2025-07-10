@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code Akevas
-        uses:  actions/checkout@3
+        uses:  actions/checkout@v3
 
       - name: Install Dependancies
         run:  npm install
@@ -19,7 +19,7 @@ jobs:
         run:  npm run build
 
       - name: Deploy via FTP
-        uses: Level237/Akevas-deploy-main@v1
+        uses: SamKirkland/FTP-Deploy-Action@v4
         with:
           server: ftp.viens-yamo.com
           username: ${{ secrets.FTP_USERNAME }}
