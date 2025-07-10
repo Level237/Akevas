@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Menu as MenuIcon } from 'lucide-react';
+import { Menu as MenuIcon } from 'lucide-react';
 import AsyncLink from './AsyncLink';
 
 const menuSections = [

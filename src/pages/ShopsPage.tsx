@@ -13,7 +13,6 @@ import { Shop } from '@/types/shop';
 import OptimizedImage from '@/components/OptimizedImage';
 import ShopSearch from '@/components/shop/ShopSearch';
 import Footer from '@/components/ui/footer';
-import SidebarCanvas from '@/components/ui/SidebarCanvas';
 
 
 type SortOption = 'rating' | 'allShops' | 'followers' | 'newest';

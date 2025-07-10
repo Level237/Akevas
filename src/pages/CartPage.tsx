@@ -12,7 +12,6 @@ import { Product } from '@/types/products';
 import { redirectToLogin } from '@/lib/redirectToLogin';
 import { useCheckAuthQuery } from '@/services/auth';
 import OptimizedImage from '@/components/OptimizedImage';
-import SidebarCanvas from '@/components/ui/SidebarCanvas';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
   const { data } = useCheckAuthQuery()
