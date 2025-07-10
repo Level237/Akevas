@@ -33,7 +33,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp.viens-yamo.com
-          username: ${{ env.username }}
-          password: ${{ env.password }}
+          username: akevasftp@akevas.com
+          password: jMylEA6+(oHD
           local-dir: ./dist/
           server-dir: /main/
