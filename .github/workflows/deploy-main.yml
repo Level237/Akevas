@@ -21,6 +21,14 @@ jobs:
       - name: Build App
         run:  pnpm run build
 
+      - name: Add .htaccess to dist/
+        run: |
+          echo 'Options -Indexes' > ./dist/.htaccess
+          echo 'RewriteEngine On' >> ./dist/.htaccess
+          echo 'RewriteCond %{REQUEST_FILENAME} !-f' >> ./dist/.htaccess
+          echo 'RewriteCond %{REQUEST_FILENAME} !-d' >> ./dist/.htaccess
+          echo 'RewriteRule ^ index.html [QSA,L]' >> ./dist/.htaccess
+          
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
