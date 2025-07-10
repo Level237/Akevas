@@ -28,12 +28,12 @@ jobs:
           echo 'RewriteCond %{REQUEST_FILENAME} !-f' >> ./dist/.htaccess
           echo 'RewriteCond %{REQUEST_FILENAME} !-d' >> ./dist/.htaccess
           echo 'RewriteRule ^ index.html [QSA,L]' >> ./dist/.htaccess
-          
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp.viens-yamo.com
-          username: akevasftp@akevas.com
+          username: ${{ secrets.FTP_USERNAME }}
           password: jMylEA6+(oHD
           local-dir: ./dist/
           server-dir: /main/
