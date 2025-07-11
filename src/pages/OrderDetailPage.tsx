@@ -13,7 +13,7 @@ const OrderDetailPage = () => {
     const { data: orderData, isLoading } = useShowOrderQuery(orderId)
     const [activeDelivery, setActiveDelivery] = useState<string | null>(null)
     const [showWarningModal, setShowWarningModal] = useState(false)
-
+    console.log(orderData)
     useEffect(() => {
         // Vérifier s'il y a une livraison active en cherchant dans le localStorage
         const checkActiveDelivery = () => {
@@ -67,6 +67,8 @@ const OrderDetailPage = () => {
             console.error('Erreur lors du refus:', error)
         }
     }
+
+    const isVariedOrder = orderData?.order_details?.[0]?.product_variation !== undefined;
 
     return (
         <div className="min-h-screen bg-[#F8F9FC]">
@@ -140,18 +142,46 @@ const OrderDetailPage = () => {
                                 <div className="space-y-4">
                                     {orderData?.order_details?.map((orderDetail: any) => (
                                         <div
-                                            key={orderDetail?.product?.id}
+                                            key={isVariedOrder ? orderDetail?.product_variation?.id : orderDetail?.product?.id}
                                             className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <img src={orderDetail?.product?.product_profile} alt={orderDetail?.product?.product?.product_name} className="w-10 h-10 rounded-lg" />
+                                                <img
+                                                    src={
+                                                        isVariedOrder
+                                                            ? orderDetail?.product_variation?.images?.[0]?.path
+                                                            : orderDetail?.product?.product_profile
+                                                    }
+                                                    alt={
+                                                        isVariedOrder
+                                                            ? orderDetail?.product_variation?.product_name
+                                                            : orderDetail?.product?.product_name
+                                                    }
+                                                    className="w-10 h-10 rounded-lg"
+                                                />
                                                 <div>
-                                                    <p className="font-medium">{orderDetail?.product?.product_name}</p>
-                                                    <p className="text-sm text-gray-600">Taille: {orderDetail?.product?.product?.size}</p>
+                                                    <p className="font-medium">
+                                                        {isVariedOrder
+                                                            ? orderDetail?.product_variation?.product_name
+                                                            : orderDetail?.product?.product_name}
+                                                    </p>
+                                                    {isVariedOrder && (
+                                                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                                                            <span>Couleur: {orderDetail?.product_variation?.color?.name}</span>
+                                                            {/* Ajoute d'autres infos de variation si besoin */}
+                                                        </div>
+                                                    )}
+                                                    {!isVariedOrder && (
+                                                        <p className="text-sm text-gray-600">
+                                                            {/* Ajoute d'autres infos produit simple si besoin */}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <span className="font-medium">Quantité: {orderDetail.quantity}</span>
+                                                <span className="font-medium">
+                                                    Quantité: {isVariedOrder ? orderDetail.variation_quantity : orderDetail.quantity}
+                                                </span>
                                             </div>
                                         </div>
                                     ))}
