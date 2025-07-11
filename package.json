@@ -44,6 +44,7 @@
     "react-top-loading-bar": "^3.0.2",
     "recharts": "^2.15.4",
     "slick-carousel": "^1.8.1",
+    "sonner": "^2.0.6",
     "styled-components": "^6.1.15",
     "swiper": "^11.2.4",
     "tailwind-merge": "^2.5.4",

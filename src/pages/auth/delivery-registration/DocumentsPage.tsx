@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useDispatch } from 'react-redux';
 import { setDocument } from '@/store/delivery/deliverySlice';
 import TopLoader from '@/components/ui/top-loader';
+import { toast } from 'sonner';
 const steps = [
   {
     id: 1,
@@ -89,7 +90,11 @@ const DocumentsPage: React.FC = () => {
   console.log(documents[0].file)
   const handleFileChange = (documentId: string, file: File) => {
     if (file.size > 1048576) { // 1 Mo = 1048576 octets
-      alert('Le fichier ne doit pas dépasser plus de 1 Mo.');
+      
+      toast.error('Le fichier ne doit pas dépasser plus de  1 Mo.', {
+        duration: 4000, // ms
+      });
+      return;
       //file = ''; // Réinitialise l'input
   }else{
     const reader = new FileReader();

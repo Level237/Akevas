@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { useDispatch } from 'react-redux';
 import { setVehicleInfoDelivery } from '@/store/delivery/deliverySlice';
 import TopLoader from '@/components/ui/top-loader';
+import { toast } from 'sonner';
 
   const steps = [
   {
@@ -101,8 +102,12 @@ const VehicleInfoPage: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 1048576) { // 1 Mo = 1048576 octets
-        alert('Le fichier ne doit pas dépasser plus de  1 Mo.');
+        
+        toast.error('Le fichier ne doit pas dépasser plus de  1 Mo.', {
+          duration: 4000, // ms
+        });
         e.target.value = ''; // Réinitialise l'input
+        return; 
     }
       const reader = new FileReader();
       reader.onload = () => {

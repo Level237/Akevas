@@ -16,6 +16,7 @@ import { useCheckIfEmailExistsMutation, useGetQuartersQuery } from '@/services/g
 import { useGetTownsQuery } from '@/services/guardService';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
+import { toast } from 'sonner';
 import { SelectTrigger } from '@/components/ui/select';
 import { SelectContent } from '@/components/ui/select';
 import { SelectItem } from '@/components/ui/select';
@@ -89,7 +90,11 @@ const DeliveryRegisterPage: React.FC = () => {
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
 
     if (missingFields.length > 0) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      
+      toast.error('Veuillez remplir tous les champs obligatoires', {
+        description: "Tous les champs marqués d'un * sont requis.",
+        duration: 4000, // ms
+      });
       return;
     }
     const form = new FormData()
@@ -98,8 +103,11 @@ const DeliveryRegisterPage: React.FC = () => {
     const response = await checkIfEmailExists(form)
     console.log(response)
     if (response.error) {
-      alert("ce mail ou ce numéro de téléphone existe déjà");
-
+      
+      toast.error('Ce mail ou ce numéro de téléphone existe déjà', {
+       
+        duration: 4000, // ms
+      });
       return;
     }
 
