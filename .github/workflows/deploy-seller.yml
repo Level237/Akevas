@@ -1,4 +1,4 @@
-name: Deploy to Akevas.com
+name: Deploy to seller.akevas.com
 
 on:
   push:
