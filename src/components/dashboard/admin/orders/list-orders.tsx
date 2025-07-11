@@ -38,20 +38,13 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                             <TableCell>{formatDate(order.created_at)}</TableCell>
                             <TableCell>{order.itemsCount} produits commandés</TableCell>
                             <TableCell>{order.total_amount}</TableCell>
-                            <TableCell className={`${order.status === "0" && "text-red-500"}`}>
+                            <TableCell className={`${order.status === "0" && "text-red-500"} ${order.status === "1" && "text-orange-500"} ${order.status === "2" && "text-green-500"}`}>
                                 <span className="capitalize font-bold">{order.status === "0" && "En attente"}</span>
-                               
-                            </TableCell>
-
-                            <TableCell className={`${order.status === "1" && "text-orange-500"}`}>
                                 <span className="capitalize font-bold">{order.status === "1" && "En Cours"}</span>
-                               
+                                <span className="capitalize font-bold">{order.status === "2" && "Livré"}</span>
                             </TableCell>
 
-                            <TableCell className={`${order.status === "2" && "text-green-500"}`}>
-                                <span className="capitalize font-bold">{order.status === "2" && "Livré"}</span>
-                               
-                            </TableCell>
+                            
                             <TableCell>{order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}</TableCell>
                             <TableCell>{order.phone}</TableCell>
                             <TableCell className="text-right flex items-center">
@@ -79,7 +72,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
 export default React.memo(ListOrders);
 
 export function ListOrdersContainer() {
-    const { data: orders, isLoading } = useAdminListOrdersQuery('admin')
-    console.log(orders)
+    const { data: orders, isLoading,error } = useAdminListOrdersQuery('admin')
+    console.log(error)
     return <ListOrders orders={orders} isLoading={isLoading} />
 }
