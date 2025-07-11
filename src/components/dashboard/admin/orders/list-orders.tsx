@@ -38,11 +38,22 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                             <TableCell>{formatDate(order.created_at)}</TableCell>
                             <TableCell>{order.itemsCount} produits commandés</TableCell>
                             <TableCell>{order.total_amount}</TableCell>
-                            <TableCell className={`${order.status === "0" ? "text-red-500" : "text-green-500"}`}>
-                                <span className="capitalize font-bold">{order.status === "0" ? "En attente" : "Livré"}</span>
+                            <TableCell className={`${order.status === "0" && "text-red-500"}`}>
+                                <span className="capitalize font-bold">{order.status === "0" && "En attente"}</span>
+                               
+                            </TableCell>
+
+                            <TableCell className={`${order.status === "1" && "text-orange-500"}`}>
+                                <span className="capitalize font-bold">{order.status === "1" && "En Cours"}</span>
+                               
+                            </TableCell>
+
+                            <TableCell className={`${order.status === "2" && "text-green-500"}`}>
+                                <span className="capitalize font-bold">{order.status === "2" && "Livré"}</span>
+                               
                             </TableCell>
                             <TableCell>{order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}</TableCell>
-                            <TableCell>Aucun</TableCell>
+                            <TableCell>{order.phone}</TableCell>
                             <TableCell className="text-right flex items-center">
                                 <AsyncLink to={`/admin/order/${order.id}`} className="mr-2">
                                     <Eye className="h-4 w-4" />
