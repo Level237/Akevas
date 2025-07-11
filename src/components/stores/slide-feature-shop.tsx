@@ -44,7 +44,7 @@ const SlideFeatureShop = ({ shops, isLoading }: { shops: Shop[], isLoading: bool
     const renderShops = useMemo(() => {
         if (isLoading) return renderSkeletons;
         
-        return shops.map((shop: Shop, index: number) => (
+        return Array.isArray(shops) && shops.map((shop: Shop, index: number) => (
             <SwiperSlide key={shop.shop_id} virtualIndex={index}>
                 <StoreCard 
                     shop={shop} 

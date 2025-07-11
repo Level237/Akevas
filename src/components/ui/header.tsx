@@ -348,7 +348,7 @@ console.log(userData)
               {/* Navigation par genre */}
               <nav className="flex items-center gap-6">
                
-                {genders.map((gender) => (
+                {Array.isArray(genders) && genders.map((gender) => (
                   <AsyncLink
                     key={gender.id}
                     to={`/home?g=${gender.url}`}

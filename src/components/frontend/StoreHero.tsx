@@ -16,7 +16,7 @@ const SlideControls = memo(({ slides, currentSlide, setCurrentSlide }:{slides:an
 
   return (
     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-      {slides.map((_:any, index:any) => (
+      {Array.isArray(slides) && slides.map((_:any, index:any) => (
         <button
           key={index}
           onClick={() => handleClick(index)}
@@ -57,7 +57,7 @@ const ProductGrid = memo(({ productImages }:{productImages:any}) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {productImages?.map((img:any, index:any) => renderImage(img, index))}
+      {Array.isArray(productImages) && productImages?.map((img:any, index:any) => renderImage(img, index))}
     </motion.div>
   );
 });
@@ -68,7 +68,7 @@ export default function StoreHero() {
 
   const productImages = useMemo(() => {
     if(!isLoading && shopData) {
-      return shopData.slice(0,6).map((shop:any) => ({
+      return Array.isArray(shopData) && shopData.slice(0,6).map((shop:any) => ({
         profile: shop.shop_profile,
         url: shop.id
       }));
@@ -132,7 +132,7 @@ export default function StoreHero() {
           <motion.div className="my-6 h-48 relative">
             {slides[2].isMarketplace && (
               <div className="grid grid-cols-2 gap-3 h-full">
-                {!isLoading && productImages?.slice(0, 4).map((img:any, index:number) => (
+                {Array.isArray(productImages) && !isLoading && productImages?.slice(0, 4).map((img:any, index:number) => (
                   <Link key={index} to={`/shop/${img.url}`} className="relative rounded-xl overflow-hidden">
                     <OptimizedImage
                       src={img.profile}

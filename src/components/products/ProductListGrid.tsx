@@ -25,7 +25,7 @@ const ProductCard = memo(({
 }) => {
   return (
     <motion.div
-      className="m-3 w-[290px] flex-shrink-0 cursor-pointer max-sm:max-w-56 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
+      className="m-3 w-[290px] cursor-pointer max-sm:max-w-56 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
       layout
     >
       <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -51,7 +51,7 @@ const ProductCard = memo(({
 
             {product.variations && product.variations.length > 0 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center max-sm:px-2 max-sm:py-1 gap-2 bg-white/90 px-3 py-2 rounded-full">
-                {getColorSwatches(product).map((color) => (
+                {Array.isArray(product) && getColorSwatches(product).map((color) => (
                   <div
                     key={color.hex}
                     title={color.name}

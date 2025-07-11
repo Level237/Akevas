@@ -42,7 +42,7 @@ const GenderNavigationMobile = () => {
       <div className={`w-full flex items-center justify-center gap-2 px-4 transition-all duration-500 ${
         isScrolled ? 'py-3' : 'py-4'
       } overflow-x-auto no-scrollbar`}>
-        {tabs.map((tab) => (
+        {Array.isArray(tabs) && tabs.map((tab) => (
           <AsyncLink
             key={tab.id}
             to={`/home?g=${tab.id}`}
