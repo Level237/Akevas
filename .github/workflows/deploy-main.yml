@@ -36,4 +36,4 @@ jobs:
           username: akevasftp@akevas.com
           password: jMylEA6+(oHD
           local-dir: ./dist/
-          server-dir: /public_html/
+          server-dir: /../
