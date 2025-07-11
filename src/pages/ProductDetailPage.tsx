@@ -635,7 +635,7 @@ const ProductDetailPage: React.FC = () => {
                           className="w-full bg-green-500 text-white px-6 py-3.5 flex items-center justify-center gap-2 rounded-xl font-medium hover:bg-green-600 transition-colors"
                         >
                           <MessageCircle className="w-5 h-5" />
-                          Contacter par WhatsApp
+                          Assistance produit
                         </button>
                         <p className="text-xs text-gray-500 text-center mt-2">
                           Réponse rapide garantie
