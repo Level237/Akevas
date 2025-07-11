@@ -5,7 +5,6 @@ import { ChevronDown, Sparkle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AsyncLink from '../ui/AsyncLink';
 import { Category } from '@/types/products';
-import { Link } from 'react-router-dom';
 
 
 // Composant pour le skeleton loading
@@ -62,12 +61,13 @@ const CategoryDropdown = React.memo(({
                     <ul className="space-y-2">
                       {parentCat.children.map((childCat: any) => (
                         <li key={childCat.id}>
-                          <Link
-                            to={`https://dev.akevas.com/c/${childCat.category_url}`}
+                          <a
+                            href={`https://main.akevas.com/c/${childCat.category_url}`}
                             className="text-sm text-gray-600 hover:text-orange-500"
+                            target='_blank'
                           >
                             {childCat.category_name}
-                          </Link>
+                          </a>
                         </li>
                       ))}
                     </ul>
@@ -82,12 +82,13 @@ const CategoryDropdown = React.memo(({
                   <ul className="space-y-2">
                     {categories.map((item: any) => (
                       <li key={item.id}>
-                        <Link
-                          to={`https://dev.akevas.com/c/${item.category_url}`}
+                        <a
+                          href={`https://main.akevas.com/c/${item.category_url}`}
                           className="text-sm text-gray-600 hover:text-orange-500"
+                          target='_blank'
                         >
                           {item.category_name} {key}
-                        </Link>
+                        </a>
                       </li>
                     ))}
                   </ul>
@@ -107,13 +108,14 @@ const CategoryDropdown = React.memo(({
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6 text-white">
                 <h3 className="text-xl font-bold mb-2">Collection {category.category_name}</h3>
                 <p className="text-sm mb-4">Découvrez nos nouveautés</p>
-                <Link
-                  to={`https://dev.akevas.com/c/${category.category_url}`}
+                <a
+                  href={`https://main.akevas.com/c/${category.category_url}`}
                   className="inline-flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-orange-500 hover:text-white transition-colors"
+                  target='_blank'
                 >
                   Découvrir
                   <Sparkle className="w-4 h-4" />
-                </Link>
+                </a>
               </div>
             </div>
 
