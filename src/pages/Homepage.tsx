@@ -28,21 +28,22 @@ const Homepage = () => {
   const [transition, startTransition] = useTransition();
   console.log(transition)
   const [localShops, setLocalShops] = useState<Shop[]>([])
-  const { data: { data: shops } = {}, isLoading: shopsLoading } = useGetHomeShopsQuery("guard", {
+  const { data: { data: shopsData } = {}, isLoading: shopsLoading,error:shopsError } = useGetHomeShopsQuery("guard", {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   })
-  const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
+  const { data: { data: categoriesData } = {}, isLoading: categoriesLoading,error:categoriesError } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   })
 
   
-
+  const shops=shopsData || [];
+  const categories=categoriesData || [];
 
 
   useEffect(() => {
-    if (shops) {
+    if (shops && Array.isArray(shops)) {
       startTransition(() => {
         setLocalShops(shops);
       });
@@ -59,6 +60,26 @@ const Homepage = () => {
     }
   }, [shopsLoading, categoriesLoading, dispatch]);
 
+  if (shopsError || categoriesError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Erreur de chargement
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Impossible de charger les données. Veuillez réessayer.
+          </p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-[#ed7e0f] text-white px-4 py-2 rounded-lg"
+          >
+            Recharger
+          </button>
+        </div>
+      </div>
+    );
+  }
   if (isInitialLoading || shopsLoading || categoriesLoading) {
     return <PageLoader />;
   }
