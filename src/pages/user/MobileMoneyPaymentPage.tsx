@@ -31,12 +31,11 @@ export default function MobileMoneyPaymentPage() {
   let variations=null;
   let productsPayments=null;
   if(formDataPayment.hasVariation && formDataPayment.s==0){
-    variations=JSON.parse(formDataPayment.variations);
-    console.log("ekke")
+    variations=JSON.parse(formDataPayment.variations || '{}');
     
   }
   if(formDataPayment.s==1){
-    productsPayments=JSON.parse(formDataPayment.productsPayments)
+    productsPayments=JSON.parse(formDataPayment.productsPayments || '[]')
     console.log(productsPayments)
   }
   
