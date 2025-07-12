@@ -21,7 +21,7 @@ jobs:
       - name: Build App
         run:  pnpm run build
 
-      - name: Add .htaccess to dist/
+      - name: Add .htaccess to Delivery dist/
         run: |
           echo 'Options -Indexes' > ./dist/.htaccess
           echo 'RewriteEngine On' >> ./dist/.htaccess
