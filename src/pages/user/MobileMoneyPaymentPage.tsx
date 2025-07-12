@@ -32,6 +32,7 @@ export default function MobileMoneyPaymentPage() {
   let productsPayments=null;
   if(formDataPayment.hasVariation && formDataPayment.s==0){
     variations=JSON.parse(formDataPayment.variations);
+    console.log("ekke")
     
   }
   if(formDataPayment.s==1){
