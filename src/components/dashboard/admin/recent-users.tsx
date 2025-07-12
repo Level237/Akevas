@@ -1,3 +1,4 @@
+import AsyncLink from "@/components/ui/AsyncLink"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,7 +18,7 @@ export function RecentUsers({ users, title, isLoading }: RecentUsersProps) {
   return (
     <Card>
       <CardHeader >
-        <CardTitle className="flex justify-between items-center">{title} <Button className=" bg-transparent border-[1px] hover:bg-[#ed7e0f]/20 text-[#ed7e0f] border-[#ed7e0f]/90">Voir plus</Button></CardTitle>
+        <CardTitle className="flex justify-between items-center">{title} <AsyncLink to="/admin/shops" className=" bg-transparent p-3 rounded-lg border-[1px] hover:bg-[#ed7e0f]/20 text-[#ed7e0f] border-[#ed7e0f]/90">Voir plus</AsyncLink></CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
