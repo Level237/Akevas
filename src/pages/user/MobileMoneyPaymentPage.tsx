@@ -26,18 +26,53 @@ export default function MobileMoneyPaymentPage() {
   const delay = 1500;
   let isActive = true;
   let isActiveWebhook = false;
-  const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
+
+  const getFormDataPayment = () => {
+    try {
+      const stored = sessionStorage.getItem('formDataPayment');
+      if (!stored) {
+        throw new Error('Aucune donnée de paiement trouvée');
+      }
+      return JSON.parse(stored);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données de paiement:', error);
+      navigate('/cart'); // Rediriger vers le panier
+      return null;
+    }
+  };
+  const formDataPayment = getFormDataPayment();
   
+  if (!formDataPayment) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Données de paiement manquantes</h2>
+          <p className="text-gray-600 mb-4">Veuillez retourner au panier et réessayer.</p>
+          <Button onClick={() => navigate('/cart')}>
+            Retourner au panier
+          </Button>
+        </div>
+      </div>
+    );
+  }
   let variations=null;
   let productsPayments=null;
-  if(JSON.parse(formDataPayment.hasVariation) && JSON.parse(formDataPayment.s)==0){
-    variations=JSON.parse(formDataPayment.variations);
-    
+
+  try{
+    if(JSON.parse(formDataPayment.hasVariation) && JSON.parse(formDataPayment.s)==0){
+      variations=JSON.parse(formDataPayment.variations);
+      
+    }
+    if(JSON.parse(formDataPayment.s)==1){
+      productsPayments=JSON.parse(formDataPayment.productsPayments)
+      
+    }
+  }catch(error){
+    console.error('Erreur lors du parsing des données:', error);
+    navigate('/cart');
+    return null;
   }
-  if(JSON.parse(formDataPayment.s)==1){
-    productsPayments=JSON.parse(formDataPayment.productsPayments)
-    
-  }
+  
 
    const pollStatus = async () => {
     
