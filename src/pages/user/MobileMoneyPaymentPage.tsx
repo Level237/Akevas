@@ -27,20 +27,20 @@ export default function MobileMoneyPaymentPage() {
   let isActive = true;
   let isActiveWebhook = false;
   const formDataPayment = JSON.parse(sessionStorage.getItem('formDataPayment') || '{}');
-  console.log(formDataPayment)
+  
   let variations=null;
   let productsPayments=null;
-  if(formDataPayment.hasVariation && formDataPayment.s==0){
-    variations=JSON.parse(formDataPayment.variations || '{}');
+  if(JSON.parse(formDataPayment.hasVariation) && JSON.parse(formDataPayment.s)==0){
+    variations=JSON.parse(formDataPayment.variations);
     
   }
-  if(formDataPayment.s==1){
-    productsPayments=JSON.parse(formDataPayment.productsPayments || '[]')
-    console.log(productsPayments)
+  if(JSON.parse(formDataPayment.s)==1){
+    productsPayments=JSON.parse(formDataPayment.productsPayments)
+    
   }
-  
+
    const pollStatus = async () => {
-   
+    
     if(formDataPayment.s==0){
       formData = {
         phone:formDataPayment.phone,
