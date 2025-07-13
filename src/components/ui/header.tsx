@@ -243,6 +243,8 @@ console.log(userData)
         <Search className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
       </button>
       <DropdownAccount currentUser={userData}>
+
+        <div className='z-[99999]'>
         {!userData && (
           <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
             <User className="h-6 w-6 max-sm:w-5 max-sm:h-5" />
@@ -255,6 +257,8 @@ console.log(userData)
             <AvatarFallback>{userData?.userName.charAt(0)}</AvatarFallback>
           </Avatar>
         )}
+        </div>
+        
       </DropdownAccount>
 
       {!userData && <AsyncLink to="/cart">
