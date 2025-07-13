@@ -44,7 +44,7 @@ const PremiumProducts: React.FC = () => {
 
   return (
     <section className="pt-24 max-sm:pt-12  bg-gray-200">
-      <div className="max-w-8xl ml-12 mx-auto px-4 max-sm:pr-0 sm:px-6 lg:px-8">
+      <div className="max-w-8xl ml-12 max-sm:ml-2 mx-auto px-4 max-sm:pr-0 sm:px-6 lg:px-8">
         <SectionHeader title='Produits Premium' description='Découvrez notre sélection de produits premium'/>
         <ProductListGrid
           products={memoizedProducts}

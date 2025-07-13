@@ -34,7 +34,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
 
 
   return (
-    <div className="relative z-[999999] ">
+    <div className="relative z-[99999] ">
       <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -49,9 +49,9 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.2 }}
-              className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+              className="absolute z-[99999]  right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 "
             >
-              <div className="px-4 py-3 border-b border-gray-100">
+              <div className="px-4 py-3  border-b border-gray-100">
                 {!currentUser && <><Link to={"/login"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button></Link>
                   <Link to={"/register"}><Button variant="ghost" className="w-full text-sm">S&apos;inscrire</Button></Link></>}
                 {currentUser && currentUser.role_id === 2 && <><AsyncLink to={"/shop/" + currentUser.shop.shop_id}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Voir ma boutique</Button></AsyncLink>

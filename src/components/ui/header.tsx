@@ -360,7 +360,7 @@ console.log(userData)
               </nav>
 
               {/* Actions (compte, panier, etc.) */}
-              <div className="flex items-center gap-4">
+              <div className="flex  items-center gap-4">
                 <DropdownAccount currentUser={userData}>
                   {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
                     <User className="h-7 w-7" />
