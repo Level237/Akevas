@@ -44,7 +44,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.2 }}
-              className="fixed z-[999999] right-4 mt-2 w-64 bg-white rounded-lg shadow-2xl border border-gray-200 py-2"
+              className="absolute z-[9999] right-0 mt-2 w-64 bg-white rounded-lg shadow-2xl border border-gray-200 py-2"
             >
               <div className="px-4 py-3 border-b border-gray-100">
                 {!currentUser && <><Link to={"/login"}><Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 mb-2">Se connecter</Button></Link>
