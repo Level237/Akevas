@@ -8,9 +8,9 @@ const ListCustomerPage = () => {
     return (
         <main className="p-4 md:p-6 mt-16">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Products</h1>
+                <h1 className="text-2xl font-bold">Clients</h1>
                 <Button className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90">
-                    <Plus className="mr-2 h-4 w-4" /> Add Customer
+                    <Plus className="mr-2 h-4 w-4" /> Ajouter
                 </Button>
             </div>
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
