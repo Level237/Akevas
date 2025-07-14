@@ -1,10 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { IdentityStepProps } from "@/interfaces/steps/IdentityStepProps";
+import { compressImage } from "@/lib/imageCompression";
 import { toast } from 'sonner';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useState } from 'react';
 
 const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
-  const handleChange = (
+  const [loadingField, setLoadingField] = useState<string | null>(null);
+  const handleChange =async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, type, files } = e.target;
@@ -13,53 +17,68 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
       const file = files[0];
       const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
 
-      if (file.size > maxSize) {
-       
-        toast.error("Le fichier ne doit pas dépasser 2 Mo.", {
-          description: "Choisir un fichier en dessous de 2Mo",
-          duration: 4000, // ms
-        });
-        return;
-      }
+      try{
+        setLoadingField(name); // Début du chargement
+        let processedFile=file;
 
-      if(name === 'identity_card_in_front'){
-        reader.onload = (e) => {
-          const base64 = e.target?.result as string;
-          onUpdate({
-            identityInfo: {
-              ...data,
-              [name]: base64,
-            },
-          });
-        };
-        reader.readAsDataURL(file);
-      }
-      else if(name === 'identity_card_in_back'){
-        reader.onload = (e) => {
-          const base64 = e.target?.result as string;
-          onUpdate({
-            identityInfo: {
-              ...data,
-              [name]: base64,
-            },
+        if (file.size > maxSize) {
+          processedFile=await compressImage(file,{
+            maxWidth:1920,
+            maxHeight:1080,
+            quality:0.8,
+            maxSizeMB:2,
+          })
+          toast.success("Image compressée avec succès", {
+            description: `Taille réduite de ${(file.size / 1024 / 1024).toFixed(1)}Mo à ${(processedFile.size / 1024 / 1024).toFixed(1)}Mo`,
+            duration: 3000,
           });
         }
-         reader.readAsDataURL(file);
-      }
-      else if(name === 'identity_card_with_the_person'){
-        console.log("lrv")
-        reader.onload = (e) => {
-          const base64 = e.target?.result as string;
-          onUpdate({
-            identityInfo: {
-              ...data,
-              [name]: base64,
-            },
-          });
+        if(name === 'identity_card_in_front'){
+          reader.onload = (e) => {
+            const base64 = e.target?.result as string;
+            onUpdate({
+              identityInfo: {
+                ...data,
+                [name]: base64,
+              },
+            });
+            setLoadingField(null); // Fin du chargement
+          };
+          reader.readAsDataURL(processedFile);
         }
-        reader.readAsDataURL(file);
+        else if(name === 'identity_card_in_back'){
+          reader.onload = (e) => {
+            const base64 = e.target?.result as string;
+            onUpdate({
+              identityInfo: {
+                ...data,
+                [name]: base64,
+              },
+            });
+            setLoadingField(null); // Fin du chargement
+          }
+           reader.readAsDataURL(processedFile);
+        }
+        else if(name === 'identity_card_with_the_person'){
+          reader.onload = (e) => {
+            const base64 = e.target?.result as string;
+            onUpdate({
+              identityInfo: {
+                ...data,
+                [name]: base64,
+              },
+            });
+            setLoadingField(null); // Fin du chargement
+          }
+          reader.readAsDataURL(processedFile);
+        }
+      }catch(e){
+        setLoadingField(null); // Fin du chargement même en cas d'erreur
+        toast.error("Erreur lors de la compression", {
+          description: "Veuillez essayer avec une autre image",
+          duration: 4000,
+        });
       }
-     
     }
   };
 
@@ -75,7 +94,12 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
      
 
       <div  className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200">
+        <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200 relative">
+          {loadingField === 'identity_card_in_front' && (
+            <div className="absolute inset-0 bg-white/80 z-20 flex items-center justify-center rounded-xl">
+              <LoadingSpinner size="md" />
+            </div>
+          )}
           <div className="space-y-3">
             <Label htmlFor="identity_card_in_front" className="text-sm font-medium text-gray-700">
               Photo recto de la CNI ou passport <span className="text-red-500">*</span>
@@ -144,7 +168,12 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
           </div>
         </Card>
 
-        <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200">
+        <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200 relative">
+          {loadingField === 'identity_card_in_back' && (
+            <div className="absolute inset-0 bg-white/80 z-20 flex items-center justify-center rounded-xl">
+              <LoadingSpinner size="md" />
+            </div>
+          )}
           <div className="space-y-3">
             <Label htmlFor="idCardBack" className="text-sm font-medium text-gray-700">
               Photo verso de la CNI <span className="text-red-500">*</span>
@@ -213,7 +242,12 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
           </div>
         </Card>
 
-        <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200">
+        <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200 relative">
+          {loadingField === 'identity_card_with_the_person' && (
+            <div className="absolute inset-0 bg-white/80 z-20 flex items-center justify-center rounded-xl">
+              <LoadingSpinner size="md" />
+            </div>
+          )}
           <div className="space-y-3">
             <Label htmlFor="idCardPassport" className="text-sm font-medium text-gray-700">
               Photo de vous avec votre CNI <span className="text-red-500">*</span>
@@ -286,6 +320,8 @@ const IdentityInfoStep: React.FC<IdentityStepProps> = ({ data, onUpdate }) => {
           </div>
         </Card>
       </div>
+
+      
     </div>
   );
 };
