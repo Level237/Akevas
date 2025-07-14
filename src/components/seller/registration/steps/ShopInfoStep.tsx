@@ -8,6 +8,8 @@ import { MultiSelect } from '@/components/ui/multiselect';
 import { useGetCategoriesQuery, useGetCategoryByGenderQuery } from '@/services/guardService';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { compressImage, compressMultipleImages } from '@/lib/imageCompression';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 interface ShopInfoStepProps {
   data: SellerFormData['shopInfo'];
@@ -19,81 +21,107 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
    const [gender,setGender]=useState<number>(0)
     const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
   console.log(categories);
-  const handleChange = (
+  const [loadingImages, setLoadingImages] = useState(false);
+  const handleChange = async(
     e: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>
   ) => {
     const { name,value,type, files } = e.target;
     if(type === 'file' && files) {
-       if (name === 'images') {
-        // Traitement de plusieurs fichiers
-        const file = files[0];
-        const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
-        
 
-        if (file.size > maxSize) {
-       
-          toast.error("Le fichier ne doit pas dépasser 2 Mo.", {
-            description: "Choisir un fichier en dessous de 2Mo",
-            className:"bg-black",
-            duration: 4000, // ms
-          });
-          return;
-        }
-        
-        if (files && files.length > 3) {
-                    alert('Vous ne pouvez sélectionner que 3 images maximum');
-                    e.target.value = '';
-                    return;
-                  }
-        const fileArray = Array.from(files);
-        Promise.all(
-          fileArray.map((file) => {
-            return new Promise<string>((resolve) => {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                resolve(e.target?.result as string);
-              };
-              reader.readAsDataURL(file);
+      try{
+        let processedFile=null;
+        if (name === 'images') {
+          setLoadingImages(true); // Affiche le loader
+
+          // Limite le nombre total d’images (exemple : 6)
+          const maxImages = 3;
+          const currentImages = data.images || [];
+          if (currentImages.length + files.length > maxImages) {
+            toast.error(`Vous ne pouvez sélectionner que ${maxImages} images au total.`);
+            setLoadingImages(false);
+            return;
+          }
+
+          try {
+            // Compression multiple
+            const compressedFiles = await compressMultipleImages(files, {
+              maxWidth: 1920,
+              maxHeight: 1080,
+              quality: 0.8,
+              maxSizeMB: 2,
             });
-          })
-        ).then((base64Array) => {
-          onUpdate({
-            shopInfo: {
-              ...data,
-              [name]: base64Array,
-            },
-          });
-        });
-        return;
-      } else if (name === 'logo') {
+            console.log(files)
+            // Conversion en base64
+            const base64Array = await Promise.all(
+              compressedFiles.map(
+                file =>
+                  new Promise<string>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target?.result as string);
+                    reader.readAsDataURL(file);
+                  })
+              )
+            );
 
-        const file = files[0];
-        const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
-        
+            const allImages = [...currentImages, ...base64Array];
+            onUpdate({
+              shopInfo: {
+                ...data,
+                [name]: allImages,
+              },
+            });
+            setLoadingImages(false); // Cache le loader
+          } catch (e) {
+            setLoadingImages(false);
+            toast.error("Erreur lors de la compression", {
+              description: "Veuillez essayer avec une autre image",
+              duration: 4000,
+            });
+          }
+          return;
+        } else if (name === 'logo') {
+  
+          const file = files[0];
+          processedFile=file;
+          const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
+          
+  
+          if (file.size > maxSize) {
+         
+           processedFile=await compressImage(file,{
+            maxWidth:1920,
+            maxHeight:1080,
+            quality:0.8,
+            maxSizeMB:2,
+           })
+          }
 
-        if (file.size > maxSize) {
-       
-          toast.error("Le fichier ne doit pas dépasser 2 Mo.", {
-            description: "Choisir un fichier en dessous de 2Mo",
-            className:"bg-black",
-            duration: 4000, // ms
+          toast.success("Image compressée avec succès", {
+            description: `Taille réduite de ${(file.size / 1024 / 1024).toFixed(1)}Mo à ${(processedFile.size / 1024 / 1024).toFixed(1)}Mo`,
+            duration: 3000,
           });
+          // Traitement d'un seul fichier (logo)
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const base64 = e.target?.result as string;
+            onUpdate({
+              shopInfo: {
+                ...data,
+                [name]: base64,
+              },
+            });
+          };
+          reader.readAsDataURL(processedFile);
           return;
         }
-        // Traitement d'un seul fichier (logo)
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const base64 = e.target?.result as string;
-          onUpdate({
-            shopInfo: {
-              ...data,
-              [name]: base64,
-            },
-          });
-        };
-        reader.readAsDataURL(files[0]);
-        return;
-      }
+      }catch(e){
+      //setLoadingField(null); // Fin du chargement même en cas d'erreur
+      toast.error("Erreur lors de la compression", {
+        description: "Veuillez essayer avec une autre image",
+        duration: 4000,
+      });
+    }
+      
     }
     onUpdate({
       shopInfo: {
@@ -198,7 +226,13 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
         </div>
        
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200">
+          <Card className="p-4 bg-white shadow-lg hover:shadow-xl transition-shadow duration-200 relative">
+          {loadingImages && (
+            <div className="absolute inset-0 bg-white/80 z-20 flex items-center justify-center rounded-xl">
+              <LoadingSpinner size="md" />
+              <span className="ml-2 text-[#ed7e0f] font-semibold">Compression...</span>
+            </div>
+          )}
           <div className="space-y-3">
             <Label htmlFor="idCardFront" className="text-sm font-medium text-gray-700">
               Indiquez le profil de votre boutique <span className="text-red-500">*</span><span className='text-xs text-gray-400'> ( Envoyez des photos de bonnes qualité pour permettre une validation rapide de votre boutique )</span>
@@ -349,7 +383,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
             )}
           </div>
 ) : (
-  <label className="cursor-pointer -mt-12 group relative block mt-5">
+  <label className="cursor-pointer -mt-12 group relative block ">
     <Input
                 type="file"
                 id="images"
@@ -390,6 +424,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
           </div>
         </Card>
         </div>
+        
       </div>
     </div>
   );
