@@ -1140,7 +1140,7 @@ const CreateProductPage: React.FC = () => {
                         value={whatsappNumber}
                         onChange={(e) => setWhatsappNumber(e.target.value)}
                         className="w-full pl-12 pr-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                        placeholder="Ex: +225 0123456789"
+                        placeholder="Ex: +237 656488374"
                         
                       />
                     </div>
@@ -1528,7 +1528,7 @@ const CreateProductPage: React.FC = () => {
                                     const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === size.id);
                                     return (
                                       <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
-                                        <span className="text-sm">{sizeData?.value}</span>
+                                        <span className="text-sm">{size.quantity} {sizeData?.value}</span>
                                         <button
                                           onClick={() => removeSizeFromVariation(frame.id, size.id)}
                                           className="text-gray-400 hover:text-gray-600"
