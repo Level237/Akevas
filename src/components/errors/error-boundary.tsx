@@ -84,17 +84,17 @@ const NetworkBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) 
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#fff8f0] to-[#fff1e0] dark:from-[#2d1705] dark:to-[#1a0d03]">
         <div className="max-w-md mx-auto p-8 bg-white dark:bg-[#1a0d03] rounded-2xl shadow-[0_8px_30px_rgba(237,126,15,0.12)] dark:shadow-[0_8px_30px_rgba(237,126,15,0.08)]">
           <div className="flex flex-col items-center text-center">
-            <div className="w-20 h-20 mb-8 rounded-full bg-[#fff8f0] dark:bg-[#2d1705] flex items-center justify-center">
-            <WifiOff className="w-12 h-12 text-[#ed7e0f]"/>
+            <div className="w-20 h-20 mb-8 max-sm:mb-2 rounded-full bg-[#fff8f0] dark:bg-[#2d1705] flex items-center justify-center">
+            <WifiOff className="w-12 max-sm:w-10 h-12 text-[#ed7e0f]"/>
             
             </div>
-            <h2 className="text-3xl font-bold text-[#ed7e0f] mb-4">
+            <h2 className="text-3xl max-sm:text-xl font-bold text-[#ed7e0f] mb-4">
               Pas de connexion internet
             </h2>
-            <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
+            <p className="text-gray-700 max-sm:text-base dark:text-gray-300 text-lg leading-relaxed">
               Veuillez vérifier votre connexion. La page se rechargera automatiquement dès que la connexion sera rétablie.
             </p>
-            <div className="mt-8 flex space-x-2">
+            <div className="mt-8 flex space-x-2 max-sm:mt-7">
               <div className="w-3 h-3 bg-[#ed7e0f] rounded-full animate-bounce"></div>
               <div className="w-3 h-3 bg-[#ed7e0f] rounded-full animate-bounce delay-150"></div>
               <div className="w-3 h-3 bg-[#ed7e0f] rounded-full animate-bounce delay-300"></div>

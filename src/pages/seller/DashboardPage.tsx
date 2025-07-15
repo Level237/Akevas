@@ -85,28 +85,28 @@ const DashboardPage = () => {
               animate={{ opacity: 1, y: 0 }}
               className="mb-6"
             >
-              <div className="bg-gradient-to-r from-[#ed7e0f] to-[#f4a340] rounded-2xl p-6 shadow-lg relative overflow-hidden">
+              <div className="bg-gradient-to-r from-[#ed7e0f] max-sm:flex max-sm:flex-col to-[#f4a340] rounded-2xl p-6 shadow-lg relative overflow-hidden">
                 {/* Cercles décoratifs en arrière-plan */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
                 
-                <div className="flex items-center justify-between relative z-10">
+                <div className="flex items-center max-sm:flex max-sm:flex-col max-sm:gap-6 justify-between relative z-10">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-xl">
-                        <Coins className="w-6 h-6 text-white" />
+                        <Coins className="w-6 max-sm:w-4 max-sm:h-4 h-6 text-white" />
                       </div>
-                      <h3 className="text-lg font-semibold text-white">
-                        Démarrez votre activité maintenant !
+                      <h3 className="text-lg max-sm:text-base font-semibold text-white">
+                        Démarrez votre activité maintenant
                       </h3>
                     </div>
                     <div className="space-y-2">
-                      <p className="text-white/90">
+                      <p className="text-white/90 max-sm:text-sm">
                         Rechargez votre compte pour accéder à tous les avantages vendeur
                       </p>
-                      <div className="flex gap-2 text-white/80 text-sm">
+                      <div className="flex gap-2  text-white/80 text-sm">
                         <span className="flex items-center gap-1">
-                          <Check className="w-4 h-4" /> Boostage de votre boutique
+                          <Check className="w-4 h-4 " /> Boostage de votre boutique
                         </span>
                         <span className="flex items-center gap-1">
                           <Check className="w-4 h-4" /> Boostage de vos produits
@@ -118,7 +118,8 @@ const DashboardPage = () => {
                   <AsyncLink to="/recharge">
                     <button className="flex items-center gap-2 bg-white text-[#ed7e0f] px-6 py-3 rounded-xl hover:bg-white/90 transition-all duration-300 font-medium shadow-md hover:shadow-xl transform hover:-translate-y-0.5">
                       <Plus className="w-5 h-5" />
-                      Recharger maintenant
+                      <span className='max-sm:text-sm' >Recharger maintenant</span>
+                      
                     </button>
                   </AsyncLink>
                 </div>

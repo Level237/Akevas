@@ -8,7 +8,7 @@ import AsyncLink from '@/components/ui/AsyncLink'
 import { formatDate } from '@/lib/formatDate'
 
 export default function ProductListOverview({ products, isLoading }: { products: Product[], isLoading: boolean }) {
-
+  console.log(products)
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -131,7 +131,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                 <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(product.status ? 'active' : 'draft')}`}>{getStatusText(product.status ? 'active' : 'draft')}</span>
               </div>
               <div className="flex justify-end gap-2 mt-2">
-                <a target="_blank" href={`https://dev.akevas.com/produit/${product.product_url}`}> 
+                <a target="_blank" href={`https://akevas.com/produit/${product.product_url}`}> 
                   <button className="p-2 hover:bg-gray-100 rounded-lg" title="Voir">
                     <Eye className="w-5 h-5 text-gray-600" />
                   </button>

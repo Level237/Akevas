@@ -18,8 +18,8 @@ export default function TitleOverview({title,content,link,number,cta}:{title:str
                     <span className="text-white font-bold">{number}</span>
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-xl font-semibold max-sm:text-lg text-gray-900">{title}</h2>
-                    <p className="text-gray-600 mt-1">
+                    <h2 className="text-xl font-semibold max-sm:text-base text-gray-900">{title}</h2>
+                    <p className="text-gray-600 max-sm:text-sm mt-1">
                      {content}
                     </p>
                   </div>
@@ -27,7 +27,7 @@ export default function TitleOverview({title,content,link,number,cta}:{title:str
                 <div className="mt-4 flex justify-end">
                   <AsyncLink to={link}>
                   <Button
-                    className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white font-semibold"
+                    className="bg-[#ed7e0f] max-sm:text-sm hover:bg-[#ed7e0f]/90 text-white font-semibold"
                    
                   >
                    {cta}

@@ -267,13 +267,13 @@ const SellerCatalog: React.FC = () => {
                                         </div>
                                         <div className="flex gap-3">
                                             <AsyncLink
-                                                to={`/seller/products/${product.id}/edit`}
+                                                to={`/`}
                                                 className="flex-1 text-center py-2.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                                             >
                                                 Modifier
                                             </AsyncLink>
                                             <a
-                                                href={`https:/main.akevas.com/produit/${product.product_url}`}
+                                                href={`https:/akevas.com/produit/${product.product_url}`}
                                                 target='_blank'
                                                 className="flex-1 text-center py-2.5 text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
                                             >
