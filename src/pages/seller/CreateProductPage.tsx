@@ -941,7 +941,7 @@ const CreateProductPage: React.FC = () => {
 
       <form onSubmit={handleSubmit} encType='multipart/form-data'>
         {/* Header avec boutons d'action */}
-        <header className="sticky top-0 z-40 bg-white border-b">
+        <header className="sticky top-16 z-30 bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 py-4">
             {/* Version mobile */}
             <div className="md:hidden">

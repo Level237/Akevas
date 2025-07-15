@@ -14,7 +14,6 @@ import logo from '@/assets/favicon.png'
 import { Link } from 'react-router-dom'
 
 export default function Header({
-  isMobile,
   setIsSidebarOpen,
   sellerData,
 }: {
@@ -156,7 +155,7 @@ export default function Header({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg overflow-hidden z-50 border border-gray-100"
+                    className="absolute right-0 z-50 mt-2 w-44 bg-white rounded-lg shadow-lg overflow-hidden  border border-gray-100"
                   >
                     <AsyncLink to="/account">
                       <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
