@@ -71,7 +71,7 @@ export default function DetailDelivery({ delivery, isLoading }: DetailDeliveryPr
 
       {!isLoading &&
         <div><div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Détails de la boutique</h1>
+          <h1 className="text-2xl font-bold">Détails du livreur</h1>
           <div className="space-x-2 max-sm:flex max-sm:flex-col max-sm:gap-4">
             <Button disabled={isConfirm}  onClick={()=>setOpenRejectDialog(true)} variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
               <X className="mr-2 h-4 w-4" /> Rejeter

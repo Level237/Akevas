@@ -12,7 +12,7 @@ export default function ProductDetailPageAdmin() {
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const [togglePublish] = useTogglePublishMutation();
   const [isImageOpen, setIsImageOpen] = useState<string | null>(null);
-
+  console.log(product)
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -118,10 +118,63 @@ export default function ProductDetailPageAdmin() {
 
             {/* Colonne infos */}
             <div className="md:w-2/3 flex flex-col gap-6">
+              {/* Titre produit */}
+              <div>
+                <h1 className="text-2xl font-bold mb-1">{product.product_name}</h1>
+                <div className="flex items-center gap-2">
+                  {product.status==1 ? (
+                    <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs">Publié</span>
+                  ) : (
+                    <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700 text-xs">Non publié</span>
+                  )}
+                  <span className="text-xs text-gray-400">Ajouté le {new Date(product.created_at).toLocaleDateString()}</span>
+                </div>
+              </div>
+
+              {/* Section Boutique */}
+              <div className="flex items-center gap-4 bg-orange-50 border border-orange-100 rounded-xl p-4 my-2">
+                <img
+                  src={product.shop_profile || "/placeholder.svg"}
+                  alt={product.shop_name}
+                  className="w-14 h-14 rounded-full object-cover border"
+                />
+                <div className="flex-1">
+                  <div className="font-bold text-orange-700">{product.shop_name}</div>
+                  <div className="text-xs text-gray-500">
+                    Inscrit le {product.shop_created_at ? new Date(product.shop_created_at).toLocaleDateString() : "N/A"}
+                  </div>
+                </div>
+                <Button
+                  className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg"
+                  onClick={() => navigate(`/admin/shops/${product.shop_id}`)}
+                >
+                  Voir la boutique
+                </Button>
+              </div>
+
+              {/* Grille infos produit */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <span className="text-gray-500">Prix :</span>
-                  <div className="font-bold text-lg">{product.product_price?.toLocaleString()} FCFA</div>
+                  <div className="font-bold text-lg">
+                    {product.product_price !== null
+                      ? `${Number(product.product_price).toLocaleString()} FCFA`
+                      : product.variations && product.variations.length > 0
+                        ? (() => {
+                            // Récupère tous les prix des variations
+                            const allPrices = product.variations
+                              .flatMap((v: any) => v.attributes?.map((a: any) => Number(a.price)) || [])
+                              .filter((p: number) => !isNaN(p));
+                            if (allPrices.length === 0) return "Non défini";
+                            const min = Math.min(...allPrices);
+                            const max = Math.max(...allPrices);
+                            return min === max
+                              ? `${min.toLocaleString()} FCFA`
+                              : `À partir de ${min.toLocaleString()} FCFA`;
+                          })()
+                        : "Non défini"
+                    }
+                  </div>
                 </div>
                 <div>
                   <span className="text-gray-500">Stock :</span>
@@ -147,6 +200,7 @@ export default function ProductDetailPageAdmin() {
                 </div>
               </div>
 
+              {/* Description */}
               <div>
                 <h2 className="text-lg font-semibold mb-2">Description</h2>
                 <p className="text-gray-700">{product.product_description}</p>
@@ -156,20 +210,36 @@ export default function ProductDetailPageAdmin() {
               {product.variations && product.variations.length > 0 && (
                 <div>
                   <h2 className="text-lg font-semibold mb-2">Variations</h2>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {product.variations.map((variation: any, idx: number) => (
-                      <div key={idx} className="border rounded-lg p-3 flex flex-col sm:flex-row gap-4">
-                        <div className="flex gap-2 items-center">
-                          {variation.images?.[0] && (
-                            <img src={variation.images[0]} alt="var" className="w-12 h-12 object-cover rounded" />
-                          )}
+                      <div key={idx} className="border rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span
+                            className="w-5 h-5 rounded-full border"
+                            style={{ background: variation.color.hex }}
+                            title={variation.color.name}
+                          />
                           <span className="font-medium">{variation.color.name}</span>
-                          {variation.size && <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{variation.size}</span>}
-                          {variation.shoe_size && <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{variation.shoe_size}</span>}
                         </div>
-                        <div className="flex-1 flex flex-wrap gap-4 items-center">
-                          <span>Prix: <b>{variation.price?.toLocaleString()} FCFA</b></span>
-                          <span>Stock: <b>{variation.quantity}</b></span>
+                        <div className="overflow-x-auto">
+                          <table className="min-w-[300px] text-sm">
+                            <thead>
+                              <tr>
+                                <th className="px-2 py-1 text-left">Taille</th>
+                                <th className="px-2 py-1 text-left">Prix</th>
+                                <th className="px-2 py-1 text-left">Stock</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {variation.attributes.map((attr: any) => (
+                                <tr key={attr.id}>
+                                  <td className="px-2 py-1">{attr.value}</td>
+                                  <td className="px-2 py-1">{Number(attr.price).toLocaleString()} FCFA</td>
+                                  <td className="px-2 py-1">{attr.quantity}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
                       </div>
                     ))}
