@@ -154,7 +154,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                     
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 
-                      {!isLoading && shop.shop.categories.map((category:Category) => (
+                      {!isLoading &&  shop && shop.shop && shop.shop.categories?.map((category:Category) => (
                           <div
                               key={category.id}
                           className="rounded-lg border bg-gray-50 p-3 text-center"
@@ -169,13 +169,13 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                   <Separator className="my-6" />
 
                   <div>
-                    {!isLoading && shop.shop.products_count > 0 && (
+                    {!isLoading && shop && shop.shop &&  shop.shop.products_count > 0 && (
                     <div className="mb-6 flex items-center justify-between">
                       <h3 className="text-lg max-sm:text-sm font-semibold">Featured Products</h3>
                      <AsyncLink to={`/shop/${shop.shop.shop_id}`}> <Button variant="outline">Voir tout les produits</Button></AsyncLink>
                     </div>
                     )}
-                    <ProductGrid products={shop.shop.products} />
+                    <ProductGrid products={shop && shop.shop ? shop.shop.products : []} />
                   </div>
                 </div>
 
@@ -210,7 +210,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                       <MapPin className="h-5 w-5 text-gray-500" />
                       <div>
                         <div className="font-medium">Localisation</div>
-                        <div className="text-sm text-gray-500">{shop.shop.town}, Cameroun</div>
+                        <div className="text-sm text-gray-500">{shop && shop.shop ? shop.shop.town : ''}, Cameroun</div>
                       </div>
                     </div>
 

@@ -5,7 +5,7 @@ import { useState } from "react";
 import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
@@ -55,8 +55,15 @@ export default function LoginForm() {
   }
   return (
     <div className="flex flex-col px-8 py-6 ">
+      <a href="/" className="inline-flex items-center gap-2 text-orange-600 hover:underline font-medium">
+            <ArrowLeft className="w-5 h-5" />
+          
+          </a>
       <div className="mb-2 md:px-2">
-
+        
+         
+         
+        
       </div>
 
       <div className="flex flex-col space-y-6 md:px-16 mx-16 max-sm:mx-1">
