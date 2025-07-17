@@ -5,6 +5,8 @@ import { useState } from "react";
 import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
+
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('productId');
@@ -17,13 +19,13 @@ export default function LoginForm() {
   const s = params.get('s');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [login, { isLoading, isError, error }] = useLoginMutation()
   if (error) {
     toast.error("Vous n'avez pas accès à cette application", {
       position: "bottom-center", 
       duration: 6000,
-      
     })
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,7 +37,6 @@ export default function LoginForm() {
       const cookies = new Cookies();
       cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
       cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
-
 
       if (redirectUrl) {
         if (s === '1') {
@@ -58,7 +59,7 @@ export default function LoginForm() {
 
       </div>
 
-      <div className="flex flex-col space-y-6 md:px-16">
+      <div className="flex flex-col space-y-6 md:px-16 mx-16 max-sm:mx-1">
         <div className="space-y-2 flex justify-center items-center ">
           <img
             src={logo}
@@ -66,12 +67,7 @@ export default function LoginForm() {
             className="h-24 max-sm:h-16"
           />
           <h1 className="text-3xl max-sm:text-2xl text-center font-semibold tracking-tight">Connexion</h1>
-          
         </div>
-
-
-
-
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
@@ -97,21 +93,30 @@ export default function LoginForm() {
 
           <div className="space-y-2">
             <label className="max-sm:text-sm" htmlFor="password">Password</label>
-            <Input
-              id="password"
-              placeholder="Enter your password"
-              required
-              type="password"
-              className="py-6 max-sm:placeholder:text-sm rounded-xl bg-white"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                placeholder="Enter your password"
+                required
+                type={showPassword ? "text" : "password"}
+                className="py-6 max-sm:placeholder:text-sm rounded-xl bg-white pr-12"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                tabIndex={-1}
+                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           <div className="space-y-12 max-sm:space-y-5">
-
-
             <Button disabled={isLoading} type="submit" className="w-full max-sm:mt-4 mt-12 py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
               {isLoading ? <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
                 <span className="sr-only">Loading...</span>

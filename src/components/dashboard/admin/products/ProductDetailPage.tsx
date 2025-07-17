@@ -132,7 +132,7 @@ export default function ProductDetailPageAdmin() {
               </div>
 
               {/* Section Boutique */}
-              <div className="flex items-center gap-4 bg-orange-50 border border-orange-100 rounded-xl p-4 my-2">
+              <div className="flex items-center max-sm:flex-col gap-4 bg-orange-50 border border-orange-100 rounded-xl p-4 my-2">
                 <img
                   src={product.shop_profile || "/placeholder.svg"}
                   alt={product.shop_name}
