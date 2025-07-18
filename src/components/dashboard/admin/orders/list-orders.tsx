@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }) => {
+    
     const getStatusInfo = (status: string) => {
         switch (status) {
             case "0":
@@ -76,8 +77,9 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
-                                        <span className="text-sm text-gray-600">
+                                        <span className="text-sm  text-gray-600">
                                             {order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
+                                            {order.emplacement == null && order.addresse}
                                         </span>
                                     </TableCell>
                                     <TableCell>
@@ -161,6 +163,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                         <MapPin className="h-4 w-4 text-gray-400" />
                                         <span>
                                             {order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
+                                            {order.emplacement == null && order.addresse}
                                         </span>
                                     </div>
 
