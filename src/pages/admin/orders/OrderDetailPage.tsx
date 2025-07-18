@@ -29,43 +29,64 @@ const getStatusText = (status: string) => {
 };
 
 const isVariedOrder = (orderDetails: any[]) => {
-    return orderDetails.some((detail: any) => detail.product_variation);
+    return orderDetails.some(
+        (detail: any) => detail.variation_attribute || detail.product_variation
+    );
 };
 
 const getProductDetails = (orderDetails: any[]) => {
-    if (isVariedOrder(orderDetails)) {
-        const variedDetails = orderDetails.filter((detail: any) => detail.product_variation);
-        return variedDetails.map((detail: any) => ({
-            id: detail.id,
-            name: detail.product_variation?.product_name || 'Produit inconnu',
-            color: detail.product_variation?.color?.name || '',
-            quantity: detail.variation_quantity,
-            price: detail.variation_price,
-            image: detail.product_variation?.images?.[0]?.path || '',
-            total: parseInt(detail.variation_quantity) * parseFloat(detail.variation_price)
-        }));
-    } else {
-        return orderDetails.map((detail: any) => ({
-            id: detail.id,
-            name: detail.product?.name || 'Produit inconnu',
-            quantity: detail.quantity || 1,
-            price: detail.price || 0,
-            image: detail.product?.product_profile || '',
-            total: (detail.quantity || 1) * (detail.price || 0)
-        }));
-    }
+    return orderDetails.map((detail: any) => {
+        // Cas 1: variation_attribute (couleur + taille/pointure)
+        if (detail.variation_attribute && detail.variation_attribute.product_variation) {
+            const variation = detail.variation_attribute.product_variation;
+            return {
+                id: detail.id,
+                name: variation.product_name || 'Produit inconnu',
+                color: variation.color?.name || '',
+                size: detail.variation_attribute.value || '', // taille/pointure
+                quantity: detail.variation_quantity,
+                price: detail.variation_price,
+                image: variation.images?.[0]?.path || '',
+                total: parseInt(detail.variation_quantity) * parseFloat(detail.variation_price)
+            };
+        }
+        // Cas 2: product_variation (couleur seule)
+        else if (detail.product_variation) {
+            return {
+                id: detail.id,
+                name: detail.product_variation.product_name || 'Produit inconnu',
+                color: detail.product_variation.color?.name || '',
+                size: '', // pas de taille
+                quantity: detail.variation_quantity,
+                price: detail.variation_price,
+                image: detail.product_variation.images?.[0]?.path || '',
+                total: parseInt(detail.variation_quantity) * parseFloat(detail.variation_price)
+            };
+        }
+        // Cas 3: produit simple
+        else {
+            return {
+                id: detail.id,
+                name: detail.product?.name || 'Produit inconnu',
+                color: '',
+                size: '',
+                quantity: detail.quantity || 1,
+                price: detail.price || 0,
+                image: detail.product?.product_profile || '',
+                total: (detail.quantity || 1) * (detail.price || 0)
+            };
+        }
+    });
 };
 
 const calculateItemsTotal = (orderDetails: any[]) => {
-    if (isVariedOrder(orderDetails)) {
-        return orderDetails.reduce((total: number, detail: any) => {
+    return orderDetails.reduce((total: number, detail: any) => {
+        if (detail.variation_attribute || detail.product_variation) {
             return total + (parseInt(detail.variation_quantity) * parseFloat(detail.variation_price));
-        }, 0);
-    } else {
-        return orderDetails.reduce((total: number, detail: any) => {
+        } else {
             return total + ((detail.quantity || 1) * (detail.price || 0));
-        }, 0);
-    }
+        }
+    }, 0);
 };
 
 export default function AdminOrderDetailPage() {
@@ -118,13 +139,18 @@ export default function AdminOrderDetailPage() {
                                 <span className="text-gray-600">Date de commande</span>
                                 <span className="font-medium">{order?.created_at?.split('T')[0]}</span>
                             </div>
+
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Quantité</span>
+                                <span className="font-medium">{productDetails[0].quantity}</span>
+                            </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Total des articles</span>
                                 <span className="font-medium">{itemsTotal} XAF</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Frais de livraison</span>
-                                <span className="font-medium">{order?.shipping || 0} XAF</span>
+                                <span className="font-medium">{order?.fee_of_shipping || 0} XAF</span>
                             </div>
                             <div className="flex justify-between border-t pt-2">
                                 <span className="text-gray-800 font-semibold">Total</span>
@@ -132,7 +158,7 @@ export default function AdminOrderDetailPage() {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Méthode de paiement</span>
-                                <span className="font-medium">{order?.payment_method === "0" ? "Carte de crédit" : "Mobile Money"}</span>
+                                <span className="font-medium">{order?.payment_method === "0" && "Mobile Money"}</span>
                             </div>
                         </div>
                     </Card>
@@ -153,7 +179,8 @@ export default function AdminOrderDetailPage() {
                             Livraison
                         </h2>
                         <div className="space-y-2">
-                            <p className="text-gray-600">{order?.emplacement}</p>
+                            <p className="text-gray-600"> {order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
+                            {order.emplacement == null && order.addresse}</p>
                         </div>
                     </Card>
                 </div>
@@ -183,6 +210,11 @@ export default function AdminOrderDetailPage() {
                                                 {item.color}
                                             </Badge>
                                         )}
+                                        {item.size && (
+                                            <Badge variant="outline" className="text-xs">
+                                                {item.size}
+                                            </Badge>
+                                        )}
                                     </div>
                                     <p className="text-sm text-gray-500 mt-1">
                                         Prix unitaire: {item.price} XAF
@@ -202,7 +234,7 @@ export default function AdminOrderDetailPage() {
                         </div>
                         <div className="flex justify-between items-center mt-2">
                             <span className="text-gray-600">Frais de livraison</span>
-                            <span className="font-medium">{order?.shipping || 0} XAF</span>
+                            <span className="font-medium">{order?.fee_of_shipping || 0} XAF</span>
                         </div>
                         <div className="flex justify-between items-center mt-3 pt-3 border-t">
                             <span className="text-lg font-semibold">Total</span>
