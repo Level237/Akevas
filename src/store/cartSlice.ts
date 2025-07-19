@@ -73,34 +73,39 @@ const cartSlice = createSlice({
 
         removeItem: (state, action) => {
             const { product, selectedVariation } = action.payload;
-            console.log(product)
             const item = state.cartItems.find(item => {
                 if (selectedVariation) {
-                    
                     return item.selectedVariation?.color.id === selectedVariation.color.id;
                 }
                 return item.product.id === product.id && !item.selectedVariation;
             });
-           
+
             if (item) {
-                item.quantity -= 1;
-                
-                if (item.quantity === 0) {
-                    state.cartItems = state.cartItems.filter(cartItem => cartItem !== item);
+                // Calculer l'impact total de l'item à retirer
+                let itemPrice;
+                if (selectedVariation) {
+                    if(selectedVariation.attributes){
+                        itemPrice = selectedVariation.attributes.price;
+                    }else{
+                        itemPrice = selectedVariation.price;
+                    }
+                   
+                } else {
+                    itemPrice = product.product_price;
                 }
+                const quantityToRemove = item.quantity;
+                state.totalQuantity -= quantityToRemove;
+                state.totalPrice -= parseFloat(itemPrice) * quantityToRemove;
 
-                const itemPrice = selectedVariation 
-                    ? selectedVariation.price
-                    : product.product_price;
-
-                state.totalQuantity -= 1;
-                state.totalPrice -= parseFloat(itemPrice);
+                // Retirer complètement l'item du panier
+                state.cartItems = state.cartItems.filter(cartItem => cartItem !== item);
 
                 localStorage.setItem('totalQuantity', state.totalQuantity.toString());
                 localStorage.setItem('totalPrice', state.totalPrice.toString());
                 localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
             }
         },
+
         updateQuantity: (state, action) => {
             const { product, quantity, selectedVariation } = action.payload;
             
@@ -111,7 +116,7 @@ const cartSlice = createSlice({
                         return item.selectedVariation.attributes?.value === selectedVariation.attributes.value;
                     }
                     // Otherwise check color ID
-                    return item.selectedVariation?.color?.id === selectedVariation.color?.id  && !item.selectedVariation?.attributes;
+                    return item.selectedVariation?.color?.id === selectedVariation.color?.id;
                 }
                 return item.product.id === product.id && !item.selectedVariation;
             });
