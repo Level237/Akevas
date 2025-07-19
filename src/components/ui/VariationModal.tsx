@@ -84,10 +84,10 @@ const VariationModal: React.FC<VariationModalProps> = ({
                       <button
                         key={variation.color.id}
                         onClick={() => setSelectedColor(variation.color.id.toString())}
-                        className={`w-8 h-8 rounded-full border-2 ${
+                        className={`w-8 h-8 rounded-full  border-2  ${
                           selectedColor === variation.color.id.toString()
                             ? 'border-[#ed7e0f]'
-                            : 'border-transparent'
+                            : 'border-[#000]'
                         }`}
                         style={{ backgroundColor: variation.color.hex }}
                         title={variation.color.name}

@@ -11,12 +11,12 @@ interface CartItem {
       name: string;
       hex: string;
     };
-    attributes?: Array<{
+    attributes?: {
       id: number;
       value: string;
       quantity: number;
       price: string;
-    }>;
+    };
   };
 }
 
@@ -53,7 +53,7 @@ const cartSlice = createSlice({
 
             // Calculer le prix en fonction de la variation si elle existe
             const itemPrice = selectedVariation 
-                ? (selectedVariation.price) || (selectedVariation.attributes[0].price)
+                ? (selectedVariation.price) || (selectedVariation.attributes.price)
                 : product.product_price;
                 
             
@@ -104,7 +104,7 @@ const cartSlice = createSlice({
                 if (selectedVariation) {
                     // Check if the variation has attributes
                     if (selectedVariation.attributes && item.selectedVariation?.attributes) {
-                        return item.selectedVariation.attributes[0]?.value === selectedVariation.attributes[0]?.value;
+                        return item.selectedVariation.attributes?.value === selectedVariation.attributes.value;
                     }
                     // Otherwise check color ID
                     return item.selectedVariation?.color?.id === selectedVariation.color?.id;
@@ -124,7 +124,7 @@ const cartSlice = createSlice({
                 state.totalQuantity = state.cartItems.reduce((total, item) => total + item.quantity, 0);
                 state.totalPrice = state.cartItems.reduce((total, item) => {
                     const price = item.selectedVariation 
-                        ? (item.selectedVariation.attributes?.[0]?.price || item.product.product_price)
+                        ? (item.selectedVariation.attributes?.price || item.product.product_price)
                         : item.product.product_price;
                     return total + parseFloat(price) * item.quantity;
                 }, 0);

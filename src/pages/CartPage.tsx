@@ -130,11 +130,11 @@ const CartPage: React.FC = () => {
                                     </span>
                                   </div>
                                 </div>
-                                {item.selectedVariation.attributes?.[0] && (
+                                {item.selectedVariation.attributes && (
                                   <div className="flex items-center gap-2">
                                     <span className="text-sm text-gray-500">Taille:</span>
                                     <span className="text-sm text-gray-700">
-                                      {item.selectedVariation.attributes[0].value}
+                                      {item.selectedVariation.attributes.value}
                                     </span>
                                   </div>
                                 )}
@@ -178,7 +178,7 @@ const CartPage: React.FC = () => {
                              parseFloat(item.selectedVariation?.price) * item.quantity
                           }
                           {item.selectedVariation && item.selectedVariation.isColorOnly===false &&
-                             parseFloat(item.selectedVariation?.attributes[0].price) * item.quantity
+                             parseFloat(item.selectedVariation?.attributes.price) * item.quantity
                           }
                           {!item.selectedVariation && parseFloat(item.product.product_price) * item.quantity}
                           </span>

@@ -23,6 +23,8 @@ const ProductCard = memo(({
   onAddToCartClick: (product: Product) => void,
   getColorSwatches: (product: any) => any[]
 }) => {
+
+  console.log(getColorSwatches)
   return (
     <motion.div
       className="m-3 w-[290px] cursor-pointer max-sm:max-w-56 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
@@ -51,7 +53,7 @@ const ProductCard = memo(({
 
             {product.variations && product.variations.length > 0 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center max-sm:px-2 max-sm:py-1 gap-2 bg-white/90 px-3 py-2 rounded-full">
-                {Array.isArray(product) && getColorSwatches(product).map((color) => (
+                {getColorSwatches(product).map((color) => (
                   <div
                     key={color.hex}
                     title={color.name}
@@ -133,7 +135,7 @@ const ProductListGrid = ({ products = [], isLoading, gridColumn, type }: { produ
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const dragX = useMotionValue(0);
   const controls = useAnimation();
-
+  
   const normalizedProducts = useMemo(() => 
     (products || []).map(normalizeProduct),
     [products]

@@ -44,16 +44,29 @@ const ProductDetailPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const productId = product?.id
   const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null);
-  console.log(selectedVariant)
-  const handleAddToCart = useCallback(async () => {
+  
+  const handleAddToCart = async () => {
     setIsLoadingCart(true);
-    console.log(quantity)
+    
+    // Si selectedVariant a des attributs, transformer l'array en objet unique
+    let modifiedSelectedVariant = selectedVariant;
+    if (selectedVariant?.attributes && selectedVariant.attributes.length > 0) {
+      const foundAttribute = selectedVariant.attributes.find((variant:any) => variant.value === currentInfo.attribute);
+      if (foundAttribute) {
+        modifiedSelectedVariant = {
+          ...selectedVariant,
+          attributes: foundAttribute // Remplacer l'array par l'objet unique
+        };
+      }
+    }
+    
+
     dispatch(addItem({ 
       product, 
       quantity,
-      selectedVariation: selectedVariant
+      selectedVariation: modifiedSelectedVariant
     }));
-    console.log(selectedVariant)
+   
     await new Promise(resolve => setTimeout(resolve, 1000));
     toast.success("Produit ajouté au panier avec succès", {
       position: "top-center", 
@@ -70,7 +83,7 @@ const ProductDetailPage: React.FC = () => {
     })
     setIsLoadingCart(false);
     setShowCartButton(true);
-  }, [dispatch, product, quantity, selectedVariant]);
+  };
   // Helper function to get all images
   const getAllImages = () => {
     if (selectedVariant) {
@@ -108,6 +121,7 @@ const ProductDetailPage: React.FC = () => {
       if (currentVariant.attributes && currentVariant.attributes.length > 0) {
         const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute) 
           || currentVariant.attributes[0];
+          
           
         return {
           attributeVariationId: selectedAttr.id,
@@ -221,7 +235,7 @@ const ProductDetailPage: React.FC = () => {
     const whatsappUrl = `https://wa.me/237678080249?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
-
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -505,10 +519,10 @@ const ProductDetailPage: React.FC = () => {
                     <div className="flex items-center">
                       <Star className="w-5 h-5 text-yellow-400 fill-current" />
                       <span className="ml-1 font-medium">{product.review_average}</span>
-                      <span className="ml-1 text-gray-500">({product.reviewCount} avis)</span>
+                      <span className="ml-1 text-gray-500 max-sm:text-sm">({product.reviewCount} avis)</span>
                     </div>
-                    <div className="text-gray-500">{product.count_seller} vendus</div>
-                    <div className="text-gray-500">Code: {product.shop_key}</div>
+                    <div className="text-gray-500 max-sm:text-sm">{product.count_seller} vendus</div>
+                    <div className="text-gray-500 max-sm:text-sm">Code: {product.shop_key}</div>
                   </div>
 
 
@@ -528,7 +542,7 @@ const ProductDetailPage: React.FC = () => {
                           type="number"
                           value={quantity}
                           onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                          className="w-16 text-center border-x"
+                          className="w-16  text-center border-x"
                         />
                         <button
                           onClick={() => setQuantity(quantity + 1)}
@@ -539,7 +553,7 @@ const ProductDetailPage: React.FC = () => {
                       </div>
                     </div>
                     {getProductQuantity() > 0 && (
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm max-sm:text-xs text-gray-500">
                         Stock disponible: {getProductQuantity()} unités
                       </span>
                     )}
