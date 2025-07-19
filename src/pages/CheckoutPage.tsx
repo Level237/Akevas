@@ -40,6 +40,7 @@ const CheckoutPage: React.FC = () => {
   const residence = params.get('residence');
   const totalPrice = params.get('price');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
+  const totalCartPrice = useSelector((state: RootState) => state.cart.totalPrice)
   const { data: userDataAuth } = useGetUserQuery('Auth');
   const [phone, setPhone] = useState<string>(userDataAuth?.phone_number);
   const productId = params.get('productId');
@@ -83,10 +84,11 @@ const CheckoutPage: React.FC = () => {
     return deliveryFees[address.deliveryOption];
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + parseInt(item.product.product_price) * item.quantity, 0);
+  const subtotal = totalCartPrice;
   const shipping = getDeliveryFee();
   const total = s == "1" ? subtotal + shipping : parseInt(totalPrice || '0') + shipping;
-  const totalWithTax = total * (1 + TAX_RATE); // Calculate total with tax
+  console.log(totalPrice)
+  const totalWithTax = total * (1 + TAX_RATE); ; // Calculate total with tax
   const totalQuantity=cartItems.reduce((sum, item) => sum + parseInt(item.quantity.toString()), 0);
  console.log(totalQuantity)
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -583,7 +585,7 @@ const CheckoutPage: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="text-lg font-medium">Total (TTC)</span>
                     <span className="text-lg font-bold">
-                      {totalWithTax.toFixed(2)} Fcfa
+                      {totalWithTax} Fcfa
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">TVA incluse</p>
