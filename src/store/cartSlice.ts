@@ -101,7 +101,6 @@ const cartSlice = createSlice({
                 localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
             }
         },
-
         updateQuantity: (state, action) => {
             const { product, quantity, selectedVariation } = action.payload;
             
@@ -112,7 +111,7 @@ const cartSlice = createSlice({
                         return item.selectedVariation.attributes?.value === selectedVariation.attributes.value;
                     }
                     // Otherwise check color ID
-                    return item.selectedVariation?.color?.id === selectedVariation.color?.id;
+                    return item.selectedVariation?.color?.id === selectedVariation.color?.id  && !item.selectedVariation?.attributes;
                 }
                 return item.product.id === product.id && !item.selectedVariation;
             });
