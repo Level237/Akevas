@@ -1,10 +1,10 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
  // À adapter selon ton service
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Package, MapPin, User } from 'lucide-react';
+import { Package, MapPin, User, ArrowLeft } from 'lucide-react';
 import { useAdminDetailOrderQuery } from '@/services/adminService';
 
 const getStatusColor = (status: string) => {
@@ -91,6 +91,7 @@ const calculateItemsTotal = (orderDetails: any[]) => {
 
 export default function AdminOrderDetailPage() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { data: order, isLoading } = useAdminDetailOrderQuery(id);
     console.log(order)
 
@@ -109,6 +110,15 @@ export default function AdminOrderDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-8"
             >
+                {/* Bouton retour */}
+                <button
+                    onClick={() => navigate('/admin/orders')}
+                    className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-orange-600 mb-2 transition-colors"
+                    type="button"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    Retour à la liste des commandes
+                </button>
                 {/* En-tête */}
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">

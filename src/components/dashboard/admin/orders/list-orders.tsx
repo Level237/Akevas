@@ -8,6 +8,7 @@ import { formatDate } from "@/lib/formatDate";
 import AsyncLink from "@/components/ui/AsyncLink";
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }) => {
     
@@ -23,6 +24,51 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                 return { text: "Inconnu", color: "bg-gray-100 text-gray-700", icon: AlertCircle };
         }
     };
+
+    // Loader for table rows (desktop)
+    const renderTableLoader = () => (
+        <TableRow>
+            <TableCell colSpan={8}>
+                <div className="flex flex-col gap-2">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                </div>
+            </TableCell>
+        </TableRow>
+    );
+
+    // Loader for mobile cards
+    const renderMobileLoader = () => (
+        <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+                <Card key={i} className="overflow-hidden border border-gray-200">
+                    <CardContent className="p-0">
+                        <div className="p-4 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <Skeleton className="h-12 w-12 rounded-full" />
+                                <div>
+                                    <Skeleton className="h-5 w-32 mb-2" />
+                                    <Skeleton className="h-4 w-20" />
+                                </div>
+                            </div>
+                            <Skeleton className="h-6 w-20 rounded" />
+                        </div>
+                        <div className="px-4 pb-4 space-y-3">
+                            <Skeleton className="h-4 w-40" />
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-4 w-48" />
+                            <Skeleton className="h-4 w-24" />
+                        </div>
+                        <div className="px-4 pb-4 flex items-center gap-2">
+                            <Skeleton className="h-10 w-32 rounded" />
+                            <Skeleton className="h-10 w-20 rounded" />
+                        </div>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
+    );
 
     return (
         <div className="space-y-6">
@@ -42,6 +88,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                         </TableRow>
                     </TableHeader>
                     <TableBody>
+                        {isLoading && renderTableLoader()}
                         {!isLoading && orders?.length > 0 && orders.map((order) => {
                             const statusInfo = getStatusInfo(order.status);
                             const StatusIcon = statusInfo.icon;
@@ -106,6 +153,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
 
             {/* Mobile Card View */}
             <div className="lg:hidden space-y-4">
+                {isLoading && renderMobileLoader()}
                 {!isLoading && orders?.length > 0 && orders.map((order) => {
                     const statusInfo = getStatusInfo(order.status);
                     const StatusIcon = statusInfo.icon;
