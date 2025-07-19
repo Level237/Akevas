@@ -117,7 +117,7 @@ const CheckoutPage: React.FC = () => {
     if (s === '1') {
       productsPayments = cartItems.map(item => ({
         product_id: item.product.id,
-        attributeVariationId: item.selectedVariation?.attributes?.[0]?.id ?? null,
+        attributeVariationId: item.selectedVariation?.attributes?.id ?? null,
         productVariationId: item.selectedVariation?.id ?? null,
         quantity: item.quantity,
         hasVariation:item.selectedVariation ? true : false,
@@ -491,13 +491,18 @@ const CheckoutPage: React.FC = () => {
 
               {/* Articles */}
               <div className="space-y-4 mb-6">
-                {s == "1" && cartItems.map((item) => (
+                {s == "1" && cartItems.map((item:any) => (
                   <div key={item.product.id} className="flex gap-4">
-                    <img
-                      src={item.product.product_profile}
+                    {item.selectedVariation ?  <img
+                      src={item.selectedVariation?.images[0]}
                       alt={item.product.product_name}
                       className="w-16 h-16 object-cover rounded-lg"
-                    />
+                    /> :  <img
+                    src={item.product.product_profile}
+                    alt={item.product.product_name}
+                    className="w-16 h-16 object-cover rounded-lg"
+                  />}
+                   
                     <div className="flex-1">
                       <h3 className="text-sm font-medium">{item.product.product_name}</h3>
                       {item.selectedVariation && (
@@ -514,11 +519,11 @@ const CheckoutPage: React.FC = () => {
                               </span>
                             </div>
                           </div>
-                          {item.selectedVariation.attributes?.[0] && (
+                          {item.selectedVariation.attributes && (
                             <div className="flex items-center gap-2">
                               <span className="text-xs text-gray-500">Taille:</span>
                               <span className="text-xs text-gray-700">
-                                {item.selectedVariation.attributes[0].value}
+                                {item.selectedVariation.attributes.value}
                               </span>
                             </div>
                           )}
@@ -529,8 +534,8 @@ const CheckoutPage: React.FC = () => {
                       </p>
                       <p className="text-sm font-medium">
                         {(
-                          (item.selectedVariation?.attributes?.[0]?.price
-                            ? parseFloat(item.selectedVariation.attributes[0].price)
+                          (item.selectedVariation?.attributes?.price
+                            ? parseFloat(item.selectedVariation.attributes.price)
                             : parseFloat(item.product.product_price)
                           ) * item.quantity
                         ).toFixed(2)} Fcfa
@@ -547,8 +552,8 @@ const CheckoutPage: React.FC = () => {
                   <span className="font-medium">
                     {s == "1" ? 
                       cartItems.reduce((sum, item) => {
-                        const price = item.selectedVariation?.attributes?.[0]?.price 
-                          ? parseFloat(item.selectedVariation.attributes[0].price)
+                        const price = item.selectedVariation?.attributes?.price 
+                          ? parseFloat(item.selectedVariation.attributes.price)
                           : parseFloat(item.product.product_price);
                         return sum + (price * item.quantity);
                       }, 0).toFixed(2)
@@ -565,8 +570,8 @@ const CheckoutPage: React.FC = () => {
                   <span className="font-medium">
                     {s == "1" ? 
                       (cartItems.reduce((sum, item) => {
-                        const price = item.selectedVariation?.attributes?.[0]?.price 
-                          ? parseFloat(item.selectedVariation.attributes[0].price)
+                        const price = item.selectedVariation?.attributes?.price 
+                          ? parseFloat(item.selectedVariation.attributes.price)
                           : parseFloat(item.product.product_price);
                         return sum + (price * item.quantity);
                       }, 0) * TAX_RATE).toFixed(2)
