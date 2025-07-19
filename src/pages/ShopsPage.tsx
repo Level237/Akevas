@@ -123,11 +123,12 @@ const ShopCard = memo(({ shop }: { shop: Shop }) => {
       {/* Cover Image */}
       
       <div className="relative h-48">
-        <OptimizedImage
-          src={shop.images[0].path}
+        {shop.images.length > 0 && <OptimizedImage
+          src={shop?.images[0]?.path || ""}
           alt={`${shop.shop_name} cover`}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
+        /> }
+        
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
         
         {/* Premium Badge */}
