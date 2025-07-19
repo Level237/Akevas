@@ -57,7 +57,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
+  console.log(shop)
   const navigate = useNavigate();
 
   const confirm = async (state: string) => {

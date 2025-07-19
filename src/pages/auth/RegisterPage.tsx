@@ -1,126 +1,230 @@
 import { Link, useNavigate } from "react-router-dom"
 import RegisterForm from "@/components/frontend/forms/RegisterForm"
 import logo from "@/assets/favicon.png"
-import { ArrowLeft, Shield, Sparkles } from "lucide-react"
+import { ArrowLeft, Shield, Sparkles, Users, Zap, CheckCircle, Star, Truck, CreditCard } from "lucide-react"
 import { motion } from "framer-motion"
 
 export default function SignupForm() {
   const navigate = useNavigate();
 
+  const features = [
+    { icon: Shield, text: "Sécurité maximale", color: "text-green-500", desc: "Vos données sont protégées" },
+    { icon: Truck, text: "Livraison rapide", color: "text-blue-500", desc: "Livraison en 24h" },
+    { icon: Users, text: "Communauté active", color: "text-purple-500", desc: "10K+ clients satisfaits" },
+    { icon: CreditCard, text: "Paiement sécurisé", color: "text-orange-500", desc: "Transactions sécurisées" }
+  ];
+
+  const stats = [
+    { number: "10K+", label: "Clients satisfaits", icon: Star },
+    { number: "500+", label: "Produits disponibles", icon: Zap },
+    { number: "24h", label: "Livraison rapide", icon: Truck }
+  ];
+
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
-      {/* Arrière-plan animé */}
-      <div className="fixed inset-0 bg-gradient-to-br from-orange-100 via-white to-orange-50">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-30" />
+    <div className="min-h-screen flex">
+      {/* Section gauche - Statique avec background */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        {/* Background avec image et overlay */}
+        <div className="absolute inset-0 bg-[#6E0A13]">
+          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
+        </div>
         
-        {/* Cercles décoratifs */}
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-orange-200 rounded-full filter blur-3xl opacity-20 animate-blob" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-orange-300 rounded-full filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute bottom-40 left-40 w-[400px] h-[400px] bg-orange-100 rounded-full filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+        {/* Cercles décoratifs animés */}
+        <div className="absolute top-20 left-20 w-32 h-32 bg-white/10 rounded-full animate-pulse" />
+        <div className="absolute bottom-40 right-20 w-24 h-24 bg-white/10 rounded-full animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-500" />
+
+        {/* Contenu de la section gauche */}
+        <div className="relative z-10 flex flex-col justify-center px-16 py-12 text-white">
+          {/* Logo et titre */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-12"
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <div className="relative">
+                <img
+                  src={logo}
+                  alt="Logo"
+                  className="h-16 w-auto relative z-10"
+                />
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute -inset-3 border-4 border-white/30 rounded-full"
+                />
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute -top-1 -right-1"
+                >
+                  <Sparkles className="w-5 h-5 text-yellow-300" />
+                </motion.div>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">Akevas</h1>
+                <p className="text-white/80">Votre marketplace de confiance</p>
+              </div>
+            </div>
+            
+            <h2 className="text-4xl font-bold mb-6 leading-tight">
+              Rejoignez notre communauté
+            </h2>
+            <p className="text-xl text-white/90 leading-relaxed mb-8">
+              Découvrez des produits exceptionnels et profitez d'une expérience d'achat unique au Cameroun
+            </p>
+          </motion.div>
+
+          {/* Features */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mb-12"
+          >
+            <h3 className="text-xl font-semibold mb-6">Pourquoi nous choisir ?</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.1 }}
+                  className="flex items-start gap-3 p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300"
+                >
+                  <feature.icon className={`w-6 h-6 ${feature.color} mt-1 flex-shrink-0`} />
+                  <div>
+                    <div className="font-semibold text-white">{feature.text}</div>
+                    <div className="text-sm text-white/70">{feature.desc}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Statistiques */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="grid grid-cols-3 gap-6"
+          >
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1 + index * 0.1 }}
+                className="text-center"
+              >
+                <div className="flex items-center justify-center mb-2">
+                  <stat.icon className="w-5 h-5 text-yellow-300 mr-2" />
+                  <div className="text-2xl font-bold text-white">{stat.number}</div>
+                </div>
+                <div className="text-sm text-white/80">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-2xl relative z-10"
-      >
-        {/* Card principale avec motif */}
-        <div className="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden">
-          {/* Motif de fond */}
-          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
-          
-          {/* Effet de brillance */}
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-orange-200 via-orange-100 to-orange-200 z-[-1] rounded-3xl opacity-60" />
+      {/* Section droite - Formulaire scrollable */}
+      <div className="flex-1 lg:w-1/2 flex flex-col">
+        {/* Header mobile */}
+        <div className="lg:hidden p-6 bg-white border-b border-gray-100">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all duration-300"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </motion.button>
+        </div>
 
-          {/* Contenu principal */}
-          <div className="relative p-8">
-            {/* Bouton retour */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate(-1)}
-              className="absolute top-4 left-4 p-2 rounded-xl bg-white/80 hover:bg-orange-50 transition-all duration-300 shadow-sm"
-              aria-label="Go back"
+        {/* Contenu du formulaire */}
+        <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
+          <div className="w-full mx-6">
+            {/* En-tête desktop */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="hidden lg:block text-center mb-8"
             >
-              <ArrowLeft className="w-6 h-6 text-gray-600" />
-            </motion.button>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Créer votre compte
+              </h2>
+              <p className="text-gray-600">
+                Commencez votre aventure en quelques étapes simples
+              </p>
+            </motion.div>
 
-            <div className="space-y-8">
-              {/* En-tête amélioré */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="flex flex-col items-center space-y-4"
-              >
-                <div className="relative">
-                  <div className="relative">
-                    <img
-                      src={logo}
-                      alt="Logo"
-                      className="h-24 w-auto relative z-10"
-                    />
-                    <motion.div 
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                      className="absolute -inset-4 border-4 border-orange-200/50 rounded-full"
-                    />
-                    {/* Effet d'étoiles */}
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="absolute -top-2 -right-2"
-                    >
-                      <Sparkles className="w-6 h-6 text-orange-400" />
-                    </motion.div>
-                  </div>
+            {/* En-tête mobile */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="lg:hidden text-center mb-8"
+            >
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <img
+                  src={logo}
+                  alt="Logo"
+                  className="h-12 w-auto"
+                />
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">Akevas</h1>
+                  <p className="text-sm text-gray-600">Marketplace</p>
                 </div>
-                <div className="text-center relative">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-                    Créer un compte
-                  </h1>
-                  <p className="mt-2 text-gray-600">
-                    Rejoignez notre communauté et commencez à explorer
-                  </p>
-                  {/* Ligne décorative */}
-                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-orange-200 to-orange-400 rounded-full" />
-                </div>
-              </motion.div>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Créer votre compte
+              </h2>
+              <p className="text-gray-600">
+                Rejoignez notre communauté
+              </p>
+            </motion.div>
 
-              {/* Formulaire */}
+            {/* Formulaire */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
               <RegisterForm />
+            </motion.div>
 
-              {/* Footer amélioré */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm pt-6 border-t border-orange-100/50"
-              >
-                <div className="flex items-center gap-2 bg-orange-50/50 px-4 py-2 rounded-full">
-                  <Shield className="w-4 h-4 text-orange-500" />
-                  <span className="text-gray-700">Vos données sont sécurisées</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Link 
-                    to="/login" 
-                    className="text-orange-600 font-medium hover:text-orange-700 transition-colors hover:underline"
-                  >
-                    Déjà inscrit ? Connexion
-                  </Link>
-                  <div className="h-4 w-px bg-orange-200" />
-                  <Link 
-                    to="/terms" 
-                    className="text-gray-600 hover:text-gray-800 transition-colors hover:underline"
-                  >
-                    Conditions générales
-                  </Link>
-                </div>
-              </motion.div>
-            </div>
+            {/* Footer */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="mt-8 text-center"
+            >
+              <div className="flex items-center justify-center gap-4 text-sm">
+                <Link 
+                  to="/login" 
+                  className="text-blue-600 font-medium hover:text-blue-700 transition-colors hover:underline"
+                >
+                  Déjà inscrit ? Connexion
+                </Link>
+                <div className="h-4 w-px bg-gray-300" />
+                <Link 
+                  to="/terms" 
+                  className="text-gray-600 hover:text-gray-800 transition-colors hover:underline"
+                >
+                  Conditions générales
+                </Link>
+              </div>
+            </motion.div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }
