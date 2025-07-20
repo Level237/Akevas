@@ -26,6 +26,34 @@ export default function PaymentTicketPage() {
     return <Skeleton className="w-full h-[600px]" />;
   }
 
+  if (payment && payment.code === 404) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-green-100">
+        <Card className="p-10 rounded-3xl shadow-2xl border-0 bg-white/90 backdrop-blur-md text-center max-w-md w-full">
+          <div className="flex flex-col items-center">
+            <div className="bg-red-100 rounded-full p-4 mb-4 animate-bounce">
+              <svg className="w-10 h-10 text-[#ed7e0f]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 9l-6 6m0-6l6 6" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-extrabold text-[#ed7e0f] mb-2 tracking-tight">Ticket introuvable</h2>
+            <p className="text-gray-500 mb-6 text-base">
+              Oups ! Aucun ticket ne correspond à cette référence.<br />
+              Veuillez vérifier le lien ou réessayer plus tard.
+            </p>
+            <Button 
+              onClick={() => window.location.href = '/'}
+              className="bg-[#ed7e0f] to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg transition-all duration-200"
+            >
+              Retour à l'accueil
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+  
   const order = payment.order;
   const status = statusMap[order.status] || statusMap['0'];
   const details = order.order_details;

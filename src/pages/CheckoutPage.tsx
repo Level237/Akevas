@@ -8,12 +8,15 @@ import {
 } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { ScrollRestoration } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { useGetUserQuery } from '@/services/auth';
 import { useGetQuartersQuery } from '@/services/guardService';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { removeItem } from '@/store/cartSlice';
+
+
 type PaymentMethod = 'card' | 'cm.orange' | 'cm.mtn';
 type DeliveryOption = 'pickup' | 'localDelivery' | 'remotePickup' | 'remoteDelivery';
 
@@ -33,7 +36,7 @@ const CheckoutPage: React.FC = () => {
   const [quarter, setQuarter] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [paymentPhone, setPaymentPhone] = useState<string>('');
-  
+  const [showModal,setShowModal]=useState(false)
   const params = new URLSearchParams(window.location.search);
   const s = params.get('s');
   const variations=params.get('variation');
@@ -51,8 +54,7 @@ const CheckoutPage: React.FC = () => {
   const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);
-
-  console.log(variations)
+  console.log(quarters)
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
     phone: '',
@@ -61,6 +63,8 @@ const CheckoutPage: React.FC = () => {
     country: '',
     deliveryOption: 'pickup'
   });
+
+  const dispatch = useDispatch();
 
   // Mock cart items
   useEffect(()=>{
@@ -201,6 +205,29 @@ const CheckoutPage: React.FC = () => {
     
   };
   
+  // 1. Regrouper les produits par ville
+  const productsByCity = cartItems.reduce((acc:any, item) => {
+    const city = item.product.residence || 'Ville inconnue';
+    if (!acc[city]) acc[city] = [];
+    acc[city].push({
+      id: item.product.id,
+      name: item.product.product_name,
+      image: item.product.product_profile,
+      quantity: item.quantity,
+    });
+    return acc;
+  }, {});
+
+  // 2. Vérifier s'il y a plusieurs villes
+  const uniqueCities = Object.keys(productsByCity);
+  const showCityAlert = s === "1" && uniqueCities.length > 1;
+
+  function handleRemoveFromCart(product: any, selectedVariation?: any) {
+    dispatch(removeItem({
+      product,
+      selectedVariation: selectedVariation || undefined
+    }));
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -215,7 +242,91 @@ const CheckoutPage: React.FC = () => {
             {/* Adresse de livraison */}
             <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
               <h2 className="text-xl font-semibold mb-6">Options de livraison</h2>
+              {showCityAlert && (
+  <div className="relative flex items-center gap-4 mb-6 px-5 py-4 rounded-2xl border border-red-200 bg-gradient-to-r from-red-50 via-white to-red-100 shadow-lg">
+    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 border border-red-200 mr-2">
+      <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+      </svg>
+    </div>
+    <div className="flex-1">
+      <span className="block text-base font-semibold text-red-700 mb-1">Attention</span>
+      <span className="block text-sm text-red-600">Les produits sélectionnés dans votre panier ne sont pas dans la même ville.</span>
+    </div>
+    <button
+      className="ml-auto px-4 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold shadow hover:from-red-600 hover:to-red-700 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-red-300"
+      onClick={() => setShowModal(true)}
+    >
+      <span className="flex items-center gap-2">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0A9 9 0 11 3 12a9 9 0 0118 0z" />
+        </svg>
+        Voir
+      </span>
+    </button>
+  </div>
+)}
 
+{/* Modal Produits par ville */}
+{showModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-0 relative overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-3 px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-blue-100">
+        <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v6m0 0c-4.418 0-8-1.79-8-4V7a2 2 0 012-2h12a2 2 0 012 2v6c0 2.21-3.582 4-8 4z" />
+        </svg>
+        <h2 className="text-lg font-bold text-blue-700">Produits par ville</h2>
+        <button
+          className="ml-auto text-gray-400 hover:text-gray-700 text-2xl"
+          onClick={() => setShowModal(false)}
+          aria-label="Fermer"
+        >
+          &times;
+        </button>
+      </div>
+      {/* Body */}
+      <div className="p-6 max-h-[70vh] overflow-y-auto">
+        {Object.entries(productsByCity as any[]).map(([city, products]) => (
+          <div key={city} className="mb-8">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold shadow">{city}</span>
+              <span className="text-xs text-gray-400">({products.length} produit{products.length > 1 ? 's' : ''})</span>
+            </div>
+            <div className="space-y-3">
+              {(products as any[]).map((product: any) => (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-white rounded-xl p-3 shadow-sm hover:shadow-md transition group"
+                >
+                  <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg border object-cover" />
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900 group-hover:text-blue-700 transition">{product.name}</div>
+                    <div className="text-xs text-gray-500">Qté: {product.quantity}</div>
+                  </div>
+                  <button
+                    className="px-3 py-1 bg-red-500 text-white rounded-lg font-semibold shadow hover:bg-red-600 transition"
+                    onClick={() => handleRemoveFromCart(product, product.selectedVariation)}
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div className="flex justify-end mt-2">
+          <button
+            className="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+            onClick={() => setShowModal(false)}
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
               <div className="mb-4">
                 <p className="text-sm text-gray-600 mb-2">
                   Localisation du produit: <span className="font-semibold">{productLocation}</span>

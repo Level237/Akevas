@@ -196,7 +196,7 @@ const CartPage: React.FC = () => {
                     <Truck className="w-8 h-8 text-[#ed7e0f]" />
                     <div>
                       <h3 className="font-medium max-sm:text-md text-gray-900">
-                        Livraison gratuite
+                        Livraison rapide
                       </h3>
                       <p className="text-sm  text-gray-500">
                         Pour toute commande
