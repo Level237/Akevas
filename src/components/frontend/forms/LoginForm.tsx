@@ -84,18 +84,34 @@ export default function LoginForm() {
           </div>}
 
           <div className="space-y-2 mt-3">
-            <label className="max-sm:text-sm" htmlFor="email">Numéro de Téléphone</label>
-            <Input
-              id="phone"
-              placeholder="Enter your phone"
-              required
-              type="phone"
-              autoComplete='billing home email webauthn'
-              className="py-6 max-sm:placeholder:text-sm rounded-xl bg-white"
-              name="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            <label className="max-sm:text-sm" htmlFor="phone">Numéro de Téléphone</label>
+            <div className="flex items-center bg-white/80 rounded-xl shadow-sm border border-gray-200 focus-within:border-blue-500 transition-all">
+              <button
+                type="button"
+                className="flex items-center justify-center w-10 h-10 rounded-l-xl border-none focus:outline-none cursor-default"
+                tabIndex={-1}
+                disabled
+              >
+                <span role="img" aria-label="Cameroun" className="text-white text-sm">🇨🇲</span>
+              </button>
+              <span className="px-3 text-gray-700 font-semibold select-none text-sm bg-gray-50">+237</span>
+              <Input
+                id="phone"
+                name="phone"
+                placeholder="6XX XXX XXX"
+                required
+                type="tel"
+                autoComplete="tel"
+                className="flex-1 h-12 border-none bg-transparent focus:ring-0 focus:outline-none placeholder:text-gray-400 rounded-r-xl"
+                value={phone}
+                onChange={e => {
+                  // Empêche d'entrer le préfixe
+                  const value = e.target.value.replace(/^\+?237\s?/, '');
+                  setPhone(value);
+                }}
+                style={{ boxShadow: 'none' }}
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
