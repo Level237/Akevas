@@ -32,7 +32,7 @@ export default function PaymentTicketPage() {
   const status = statusMap[order.status] || statusMap['0'];
   const details = order.order_details;
   
-
+  
   return (
     <>
       <div className="max-w-2xl mx-auto px-4 py-10" ref={ticketRef}>
@@ -61,35 +61,80 @@ export default function PaymentTicketPage() {
           <div className="flex items-center gap-2 mt-4">
             <MapPin className="w-5 h-5 text-gray-500" />
             <span className="text-gray-700 font-medium">Emplacement de livraison :</span>
-            <span className="text-gray-600">{order.emplacement}</span>
+            <span className="text-gray-600">{order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
+            {order.emplacement == null && order.addresse}</span>
           </div>
         </Card>
 
         <Card className="p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><Package className="w-5 h-5" /> Détails de la commande</h2>
           <div className="space-y-4">
-            {details.map((item: any) => (
-              <div key={item.id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4">
-                <img
-                  src={item.product_variation?.images?.[0]?.path}
-                  alt={item.product_variation?.product_name}
-                  className="w-16 h-16 object-cover rounded-md border"
-                />
-                <div className="flex-1">
-                  <div className="font-medium">{item.product_variation?.product_name}</div>
-                  <div className="flex items-center gap-2 text-xs mt-1">
-                    <span className="text-gray-600">Quantité: {item.variation_quantity}</span>
-                    {item.product_variation?.color?.name && (
-                      <Badge variant="outline" className="text-xs">
-                        {item.product_variation.color.name}
-                      </Badge>
-                    )}
+            {details.map((item: any) => {
+              // Mapping inspiré de OrderDetailPage.tsx
+              let name = 'Produit inconnu';
+              let color = '';
+              let size = '';
+              let quantity = 1;
+              let price = 0;
+              let image = '';
+              let total = 0;
+
+              // Cas 1: variation_attribute (couleur + taille/pointure)
+              if (item.variation_attribute && item.variation_attribute.product_variation) {
+                const variation = item.variation_attribute.product_variation;
+                name = variation.product_name || 'Produit inconnu';
+                color = variation.color?.name || '';
+                size = item.variation_attribute.value || '';
+                quantity = item.variation_quantity;
+                price = item.variation_price;
+                image = variation.images?.[0]?.path || '';
+                total = parseInt(item.variation_quantity) * parseFloat(item.variation_price);
+              }
+              // Cas 2: product_variation (couleur seule)
+              else if (item.product_variation) {
+                name = item.product_variation.product_name || 'Produit inconnu';
+                color = item.product_variation.color?.name || '';
+                size = '';
+                quantity = item.variation_quantity;
+                price = item.variation_price;
+                image = item.product_variation.images?.[0]?.path || '';
+                total = parseInt(item.variation_quantity) * parseFloat(item.variation_price);
+              }
+              // Cas 3: produit simple
+              else {
+                name = item.product?.name || 'Produit inconnu';
+                color = '';
+                size = '';
+                quantity = item.quantity || 1;
+                price = item.price || 0;
+                image = item.product?.product_profile || '';
+                total = (item.quantity || 1) * (item.price || 0);
+              }
+
+              return (
+                <div key={item.id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4">
+                  <img
+                    src={image}
+                    alt={name}
+                    className="w-16 h-16 object-cover rounded-md border"
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium">{name}</div>
+                    <div className="flex items-center gap-2 text-xs mt-1">
+                      <span className="text-gray-600">Quantité: {quantity}</span>
+                      {color && (
+                        <Badge variant="outline" className="text-xs">{color}</Badge>
+                      )}
+                      {size && (
+                        <Badge variant="outline" className="text-xs">{size}</Badge>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">Prix unitaire: {price} XAF</div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">Prix unitaire: {item.variation_price} XAF</div>
+                  <div className="text-right font-semibold">{total} XAF</div>
                 </div>
-                <div className="text-right font-semibold">{parseInt(item.variation_quantity) * parseFloat(item.variation_price)} XAF</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="mt-6 pt-4 border-t">
             <div className="flex justify-between items-center">
