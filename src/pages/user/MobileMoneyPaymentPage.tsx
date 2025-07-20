@@ -5,6 +5,7 @@ import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useControlPaymentMutation, useInitPayinMutation,useVerifyPayinMutation,useWebhookPaymentMutation } from '@/services/auth';
+import { safeJSONParse } from '@/lib/safeJSONParse';
 
 
 export default function MobileMoneyPaymentPage() {
@@ -27,16 +28,18 @@ export default function MobileMoneyPaymentPage() {
   let isActive = true;
   let isActiveWebhook = false;
 
+  
+
   const getFormDataPayment = () => {
     try {
       const stored = sessionStorage.getItem('formDataPayment');
-      if (!stored) {
+      if (!stored || stored === "undefined" || stored === "null" || stored === "") {
         throw new Error('Aucune donnée de paiement trouvée');
       }
-      return JSON.parse(stored);
+      return safeJSONParse(stored, null);
     } catch (error) {
       console.error('Erreur lors de la récupération des données de paiement:', error);
-      navigate('/cart'); // Rediriger vers le panier
+      navigate('/cart');
       return null;
     }
   };
@@ -55,19 +58,30 @@ export default function MobileMoneyPaymentPage() {
       </div>
     );
   }
-  let variations=null;
-  let productsPayments=null;
+  let variations = null;
+  let productsPayments = null;
 
-  try{
-    if(JSON.parse(formDataPayment.hasVariation) && JSON.parse(formDataPayment.s)==0){
-      variations=JSON.parse(formDataPayment.variations);
-      
+  try {
+    const hasVariation = safeJSONParse(formDataPayment.hasVariation, false);
+    const s = safeJSONParse(formDataPayment.s, 0);
+
+    if (
+      hasVariation &&
+      s === 0 &&
+      formDataPayment.variations
+    ) {
+      variations = safeJSONParse(formDataPayment.variations, null);
+     
     }
-    if(JSON.parse(formDataPayment.s)==1){
-      productsPayments=JSON.parse(formDataPayment.productsPayments)
+    if (
+      s === 1 &&
+      formDataPayment.productsPayments
+    ) {
       
+      productsPayments = safeJSONParse(formDataPayment.productsPayments, null);
+      console.log(productsPayments)
     }
-  }catch(error){
+  } catch (error) {
     console.error('Erreur lors du parsing des données:', error);
     navigate('/cart');
     return null;
