@@ -229,7 +229,7 @@ const CheckoutPage: React.FC = () => {
   }, {});
 
   // 2. Vérifier s'il y a plusieurs villes
-  const showCityAlert = s === "1" && uniqueCities.length > 1;
+  const isMultiCity = s === "1" && uniqueCities.length > 1;
 
   function handleRemoveFromCart(product: any, selectedVariation?: any) {
     dispatch(removeItem({
@@ -255,7 +255,7 @@ const CheckoutPage: React.FC = () => {
             {/* Adresse de livraison */}
             <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
               <h2 className="text-xl font-semibold mb-6">Options de livraison</h2>
-              {showCityAlert && (
+              {isMultiCity && (
   <div className="relative flex items-center gap-4 mb-6 px-5 py-4 rounded-2xl border border-red-200 bg-gradient-to-r from-red-50 via-white to-red-100 shadow-lg">
     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 border border-red-200 mr-2">
       <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -340,7 +340,7 @@ const CheckoutPage: React.FC = () => {
     </div>
   </div>
 )}
-              {s === "1" && uniqueCities.length > 1 && (
+              {isMultiCity && (
   <div className="mb-4">
     <label className="block text-sm font-medium text-gray-700 mb-1">
       Choisissez la ville de livraison :
@@ -373,152 +373,167 @@ const CheckoutPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="pickup"
-                    name="deliveryOption"
-                    value="pickup"
-                    checked={address.deliveryOption === 'pickup'}
-                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
-                    className="mr-2"
-                   
-                  />
-                  <label htmlFor="pickup">
-                    Récupérer en magasin de {productLocation} (0 XAF)
-                  </label>
-                </div>
+              <div className={`space-y-4 mb-6 ${isMultiCity && !selectedCity ? 'opacity-50 pointer-events-none select-none' : ''}`}>
+                {/* Si tous les produits sont de la même ville, affiche les 4 options */}
+                {!isMultiCity && (
+                  <>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="pickup"
+                        name="deliveryOption"
+                        value="pickup"
+                        checked={address.deliveryOption === 'pickup'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
+                        className="mr-2"
+                      />
+                      <label htmlFor="pickup">
+                        Récupérer en magasin de {productLocation} (0 XAF)
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="localDelivery"
+                        name="deliveryOption"
+                        value="localDelivery"
+                        checked={address.deliveryOption === 'localDelivery'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
+                        className="mr-2"
+                      />
+                      <label htmlFor="localDelivery">
+                        Livraison à domicile {quarter} (1 500 XAF)
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="remotePickup"
+                        name="deliveryOption"
+                        value="remotePickup"
+                        checked={address.deliveryOption === 'remotePickup'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
+                        className="mr-2"
+                      />
+                      <label htmlFor="remotePickup">
+                        Expédition au magasin Akevas de {otherLocation} (2 500 XAF)
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="remoteDelivery"
+                        name="deliveryOption"
+                        value="remoteDelivery"
+                        checked={address.deliveryOption === 'remoteDelivery'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
+                        className="mr-2"
+                      />
+                      <label htmlFor="remoteDelivery">
+                        Expédition et livraison à domicile dans la ville de {otherLocation} (3 500 XAF)
+                      </label>
+                    </div>
+                  </>
+                )}
 
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="localDelivery"
-                    name="deliveryOption"
-                    value="localDelivery"
-                    checked={address.deliveryOption === 'localDelivery'}
-                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
-                    className="mr-2"
-                    
-                  />
-                  <label htmlFor="localDelivery">
-                    Livraison à domicile {quarter} (1 500 XAF)
-                  </label>
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="remotePickup"
-                    name="deliveryOption"
-                    value="remotePickup"
-                    checked={address.deliveryOption === 'remotePickup'}
-                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
-                    className="mr-2"
-                    
-                  />
-                  <label htmlFor="remotePickup" className=''>
-                    Expédition au magasin Akevas de {otherLocation} (2 500 XAF)
-                  </label>
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="remoteDelivery"
-                    name="deliveryOption"
-                    value="remoteDelivery"
-                    checked={address.deliveryOption === 'remoteDelivery'}
-                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
-                    className="mr-2"
-                    
-                  />
-                  <label htmlFor="remoteDelivery" className="">
-                    Expédition et livraison à domicile dans la ville de {otherLocation} (3 500 XAF)
-                  </label>
-                </div>
+                {/* Si produits de villes différentes, affiche seulement les 2 options */}
+                {isMultiCity && (
+                  <>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="pickup"
+                        name="deliveryOption"
+                        value="pickup"
+                        checked={address.deliveryOption === 'pickup'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
+                        className="mr-2"
+                        disabled={!selectedCity}
+                      />
+                      <label htmlFor="pickup">
+                        Récupérer en magasin de {selectedCity} (1 500 XAF)
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="remoteDelivery"
+                        name="deliveryOption"
+                        value="remoteDelivery"
+                        checked={address.deliveryOption === 'remoteDelivery'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
+                        className="mr-2"
+                        disabled={!selectedCity}
+                      />
+                      <label htmlFor="remoteDelivery">
+                        Expédition et livraison à domicile dans la ville de {selectedCity} (3 500 XAF)
+                      </label>
+                    </div>
+                  </>
+                )}
               </div>
 
-              {address.deliveryOption === 'localDelivery' && (
+              {/* Champ quartier et adresse pour Livraison à domicile */}
+              {(address.deliveryOption === 'localDelivery' || address.deliveryOption === 'remoteDelivery') && (
                 <>
-                                <div className="space-y-2 mb-6">
-                  <Label htmlFor="street">Choisir un quartier de livraison</Label>
-                  <Select
-                    name="quarter"
-                    value={quarter}
-                    disabled={quartersLoading}
-                    onValueChange={(value) => setQuarter(value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choisir un quartier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {quartersLoading ? (
-                        <SelectItem value="loading">Chargement des quartiers...</SelectItem>
-                      ) : (
-                        quartersForProductLocation?.map((quarter: { id: string, quarter_name: string }) => (
-                          <SelectItem key={quarter.id} value={quarter.quarter_name}>
-                            {quarter.quarter_name}
-                          </SelectItem>
-                        ))
-                      )}
-                      {quartersForProductLocation?.length === 0 && (
-                        <SelectItem value="no-quarters">Aucun quartier trouvé, veuillez vérifier votre ville</SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                </>
-
-              )}
-{
-                address.deliveryOption === "remoteDelivery" && (
                   <div className="space-y-2 mb-6">
-                  <Label htmlFor="street">Choisir un quartier de livraison</Label>
-                  <Select
-                    name="quarter"
-                    value={quarter}
-                    disabled={quartersLoading}
-                    onValueChange={(value) => setQuarter(value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choisir un quartier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {quartersLoading ? (
-                        <SelectItem value="loading">Chargement des quartiers...</SelectItem>
-                      ) : (
-                        filterOtherLocation?.map((quarter: { id: string, quarter_name: string }) => (
-                          <SelectItem key={quarter.id} value={quarter.quarter_name}>
-                            {quarter.quarter_name}
-                          </SelectItem>
-                        ))
-                      )}
-                      {filterOtherLocation?.length === 0 && (
-                        <SelectItem value="no-quarters">Aucun quartier trouvé,veuillez verifier votre ville</SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-                )
-              }
-              {
-                (address.deliveryOption === "remoteDelivery" || address.deliveryOption === "localDelivery") && (
+                    <Label htmlFor="street">Choisir un quartier de livraison</Label>
+                    <Select
+                      name="quarter"
+                      value={quarter}
+                      disabled={quartersLoading}
+                      onValueChange={(value) => setQuarter(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choisir un quartier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {quartersLoading ? (
+                          <SelectItem value="loading">Chargement des quartiers...</SelectItem>
+                        ) : (
+                          quarters?.quarters
+                            .filter((q: any) => {
+                              if (address.deliveryOption === 'remoteDelivery') {
+                                // Multi-ville : quartiers de la ville choisie
+                                if (isMultiCity) return q.town_name === selectedCity;
+                                // Mono-ville : quartiers de l'autre ville
+                                return q.town_name === otherLocation;
+                              }
+                              // localDelivery : quartiers de la ville de résidence ou choisie
+                              return q.town_name === (isMultiCity ? selectedCity : productLocation);
+                            })
+                            .map((quarter: any) => (
+                              <SelectItem key={quarter.id} value={quarter.quarter_name}>
+                                {quarter.quarter_name}
+                              </SelectItem>
+                            ))
+                        )}
+                        {quarters?.quarters.filter((q: any) => {
+                          if (address.deliveryOption === 'remoteDelivery') {
+                            if (isMultiCity) return q.town_name === selectedCity;
+                            return q.town_name === otherLocation;
+                          }
+                          return q.town_name === (isMultiCity ? selectedCity : productLocation);
+                        }).length === 0 && (
+                          <SelectItem value="no-quarters">Aucun quartier trouvé, veuillez vérifier votre ville</SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div className="col-span-2 mb-8">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Adresse de livraison (mentionnez les details de votre adresse de livraison)
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={address.address}
-                    onChange={handleAddressChange}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                  />
-                </div>
-                )
-              }
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Adresse de livraison (mentionnez les détails de votre adresse de livraison)
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      value={address.address}
+                      onChange={handleAddressChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                    />
+                  </div>
+                </>
+              )}
               
               <div className="space-y-4 mb-6">
                 <div className="col-span-2 sm:col-span-1">
@@ -746,9 +761,9 @@ const CheckoutPage: React.FC = () => {
               {/* Bouton de paiement */}
               <button
                 onClick={handlePayment}
-                disabled={!paymentPhone.trim() || selectedCity === ''}
+                disabled={!paymentPhone.trim() || (isMultiCity && !selectedCity)}
               className={`w-full mt-6 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
-                !paymentPhone.trim() || selectedCity === '' 
+                !paymentPhone.trim() || (isMultiCity && !selectedCity) 
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-70' 
                   : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
               }`}
