@@ -54,7 +54,7 @@ const CheckoutPage: React.FC = () => {
   const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);
-  console.log(quarters)
+  console.log(filteredQuarters)
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
     phone: '',
@@ -73,7 +73,17 @@ const CheckoutPage: React.FC = () => {
   },)
   console.log(JSON.parse(variations || '{}'))
   // Mock data pour la démonstration
-  const productLocation = s == "1" ? cartItems[0].product.residence : residence;
+  const uniqueCities = Array.from(
+    new Set(cartItems.map(item => item.product.residence || 'Ville inconnue'))
+  );
+  const [selectedCity, setSelectedCity] = useState<string>('');
+  const productLocation =
+    s === "1"
+      ? (uniqueCities.length === 1
+          ? uniqueCities[0]
+          : selectedCity // si plusieurs villes, on prend celle choisie
+        )
+      : residence;
   const deliveryFees = {
     pickup: 0,
     localDelivery: 1500,
@@ -219,7 +229,6 @@ const CheckoutPage: React.FC = () => {
   }, {});
 
   // 2. Vérifier s'il y a plusieurs villes
-  const uniqueCities = Object.keys(productsByCity);
   const showCityAlert = s === "1" && uniqueCities.length > 1;
 
   function handleRemoveFromCart(product: any, selectedVariation?: any) {
@@ -228,6 +237,10 @@ const CheckoutPage: React.FC = () => {
       selectedVariation: selectedVariation || undefined
     }));
   }
+
+  const quartersForProductLocation = quarters?.quarters.filter(
+    (quarter: { town_name: string }) => quarter.town_name === productLocation
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -327,9 +340,36 @@ const CheckoutPage: React.FC = () => {
     </div>
   </div>
 )}
+              {s === "1" && uniqueCities.length > 1 && (
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Choisissez la ville de livraison :
+    </label>
+    <select
+      value={selectedCity}
+      onChange={e => setSelectedCity(e.target.value)}
+      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+    >
+      <option value="">-- Sélectionnez une ville --</option>
+      {uniqueCities.map(city => (
+        <option key={city} value={city}>{city}</option>
+      ))}
+    </select>
+    {selectedCity === '' && (
+      <p className="text-xs text-red-500 mt-1">Veuillez choisir une ville pour la livraison.</p>
+    )}
+  </div>
+)}
               <div className="mb-4">
                 <p className="text-sm text-gray-600 mb-2">
-                  Localisation du produit: <span className="font-semibold">{productLocation}</span>
+                  Localisation du produit : <span className="font-semibold">
+                    {s === "1"
+                      ? (uniqueCities.length === 1
+                          ? uniqueCities[0]
+                          : selectedCity
+                        )
+                      : residence}
+                  </span>
                 </p>
               </div>
 
@@ -416,14 +456,14 @@ const CheckoutPage: React.FC = () => {
                       {quartersLoading ? (
                         <SelectItem value="loading">Chargement des quartiers...</SelectItem>
                       ) : (
-                        filteredQuarters?.map((quarter: { id: string, quarter_name: string }) => (
+                        quartersForProductLocation?.map((quarter: { id: string, quarter_name: string }) => (
                           <SelectItem key={quarter.id} value={quarter.quarter_name}>
                             {quarter.quarter_name}
                           </SelectItem>
                         ))
                       )}
-                      {filteredQuarters?.length === 0 && (
-                        <SelectItem value="no-quarters">Aucun quartier trouvé,veuillez verifier votre ville</SelectItem>
+                      {quartersForProductLocation?.length === 0 && (
+                        <SelectItem value="no-quarters">Aucun quartier trouvé, veuillez vérifier votre ville</SelectItem>
                       )}
                     </SelectContent>
                   </Select>
@@ -706,9 +746,9 @@ const CheckoutPage: React.FC = () => {
               {/* Bouton de paiement */}
               <button
                 onClick={handlePayment}
-                disabled={!paymentPhone.trim()}
+                disabled={!paymentPhone.trim() || selectedCity === ''}
               className={`w-full mt-6 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
-                !paymentPhone.trim() 
+                !paymentPhone.trim() || selectedCity === '' 
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-70' 
                   : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
               }`}
