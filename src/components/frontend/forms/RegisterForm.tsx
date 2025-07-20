@@ -16,7 +16,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCheckIfEmailExistsMutation, useGetQuartersQuery, useGetTownsQuery } from "@/services/guardService";
 import { useState } from "react";
 import Cookies from "universal-cookie";
-import { motion } from "framer-motion";
 import { Eye, EyeOff, Check } from "lucide-react";
 
 
@@ -99,9 +98,7 @@ export default function RegisterForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Section Informations personnelles */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
           className="space-y-8"
         >
           {/* Informations de base */}
@@ -363,12 +360,10 @@ export default function RegisterForm() {
               />
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+        <div
+        
         >
           <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100">
             <Button 
@@ -392,7 +387,7 @@ export default function RegisterForm() {
               En créant votre compte, vous acceptez nos conditions d'utilisation
             </p>
           </div>
-        </motion.div>
+        </div>
       </form>
     </Form>
   );
