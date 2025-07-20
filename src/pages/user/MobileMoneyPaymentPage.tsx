@@ -105,6 +105,7 @@ export default function MobileMoneyPaymentPage() {
         shipping: formDataPayment.shipping,
         address: formDataPayment.address,
         hasVariation:formDataPayment.hasVariation,
+        isMultiCity:formDataPayment.isMultiCity,
         productVariationId: variations?.productVariationId || null,
         attributeVariationId: variations?.attributeVariationId || null
       }
@@ -141,7 +142,7 @@ export default function MobileMoneyPaymentPage() {
       setTimeout(() => {
         
         setIsControlPayment(true)
-      }, 10000)
+      }, 1000)
       clearTimeout(timeoutRef.current);
       // Redirect after success
       
