@@ -93,8 +93,11 @@ const CheckoutPage: React.FC = () => {
   
   
   const otherLocation = productLocation === "Yaoundé" ? "Douala" : "Yaoundé";
-  const filterOtherLocation=quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === otherLocation);
+  const isMultiCity = s === "1" && uniqueCities.length > 1;
   const getDeliveryFee = () => {
+    if (isMultiCity && address.deliveryOption === 'pickup') {
+      return 1500;
+    }
     return deliveryFees[address.deliveryOption];
   };
 
@@ -138,7 +141,8 @@ const CheckoutPage: React.FC = () => {
         quantity: item.quantity,
         hasVariation:item.selectedVariation ? true : false,
         price: item.product.product_price,
-        name: item.product.product_name
+        name: item.product.product_name,
+        
       }));
 
       formData.append("s","1");
@@ -148,7 +152,12 @@ const CheckoutPage: React.FC = () => {
       if(totalQuantity){
           formData.append("quantity",totalQuantity.toString());
       }
-     
+      let deliveryInfos;
+      formData.append("isMultiCity", isMultiCity ? "true" : "false");
+      if(isMultiCity){
+        deliveryInfos=shipping=== 1500 ? `Récupérer en magasin de ${selectedCity}` : `Expédition et livraison à domicile dans la ville de ${selectedCity}`
+        formData.append("delivery_info",deliveryInfos)
+      }
      
       
       sessionStorage.setItem("paymentMethod",selectedPayment);
@@ -229,8 +238,9 @@ const CheckoutPage: React.FC = () => {
   }, {});
 
   // 2. Vérifier s'il y a plusieurs villes
-  const isMultiCity = s === "1" && uniqueCities.length > 1;
-
+  
+  console.log('dd')
+  console.log(isMultiCity)
   function handleRemoveFromCart(product: any, selectedVariation?: any) {
     dispatch(removeItem({
       product,
@@ -238,9 +248,7 @@ const CheckoutPage: React.FC = () => {
     }));
   }
 
-  const quartersForProductLocation = quarters?.quarters.filter(
-    (quarter: { town_name: string }) => quarter.town_name === productLocation
-  );
+ 
 
   return (
     <div className="min-h-screen bg-gray-50">

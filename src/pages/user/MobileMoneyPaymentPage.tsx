@@ -101,7 +101,7 @@ export default function MobileMoneyPaymentPage() {
         methodChanel:formDataPayment.paymentMethod,
         amount: formDataPayment.amount,
         price: formDataPayment.price,
-        quarter_delivery: formDataPayment.quarter_delivery || null,
+        quarter_delivery: formDataPayment.quarter || null,
         shipping: formDataPayment.shipping,
         address: formDataPayment.address,
         hasVariation:formDataPayment.hasVariation,
@@ -118,8 +118,10 @@ export default function MobileMoneyPaymentPage() {
         quantity: formDataPayment.quantity,
         methodChanel:formDataPayment.paymentMethod,
         amount: formDataPayment.amount,
-        quarter_delivery: formDataPayment.quarter_delivery || null,
+        quarter_delivery: formDataPayment.quarter || null,
         shipping: formDataPayment.shipping,
+        isMultiCity:formDataPayment.isMultiCity,
+        delivery_infos:formDataPayment.delivery_info || null,
         address: formDataPayment.address,
       }
     }
