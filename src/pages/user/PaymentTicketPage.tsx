@@ -10,9 +10,6 @@ import { useShowPaymentWithReferenceQuery } from '@/services/auth';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-// Remplacer ceci par un vrai hook RTK Query ou fetch selon votre API
-
-
 const statusMap: Record<string, { label: string; color: string }> = {
   '0': { label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },
   '1': { label: 'En cours de livraison', color: 'bg-blue-100 text-blue-800' },
@@ -22,8 +19,9 @@ const statusMap: Record<string, { label: string; color: string }> = {
 
 export default function PaymentTicketPage() {
   const { ref } = useParams();
-  const {data:payment,isLoading}=useShowPaymentWithReferenceQuery(ref)
+  const { data: payment, isLoading } = useShowPaymentWithReferenceQuery(ref);
   const ticketRef = useRef<HTMLDivElement>(null);
+
   if (isLoading || !payment) {
     return <Skeleton className="w-full h-[600px]" />;
   }
@@ -32,45 +30,60 @@ export default function PaymentTicketPage() {
   const status = statusMap[order.status] || statusMap['0'];
   const details = order.order_details;
   
-  
   return (
     <>
-      <div className="max-w-2xl mx-auto px-4 py-10" ref={ticketRef}>
-        <Card className="p-6 mb-6 shadow-xl border-2 border-green-100">
-          <div className="flex items-center gap-4 mb-4">
-            <CheckCircle className="w-10 h-10 text-green-500" />
-            <div>
-              <h1 className="text-2xl font-bold">Paiement réussi</h1>
-              <p className="text-gray-600 text-sm">Merci pour votre achat, {payment.user} !</p>
+      <div
+        className="max-w-2xl mx-auto px-2 py-4 sm:px-4 sm:py-10"
+        ref={ticketRef}
+      >
+        {/* Header Card */}
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6 shadow-xl border-2 border-green-100 rounded-2xl">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <CheckCircle className="w-12 h-12 sm:w-10 sm:h-10 text-green-500 flex-shrink-0" />
+            <div className="text-center sm:text-left">
+              <h1 className="text-xl sm:text-2xl font-bold">Paiement réussi</h1>
+              <p className="text-gray-600 text-xs sm:text-sm">
+                Merci pour votre achat, <span className="font-semibold">{payment.user}</span> !
+              </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-4 items-center mb-2">
-            <Badge className="bg-green-100 text-green-800">Réf. paiement : {payment.transaction_ref}</Badge>
-            <Badge className={status.color}>{status.label}</Badge>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center sm:items-start mb-2">
+            <Badge className="bg-green-100 text-green-800 text-xs sm:text-sm px-2 py-1 rounded-lg">
+              Réf. paiement : {payment.transaction_ref}
+            </Badge>
+            <Badge className={`${status.color} text-xs sm:text-sm px-2 py-1 rounded-lg`}>
+              {status.label}
+            </Badge>
           </div>
-          <div className="flex flex-col md:flex-row md:items-center gap-4 mt-2">
-            <div>
-              <div className="text-lg font-semibold">Montant payé</div>
-              <div className="text-2xl font-bold text-green-700">{payment.price} XAF</div>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2">
+            <div className="flex flex-row items-center justify-between w-full sm:w-auto">
+              <div className="text-base sm:text-lg font-semibold">Montant payé</div>
+              <div className="text-lg sm:text-2xl font-bold text-green-700 ml-2 sm:ml-4">{payment.price} XAF</div>
             </div>
-            <div className="md:ml-auto">
-              <div className="text-sm text-gray-500">Date de commande</div>
-              <div className="font-medium">{order.created_at.split('T')[0]}</div>
+            <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
+              <div className="text-xs sm:text-sm text-gray-500">Date de commande</div>
+              <div className="font-medium text-xs sm:text-base ml-2 sm:ml-4">{order.created_at.split('T')[0]}</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 mt-4">
+          <div className="flex flex-col sm:flex-row items-start gap-2 mt-4">
+            <div className="flex flex-row items-center gap-2">
             <MapPin className="w-5 h-5 text-gray-500" />
-            <span className="text-gray-700 font-medium">Emplacement de livraison :</span>
-            <span className="text-gray-600">{order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
-            {order.emplacement == null && order.addresse}</span>
+              <span className="text-gray-700 font-medium text-xs sm:text-base">Emplacement de livraison :</span>
+            </div>
+            <span className="text-gray-600 text-xs sm:text-sm break-words">
+              {order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
+              {order.emplacement == null && order.addresse}
+            </span>
           </div>
         </Card>
 
-        <Card className="p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><Package className="w-5 h-5" /> Détails de la commande</h2>
-          <div className="space-y-4">
+        {/* Order Details Card */}
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6 rounded-2xl">
+          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+            <Package className="w-5 h-5" /> Détails de la commande
+          </h2>
+          <div className="space-y-3 sm:space-y-4">
             {details.map((item: any) => {
-              // Mapping inspiré de OrderDetailPage.tsx
               let name = 'Produit inconnu';
               let color = '';
               let size = '';
@@ -79,7 +92,6 @@ export default function PaymentTicketPage() {
               let image = '';
               let total = 0;
 
-              // Cas 1: variation_attribute (couleur + taille/pointure)
               if (item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
                 name = variation.product_name || 'Produit inconnu';
@@ -89,9 +101,7 @@ export default function PaymentTicketPage() {
                 price = item.variation_price;
                 image = variation.images?.[0]?.path || '';
                 total = parseInt(item.variation_quantity) * parseFloat(item.variation_price);
-              }
-              // Cas 2: product_variation (couleur seule)
-              else if (item.product_variation) {
+              } else if (item.product_variation) {
                 name = item.product_variation.product_name || 'Produit inconnu';
                 color = item.product_variation.color?.name || '';
                 size = '';
@@ -99,9 +109,7 @@ export default function PaymentTicketPage() {
                 price = item.variation_price;
                 image = item.product_variation.images?.[0]?.path || '';
                 total = parseInt(item.variation_quantity) * parseFloat(item.variation_price);
-              }
-              // Cas 3: produit simple
-              else {
+              } else {
                 name = item.product?.name || 'Produit inconnu';
                 color = '';
                 size = '';
@@ -123,10 +131,14 @@ export default function PaymentTicketPage() {
                     <div className="flex items-center gap-2 text-xs mt-1">
                       <span className="text-gray-600">Quantité: {quantity}</span>
                       {color && (
-                        <Badge variant="outline" className="text-xs">{color}</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {color}
+                        </Badge>
                       )}
                       {size && (
-                        <Badge variant="outline" className="text-xs">{size}</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {size}
+                        </Badge>
                       )}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">Prix unitaire: {price} XAF</div>
@@ -136,24 +148,30 @@ export default function PaymentTicketPage() {
               );
             })}
           </div>
-          <div className="mt-6 pt-4 border-t">
-            <div className="flex justify-between items-center">
+          <div className="mt-5 sm:mt-6 pt-4 border-t">
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center text-xs sm:text-base">
               <span className="text-gray-600">Sous-total ({order.itemsCount} article(s))</span>
               <span className="font-medium">{order.total_amount} XAF</span>
             </div>
-            <div className="flex justify-between items-center mt-2">
+              <div className="flex justify-between items-center text-xs sm:text-base">
               <span className="text-gray-600">Frais de livraison</span>
               <span className="font-medium">{order.fee_of_shipping || 0} XAF</span>
             </div>
-            <div className="flex justify-between items-center mt-3 pt-3 border-t">
-              <span className="text-lg font-semibold">Total</span>
-              <span className="text-lg font-bold">{order.total_amount} XAF</span>
+              <div className="flex justify-between items-center mt-2 pt-2 border-t text-base sm:text-lg">
+                <span className="font-semibold">Total</span>
+                <span className="font-bold">{order.total_amount} XAF</span>
+              </div>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6 mb-6 flex flex-col items-center">
-          <h2 className="text-lg font-semibold mb-2 flex items-center gap-2"><QrCode className="w-5 h-5" /> QR Code du ticket</h2>
+        {/* QR Code Card */}
+        <Card className="p-4 sm:p-6 mb-4  sm:mb-6 flex flex-col items-center rounded-2xl">
+          <h2 className="text-base sm:text-lg font-semibold mb-2 flex items-center gap-2">
+            <QrCode className="w-5 h-5" /> QR Code du ticket
+          </h2>
+          <div className="flex justify-center  w-full">
           <QRCodeCanvas
             value={JSON.stringify({
               ref: payment.transaction_ref,
@@ -162,17 +180,20 @@ export default function PaymentTicketPage() {
               date: order.created_at,
               products: details.map((item: any) => item.product_variation?.product_name)
             })}
-            size={160}
+              size={140}
             level="H"
             includeMargin={true}
           />
-          <div className="text-xs text-gray-500 mt-2">Scannez pour vérifier ou partager ce ticket</div>
+          </div>
+          <div className="text-xs text-gray-500 mt-2 text-center">
+            Scannez pour vérifier ou partager ce ticket
+          </div>
         </Card>
       </div>
-      <div className="flex justify-center mt-8">
+      <div className="fixed bottom-0 max-sm:relative max-sm:mb-12  left-0 w-full bg-white z-20 px-2 py-3 sm:static sm:bg-transparent sm:py-0 flex justify-center shadow-[0_-2px_12px_-4px_rgba(0,0,0,0.08)] sm:shadow-none">
         <Button
           size="lg"
-          className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl text-lg font-semibold shadow-lg"
+          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 rounded-xl text-base sm:text-lg font-semibold shadow-lg"
           onClick={async () => {
             if (!ticketRef.current) return;
             const canvas = await html2canvas(ticketRef.current, { scale: 2 });
