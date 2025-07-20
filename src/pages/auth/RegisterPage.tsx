@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import RegisterForm from "@/components/frontend/forms/RegisterForm"
 import logo from "@/assets/favicon.png"
-import { ArrowLeft, Shield, Sparkles, Users, Zap, CheckCircle, Star, Truck, CreditCard } from "lucide-react"
+import { ArrowLeft, Shield, Sparkles, Users, Zap,Star, Truck, CreditCard } from "lucide-react"
 import { motion } from "framer-motion"
 
 export default function SignupForm() {
@@ -148,7 +148,7 @@ export default function SignupForm() {
 
         {/* Contenu du formulaire */}
         <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-          <div className="w-full mx-6">
+          <div className="w-full mx-6 max-sm:mx-0">
             {/* En-tête desktop */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}

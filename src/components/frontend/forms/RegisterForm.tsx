@@ -343,7 +343,7 @@ export default function RegisterForm() {
                       />
                     </FormControl>
                     <div className="space-y-2 leading-none">
-                      <FormLabel className="text-sm text-gray-700 cursor-pointer font-medium">
+                      <FormLabel className="text-sm  text-gray-700 cursor-pointer font-medium">
                         J'accepte les{" "}
                         <a href="/terms" className="text-blue-600 hover:text-blue-700 underline font-semibold">
                           conditions générales
