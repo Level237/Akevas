@@ -90,7 +90,7 @@ const InstallButton: React.FC = () => {
                 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setShowPrompt(true)}
-                className="fixed overflow-hidden bottom-10 max-sm:bottom-20 left-24 z-[9999999999] bg-black text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8b0d19] flex items-center justify-center"
+                className="fixed overflow-hidden bottom-10 max-sm:bottom-20 left-8 z-[9999999999] bg-black text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#8b0d19] flex items-center justify-center"
             >
                 <motion.div
                     animate={{
