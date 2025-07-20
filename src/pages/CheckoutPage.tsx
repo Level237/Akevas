@@ -105,7 +105,7 @@ const CheckoutPage: React.FC = () => {
   const shipping = getDeliveryFee();
   const total = s == "1" ? subtotal + shipping : parseInt(totalPrice || '0') + shipping;
   console.log(totalPrice)
-  const totalWithTax = total * (1 + TAX_RATE); ; // Calculate total with tax
+  const totalWithTax =total * (1 + TAX_RATE) ; ; // Calculate total with tax
   const totalQuantity=cartItems.reduce((sum, item) => sum + parseInt(item.quantity.toString()), 0);
  console.log(totalQuantity)
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,10 +163,10 @@ const CheckoutPage: React.FC = () => {
       sessionStorage.setItem("paymentMethod",selectedPayment);
       sessionStorage.setItem("paymentPhone", paymentPhone);
       sessionStorage.setItem("phone",phone)
-      formData.append("amount",totalWithTax.toString()); // Use total with tax
+      formData.append("amount",Math.round(totalWithTax).toString()); // Use total with tax
       formData.append('productsPayments', JSON.stringify(productsPayments))
       
-      formData.append("address",totalWithTax.toString()); // Use total with tax
+      //formData.append("address",totalWithTax.toString()); // Use total with tax
       formData.append("phone",phone);
       formData.append("address",address.address);
       formData.append("shipping",shipping.toString());
@@ -759,7 +759,7 @@ const CheckoutPage: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="text-lg font-medium">Total (TTC)</span>
                     <span className="text-lg font-bold">
-                      {totalWithTax} Fcfa
+                      {Math.round(totalWithTax)} Fcfa
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">TVA incluse</p>
@@ -769,9 +769,9 @@ const CheckoutPage: React.FC = () => {
               {/* Bouton de paiement */}
               <button
                 onClick={handlePayment}
-                disabled={!paymentPhone.trim() || (isMultiCity && !selectedCity)}
+                disabled={paymentPhone.trim().length !=9 || (isMultiCity && !selectedCity)}
               className={`w-full mt-6 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
-                !paymentPhone.trim() || (isMultiCity && !selectedCity) 
+                paymentPhone.trim().length !=9 || (isMultiCity && !selectedCity) 
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-70' 
                   : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
               }`}
@@ -827,10 +827,18 @@ const CheckoutPage: React.FC = () => {
                       'Expédition et livraison à domicile'
                   }</p>
                   <p>Frais de livraison: {shipping} FCFA</p>
-                  <p>TVA: {totalWithTax.toFixed(2)} FCFA</p>
+                  <p>TVA:  {s == "1" ? 
+                      (cartItems.reduce((sum, item) => {
+                        const price = item.selectedVariation?.attributes?.price 
+                          ? parseFloat(item.selectedVariation.attributes.price)
+                          : parseFloat(item.product.product_price);
+                        return sum + (price * item.quantity);
+                      }, 0) * TAX_RATE).toFixed(2)
+                      : (parseInt(totalPrice || '0') * TAX_RATE).toFixed(2)
+                    } Fcfa FCFA</p>
                 </div>
                 <div>
-                  <p className="font-medium">Montant total: {totalWithTax.toFixed(2)} FCFA</p>
+                  <p className="font-medium">Montant total:{Math.round(totalWithTax)} Fcfa FCFA</p>
                 </div>
               </div>
 
