@@ -129,6 +129,17 @@ const CheckoutPage: React.FC = () => {
     setShowConfirmModal(true);
   };
 
+  const getPrice=(item:any)=>{
+    if(item.selectedVariation?.attributes?.price){
+        return item.selectedVariation?.attributes?.price;
+    }
+    if(item.selectedVariation && item.selectedVariation.isColorOnly){
+      return item.selectedVariation?.price;
+    }
+    else{
+      return item.product.product_price
+    }
+  }
   const confirmPayment = async() => {
     let productsPayments;
     const formData=new FormData();
@@ -140,7 +151,7 @@ const CheckoutPage: React.FC = () => {
         productVariationId: item.selectedVariation?.id ?? null,
         quantity: item.quantity,
         hasVariation:item.selectedVariation ? true : false,
-        price: item.product.product_price,
+        price: getPrice(item),
         name: item.product.product_name,
         
       }));
