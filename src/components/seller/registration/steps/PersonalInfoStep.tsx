@@ -14,7 +14,16 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
-    
+    if(name=="phone"){
+      const valueEmpty=value.replace(/^\+?237\s?/, '')
+      onUpdate({
+        personalInfo: {
+          ...data,
+          [name]: valueEmpty,
+        },
+      });
+      return;
+    }
 
     onUpdate({
       personalInfo: {
@@ -73,15 +82,27 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, onUpdate }) =
 
         <div className="space-y-2">
           <Label htmlFor="phone">Numéro de téléphone</Label>
-          <Input
+          <div className="flex items-center bg-white/80 rounded-xl shadow-sm border border-gray-200 focus-within:border-blue-500 transition-all">
+          <button
+                type="button"
+                className="flex items-center justify-center w-10 h-10 rounded-l-xl border-none focus:outline-none cursor-default"
+                tabIndex={-1}
+                disabled
+              >
+                <span role="img" aria-label="Cameroun" className="text-white text-sm">🇨🇲</span>
+              </button>
+              <span className="px-3 text-gray-700 font-semibold select-none text-sm bg-gray-50">+237</span>
+              <Input
             type="tel"
             id="phone"
             name="phone"
             value={data.phone}
             onChange={handleChange}
             placeholder="Entrez votre numéro de téléphone"
-            className="py-6"
+           className="flex-1 h-12 border-none bg-transparent focus:ring-0 focus:outline-none placeholder:text-gray-400 rounded-r-xl"
           />
+          </div>
+         
         </div>
 
         <div className="space-y-2">
