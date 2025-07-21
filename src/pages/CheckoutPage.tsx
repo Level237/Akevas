@@ -50,7 +50,7 @@ const CheckoutPage: React.FC = () => {
   const quantity = params.get('quantity');
   const price = params.get('price');
   const name = params.get('name');
-  
+  console.log(cartItems)
   const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
   const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);

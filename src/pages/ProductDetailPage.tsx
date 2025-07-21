@@ -44,7 +44,7 @@ const ProductDetailPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const productId = product?.id
   const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null);
-  
+  console.log(product)
   const handleAddToCart = async () => {
     setIsLoadingCart(true);
     
