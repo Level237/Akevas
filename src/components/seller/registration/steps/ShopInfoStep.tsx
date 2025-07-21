@@ -14,9 +14,10 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 interface ShopInfoStepProps {
   data: SellerFormData['shopInfo'];
   onUpdate: (data: Partial<SellerFormData>) => void;
+  categoryError:string
 }
 
-const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
+const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate,categoryError }) => {
   const {data:categories}=useGetCategoriesQuery('guard')
    const [gender,setGender]=useState<number>(0)
     const {data:categoriesByGender,isLoading:isLoadingCategoriesByGender}=useGetCategoryByGenderQuery(gender)
@@ -214,12 +215,17 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate }) => {
         options={categoriesByGender?.categories}
         selected={selectedCategories}
         onChange={handleChangeCategories}
-        placeholder="Select categories..."
-      />
+        placeholder="Selectionnez une catégorie de votre boutique"
+      />  
+      
+     
+            )}{categoryError && (
+              <div className="text-red-500 text-sm mt-1">{categoryError}</div>
             )}
                 </div>
               </div>
                 )}
+                
           </div>
 
           

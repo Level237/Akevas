@@ -21,6 +21,7 @@ const ShopInfoPage = () => {
     category: [],
     gender: 0,
   });
+  const [categoryError, setCategoryError] = useState('');
   console.log(formData.logo);
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.shopInfo) {
@@ -35,7 +36,22 @@ const ShopInfoPage = () => {
   const handleNext = async () => {
     // Validation
     const requiredFields = ['shopName', 'description', 'category', 'gender', 'logo', 'images'];
-    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+    const missingFields = requiredFields.filter(field => {
+      if (field === 'category') {
+        
+        return !formData.category || formData.category.length === 0;
+      }
+      
+      return !formData[field as keyof typeof formData];
+    });
+
+    if (!formData.category || formData.category.length === 0) {
+      setCategoryError('La catégorie ne peut pas être vide.');
+      toast.error('Veuillez sélectionner au moins une catégorie.');
+      return;
+    } else {
+      setCategoryError('');
+    }
 
     if (missingFields.length > 0) {
       toast.error('Veuillez remplir tous les champs obligatoires', {
@@ -44,6 +60,8 @@ const ShopInfoPage = () => {
       });
       return;
     }
+
+   
 
     setIsLoading(true);
 
@@ -92,6 +110,7 @@ const ShopInfoPage = () => {
           <ShopInfoStep
             data={formData}
             onUpdate={handleUpdate}
+            categoryError={categoryError}
           />
           <motion.div
             className="mt-8 flex justify-between"

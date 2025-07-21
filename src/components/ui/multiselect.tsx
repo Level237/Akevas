@@ -42,7 +42,7 @@ export function MultiSelect({
   
   return (
     <Command className="overflow-visible bg-transparent">
-      <div className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+      <div className="group border border-input px-3  text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <div className="flex gap-1 flex-wrap">
           {selected.map((option) => {
             return (
@@ -73,7 +73,7 @@ export function MultiSelect({
             onBlur={() => setOpen(false)}
             onFocus={() => setOpen(true)}
             placeholder={placeholder}
-            className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1"
+            className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground w-[24rem]"
           />
         </div>
       </div>
