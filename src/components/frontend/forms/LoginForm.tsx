@@ -95,22 +95,22 @@ export default function LoginForm() {
                 <span role="img" aria-label="Cameroun" className="text-white text-sm">🇨🇲</span>
               </button>
               <span className="px-3 text-gray-700 font-semibold select-none text-sm bg-gray-50">+237</span>
-              <Input
-                id="phone"
+            <Input
+              id="phone"
                 name="phone"
                 placeholder="6XX XXX XXX"
-                required
+              required
                 type="tel"
                 autoComplete="tel"
                 className="flex-1 h-12 border-none bg-transparent focus:ring-0 focus:outline-none placeholder:text-gray-400 rounded-r-xl"
-                value={phone}
+              value={phone}
                 onChange={e => {
                   // Empêche d'entrer le préfixe
                   const value = e.target.value.replace(/^\+?237\s?/, '');
                   setPhone(value);
                 }}
                 style={{ boxShadow: 'none' }}
-              />
+            />
             </div>
           </div>
 

@@ -54,7 +54,7 @@ const VariationModal: React.FC<VariationModalProps> = ({
   // Fonction pour obtenir la quantité actuelle
   const getCurrentQuantity = () => {
     if (!selectedVariant) return product.product_quantity;
-    
+
     if (selectedSize && selectedVariant.attributes) {
       const selectedAttribute = selectedVariant.attributes.find((attr: any) => attr.value === selectedSize);
       return selectedAttribute ? selectedAttribute.quantity : selectedVariant.quantity || product.product_quantity;

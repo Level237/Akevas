@@ -16,6 +16,7 @@ import {
   MessageCircle,
   ChevronDown,
   ChevronUp,
+  User,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
@@ -152,7 +153,20 @@ export function Sidebar() {
             ))}
           </nav>
 
-          <div className="p-4 border-t">
+          {/* Onglet Compte en bas */}
+          <div className="p-4 border-t flex flex-col gap-2">
+            <AsyncLink
+              to="/admin/account"
+              className={cn(
+                "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                pathname === "/admin/account"
+                  ? "bg-[#ed7e0f]/10 text-[#ed7e0f]"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              )}
+            >
+              <User className="h-5 w-5" />
+              <span>Compte</span>
+            </AsyncLink>
             <Button variant="outline" className="w-full" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" /> Deconnexion
             </Button>

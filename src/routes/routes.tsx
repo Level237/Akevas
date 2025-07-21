@@ -53,6 +53,7 @@ import ContactPage from "@/pages/ContactPage";
 import PaymentSuccessPage from "@/pages/payment/PaymentSuccessPage";
 import PaymentCancelPage from "@/pages/payment/PaymentCancelPage";
 import PaymentErrorPage from "@/pages/payment/PaymentErrorPage";
+import AdminAccountPage from "@/pages/admin/account";
 
 
 
@@ -194,6 +195,9 @@ export const routes = createBrowserRouter([
       {
         path:"/admin/order/:id",
         element:<AdminOrderDetailPage/>
+      },{
+        path:"/admin/account",
+        element:<AdminAccountPage/>
       }
     ]
   },

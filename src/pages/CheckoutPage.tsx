@@ -248,7 +248,7 @@ const CheckoutPage: React.FC = () => {
     }));
   }
 
- 
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -385,62 +385,62 @@ const CheckoutPage: React.FC = () => {
                 {/* Si tous les produits sont de la même ville, affiche les 4 options */}
                 {!isMultiCity && (
                   <>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        id="pickup"
-                        name="deliveryOption"
-                        value="pickup"
-                        checked={address.deliveryOption === 'pickup'}
-                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
-                        className="mr-2"
-                      />
-                      <label htmlFor="pickup">
-                        Récupérer en magasin de {productLocation} (0 XAF)
-                      </label>
-                    </div>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        id="localDelivery"
-                        name="deliveryOption"
-                        value="localDelivery"
-                        checked={address.deliveryOption === 'localDelivery'}
-                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
-                        className="mr-2"
-                      />
-                      <label htmlFor="localDelivery">
-                        Livraison à domicile {quarter} (1 500 XAF)
-                      </label>
-                    </div>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        id="remotePickup"
-                        name="deliveryOption"
-                        value="remotePickup"
-                        checked={address.deliveryOption === 'remotePickup'}
-                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
-                        className="mr-2"
-                      />
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="pickup"
+                    name="deliveryOption"
+                    value="pickup"
+                    checked={address.deliveryOption === 'pickup'}
+                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
+                    className="mr-2"
+                  />
+                  <label htmlFor="pickup">
+                    Récupérer en magasin de {productLocation} (0 XAF)
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="localDelivery"
+                    name="deliveryOption"
+                    value="localDelivery"
+                    checked={address.deliveryOption === 'localDelivery'}
+                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
+                    className="mr-2"
+                  />
+                  <label htmlFor="localDelivery">
+                    Livraison à domicile {quarter} (1 500 XAF)
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="remotePickup"
+                    name="deliveryOption"
+                    value="remotePickup"
+                    checked={address.deliveryOption === 'remotePickup'}
+                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
+                    className="mr-2"
+                  />
                       <label htmlFor="remotePickup">
-                        Expédition au magasin Akevas de {otherLocation} (2 500 XAF)
-                      </label>
-                    </div>
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        id="remoteDelivery"
-                        name="deliveryOption"
-                        value="remoteDelivery"
-                        checked={address.deliveryOption === 'remoteDelivery'}
-                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
-                        className="mr-2"
-                      />
+                    Expédition au magasin Akevas de {otherLocation} (2 500 XAF)
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="remoteDelivery"
+                    name="deliveryOption"
+                    value="remoteDelivery"
+                    checked={address.deliveryOption === 'remoteDelivery'}
+                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
+                    className="mr-2"
+                  />
                       <label htmlFor="remoteDelivery">
-                        Expédition et livraison à domicile dans la ville de {otherLocation} (3 500 XAF)
-                      </label>
-                    </div>
+                    Expédition et livraison à domicile dans la ville de {otherLocation} (3 500 XAF)
+                  </label>
+                </div>
                   </>
                 )}
 
@@ -484,21 +484,21 @@ const CheckoutPage: React.FC = () => {
               {/* Champ quartier et adresse pour Livraison à domicile */}
               {(address.deliveryOption === 'localDelivery' || address.deliveryOption === 'remoteDelivery') && (
                 <>
-                  <div className="space-y-2 mb-6">
-                    <Label htmlFor="street">Choisir un quartier de livraison</Label>
-                    <Select
-                      name="quarter"
-                      value={quarter}
-                      disabled={quartersLoading}
-                      onValueChange={(value) => setQuarter(value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choisir un quartier" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {quartersLoading ? (
-                          <SelectItem value="loading">Chargement des quartiers...</SelectItem>
-                        ) : (
+                                <div className="space-y-2 mb-6">
+                  <Label htmlFor="street">Choisir un quartier de livraison</Label>
+                  <Select
+                    name="quarter"
+                    value={quarter}
+                    disabled={quartersLoading}
+                    onValueChange={(value) => setQuarter(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un quartier" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {quartersLoading ? (
+                        <SelectItem value="loading">Chargement des quartiers...</SelectItem>
+                      ) : (
                           quarters?.quarters
                             .filter((q: any) => {
                               if (address.deliveryOption === 'remoteDelivery') {
@@ -511,11 +511,11 @@ const CheckoutPage: React.FC = () => {
                               return q.town_name === (isMultiCity ? selectedCity : productLocation);
                             })
                             .map((quarter: any) => (
-                              <SelectItem key={quarter.id} value={quarter.quarter_name}>
-                                {quarter.quarter_name}
-                              </SelectItem>
-                            ))
-                        )}
+                          <SelectItem key={quarter.id} value={quarter.quarter_name}>
+                            {quarter.quarter_name}
+                          </SelectItem>
+                        ))
+                      )}
                         {quarters?.quarters.filter((q: any) => {
                           if (address.deliveryOption === 'remoteDelivery') {
                             if (isMultiCity) return q.town_name === selectedCity;
@@ -524,22 +524,22 @@ const CheckoutPage: React.FC = () => {
                           return q.town_name === (isMultiCity ? selectedCity : productLocation);
                         }).length === 0 && (
                           <SelectItem value="no-quarters">Aucun quartier trouvé, veuillez vérifier votre ville</SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
                   <div className="col-span-2 mb-8">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                       Adresse de livraison (mentionnez les détails de votre adresse de livraison)
-                    </label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={address.address}
-                      onChange={handleAddressChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                    />
-                  </div>
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={address.address}
+                    onChange={handleAddressChange}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                  />
+                </div>
                 </>
               )}
               

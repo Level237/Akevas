@@ -40,10 +40,10 @@ export default function SignupForm() {
           {/* Logo et titre */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-8">
-              <div className="relative">
-                <img
-                  src={logo}
-                  alt="Logo"
+                  <div className="relative">
+                    <img
+                      src={logo}
+                      alt="Logo"
                   className="h-16 w-auto relative z-10"
                 />
                 <div className="absolute -inset-3 border-4 border-white/30 rounded-full" />
@@ -168,28 +168,28 @@ export default function SignupForm() {
               </p>
             </div>
 
-            {/* Formulaire */}
+              {/* Formulaire */}
             <div>
               <RegisterForm />
-            </div>
+                </div>
 
             {/* Footer */}
             <div className="mt-8 text-center">
               <div className="flex items-center justify-center gap-4 text-sm">
-                <Link 
-                  to="/login" 
+                  <Link 
+                    to="/login" 
                   className="text-blue-600 font-medium hover:text-blue-700 transition-colors hover:underline"
-                >
-                  Déjà inscrit ? Connexion
-                </Link>
+                  >
+                    Déjà inscrit ? Connexion
+                  </Link>
                 <div className="h-4 w-px bg-gray-300" />
-                <Link 
-                  to="/terms" 
-                  className="text-gray-600 hover:text-gray-800 transition-colors hover:underline"
-                >
-                  Conditions générales
-                </Link>
-              </div>
+                  <Link 
+                    to="/terms" 
+                    className="text-gray-600 hover:text-gray-800 transition-colors hover:underline"
+                  >
+                    Conditions générales
+                  </Link>
+                </div>
             </div>
           </div>
         </div>

@@ -100,7 +100,7 @@ const cartSlice = createSlice({
             const { product, selectedVariation } = action.payload;
             
             const itemToRemove = findCartItem(state.cartItems, product, selectedVariation);
-
+           
             if (itemToRemove) {
                 // Retirer l'item du panier
                 state.cartItems = state.cartItems.filter(cartItem => cartItem !== itemToRemove);
