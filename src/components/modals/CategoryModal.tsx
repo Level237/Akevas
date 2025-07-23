@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogContent,
   DialogClose,
 } from '@/components/ui/dialog';
-import shop from '@/assets/shop.jpg'
 import Select from 'react-select';
-
+import { useUpdateCategoriesMutation } from '@/services/sellerService';
+import { toast } from 'sonner';
 interface CategoryOption {
   id: number;
   category_name: string;
@@ -30,27 +30,34 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   onChange,
   loading = false,
 }) => {
-  const [saved, setSaved] = useState(false);
-
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => {
-      setSaved(false);
-      onClose();
-    }, 1200);
-  };
+  const [updateCategories, { isLoading: isUpdating }] = useUpdateCategoriesMutation();
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const categoryOptions = options.map(opt => ({
     value: opt.id,
     label: opt.category_name,
   }));
-  console.log(options)
+
+  const handleUpdateCategories = async () => {
+    setIsSaving(true);
+    const formData = new FormData();
+    const categories = JSON.stringify(selected);
+    formData.append('categories', categories);
+    await updateCategories(formData);
+    setTimeout(() => {
+      setIsSaving(false);
+      toast.success("Catégories de votre boutique mises à jour avec succès !");
+      window.location.href = '/seller/dashboard';
+    }, 1200);
+  };
+
+  
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl p-0 border-0 bg-transparent shadow-none overflow-visible animate-fade-in">
-        <div className="relative w-full rounded-3xl bg-gradient-to-br from-orange-50 via-pink-50 to-violet-50 shadow-2xl overflow-hidden backdrop-blur-md">
+        <div className="relative w-full  rounded-3xl bg-gradient-to-br from-orange-50 via-pink-50 to-violet-50 shadow-2xl overflow-hidden backdrop-blur-md">
           {/* Header sticky */}
-          <div className="sticky top-0 z-10 flex items-center max-sm:items-start justify-between px-8 pt-8 pb-2 bg-gradient-to-br from-orange-50 via-pink-50 to-violet-50 bg-opacity-80 backdrop-blur-md">
+          <div className="sticky top-0 z-10 flex items-center  max-sm:items-start justify-between px-8 pt-8 pb-2 bg-gradient-to-br from-orange-50 via-pink-50 to-violet-50 bg-opacity-80 backdrop-blur-md">
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center justify-center rounded-full bg-gradient-to-tr from-orange-400 to-pink-400 p-3 shadow-lg">
                 <svg className="w-7 h-7 max-sm:w-4 max-sm:h-4 text-white" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
@@ -80,9 +87,9 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             {/* Right: Form */}
             <div className="w-full flex flex-col justify-center">
               {/* Bloc 1 : Titre et description */}
-              <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-10 border border-orange-100 mb-6">
+              <div className="bg-white  rounded-3xl shadow-2xl p-6 md:p-10 border border-orange-100 mb-6 max-h-[80vh]">
                 <label className="block max-sm:text-sm text-lg font-semibold text-gray-700 mb-3">
-                  Sélectionnez vos catégories principales
+                  Sélectionnez la catégorie de votre boutique
                 </label>
                 {/* Bloc 2 : Sélection */}
                 <div className="mb-6 w-full">
@@ -97,7 +104,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                     styles={{
                       control: (base) => ({
                         ...base,
-                        minHeight: 38,
+                        minHeight: 48,
                         borderRadius: 12,
                         borderColor: '#ed7e0f',
                         boxShadow: 'none',
@@ -111,6 +118,13 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                       menu: (base) => ({
                         ...base,
                         zIndex: 9999,
+                        maxHeight: 240, // Limite la hauteur du menu déroulant
+                        overflowY: 'auto', // Ajoute un overflow scroll si besoin
+                      }),
+                      menuList: (base) => ({
+                        ...base,
+                        maxHeight: 220, // Limite la hauteur de la liste des options
+                        overflowY: 'auto', // Ajoute un overflow scroll si besoin
                       }),
                     }}
                   />
@@ -122,16 +136,17 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
               
                   <button
                     className="w-full md:w-auto p-3 text-sm bg-[#6e0a13]  text-white font-bold py-3 rounded-xl transition shadow-lg disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-pink-300"
-                    onClick={handleSave}
-                    disabled={loading || selected.length === 0 || saved}
+                    onClick={handleUpdateCategories}
+                    disabled={loading || selected.length === 0 || isUpdating || isSaving}
                     type="button"
                   >
-                    {saved ? (
+                    {(isUpdating || isSaving) ? (
                       <span className="flex items-center justify-center gap-2">
-                        <svg className="w-6 h-6 text-white animate-bounce" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        <svg className="w-5 h-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                         </svg>
-                        Enregistré !
+                        Enregistrement...
                       </span>
                     ) : (
                       'Enregistrer'
