@@ -964,9 +964,7 @@ const CreateProductPage: React.FC = () => {
                 >
                   {isLoadingAddProduct ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <Save className="w-5 h-5" />
-                  )}
+                  ) : <span className='max-sm:text-sm'>Publier</span>}
                 </button>
               </div>
               <p className="text-sm text-gray-600 text-center">

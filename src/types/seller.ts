@@ -26,6 +26,7 @@ export interface Seller {
     products_count: number | null,
     products: Product[] | null,
     isPublished: boolean | null,
+    gender:string | null,
     images: Image[] | null,
     isSubscribe:number,
     subscribe_id:number | null,

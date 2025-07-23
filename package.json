@@ -44,6 +44,7 @@
     "react-hook-form": "^7.54.2",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.27.0",
+    "react-select": "^5.10.2",
     "react-slick": "^0.30.2",
     "react-top-loading-bar": "^3.0.2",
     "slick-carousel": "^1.8.1",
