@@ -79,7 +79,7 @@ const DashboardPage = () => {
       <div className=" transition-all mx-24 max-sm:mx-0 duration-300">
         <main className="max-w-7xl mx-auto px-4 py-8">
           {/* Ajout du CTA Recharger votre compte */}
-          {parseInt(sellerData?.shop.level || "0") > 1 && parseInt(sellerData?.shop.coins || "0") === 0 && (
+          {parseInt(sellerData?.shop.level || "0") > 2 && parseInt(sellerData?.shop.coins || "0") === 0 && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -282,7 +282,7 @@ const DashboardPage = () => {
               </div>
             )}
           </motion.div>}
-          {parseInt(sellerData?.shop.level || "0")>=2 && <StatisticsOverview sellerData={sellerData}/>}
+          {parseInt(sellerData?.shop.level || "0")>2 && <StatisticsOverview sellerData={sellerData}/>}
           
           {sellerData?.shop?.level === "3" && <VisibilityShop sellerData={sellerData}/>}
           {sellerData?.shop?.level && parseInt(sellerData.shop.level) >= 3 && <QuickActions sellerData={sellerData} />}
