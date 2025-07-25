@@ -5,7 +5,7 @@ import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
-import { useDispatch, } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { AppDispatch} from '@/store';
 import {setPassword} from '@/store/seller/registerSlice';
 import { toast } from 'sonner';

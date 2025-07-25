@@ -72,7 +72,7 @@ const StoreGenerationPage = () => {
         Object.entries(storeObject).forEach(([key, value]) => {
           if (value) formData.append(key, value);
         });
-        const categories = JSON.parse(storeCategories || '[]');
+        const categories = JSON.parse(storeCategories);
         for (let i = 0; i < categories.length; i++) {
           formData.append('categories[]', categories[i]);
         }

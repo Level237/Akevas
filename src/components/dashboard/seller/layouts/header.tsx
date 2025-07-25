@@ -57,8 +57,8 @@ export default function Header({
   )
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm backdrop-blur-sm bg-white/95">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+    <header className="bg-white  border-b border-gray-100 sticky top-0 z-40 shadow-sm backdrop-blur-sm bg-white/95">
+      <div className="max-w-7xl mx-24 max-sm:mx-0 px-2 sm:px-4">
         <div className="flex justify-between items-center h-16 gap-2 sm:gap-4">
           {/* Left: Logo & menu */}
           <div className="flex items-center gap-2 sm:gap-4">

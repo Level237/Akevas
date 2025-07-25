@@ -76,7 +76,7 @@ const DashboardPage = () => {
   };
   return (
     
-      <div className=" transition-all duration-300">
+      <div className=" transition-all mx-24 max-sm:mx-0 duration-300">
         <main className="max-w-7xl mx-auto px-4 py-8">
           {/* Ajout du CTA Recharger votre compte */}
           {parseInt(sellerData?.shop.level || "0") > 1 && parseInt(sellerData?.shop.coins || "0") === 0 && (
