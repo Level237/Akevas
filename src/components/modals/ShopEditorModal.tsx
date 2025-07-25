@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent } from 'react';
 import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, FileText, IdCard, MapPin, Camera, X, Plus, Trash2 } from 'lucide-react';
+import { User, FileText, IdCard, MapPin, Camera, X, Plus, Trash2, Menu } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { MultiSelect } from '@/components/ui/multiselect';
@@ -94,6 +94,7 @@ interface ShopEditorModalProps {
 const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initialData }) => {
   const [formData, setFormData] = useState<any>(initialData);
   const [tab, setTab] = useState<string>('general');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [updateShop, { isLoading }] = useUpdateShopMutation();
 
   // Catégories
@@ -118,20 +119,37 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
     onClose();
   };
 
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[90vw] h-[90vh] p-0 border-0 bg-white shadow-2xl overflow-hidden rounded-xl">
-        <div className="flex h-full">
+      <DialogContent className="max-w-[95vw] sm:max-w-[90vw] h-[95vh] sm:h-[90vh] p-0 border-0 bg-white shadow-2xl overflow-hidden rounded-xl">
+        <div className="flex h-full relative">
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={toggleSidebar}
+            className="lg:hidden absolute top-4 left-4 z-50"
+          >
+            <Menu className="w-6 h-6 text-gray-600" />
+          </button>
+
           {/* Sidebar */}
-          <div className="w-80 bg-[#6e0a13]  border-r border-gray-200 p-6">
+          <div className={`
+            absolute lg:relative w-64 lg:w-80 bg-[#6e0a13] border-r border-gray-200 p-6
+            transition-transform duration-300 ease-in-out z-40
+            lg:translate-x-0
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          `}>
             <div className="flex items-center gap-3 mb-8">
-             
               <div className='mb-40'>
                 <h2 className="text-lg font-bold text-white">Éditer ma boutique</h2>
                 <p className="text-sm text-white">Personnalisez votre espace</p>
               </div>
             </div>
-            <Tabs value={tab} onValueChange={setTab} orientation="vertical" className="h-full">
+            <Tabs value={tab} onValueChange={(val) => {
+              setTab(val);
+              setSidebarOpen(false);
+            }} orientation="vertical" className="h-full">
               <TabsList className="flex flex-col gap-3 bg-transparent">
                 {[
                   { value: 'general', label: 'Général', icon: FileText },
@@ -144,7 +162,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                     key={value}
                     value={value}
                     className={`
-                      w-full text-white flex  items-center gap-3 p-4 rounded-lg
+                      w-full text-white flex items-center gap-3 p-4 rounded-lg
                       transition-all duration-300 ease-in-out
                       hover:bg-[#ed7e0f]/30 hover:shadow-sm
                       data-[state=active]:bg-[#ed7e0f]/30
@@ -163,9 +181,9 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
           </div>
 
           {/* Content */}
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col w-full lg:w-auto">
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900">Configuration de la boutique</h3>
+              <h3 className="text-xl font-semibold text-gray-900 ml-12 lg:ml-0">Configuration de la boutique</h3>
               <DialogClose asChild>
                 <Button variant="ghost" size="icon">
                   <X className="w-5 h-5" />
@@ -173,7 +191,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
               </DialogClose>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
               <Tabs value={tab}>
                 {/* Général */}
                 <TabsContent value="general">
@@ -322,11 +340,11 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
               </Tabs>
             </div>
 
-            <div className="p-6 border-t border-gray-200 bg-gray-50">
+            <div className="p-4 sm:p-6 border-t border-gray-200 bg-gray-50">
               <div className="flex justify-end gap-3">
                 <Button variant="outline" onClick={onClose}>Annuler</Button>
                 <Button className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white" onClick={handleSave} disabled={isLoading}>
-                  {isLoading ? 'Enregistrement...' : 'Enregistrer les modifications'}
+                  {isLoading ? 'Enregistrement...' : 'Enregistrer'}
                 </Button>
               </div>
             </div>

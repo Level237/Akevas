@@ -6,7 +6,7 @@ import { Card } from '../../../ui/card';
 import { Check, Package, MapPin, Store } from 'lucide-react';
 import {motion} from "framer-motion"
 import { Seller } from '@/types/seller';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ShopEditorModal from '@/components/modals/ShopEditorModal';
 
 
