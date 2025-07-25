@@ -8,10 +8,7 @@ const ShopGalleryAlertCard: React.FC = () => {
   const [open, setOpen] = useState(false);
 
   // Simule la sauvegarde (à remplacer par appel API réel)
-  const handleSave = (images: File[]) => {
-    // TODO: Envoyer les images à l’API
-    setOpen(false);
-  };
+
 
   return (
     <>
@@ -27,7 +24,7 @@ const ShopGalleryAlertCard: React.FC = () => {
           </Button>
         </div>
       </Card>
-      <ShopGalleryModal open={open} onClose={() => setOpen(false)} onSave={handleSave} />
+      <ShopGalleryModal open={open} onClose={() => setOpen(false)} />
     </>
   );
 };

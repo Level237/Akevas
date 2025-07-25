@@ -9,14 +9,13 @@ import { useUpdateImagesMutation } from '@/services/sellerService';
 interface ShopGalleryModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (images: File[]) => void;
   initialImages?: string[];
 }
 
 const MAX_IMAGES = 3;
 
 
-const ShopGalleryModal: React.FC<ShopGalleryModalProps> = ({ open, onClose, onSave, initialImages = [] }) => {
+const ShopGalleryModal: React.FC<ShopGalleryModalProps> = ({ open, onClose,initialImages = [] }) => {
   const [images, setImages] = useState<(File | string)[]>(initialImages);
   const [isSaving, setIsSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -57,7 +56,7 @@ const ShopGalleryModal: React.FC<ShopGalleryModalProps> = ({ open, onClose, onSa
     console.log(response);
     setTimeout(() => {
       setIsSaving(false);
-      onSave(images.filter(img => typeof img !== 'string') as File[]);
+     
       toast.success('Galerie mise à jour !');
       
       window.location.href = '/seller/dashboard';
