@@ -31,7 +31,7 @@ const DashboardProductListPage = () => {
         <div className="p-6">
           {/* Actions Bar */}
           <div className="flex flex-col ml-12 items-center justify-start md:flex-row gap-4 mb-6">
-            <div className="w-[50%]">
+            <div className="w-[50%] max-sm:w-[100%]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
@@ -39,15 +39,15 @@ const DashboardProductListPage = () => {
                   placeholder="Rechercher un produit..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                  className="w-full  pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                 />
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex max-sm:items-start gap-3">
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                className="px-4 py-2 border max-sm:px-1 rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
               >
                 <option value="all">Tous les statuts</option>
                 <option value="active">Actif</option>

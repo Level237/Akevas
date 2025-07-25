@@ -50,7 +50,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
   };
 
   return (
-    <div className="overflow-x-auto mx-12">
+    <div className="overflow-x-auto mx-12 max-sm:mx-2 max-sm:mb-12">
       {/* Grid for desktop */}
       <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading && (

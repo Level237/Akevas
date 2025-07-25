@@ -123,7 +123,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] sm:max-w-[90vw] h-[95vh] sm:h-[90vh] p-0 border-0 bg-white shadow-2xl overflow-hidden rounded-xl">
+      <DialogContent className="max-w-[95vw] max-sm:max-w-[100vw] sm:max-w-[90vw] h-[95vh] sm:h-[90vh] p-0 border-0 bg-white shadow-2xl overflow-hidden rounded-xl">
         <div className="flex h-full relative">
           {/* Mobile Menu Button */}
           <button 
@@ -182,8 +182,8 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
 
           {/* Content */}
           <div className="flex-1 flex flex-col w-full lg:w-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 ml-12 lg:ml-0">Configuration de la boutique</h3>
+            <div className="sticky top-0 z-10 bg-white flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 ml-12 lg:ml-0">Configuration de la boutique</h3>
               <DialogClose asChild>
                 <Button variant="ghost" size="icon">
                   <X className="w-5 h-5" />
@@ -191,31 +191,66 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
               </DialogClose>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+            <div className="flex-1   sm:p-6 w-full lg:p-8">
+              {/* MOBILE: Tabs horizontaux scrollables */}
+                                <div className="block md:hidden sticky top-0 bg-white z-20 border-b">
+                    <div className="overflow-x-auto no-scrollbar">
+                        <div className="flex flex-row px-2 py-2">
+                        {[
+                            { value: 'general', label: 'Général', icon: FileText },
+                            { value: 'personal', label: 'Personnel', icon: User },
+                            { value: 'identity', label: 'Identité', icon: IdCard },
+                            { value: 'location', label: 'Localisation', icon: MapPin },
+                            { value: 'media', label: 'Médias', icon: Camera }
+                        ].map(({ value, label, icon: Icon }) => (
+                            <button
+                            key={value}
+                            onClick={() => setTab(value)}
+                            className={`
+                                flex flex-col items-center justify-center px-3 py-2 rounded-lg min-w-[64px]
+                                text-xs font-medium
+                                transition-all duration-300
+                                ${tab === value
+                                ? 'bg-[#ed7e0f]/20 text-[#ed7e0f] font-semibold shadow'
+                                : 'text-gray-700 hover:bg-[#ed7e0f]/10'}
+                                focus:outline-none
+                            `}
+                            style={{ WebkitTapHighlightColor: 'transparent' }}
+                            >
+                            <Icon className="w-5 h-5 mb-1" />
+                            <span>{label}</span>
+                            </button>
+                        ))}
+                        </div>
+                    </div>
+                    </div>
+              {/* DESKTOP: Sidebar vertical */}
+             
               <Tabs value={tab}>
                 {/* Général */}
                 <TabsContent value="general">
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nom de la boutique</label>
+                  <div className="flex flex-col gap-6 sm:gap-8 p-2 sm:p-4 lg:p-8">
+                    <div className=''>
+                      <label className="block text-base font-medium text-gray-700 mb-2">Nom de la boutique</label>
                       <Input
                         value={formData.shop?.shop_name || ''}
                         onChange={e => handleShopChange({ shop_name: e.target.value })}
                         placeholder="Nom de votre boutique"
-                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        className="w-full bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20 text-base py-2 sm:py-3 px-3 sm:px-4 rounded-lg"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                      <label className="block text-base font-medium text-gray-700 mb-2">Description</label>
                       <Textarea
                         value={formData.shop?.shop_description || ''}
                         onChange={e => handleShopChange({ shop_description: e.target.value })}
                         placeholder="Décrivez votre boutique en quelques mots..."
-                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        className="w-full bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20 text-base py-3"
+                        rows={3}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Catégories</label>
+                      <label className="block text-base font-medium text-gray-700 mb-2">Catégories</label>
                       <MultiSelect
                         options={categories}
                         selected={formData.shop?.categories?.map((c: any) => c.id) || []}
@@ -325,7 +360,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                 </TabsContent>
                 {/* Médias */}
                 <TabsContent value="media">
-                  <div className="space-y-6">
+                  <div className="flex flex-col gap-6 sm:gap-8 p-2 sm:p-4 lg:p-8">
                     <ImageUpload
                       label="Photo de profil"
                       value={formData.shop?.shop_profile}
