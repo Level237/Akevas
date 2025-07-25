@@ -51,7 +51,7 @@ const ShopInfoStep: React.FC<ShopInfoStepProps> = ({ data, onUpdate,categoryErro
               quality: 0.8,
               maxSizeMB: 2,
             });
-            console.log(files)
+            //console.log(files)
             // Conversion en base64
             const base64Array = await Promise.all(
               compressedFiles.map(

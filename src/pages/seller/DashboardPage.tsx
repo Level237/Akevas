@@ -23,17 +23,29 @@ import VisibilityShop from '@/components/seller/level/Two/VisibilityShop';
 import TitleOverview from '../../components/seller/level/Two/TitleOverview';
 import StatisticsOverview from '@/components/seller/level/Two/StatisticsOverview';
 import FeedbackRejected from '@/components/seller/FeedbackRejected';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { QuickActions } from '@/components/seller/QuickActions';
+import ShopGalleryAlertCard from '@/components/seller/ShopGalleryAlertCard';
+import { shopImagesIsEmpty } from '@/lib/shopImagesIsEmpty';
 
 
 const DashboardPage = () => {
 
   const {data: { data: sellerData } = {},isLoading}=useCurrentSellerQuery<SellerResponse>('seller')
-  
+  const [imagesIsEmpty, setImagesIsEmpty] = useState<boolean | null>(null);
   const [message, setMessage] = useState(sessionStorage.getItem('message') || '');
   const storeStatus = sellerData?.shop.state;
   
+  useEffect(() => {
+    if (Array.isArray(sellerData?.shop?.images)) {
+      shopImagesIsEmpty(sellerData.shop.images).then(setImagesIsEmpty);
+    } else {
+      setImagesIsEmpty(null);
+    }
+  }, [sellerData?.shop?.images]);
+
+  console.log(imagesIsEmpty)
+  console.log(sellerData?.shop?.images)
   const getStatusContent = () => {
     switch (storeStatus) {
       case "0":
@@ -202,7 +214,8 @@ const DashboardPage = () => {
 
             {sellerData?.shop.state==="2" && <FeedbackRejected feedbacks={sellerData.feedbacks} isLoading={isLoading}/>}
           </motion.div>
-          {sellerData?.shop.level === "2" && (
+          {imagesIsEmpty  &&  <ShopGalleryAlertCard />}
+          {sellerData?.shop.level === "2" && !imagesIsEmpty && (
             <TitleOverview 
             number={2} 
             title="Niveau 2 - Ajout d'un produit" 
@@ -211,7 +224,9 @@ const DashboardPage = () => {
             cta="Ajouter un produit"
             />
           )}
-           {sellerData?.shop.level === "3" && (
+          
+         
+           {sellerData?.shop.level === "3" && !imagesIsEmpty && (
             <TitleOverview 
             number={3} 
             title="Niveau 3 - Mise en avant de votre boutique" 

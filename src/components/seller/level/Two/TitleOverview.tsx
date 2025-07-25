@@ -14,7 +14,7 @@ export default function TitleOverview({title,content,link,number,cta}:{title:str
             >
               <Card className="p-6 bg-[#ed7e0f]/5 border-[#ed7e0f]/20">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 max-sm:h-6 max-sm:w-6 max-sm:p-5 rounded-full bg-[#ed7e0f] flex items-center justify-center">
+                  <div className="h-10 w-10 max-sm:h-6 max-sm:w-6 max-sm:p-5 rounded-full bg-[#6e0a13] flex items-center justify-center">
                     <span className="text-white font-bold">{number}</span>
                   </div>
                   <div className="flex-1">
@@ -27,7 +27,7 @@ export default function TitleOverview({title,content,link,number,cta}:{title:str
                 <div className="mt-4 flex justify-end">
                   <AsyncLink to={link}>
                   <Button
-                    className="bg-[#ed7e0f] max-sm:text-sm hover:bg-[#ed7e0f]/90 text-white font-semibold"
+                    className="bg-[#6e0a13] max-sm:text-sm hover:bg-[#ed7e0f]/90 text-white font-semibold"
                    
                   >
                    {cta}

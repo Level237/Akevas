@@ -42,7 +42,7 @@ export default function SidebarLeft() {
       style={{ minWidth: 84 }}
     >
       {/* Logo / Create */}
-      <AsyncLink to="/seller/create-product" className="mb-8 mt-2 flex items-center justify-center w-10 h-10 rounded-2xl bg-[#ed7e0f] shadow-lg hover:scale-105 transition-transform">
+      <AsyncLink to="/seller/create-product" className="mb-8 mt-2 flex items-center justify-center w-10 h-10 rounded-2xl bg-[#6e0a13] shadow-lg hover:scale-105 transition-transform">
         <Plus className="w-4 h-4 text-white" />
         <span className="sr-only">Créer</span>
       </AsyncLink>
@@ -55,7 +55,7 @@ export default function SidebarLeft() {
             <AsyncLink
               key={item.path}
               to={item.path}
-              className={`group flex flex-col mb-2 items-center w-full py-2 rounded-xl transition relative ${active ? 'bg-[#ed7e0f]/10 text-[#ed7e0f] font-semibold shadow' : 'text-[#ed7e0f]/80 hover:bg-[#ed7e0f]/5 hover:text-[#ed7e0f]'}`}
+              className={`group flex flex-col mb-2 items-center w-full py-2 rounded-xl transition relative ${active ? 'bg-[#6e0a13]/10 text-[#ed7e0f] font-semibold shadow' : 'text-[#ed7e0f]/80 hover:bg-[#6e0a13]/5 hover:text-[#6e0a13]'}`}
             >
               <Icon className={`w-6 h-6 mb-0.5 transition ${active ? 'text-[#ed7e0f]' : 'text-[#ed7e0f]/60 group-hover:text-[#ed7e0f]'}`} />
               <span className="text-[10px] font-medium tracking-wide">{item.label}</span>

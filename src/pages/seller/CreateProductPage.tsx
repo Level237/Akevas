@@ -827,11 +827,11 @@ const CreateProductPage: React.FC = () => {
   }, [variationFrames, getAttributes, attributes, globalColorPrice, sizePrices, shoeSizePrices]);
 
   return (
-    <div className="min-h-screen bg-gray-50  max-sm:pb-16">
+    <div className="min-h-screen bg-gray-50   max-sm:pb-16">
       {/* Modal de sélection du type de produit */}
       {showModal && (
         <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-3xl mx-4 overflow-hidden shadow-xl">
+          <div className="bg-white rounded-2xl w-full max-w-3xl  overflow-hidden shadow-xl">
             {/* Header avec bouton de fermeture */}
             <div className="flex items-center justify-between p-6 border-b">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
@@ -917,7 +917,7 @@ const CreateProductPage: React.FC = () => {
                   disabled={!selectedProductType || isLoading}
                   className={`px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all ${
                     selectedProductType
-                      ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:opacity-90'
+                      ? 'bg-[#6e0a13] to-orange-600 text-white hover:opacity-90'
                       : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -939,9 +939,9 @@ const CreateProductPage: React.FC = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} encType='multipart/form-data'>
+      <form onSubmit={handleSubmit} className='' encType='multipart/form-data'>
         {/* Header avec boutons d'action */}
-        <header className="sticky top-16 z-30 bg-white border-b">
+        <header className="sticky top-16 px-24 max-sm:px-0 z-30 bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 py-4">
             {/* Version mobile */}
             <div className="md:hidden">
@@ -955,12 +955,12 @@ const CreateProductPage: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
+                <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
                   {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
                 </h1>
                 <button
                   type="submit"
-                  className="p-2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500"
+                  className="p-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500"
                 >
                   {isLoadingAddProduct ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -996,7 +996,7 @@ const CreateProductPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium flex items-center gap-2"
+                  className="px-6 py-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium flex items-center gap-2"
                 >
                   {isLoadingAddProduct ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -1012,7 +1012,7 @@ const CreateProductPage: React.FC = () => {
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 py-8">
+        <main className="max-w-7xl pl-24 max-sm:px-4  px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Colonne principale */}
             <div className="md:col-span-2 space-y-6">

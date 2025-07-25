@@ -43,6 +43,14 @@ export const sellerService=createApi({
                     body:formData
                 })
             }),
+
+            updateImages:builder.mutation({
+                query:(formData)=>({
+                    url:"/api/v1/update/images",
+                    method:'POST',
+                    body:formData
+                })
+            }),
             initCoinPayment:builder.mutation({
                 query:(body)=>({
                     url:`/api/v1/init/payment/coins`,
@@ -76,5 +84,6 @@ useUpdateDocsMutation,
 useInitCoinPaymentMutation,
 useVerifyCoinPaymentMutation,
 useBoostShopMutation,
-useUpdateCategoriesMutation
+useUpdateCategoriesMutation,
+useUpdateImagesMutation
 }=sellerService

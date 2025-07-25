@@ -20,7 +20,7 @@ const SellerCatalog: React.FC = () => {
 
     if (seller?.shop?.level === "1") {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen p-4">
+            <div className="flex flex-col  items-center justify-center min-h-screen p-4">
                 <h1 className="text-2xl font-bold text-gray-800 mb-4">Accès non autorisé</h1>
                 <p className="text-gray-600 text-center">
                     Votre boutique n'est pas encore validée, veuillez patienter.
@@ -53,7 +53,7 @@ const SellerCatalog: React.FC = () => {
     }
     if (sellerLoading) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center  justify-center min-h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-[#ed7e0f]" />
             </div>
         );
@@ -95,7 +95,7 @@ const SellerCatalog: React.FC = () => {
     ) || [])] as string[];
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen mx-24 bg-gray-50">
             <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
@@ -163,13 +163,13 @@ const SellerCatalog: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 py-6">
                 {/* Hero Section */}
-                <div className="bg-gradient-to-r from-[#ed7e0f] to-[#ff8f1f] rounded-2xl p-8 mb-8 text-white">
+                <div className="bg-[#6e0a13] rounded-2xl p-8 mb-8 text-white">
                     <h1 className="text-3xl font-bold mb-2">Mon Catalogue</h1>
                     <p className="opacity-90">Gérez et partagez vos produits facilement</p>
                     <div className="flex gap-4 mt-6">
                     <AsyncLink
                         to="/seller/create-product"
-                            className="flex items-center gap-2 bg-white text-[#ed7e0f] px-6 py-3 rounded-lg hover:bg-gray-100 transition-all"
+                            className="flex items-center gap-2 bg-[#ed7e0f] px-6 py-3 rounded-lg hover:bg-gray-100 transition-all"
                     >
                         <Plus size={20} />
                             <span>Ajouter un produit</span>
