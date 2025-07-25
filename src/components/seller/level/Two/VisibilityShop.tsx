@@ -6,12 +6,12 @@ import { Card } from '../../../ui/card';
 import { Check, Package, MapPin, Store } from 'lucide-react';
 import {motion} from "framer-motion"
 import { Seller } from '@/types/seller';
+import React, { useState } from 'react';
+import ShopEditorModal from '@/components/modals/ShopEditorModal';
 
 
 export default function VisibilityShop(sellerData:{sellerData:Seller}) {
-
-      
-
+  const [open, setOpen] = useState(false);
 
   return (
       <motion.div
@@ -29,11 +29,12 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
                     <h3 className="text-xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
                       Aperçu de votre boutique
                     </h3>
-                    <AsyncLink to='/shop/editor'>
-                      <Button className="bg-white hover:bg-gray-50 text-[#6e0a13] border-2 border-[#6e0a13] font-medium px-4 py-1 rounded-full transition-all duration-200">
-                        Éditer
-                      </Button>
-                    </AsyncLink>
+                    <Button
+                      className="bg-white hover:bg-gray-50 text-[#6e0a13] border-2 border-[#6e0a13] font-medium px-4 py-1 rounded-full transition-all duration-200"
+                      onClick={() => setOpen(true)}
+                    >
+                      Éditer
+                    </Button>
                   </div>
                   
                   <div className="flex items-center space-x-4 bg-white/60 p-3 rounded-xl backdrop-blur-sm">
@@ -128,6 +129,7 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
                 </div>
               </Card>
             </div>
+            <ShopEditorModal open={open} onClose={() => setOpen(false)} initialData={sellerData.sellerData.shop || {}} />
           </motion.div>
   )
 }

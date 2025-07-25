@@ -44,8 +44,7 @@ const DashboardPage = () => {
     }
   }, [sellerData?.shop?.images]);
 
-  console.log(imagesIsEmpty)
-  console.log(sellerData?.shop?.images)
+  console.log(sellerData)
   const getStatusContent = () => {
     switch (storeStatus) {
       case "0":
