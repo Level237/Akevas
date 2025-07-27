@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import { useControlPaymentMutation, useInitPayinMutation,useVerifyPayinMutation,useWebhookPaymentMutation } from '@/services/auth';
+import { useControlPaymentMutation, useInitPayinMutation,useVerifyPayinMutation } from '@/services/auth';
 import { safeJSONParse } from '@/lib/safeJSONParse';
 
 
@@ -17,7 +17,7 @@ export default function MobileMoneyPaymentPage() {
   const [isControlPayment,setIsControlPayment,]=useState(false)
   const [step, setStep] = useState<'start' | 'processing'>('start');
   let formData;
-  const [webhookPayment] = useWebhookPaymentMutation();
+
   const [controlPayment] = useControlPaymentMutation();
   const [verifyPayin] = useVerifyPayinMutation();
   const timeoutRef = useRef<any>(null);
@@ -79,7 +79,7 @@ export default function MobileMoneyPaymentPage() {
     ) {
       
       productsPayments = safeJSONParse(formDataPayment.productsPayments, null);
-      console.log(productsPayments)
+      //console.log(productsPayments)
     }
   } catch (error) {
     console.error('Erreur lors du parsing des données:', error);
@@ -165,7 +165,7 @@ export default function MobileMoneyPaymentPage() {
     else if(responseData.data.status==="PENDING"){
 
       if(!isActiveWebhook){
-        await webhookPayment(formData);
+        
         isActiveWebhook=true;
       }
       
@@ -191,9 +191,42 @@ export default function MobileMoneyPaymentPage() {
   // Add this ref in the component with the other states
   
   const initializePayment = async () => {
-    const formData = {
-            phone:formDataPayment.paymentPhone,
-            amount: "10",
+    
+
+        if(formDataPayment.s==0){
+          formData = {
+            phone:formDataPayment.phone,
+            payinAmount: "10",
+            paymentPhone:formDataPayment.paymentPhone,
+            productId: formDataPayment.productId,
+            s: formDataPayment.s,
+            quantity: formDataPayment.quantity,
+            methodChanel:formDataPayment.paymentMethod,
+            amount: formDataPayment.amount,
+            price: formDataPayment.price,
+            quarter_delivery: formDataPayment.quarter || null,
+            shipping: formDataPayment.shipping,
+            address: formDataPayment.address,
+            hasVariation:formDataPayment.hasVariation,
+            isMultiCity:formDataPayment.isMultiCity,
+            productVariationId: variations?.productVariationId || null,
+            attributeVariationId: variations?.attributeVariationId || null
+          }
+        }else{
+          formData = {
+            phone:formDataPayment.phone,
+            paymentPhone:formDataPayment.paymentPhone,
+            s: formDataPayment.s,
+            productsPayments:productsPayments,
+            quantity: formDataPayment.quantity,
+            methodChanel:formDataPayment.paymentMethod,
+            amount: formDataPayment.amount,
+            quarter_delivery: formDataPayment.quarter || null,
+            shipping: formDataPayment.shipping,
+            isMultiCity:formDataPayment.isMultiCity,
+            delivery_infos:formDataPayment.delivery_info || null,
+            address: formDataPayment.address,
+          }
         }
     setStep('processing');
     setPaymentStatus('initializing');
@@ -214,7 +247,7 @@ export default function MobileMoneyPaymentPage() {
         }
       } else if(response.data.status==="low"){
         setPaymentStatus('low');
-     console.log('ff')
+     
       setMessage("Votre compte est insuffisant");
       }
       
