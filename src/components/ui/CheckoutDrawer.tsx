@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCheckAuthQuery } from '@/services/auth';
 
@@ -36,6 +36,15 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
 }: CheckoutDrawerProps) => {
     const { data } = useCheckAuthQuery()
 
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+    useEffect(() => {
+        if (data) {
+            setIsAuthenticated(true)
+        }
+    }, [data])
+
+    
     // Fonction pour mettre à jour la quantité avec vérification
     const handleQuantityChange = (newQuantity: number) => {
         // S'assurer que la quantité ne dépasse pas le stock disponible
@@ -62,7 +71,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
             ? `&variation=${encodeURIComponent(JSON.stringify(variationInfo))}`
             : '';
 
-        if (data?.isAuthenticated) {
+        if (isAuthenticated) {
             window.location.href = `/checkout?s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}${variationParams}`;
         } else {
             window.location.href = `/login?redirect=checkout&s=0&productId=${product.id}&quantity=${quantity}&price=${currentInfo.price * quantity}&name=${product.product_name}&residence=${product.residence}${variationParams}`;

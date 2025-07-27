@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Minus, X, ArrowLeft, Truck, Shield, CreditCard, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -17,7 +17,13 @@ const CartPage: React.FC = () => {
   const { data } = useCheckAuthQuery()
   const hasToken = data?.isAuthenticated
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
+  useEffect(() => {
+      if (hasToken) {
+          setIsAuthenticated(true)
+      }
+  }, [hasToken])
 
 
 
@@ -253,7 +259,7 @@ const CartPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {hasToken ? <AsyncLink to="/checkout?s=1" >
+                {isAuthenticated ? <AsyncLink to="/checkout?s=1" >
                   <button className="w-full max-sm:text-sm mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Procéder au paiement
                   </button>
