@@ -1,7 +1,7 @@
 // src/pages/seller/OrangeMoneyPaymentPage.tsx
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
+import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useControlPaymentMutation, useInitPayinMutation,useVerifyPayinMutation } from '@/services/auth';
@@ -486,30 +486,90 @@ export default function MobileMoneyPaymentPage() {
                 </motion.div>
               )}
               
-              {isGeneratingTicket && !isControlPayment && paymentStatus==="loading" && (
-                    <div className="flex flex-col items-center mt-8 gap-4">
-                      <motion.div
-                        className="relative flex items-center justify-center w-16 h-16"
-                        initial={{ scale: 0.8, opacity: 0.7 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                      >
-                        <motion.span
-                          className="absolute inset-0 rounded-full border-4 border-blue-400 border-t-transparent animate-spin"
-                          style={{ borderTopColor: "#3b82f6" }}
-                          animate={{ rotate: 360 }}
-                          transition={{ repeat: Infinity, duration: 1.1, ease: "linear" }}
-                        />
-                        <RefreshCw size={36} className="text-blue-500 z-10" />
-                      </motion.div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-base font-semibold text-blue-700 mb-1">
-                          Génération du ticket en cours...
-                        </span>
-                        <span className="text-xs text-gray-500 font-medium">
-                          Merci de patienter pendant la finalisation de votre paiement.
-                        </span>
+              {isGeneratingTicket && isControlPayment && paymentStatus==="loading" && (
+                    <div className="flex flex-col items-center mt-8 gap-6">
+                      <div className="relative">
+                        <motion.div
+                          className="w-24 h-24"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                        >
+                          {/* Cercles animés */}
+                          <motion.div
+                            className="absolute inset-0"
+                            animate={{
+                              rotate: 360,
+                              scale: [1, 1.2, 1],
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              ease: "easeInOut"
+                            }}
+                          >
+                            <div className={`w-full h-full rounded-full border-4 ${formDataPayment.paymentMethod==="cm.orange" ? "border-orange-300" : "border-blue-300"} border-t-transparent animate-spin`}></div>
+                          </motion.div>
+                          
+                          <motion.div
+                            className="absolute inset-2"
+                            animate={{
+                              rotate: -360,
+                              scale: [1, 0.8, 1],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              ease: "easeInOut"
+                            }}
+                          >
+                            <div className={`w-full h-full rounded-full border-4 ${formDataPayment.paymentMethod==="cm.orange" ? "border-orange-400" : "border-blue-400"} border-t-transparent animate-spin`}></div>
+                          </motion.div>
+
+                          {/* Icône centrale pulsante */}
+                          <motion.div 
+                            className="absolute inset-0 flex items-center justify-center"
+                            animate={{
+                              scale: [1, 1.1, 1],
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              ease: "easeInOut"
+                            }}
+                          >
+                            <Ticket className={`w-8 h-8 ${formDataPayment.paymentMethod==="cm.orange" ? "text-orange-500" : "text-blue-500"}`} />
+                          </motion.div>
+                        </motion.div>
                       </div>
+
+                      <motion.div 
+                        className="flex flex-col items-center text-center space-y-2"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <h3 className={`text-lg font-semibold ${formDataPayment.paymentMethod==="cm.orange" ? "text-orange-700" : "text-blue-700"}`}>
+                          Génération de votre ticket...
+                        </h3>
+                        <p className="text-sm text-gray-500 max-w-xs">
+                          Nous préparons votre ticket de paiement. Cela ne prendra qu'un instant.
+                        </p>
+                        <motion.div
+                          className="flex space-x-1 mt-2"
+                          animate={{
+                            opacity: [0.5, 1, 0.5],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          <div className={`w-2 h-2 rounded-full ${formDataPayment.paymentMethod==="cm.orange" ? "bg-orange-400" : "bg-blue-400"}`}></div>
+                          <div className={`w-2 h-2 rounded-full ${formDataPayment.paymentMethod==="cm.orange" ? "bg-orange-400" : "bg-blue-400"}`}></div>
+                          <div className={`w-2 h-2 rounded-full ${formDataPayment.paymentMethod==="cm.orange" ? "bg-orange-400" : "bg-blue-400"}`}></div>
+                        </motion.div>
+                      </motion.div>
                     </div>
                   )}
               {paymentStatus === 'success' && (
