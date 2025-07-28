@@ -302,12 +302,12 @@ export default function MobileMoneyPaymentPage() {
           if (response.data.status === 200) {
             console.log('good')
             setPaymentStatus('success')
-            setIsControlPayment(true);
+            setIsControlPayment(false);
             setIsGeneratingTicket(false);
           } else if (response.data.status === 400) {
             // On continue à contrôler
            console.log("nothing")
-           setIsControlPayment(false);
+           setIsControlPayment(true);
            setIsGeneratingTicket(true);
            setPaymentStatus('loading');
             controlTimeout = setTimeout(doControlPayment, 3000);
