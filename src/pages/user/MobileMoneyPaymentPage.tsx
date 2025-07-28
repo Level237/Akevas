@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useControlPaymentMutation, useInitPayinMutation,useVerifyPayinMutation } from '@/services/auth';
 import { safeJSONParse } from '@/lib/safeJSONParse';
-
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
+import { clearCart } from '@/store/cartSlice';
 
 export default function MobileMoneyPaymentPage() {
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ export default function MobileMoneyPaymentPage() {
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
   const [isControlPayment,setIsControlPayment,]=useState(false)
   const [step, setStep] = useState<'start' | 'processing'>('start');
+  const dispatch = useDispatch<AppDispatch>()
   let formData;
 
   const [controlPayment] = useControlPaymentMutation();
@@ -139,6 +142,9 @@ export default function MobileMoneyPaymentPage() {
       isActive=false;
       setIsGeneratingTicket(true);
       setPaymentStatus('loading');
+      if(formDataPayment.s==1){
+        dispatch(clearCart())
+      }
       setTimeout(() => {
         
         setIsControlPayment(true)
