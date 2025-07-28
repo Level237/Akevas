@@ -173,79 +173,107 @@ export default function ProductListOverview({ products, isLoading }: { products:
         )}
 
         {!isLoading && products.length > 0 && products.map((product) => (
-          <div key={product.id} className="border-b p-4">
-            <div className="flex items-start gap-3 mb-3">
-              <div className="relative w-12 h-12">
+          <div key={product.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 transition-all duration-200 hover:shadow-md">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="relative w-20 h-20">
                 {getRandomVariationImages(product).slice(0, 3).map((img, idx) => (
                   <img
                     key={img}
                     src={img}
                     alt={product.product_name}
-                    className="absolute rounded-lg object-cover border-2 border-white shadow"
+                    className="absolute rounded-xl object-cover border-2 border-white shadow-sm"
                     style={{
-                      left: `${idx * 12}px`,
+                      left: `${idx * 16}px`,
                       zIndex: 10 - idx,
-                      width: '36px',
-                      height: '36px',
-                      top: `${idx * 4}px`,
-                      background: '#fff'
+                      width: '48px',
+                      height: '48px', 
+                      top: `${idx * 6}px`,
+                      background: '#fff',
+                      transition: 'transform 0.2s',
+                      transform: `rotate(${idx * -4}deg)`
                     }}
                   />
                 ))}
-                {/* Fallback si pas d'image */}
                 {getRandomVariationImages(product).length === 0 && (
                   <img
                     src={product.product_profile}
                     alt={product.product_name}
-                    className="w-12 h-12 rounded-lg object-cover"
+                    className="w-20 h-20 rounded-xl object-cover shadow-sm"
                   />
                 )}
               </div>
+              
               <div className="flex-1">
-                <h3 className="font-medium">{product.product_name}</h3>
-                <p className="text-sm text-gray-500">{formatDate(product.created_at)}</p>
-                <div className="flex flex-wrap gap-1 mt-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-900">{product.product_name}</h3>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    product.variations && product.variations.length > 0 
+                    ? 'bg-blue-50 text-blue-600' 
+                    : 'bg-gray-50 text-gray-600'
+                  }`}>
+                    {product.variations && product.variations.length > 0 ? 'Varié' : 'Simple'}
+                  </span>
+                </div>
+                
+                <p className="text-sm text-gray-500 mt-1">{formatDate(product.created_at)}</p>
+                
+                <div className="flex flex-wrap gap-2 mt-3">
                   {product.product_categories.map((category) => (
-                    <span key={category.id} className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">
+                    <span key={category.id} className="px-3 max-sm:px-1 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-600 border border-gray-100">
                       {category.category_name}
                     </span>
                   ))}
                 </div>
               </div>
-              {/* Badge simple/varié mobile */}
-              <span className={`ml-2 px-2 py-0.5 rounded text-xs font-bold ${product.variations && product.variations.length > 0 ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'}`}>
-                {product.variations && product.variations.length > 0 ? 'Varié' : 'Simple'}
-              </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-gray-500">Prix:</span>
-                <div className="font-medium max-sm:text-xs"> {product.variations && product.variations.length > 0 ? "prix variable" : product?.product_price?.toLocaleString() + " FCFA"}</div>
-              </div>
-              <div>
-                <span className="text-gray-500">Stock:</span>
-                <div className="font-medium max-sm:text-xs">{product.variations && product.variations.length > 0 ? "Quantité variable" : product.product_quantity}</div>
-              </div>
-              <div>
-                <span className="text-gray-500">Status:</span>
-                <div>
-                  <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(product.status ? 'active' : 'draft')}`}>
-                    {getStatusText(product.status ? 'active' : 'draft')}
-                  </span>
+            <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-xl mt-4">
+              <div className="text-center">
+                <span className="text-sm text-gray-500 block mb-1">Prix</span>
+                <div className="font-semibold max-sm:text-xs text-gray-900">
+                  {product.variations && product.variations.length > 0 
+                    ? "Variable" 
+                    : `${product?.product_price?.toLocaleString()} FCFA`}
                 </div>
               </div>
+              
+              <div className="text-center border-x border-gray-200">
+                <span className="text-sm text-gray-500 block mb-1">Stock</span>
+                <div className="font-semibold text-gray-900">
+                  {product.variations && product.variations.length > 0 
+                    ? "Variable" 
+                    : product.product_quantity}
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <span className="text-sm text-gray-500 block mb-1">Statut</span>
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(product.status ? 'active' : 'draft')}`}>
+                  {getStatusText(product.status ? 'active' : 'draft')}
+                </span>
+              </div>
             </div>
 
-            <div className="flex justify-end gap-2 mt-3">
-              <button className="p-2 hover:bg-gray-100 rounded-lg" title="Voir">
-                <Eye className="w-5 h-5 text-gray-600" />
+            <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
+              <a 
+                href={`https://akevas.com/produit/${product.product_url}`}
+                target="_blank"
+                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                title="Voir"
+              >
+                <Eye className="w-5 h-5" />
+              </a>
+              <button 
+                className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
+                title="Modifier"
+              >
+                <Edit className="w-5 h-5" />
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg" title="Modifier">
-                <Edit className="w-5 h-5 text-gray-600" />
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg" title="Supprimer">
-                <Trash2 className="w-5 h-5 text-gray-600" />
+              <button 
+                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                title="Supprimer"
+              >
+                <Trash2 className="w-5 h-5" />
               </button>
             </div>
           </div>

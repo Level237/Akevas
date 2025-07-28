@@ -19,18 +19,18 @@ const DashboardProductListPage = () => {
 
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-24  max-sm:mx-auto px-4 py-8">
       <div className="mb-6 ">
-        <h1 className="text-2xl ml-20 font-bold text-gray-900">Mes produits</h1>
-        <p className="text-gray-600 ml-20 mt-1">
+        <h1 className="text-2xl  font-bold text-gray-900">Mes produits</h1>
+        <p className="text-gray-600 mt-1">
           Gérez votre catalogue de produits
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm">
+      <div className="bg-white overflow-x-hidden max-sm:o rounded-2xl shadow-sm">
         <div className="p-6">
           {/* Actions Bar */}
-          <div className="flex flex-col ml-12 items-center justify-start md:flex-row gap-4 mb-6">
+          <div className="flex flex-col   items-center justify-start md:flex-row gap-4 mb-6">
             <div className="w-[50%] max-sm:w-[100%]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />

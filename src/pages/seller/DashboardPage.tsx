@@ -214,7 +214,7 @@ const DashboardPage = () => {
             {sellerData?.shop.state==="2" && <FeedbackRejected feedbacks={sellerData.feedbacks} isLoading={isLoading}/>}
           </motion.div>
           {imagesIsEmpty  &&  <ShopGalleryAlertCard />}
-          {sellerData?.shop.level === "2" && !imagesIsEmpty && (
+          {sellerData?.shop.level === "2"  && (
             <TitleOverview 
             number={2} 
             title="Niveau 2 - Ajout d'un produit" 
