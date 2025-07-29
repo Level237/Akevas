@@ -137,7 +137,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                   </button>
                 </a>
                 <AsyncLink
-                to={`/seller/edit-product/${product.product_url}`}
+                to={`/seller/product/edit/${product.product_url}`}
                 className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
                 
               >

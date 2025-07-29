@@ -192,14 +192,14 @@ const SellerCatalog: React.FC = () => {
                             <Input
                                 type="text"
                                 placeholder="Rechercher un produit..."
-                                className="pl-10 w-full max-sm:placeholder:text-sm"
+                                className="pl-10 w-full py-6 max-sm:py-2 text-xl max-sm:placeholder:text-sm"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
                         <div className="flex max-sm:flex-col gap-4">
                             <select
-                                className="px-4 py-2 max-sm:text-sm border rounded-lg bg-gray-50 text-gray-700"
+                                className="px-4 py-2 max-sm:text-sm text-sm border rounded-lg bg-gray-50 text-gray-700"
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                             >
@@ -249,13 +249,18 @@ const SellerCatalog: React.FC = () => {
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
                                     <div className="p-5">
-                                        <div className="flex justify-between items-start mb-3">
+                                        <div className="flex flex-col gap-2 max-sm:items-center max-sm:gap-3 justify-between items-start mb-3">
                                             <h3 className="font-semibold text-gray-800 group-hover:text-[#ed7e0f] transition-colors">
                                                 {product.product_name}
                                             </h3>
-                                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
-                                                {product.product_categories[0]?.category_name}
-                                            </span>
+                                            <div className='max-sm:flex grid grid-cols-2 gap-3 max-sm:gap-3'>
+                                                {product.product_categories.map((category: any) => (
+                                                    <span key={category.id} className="px-3 text-xs truncate px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
+                                                        {category.category_name}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                           
                                         </div>
                                         <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                                             {product.product_description}
@@ -267,15 +272,15 @@ const SellerCatalog: React.FC = () => {
                                         </div>
                                         <div className="flex gap-3">
                                             <AsyncLink
-                                                to={`/`}
-                                                className="flex-1 text-center py-2.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                               to={`/seller/product/edit/${product.product_url}`}
+                                                className="flex-1 text-center py-2.5 max-sm:text-xs text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                                             >
                                                 Modifier
                                             </AsyncLink>
                                             <a
                                                 href={`https:/akevas.com/produit/${product.product_url}`}
                                                 target='_blank'
-                                                className="flex-1 text-center py-2.5 text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
+                                                className="flex-1 text-center py-2.5 max-sm:text-xs text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
                                             >
                                                 Voir
                                             </a>
@@ -318,7 +323,7 @@ const SellerCatalog: React.FC = () => {
                                 </span>
                                             <div className="flex gap-3">
                                 <AsyncLink
-                                    to={`/seller/products/${product.id}/edit`}
+                                    to={`/seller/product/edit/${product.product_url}`}
                                                     className="px-6 py-2.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                                 >
                                     Modifier

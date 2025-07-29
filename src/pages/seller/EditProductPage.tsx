@@ -3,11 +3,7 @@ import {
   Upload,
   Plus,
   X,
-  Save,
   Loader2,
-  Image,
-  Package,
-  Palette,
   Edit,
 } from 'lucide-react';
 
@@ -17,7 +13,7 @@ import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { useCurrentSellerQuery } from '@/services/sellerService';
+
 
 // Interfaces pour les données du produit
 interface ProductImage {
@@ -193,13 +189,13 @@ const EditProductPage: React.FC = () => {
         // Remplir les prix
         product.variations.forEach((variation:any) => {
           if (variation.size) {
-            setSizePrices(prev => ({ ...prev, [variation.size.id]: variation.size.price }));
+            //setSizePrices(prev => ({ ...prev, [variation.size.id]: variation.size.price }));
           }
           if (variation.shoeSize) {
-            setShoeSizePrices(prev => ({ ...prev, [variation.shoeSize.id]: variation.shoeSize.price }));
+            //setShoeSizePrices(prev => ({ ...prev, [variation.shoeSize.id]: variation.shoeSize.price }));
           }
           if (!variation.size && !variation.shoeSize) {
-            setGlobalColorPrice(variation.price);
+            //setGlobalColorPrice(variation.price);
           }
         });
       }

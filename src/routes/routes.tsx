@@ -112,7 +112,7 @@ export const routes = createBrowserRouter([
         element: <CreateProductPage />
       },
       {
-        path: '/seller/edit-product/:url',
+        path: '/seller/product/edit/:url',
         element: <EditProductPage />
       },
       {
