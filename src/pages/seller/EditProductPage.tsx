@@ -62,20 +62,7 @@ interface ProductVariation {
   price: number;
 }
 
-interface Product {
-  id: string;
-  product_name: string;
-  product_description: string;
-  product_price: string;
-  product_quantity: string;
-  product_profile: string;
-  product_images: ProductImage[];
-  product_categories: ProductCategory[];
-  residence: string;
-  status: number;
-  variations: ProductVariation[];
-  created_at: string;
-}
+
 
 
 const EditProductPage: React.FC = () => {
@@ -120,7 +107,7 @@ const EditProductPage: React.FC = () => {
   
   // Queries
   
-  const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
+  //const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender);
   const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender });
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
@@ -263,31 +250,31 @@ const EditProductPage: React.FC = () => {
     ]);
   };
 
-  const updateVariationFrame = (frameId: string, updates: Partial<typeof variationFrames[0]>) => {
-    setVariationFrames(variationFrames.map(frame => 
-      frame.id === frameId ? { ...frame, ...updates } : frame
-    ));
-  };
+  //const updateVariationFrame = (frameId: string, updates: Partial<typeof variationFrames[0]>) => {
+    //setVariationFrames(variationFrames.map(frame => 
+      //frame.id === frameId ? { ...frame, ...updates } : frame
+    //));
+  //};
 
-  const removeVariationFrame = (frameId: string) => {
-    setVariationFrames(variationFrames.filter(frame => frame.id !== frameId));
-  };
+  //const removeVariationFrame = (frameId: string) => {
+  //  setVariationFrames(variationFrames.filter(frame => frame.id !== frameId));
+  //};
 
-  const handleVariationImageUpload = (frameId: string, files: FileList) => {
-    setVariationFrames(variationFrames.map(frame =>
-      frame.id === frameId
-        ? { ...frame, images: [...frame.images, ...Array.from(files)] }
-        : frame
-    ));
-  };
+  //    const handleVariationImageUpload = (frameId: string, files: FileList) => {
+  //  setVariationFrames(variationFrames.map(frame =>
+  //    frame.id === frameId
+  //      ? { ...frame, images: [...frame.images, ...Array.from(files)] }
+  //      : frame
+  //  ));
+  //};
 
-  const removeVariationImage = (frameId: string, imageIndex: number) => {
-    setVariationFrames(variationFrames.map(frame =>
-      frame.id === frameId
-        ? { ...frame, images: frame.images.filter((_, idx) => idx !== imageIndex) }
-        : frame
-    ));
-  };
+  //const removeVariationImage = (frameId: string, imageIndex: number) => {
+  //  setVariationFrames(variationFrames.map(frame =>
+  //    frame.id === frameId
+  //      ? { ...frame, images: frame.images.filter((_, idx) => idx !== imageIndex) }
+  //      : frame
+  //  ));
+  //};
 
   // Fonction de soumission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
