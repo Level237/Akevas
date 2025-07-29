@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 
-import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetProductByUrlQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
+import { useGetCategoryByGenderQuery, useGetProductByUrlQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
@@ -21,22 +21,6 @@ interface ProductImage {
   path: string;
 }
 
-interface ProductCategory {
-  id: number;
-  category_name: string;
-  products_count: number;
-  category_profile: string;
-  category_url: string;
-  parent?: {
-    id: number;
-    category_name: string;
-    category_profile: string | null;
-    category_url: string;
-    parent_id: number | null;
-    created_at: string;
-    updated_at: string;
-  };
-}
 
 interface ProductVariation {
   id: string;
