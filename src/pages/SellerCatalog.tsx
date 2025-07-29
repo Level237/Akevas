@@ -95,7 +95,7 @@ const SellerCatalog: React.FC = () => {
     ) || [])] as string[];
 
     return (
-        <div className="min-h-screen mx-24 bg-gray-50">
+        <div className="min-h-screen mx-24 max-sm:mx-4 bg-gray-50">
             <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
@@ -164,22 +164,22 @@ const SellerCatalog: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 py-6">
                 {/* Hero Section */}
                 <div className="bg-[#6e0a13] rounded-2xl p-8 mb-8 text-white">
-                    <h1 className="text-3xl font-bold mb-2">Mon Catalogue</h1>
-                    <p className="opacity-90">Gérez et partagez vos produits facilement</p>
+                    <h1 className="text-3xl max-sm:text-xl font-bold mb-2">Mon Catalogue</h1>
+                    <p className="opacity-90 max-sm:text-sm">Gérez et partagez vos produits facilement</p>
                     <div className="flex gap-4 mt-6">
                     <AsyncLink
                         to="/seller/create-product"
-                            className="flex items-center gap-2 bg-[#ed7e0f] px-6 py-3 rounded-lg hover:bg-gray-100 transition-all"
+                            className="flex items-center gap-2 bg-[#ed7e0f] px-6 py-3 max-sm:px-2 max-sm:py-2 rounded-lg hover:bg-gray-100 transition-all"
                     >
-                        <Plus size={20} />
-                            <span>Ajouter un produit</span>
+                        <Plus className='max-sm:hidden ' />
+                            <span className='max-sm:text-xs'>Ajouter un produit</span>
                     </AsyncLink>
                     <button
                         onClick={handleShare}
                             className="flex items-center gap-2 bg-[#ed7e0f]/20 backdrop-blur-sm px-6 py-3 rounded-lg hover:bg-[#ed7e0f]/30 transition-all border border-white/20"
                     >
-                        <Share2 size={20} />
-                            <span>Partager</span>
+                        <Share2 className='max-sm:w-4 max-sm:h-4' />
+                            <span className='max-sm:text-xs'>Partager</span>
                     </button>
                 </div>
             </div>
@@ -188,18 +188,18 @@ const SellerCatalog: React.FC = () => {
                 <div className="bg-white rounded-xl p-4 mb-6 shadow-sm">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                            <Search className="absolute  left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                             <Input
                                 type="text"
                                 placeholder="Rechercher un produit..."
-                                className="pl-10 w-full"
+                                className="pl-10 w-full max-sm:placeholder:text-sm"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-                        <div className="flex gap-4">
+                        <div className="flex max-sm:flex-col gap-4">
                             <select
-                                className="px-4 py-2 border rounded-lg bg-gray-50 text-gray-700"
+                                className="px-4 py-2 max-sm:text-sm border rounded-lg bg-gray-50 text-gray-700"
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                             >
@@ -209,7 +209,7 @@ const SellerCatalog: React.FC = () => {
                                     </option>
                                 ))}
                             </select>
-                            <div className="flex gap-2 border rounded-lg p-1 bg-gray-50">
+                            <div className="flex gap-2 max-sm:hidden border rounded-lg p-1 bg-gray-50">
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white shadow-sm' : ''}`}
@@ -231,7 +231,7 @@ const SellerCatalog: React.FC = () => {
                 <AnimatePresence>
                     {viewMode === 'grid' ? (
                         <div 
-                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                            className="grid mb-12  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                             
                         >
                             {filteredProducts?.map((product: Product) => (

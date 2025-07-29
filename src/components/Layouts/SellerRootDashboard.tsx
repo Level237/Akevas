@@ -60,7 +60,7 @@ export default function SellerRootDashboard({ children }: { children: React.Reac
   //   setSelectedGender(value);
   //   setSelectedCategories([]); // reset sélection
   // };
-  console.log(categoriesByGender)
+  
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}

@@ -136,9 +136,13 @@ export default function ProductListOverview({ products, isLoading }: { products:
                     <Eye className="w-5 h-5 text-gray-600" />
                   </button>
                 </a>
-                <button className="p-2 hover:bg-gray-100 rounded-lg" title="Modifier">
-                  <Edit className="w-5 h-5 text-gray-600" />
-                </button>
+                <AsyncLink
+                to={`/seller/edit-product/${product.product_url}`}
+                className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
+                
+              >
+                <Edit className="w-5 h-5" />
+              </AsyncLink>
                 <button className="p-2 hover:bg-gray-100 rounded-lg" title="Supprimer">
                   <Trash2 className="w-5 h-5 text-gray-600" />
                 </button>
@@ -263,13 +267,15 @@ export default function ProductListOverview({ products, isLoading }: { products:
               >
                 <Eye className="w-5 h-5" />
               </a>
-              <button 
+              <AsyncLink
+                to={`/seller/edit-product/${product.id}`}
                 className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
-                title="Modifier"
+                
               >
                 <Edit className="w-5 h-5" />
-              </button>
-              <button 
+              </AsyncLink>
+              <button
+                
                 className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
                 title="Supprimer"
               >

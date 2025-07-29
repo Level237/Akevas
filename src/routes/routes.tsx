@@ -37,6 +37,7 @@ import MobileMoneyPaymentPage from "@/pages/MobileMoneyPaymentPage";
 import StoreCustomizationPage from "@/pages/StoreCustomizationPage";
 import HelpCenterPage from "@/pages/HelpCenterPage";
 import ReviewsPage from "@/pages/seller/ReviewsPage";
+import EditProductPage from "@/pages/seller/EditProductPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -109,6 +110,10 @@ export const routes = createBrowserRouter([
       {
         path: '/seller/create-product',
         element: <CreateProductPage />
+      },
+      {
+        path: '/seller/edit-product/:url',
+        element: <EditProductPage />
       },
       {
         path: "/orders",
