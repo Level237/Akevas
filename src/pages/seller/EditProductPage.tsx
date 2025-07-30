@@ -586,7 +586,7 @@ const EditProductPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{city}</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ville cible</label>
                     <Select name='city' value={city} onValueChange={handleCityChange}>
                       <SelectTrigger className="bg-gray-50 border-0">
                       <SelectValue placeholder="Sélectionnez votre ville de livraison">
