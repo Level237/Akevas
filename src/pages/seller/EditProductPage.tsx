@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 
-import { useGetCategoryByGenderQuery, useGetProductByUrlQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
+import { useGetCategoryByGenderQuery, useGetParentForCategoriesQuery, useGetProductByUrlQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
@@ -93,10 +93,12 @@ const EditProductPage: React.FC = () => {
   
   //const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender);
-  const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender });
+  
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
-  console.log(towns)
-
+  const { data: parentForCategories} = useGetParentForCategoriesQuery({ arrayId: selectedCategories });
+  
+  const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: parentForCategories?.map((category: { id: number, name: string }) => category.id) || [], id: gender });
+  
   // Trouver le produit à éditer
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   console.log(product)
@@ -176,6 +178,7 @@ const EditProductPage: React.FC = () => {
     }
   }, [product, isLoading]);
 
+  console.log(existingImages)
   // Handlers pour les changements
   const handleChangeCategories = (selected: number[]) => {
     setSelectedCategories(selected);
@@ -535,7 +538,7 @@ const EditProductPage: React.FC = () => {
                       ) : (
                         <MultiSelect
                           options={categoriesByGender?.categories}
-                          selected={selectedCategories}
+                          selected={parentForCategories?.map((category: { id: number, name: string }) => category.id) || []}
                           onChange={handleChangeCategories}
                           placeholder="Sélectionner les catégories..."
                         />
@@ -551,7 +554,7 @@ const EditProductPage: React.FC = () => {
                           </div>
                         ) : (
                           <MultiSelect
-                            options={subCategoriesByGender?.categories}
+                            options={subCategoriesByGender?.categories || []}
                             selected={selectedSubCategories}
                             onChange={handleChangeSubCategories}
                             placeholder="Sélectionner les sous-catégories..."

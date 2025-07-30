@@ -268,7 +268,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                 <Eye className="w-5 h-5" />
               </a>
               <AsyncLink
-                to={`/seller/edit-product/${product.id}`}
+               to={`/seller/product/edit/${product.product_url}`}
                 className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
                 
               >

@@ -56,7 +56,7 @@ const DashboardProductListPage = () => {
               </select>
               <AsyncLink
                 to="/seller/create-product"
-                className="flex items-center gap-2 max-sm:px-2 max-sm:py-1 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/90 transition-colors"
+                className="flex items-center gap-2 max-sm:px-2 max-sm:py-3 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/90 transition-colors"
               >
                 <Plus className="w-5 h-5 max-sm:w-4 max-sm:h-4" />
                 <span className="max-sm:text-xs">Nouveau produit</span>

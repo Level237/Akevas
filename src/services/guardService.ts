@@ -111,6 +111,13 @@ export const guardService = createApi({
             }),
             providesTags: ['guard'],
         }),
+        getParentForCategories: builder.query({
+            query: ({arrayId}) => ({
+                url: `/api/filter/categories/${arrayId}`,
+                method: "GET",
+            }),
+            providesTags: ['guard'],
+        }),
         getAllProducts: builder.query({
             query: (page) => ({
                 url: `/api/all/products?page=${page}`,
@@ -171,6 +178,7 @@ export const {
     useGetProductByUrlQuery,
     useGetAllProductsQuery,
     useCreateDeliveryMutation,
+    useGetParentForCategoriesQuery,
     useGetAttributeValuesQuery,
     useGetSimilarProductsQuery,
     useGetSubscriptionQuery,
