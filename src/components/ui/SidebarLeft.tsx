@@ -21,8 +21,8 @@ export default function SidebarLeft() {
     },
     {
       icon: ShoppingBag,
-      label: 'Catalogue',
-      path: '/catalogue'
+      label: 'Produits',
+      path: '/seller/products'
     },
     {
       icon: ShoppingCart,
