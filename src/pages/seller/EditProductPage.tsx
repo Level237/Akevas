@@ -95,11 +95,11 @@ const EditProductPage: React.FC = () => {
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender);
   const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender });
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
-
+  console.log(towns)
 
   // Trouver le produit à éditer
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
-
+  console.log(product)
   // Initialiser les données du produit
   useEffect(() => {
     if (product && !isLoading) {
@@ -107,6 +107,7 @@ const EditProductPage: React.FC = () => {
       
       // Remplir les champs de base
       setName(product.product_name);
+      setWhatsappNumber(product.whatsapp_number);
       setDescription(product.product_description);
       setPrice(product.product_price);
       setStock(product.product_quantity);
@@ -588,14 +589,21 @@ const EditProductPage: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Ville cible</label>
                     <Select name='city' value={city} onValueChange={handleCityChange}>
                       <SelectTrigger className="bg-gray-50 border-0">
-                        <SelectValue placeholder="Sélectionnez votre ville de livraison" />
+                      <SelectValue placeholder="Sélectionnez votre ville de livraison">
+                              {towns?.towns.find((t: { id: string, town_name: string }) => t.town_name === city)?.town_name}
+                          </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {townsLoading ? (
                           <SelectItem value="loading">Chargement des villes...</SelectItem>
                         ) : (
                           towns?.towns.map((town: { id: string, town_name: string }) => (
-                            <SelectItem key={town.id} value={String(town.id)}>
+                            <SelectItem 
+                              key={town.id} 
+                              value={String(town.id)}
+
+                            >
+                              
                               {town.town_name}
                             </SelectItem>
                           ))
