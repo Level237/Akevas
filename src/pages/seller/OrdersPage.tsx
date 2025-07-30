@@ -50,7 +50,7 @@ const OrdersPage = () => {
     };
 
     return (
-        <div className="transition-all mx-24 duration-300">
+        <div className="transition-all mx-24 max-sm:mx-2 max-sm:px-2 duration-300">
             <main className="max-w-7xl mx-auto px-4 py-8">
                 <div className="mb-8">
                     <h1 className="text-2xl font-bold text-gray-900">Commandes</h1>
