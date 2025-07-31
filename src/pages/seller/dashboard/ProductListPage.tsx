@@ -19,7 +19,7 @@ const DashboardProductListPage = () => {
 
 
   return (
-    <div className="container mx-24  max-sm:mx-auto px-4 py-8">
+    <div className="container mx-24 w-92  max-sm:mx-auto px-4 py-8">
       <div className="mb-6 ">
         <h1 className="text-2xl  font-bold text-gray-900">Mes produits</h1>
         <p className="text-gray-600 mt-1">

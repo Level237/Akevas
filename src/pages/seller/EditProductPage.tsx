@@ -97,8 +97,8 @@ const EditProductPage: React.FC = () => {
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const { data: parentForCategories} = useGetParentForCategoriesQuery({ arrayId: selectedCategories });
   
-  const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: parentForCategories?.map((category: { id: number, name: string }) => category.id) || [], id: gender });
-  
+  const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: [6,7], id: gender });
+  console.log(gender)
   // Trouver le produit à éditer
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   console.log(product)
@@ -178,7 +178,7 @@ const EditProductPage: React.FC = () => {
     }
   }, [product, isLoading]);
 
-  console.log(existingImages)
+
   // Handlers pour les changements
   const handleChangeCategories = (selected: number[]) => {
     setSelectedCategories(selected);
@@ -555,7 +555,7 @@ const EditProductPage: React.FC = () => {
                         ) : (
                           <MultiSelect
                             options={subCategoriesByGender?.categories || []}
-                            selected={selectedSubCategories}
+                            selected={product.product_categories?.map((category: { id: number, name: string }) => category.id) || []}
                             onChange={handleChangeSubCategories}
                             placeholder="Sélectionner les sous-catégories..."
                           />

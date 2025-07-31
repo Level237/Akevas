@@ -129,7 +129,7 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
                 </div>
               </Card>
             </div>
-            <ShopEditorModal open={open} onClose={() => setOpen(false)} initialData={sellerData.sellerData.shop || {}} />
+            <ShopEditorModal open={open} onClose={() => setOpen(false)} initialData={sellerData.sellerData || {}} />
           </motion.div>
   )
 }

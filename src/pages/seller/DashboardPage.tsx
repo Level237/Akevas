@@ -35,7 +35,7 @@ const DashboardPage = () => {
   const [imagesIsEmpty, setImagesIsEmpty] = useState<boolean | null>(null);
   const [message, setMessage] = useState(sessionStorage.getItem('message') || '');
   const storeStatus = sellerData?.shop.state;
-  
+  console.log(sellerData)
   useEffect(() => {
     if (Array.isArray(sellerData?.shop?.images)) {
       shopImagesIsEmpty(sellerData.shop.images).then(setImagesIsEmpty);

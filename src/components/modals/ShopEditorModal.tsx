@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,11 +9,107 @@ import { MultiSelect } from '@/components/ui/multiselect';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { useGetCategoriesQuery, useGetTownsQuery, useGetQuartersQuery, useUpdateShopMutation } from '@/services/guardService';
 
+// Types pour la structure de données
+interface ProductImage {
+  id: number;
+  path: string;
+}
+
+interface ProductCategory {
+  id: number;
+  category_name: string;
+  products_count: number;
+  category_profile: string;
+  category_url: string;
+  parent?: {
+    id: number;
+    category_name: string;
+    category_profile: string | null;
+    category_url: string;
+    parent_id: number | null;
+    created_at: string;
+    updated_at: string;
+  };
+}
+
+interface Product {
+  id: string;
+  product_name: string;
+  product_description: string;
+  product_profile: string;
+  product_price: string;
+  product_quantity: string;
+  product_url: string;
+  product_images: ProductImage[];
+  product_categories: ProductCategory[];
+  status: number;
+  created_at: string;
+}
+
+interface ShopCategory {
+  id: number;
+  category_name: string;
+  products_count: number;
+  category_profile: string;
+  category_url: string;
+  parent: any;
+}
+
+interface Shop {
+  shop_id: string;
+  shop_name: string;
+  shop_description: string;
+  shop_profile: string;
+  shop_key: string;
+  review_average: number;
+  reviewCount: number;
+  status: any;
+  coins: string;
+  isSubscribe: number;
+  products_count: number;
+  products: Product[];
+  expire: any;
+  subscribe_id: any;
+  town: string;
+  quarter: string;
+  isPublished: number;
+  visitTotal: number;
+  categories: ShopCategory[];
+  orders: any[];
+  orders_count: number;
+  total_earnings: number;
+  state: string;
+  gender: string;
+  level: string;
+  cover: string;
+  images: ProductImage[];
+}
+
+interface SellerData {
+  id: number;
+  firstName: string;
+  email: string;
+  lastName: string;
+  birthDate: string;
+  nationality: string;
+  role_id: number;
+  phone_number: string;
+  isWholesaler: string;
+  identity_card_in_front: string;
+  identity_card_in_back: string;
+  identity_card_with_the_person: string;
+  isSeller: number;
+  feedbacks: any[];
+  shop: Shop;
+  created_at: string;
+}
+
 interface ImageUploadProps {
   label: string;
   value: string | undefined;
   onChange: (val: string) => void;
 }
+
 const ImageUpload: React.FC<ImageUploadProps> = ({ label, value, onChange }) => (
   <div>
     <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
@@ -33,24 +129,31 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ label, value, onChange }) => 
     {value && (
       <div className="mt-2 flex items-center gap-4">
         <img src={value} alt="preview" className="rounded-lg w-24 h-24 object-cover border" />
-        <Button type="button" variant="destructive" size="icon" onClick={() => onChange('')}><Trash2 className="w-4 h-4" /></Button>
+        <Button type="button" variant="destructive" size="icon" onClick={() => onChange('')}>
+          <Trash2 className="w-4 h-4" />
+        </Button>
       </div>
     )}
   </div>
 );
 
 interface GalleryUploadProps {
-  images: { id: number; path: string }[];
-  onChange: (images: { id: number; path: string }[]) => void;
+  images: ProductImage[];
+  onChange: (images: ProductImage[]) => void;
 }
+
 const GalleryUpload: React.FC<GalleryUploadProps> = ({ images, onChange }) => {
   const handleAdd = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const newImages: { id: number; path: string }[] = [];
+    const newImages: ProductImage[] = [];
+    
     files.forEach((file, idx) => {
       const reader = new FileReader();
       reader.onload = (ev) => {
-        newImages.push({ id: Date.now() + idx, path: ev.target?.result as string });
+        newImages.push({ 
+          id: Date.now() + idx, 
+          path: ev.target?.result as string 
+        });
         if (newImages.length === files.length) {
           onChange([...images, ...newImages].slice(0, 6));
         }
@@ -58,9 +161,11 @@ const GalleryUpload: React.FC<GalleryUploadProps> = ({ images, onChange }) => {
       reader.readAsDataURL(file);
     });
   };
+
   const handleRemove = (id: number) => {
     onChange(images.filter(img => img.id !== id));
   };
+
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">Galerie d'images</label>
@@ -68,7 +173,11 @@ const GalleryUpload: React.FC<GalleryUploadProps> = ({ images, onChange }) => {
         {images.map(img => (
           <div key={img.id} className="relative group w-24 h-24 rounded-lg overflow-hidden border">
             <img src={img.path} alt="gallery" className="w-full h-full object-cover" />
-            <button type="button" className="absolute top-1 right-1 bg-white/80 rounded-full p-1 shadow hover:bg-white" onClick={() => handleRemove(img.id)}>
+            <button 
+              type="button" 
+              className="absolute top-1 right-1 bg-white/80 rounded-full p-1 shadow hover:bg-white" 
+              onClick={() => handleRemove(img.id)}
+            >
               <Trash2 className="w-4 h-4 text-red-500" />
             </button>
           </div>
@@ -92,10 +201,15 @@ interface ShopEditorModalProps {
 }
 
 const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initialData }) => {
-  const [formData, setFormData] = useState<any>(initialData);
+  const [formData, setFormData] = useState<SellerData>(initialData);
   const [tab, setTab] = useState<string>('general');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [updateShop, { isLoading }] = useUpdateShopMutation();
+
+  // Mise à jour du formData quand initialData change
+  useEffect(() => {
+    setFormData(initialData);
+  }, [initialData]);
 
   // Catégories
   const { data: categoriesData } = useGetCategoriesQuery('guard');
@@ -107,19 +221,95 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
   const { data: quartersData } = useGetQuartersQuery('guard');
   const quarters = quartersData?.data || [];
 
-  // Helpers pour update
-  const handleShopChange = (changes: any) => setFormData((f: any) => ({ ...f, shop: { ...f.shop, ...changes } }));
-  const handleSellerChange = (changes: any) => setFormData((f: any) => ({ ...f, ...changes }));
-  const handleCategoriesChange = (selected: number[]) => setFormData((f: any) => ({ ...f, shop: { ...f.shop, categories: selected } }));
-  const handleGalleryChange = (images: { id: number; path: string }[]) => setFormData((f: any) => ({ ...f, shop: { ...f.shop, images } }));
+  // Helpers pour update avec gestion d'erreur
+  const handleShopChange = (changes: Partial<Shop>) => {
+    setFormData((prev: SellerData) => ({
+      ...prev,
+      shop: {
+        ...prev.shop,
+        ...changes
+      }
+    }));
+  };
 
-  // Enregistrement
+  const handleSellerChange = (changes: Partial<SellerData>) => {
+    setFormData((prev: SellerData) => ({
+      ...prev,
+      ...changes
+    }));
+  };
+
+  const handleCategoriesChange = (selected: number[]) => {
+    // Convertir les IDs en objets de catégories
+    const selectedCategories = selected.map(id => {
+      const category = categories.find((cat:any) => cat.id === id);
+      return category ? {
+        id: category.id,
+        category_name: category.category_name,
+        products_count: category.products_count || 0,
+        category_profile: category.category_profile || '',
+        category_url: category.category_url || '',
+        parent: category.parent || null
+      } : null;
+    }).filter(Boolean);
+
+    //handleShopChange({ categories: selectedCategories });
+  };
+
+  const handleGalleryChange = (images: ProductImage[]) => {
+    handleShopChange({ images });
+  };
+
+  // Enregistrement avec validation
   const handleSave = async () => {
-    await updateShop(formData);
-    onClose();
+    try {
+      // Validation des données requises
+      if (!formData.shop.shop_name?.trim()) {
+        alert('Le nom de la boutique est requis');
+        return;
+      }
+
+      if (!formData.firstName?.trim() || !formData.lastName?.trim()) {
+        alert('Le prénom et le nom sont requis');
+        return;
+      }
+
+      if (!formData.email?.trim()) {
+        alert('L\'email est requis');
+        return;
+      }
+
+      // Préparation des données pour l'API
+      const updateData = {
+        ...formData,
+        shop: {
+          ...formData.shop,
+          // S'assurer que les catégories sont au bon format
+          categories: formData.shop.categories?.map(cat => ({
+            id: cat.id,
+            category_name: cat.category_name,
+            products_count: cat.products_count,
+            category_profile: cat.category_profile,
+            category_url: cat.category_url,
+            parent: cat.parent
+          })) || []
+        }
+      };
+
+      await updateShop(updateData);
+      onClose();
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour:', error);
+      alert('Une erreur est survenue lors de la mise à jour');
+    }
   };
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  // Fonction pour obtenir les IDs des catégories sélectionnées
+  const getSelectedCategoryIds = () => {
+    return formData.shop.categories?.map(cat => cat.id) || [];
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -183,7 +373,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
           {/* Content */}
           <div className="flex-1 flex flex-col w-full lg:w-auto">
             <div className="sticky top-0 z-10 bg-white flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 ml-12 lg:ml-0">Configuration de la boutique</h3>
+              <h3 className="text-lg sm:text-xl  font-semibold text-gray-900 ml-12 lg:ml-0">Configuration de la boutique</h3>
               <DialogClose asChild>
                 <Button variant="ghost" size="icon">
                   <X className="w-5 h-5" />
@@ -191,46 +381,46 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
               </DialogClose>
             </div>
 
-            <div className="flex-1   sm:p-6 w-full lg:p-8">
+            <div className="flex-1 sm:p-6 w-full lg:p-8">
               {/* MOBILE: Tabs horizontaux scrollables */}
-                                <div className="block md:hidden sticky top-0 bg-white z-20 border-b">
-                    <div className="overflow-x-auto no-scrollbar">
-                        <div className="flex flex-row px-2 py-2">
-                        {[
-                            { value: 'general', label: 'Général', icon: FileText },
-                            { value: 'personal', label: 'Personnel', icon: User },
-                            { value: 'identity', label: 'Identité', icon: IdCard },
-                            { value: 'location', label: 'Localisation', icon: MapPin },
-                            { value: 'media', label: 'Médias', icon: Camera }
-                        ].map(({ value, label, icon: Icon }) => (
-                            <button
-                            key={value}
-                            onClick={() => setTab(value)}
-                            className={`
-                                flex flex-col items-center justify-center px-3 py-2 rounded-lg min-w-[64px]
-                                text-xs font-medium
-                                transition-all duration-300
-                                ${tab === value
-                                ? 'bg-[#ed7e0f]/20 text-[#ed7e0f] font-semibold shadow'
-                                : 'text-gray-700 hover:bg-[#ed7e0f]/10'}
-                                focus:outline-none
-                            `}
-                            style={{ WebkitTapHighlightColor: 'transparent' }}
-                            >
-                            <Icon className="w-5 h-5 mb-1" />
-                            <span>{label}</span>
-                            </button>
-                        ))}
-                        </div>
-                    </div>
-                    </div>
-              {/* DESKTOP: Sidebar vertical */}
-             
-              <Tabs value={tab}>
+              <div className="block md:hidden sticky top-0 bg-white z-20 border-b">
+                <div className="overflow-x-auto no-scrollbar">
+                  <div className="flex flex-row px-2 py-2">
+                    {[
+                      { value: 'general', label: 'Général', icon: FileText },
+                      { value: 'personal', label: 'Personnel', icon: User },
+                      { value: 'identity', label: 'Identité', icon: IdCard },
+                      { value: 'location', label: 'Localisation', icon: MapPin },
+                      { value: 'media', label: 'Médias', icon: Camera }
+                    ].map(({ value, label, icon: Icon }) => (
+                      <button
+                        key={value}
+                        onClick={() => setTab(value)}
+                        className={`
+                          flex flex-col items-center justify-center px-3 py-2 rounded-lg min-w-[64px]
+                          text-xs font-medium
+                          transition-all duration-300
+                          ${tab === value
+                            ? 'bg-[#ed7e0f]/20 text-[#ed7e0f] font-semibold shadow'
+                            : 'text-gray-700 hover:bg-[#ed7e0f]/10'}
+                          focus:outline-none
+                        `}
+                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                      >
+                        <Icon className="w-5 h-5 mb-1" />
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <Tabs value={tab} className="h-full flex flex-col">
                 {/* Général */}
-                <TabsContent value="general">
-                  <div className="flex flex-col gap-6 sm:gap-8 p-2 sm:p-4 lg:p-8">
-                    <div className=''>
+                <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="general">
+                  <div className="flex flex-col gap-6 sm:gap-4 p-2 sm:p-4 lg:p-3">
+                    
+                    <div>
                       <label className="block text-base font-medium text-gray-700 mb-2">Nom de la boutique</label>
                       <Input
                         value={formData.shop?.shop_name || ''}
@@ -253,26 +443,28 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                       <label className="block text-base font-medium text-gray-700 mb-2">Catégories</label>
                       <MultiSelect
                         options={categories}
-                        selected={formData.shop?.categories?.map((c: any) => c.id) || []}
+                        selected={getSelectedCategoryIds()}
                         onChange={ids => handleCategoriesChange(ids)}
                         placeholder="Sélectionnez les catégories"
                       />
                     </div>
                   </div>
                 </TabsContent>
+
                 {/* Personnel */}
-                <TabsContent value="personal">
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
-                      <Input
-                        value={formData.firstName || ''}
-                        onChange={e => handleSellerChange({ firstName: e.target.value })}
-                        placeholder="Votre prénom"
-                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
-                      />
-                    </div>
-                    <div>
+                <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="personal">
+                  <div className="space-y-6 p-2 sm:p-4 lg:p-8">
+                    <div className='flex max-sm:flex-col gap-4'>
+                      <div className='w-1/2'>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+                          <Input
+                            value={formData.firstName || ''}
+                            onChange={e => handleSellerChange({ firstName: e.target.value })}
+                            placeholder="Votre prénom"
+                            className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                          />
+                      </div>
+                      <div className='w-1/2'>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
                       <Input
                         value={formData.lastName || ''}
@@ -281,16 +473,19 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                         className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                       />
                     </div>
-                    <div>
+                    </div>
+                    <div className='flex max-sm:flex-col gap-4'>
+                      <div className='w-1/2'>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                       <Input
                         value={formData.email || ''}
                         onChange={e => handleSellerChange({ email: e.target.value })}
                         placeholder="Votre email"
+                        type="email"
                         className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                       />
                     </div>
-                    <div>
+                    <div className='w-1/2'>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
                       <Input
                         value={formData.phone_number || ''}
@@ -299,31 +494,57 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                         className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                       />
                     </div>
+                    </div>
+                   <div className='flex max-sm:flex-col gap-4'>
+                    <div className='w-1/2'>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Date de naissance</label>
+                      <Input
+                        value={formData.birthDate || ''}
+                        onChange={e => handleSellerChange({ birthDate: e.target.value })}
+                        type="date"
+                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                      />
+                    </div>
+                    <div className='w-1/2'>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nationalité</label>
+                      <Input
+                        value={formData.nationality || ''}
+                        onChange={e => handleSellerChange({ nationality: e.target.value })}
+                        placeholder="Votre nationalité"
+                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                      />
+                    </div>
+                   </div>
+                    
+                    
+                  
                   </div>
                 </TabsContent>
+
                 {/* Identité */}
-                <TabsContent value="identity">
-                  <div className="space-y-6">
+                <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="identity">
+                  <div className="space-y-6 flex max-sm:flex-col gap-4 p-2 sm:p-4 lg:p-8">
                     <ImageUpload
                       label="CNI Recto"
                       value={formData.identity_card_in_front}
-                      onChange={val => setFormData((f: any) => ({ ...f, identity_card_in_front: val }))}
+                      onChange={val => handleSellerChange({ identity_card_in_front: val })}
                     />
                     <ImageUpload
                       label="CNI Verso"
                       value={formData.identity_card_in_back}
-                      onChange={val => setFormData((f: any) => ({ ...f, identity_card_in_back: val }))}
+                      onChange={val => handleSellerChange({ identity_card_in_back: val })}
                     />
                     <ImageUpload
                       label="Photo avec CNI"
                       value={formData.identity_card_with_the_person}
-                      onChange={val => setFormData((f: any) => ({ ...f, identity_card_with_the_person: val }))}
+                      onChange={val => handleSellerChange({ identity_card_with_the_person: val })}
                     />
                   </div>
                 </TabsContent>
+
                 {/* Localisation */}
-                <TabsContent value="location">
-                  <div className="space-y-6">
+                <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="location">
+                  <div className="space-y-6 p-2 sm:p-4 lg:p-8">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Ville</label>
                       <Select
@@ -358,9 +579,10 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                     </div>
                   </div>
                 </TabsContent>
+
                 {/* Médias */}
-                <TabsContent value="media">
-                  <div className="flex flex-col gap-6 sm:gap-8 p-2 sm:p-4 lg:p-8">
+                <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="media">
+                  <div className="flex max-sm:flex-col items-center gap-6 sm:gap-8 p-2 sm:p-4 lg:p-8">
                     <ImageUpload
                       label="Photo de profil"
                       value={formData.shop?.shop_profile}
@@ -375,10 +597,14 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
               </Tabs>
             </div>
 
-            <div className="p-4 sm:p-6 border-t border-gray-200 bg-gray-50">
+            <div className="p-4 sticky bottom-0  sm:p-6 border-t border-gray-200 bg-gray-50">
               <div className="flex justify-end gap-3">
                 <Button variant="outline" onClick={onClose}>Annuler</Button>
-                <Button className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white" onClick={handleSave} disabled={isLoading}>
+                <Button 
+                  className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white" 
+                  onClick={handleSave} 
+                  disabled={isLoading}
+                >
                   {isLoading ? 'Enregistrement...' : 'Enregistrer'}
                 </Button>
               </div>
