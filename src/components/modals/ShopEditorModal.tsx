@@ -5,9 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, FileText, IdCard, MapPin, Camera, X, Plus, Trash2, Menu } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { MultiSelect } from '@/components/ui/multiselect';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { useGetCategoriesQuery, useGetTownsQuery, useGetQuartersQuery, useUpdateShopMutation } from '@/services/guardService';
+import Select from 'react-select';
+import { Select as UISelect, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { useGetCategoriesQuery, useGetTownsQuery, useGetQuartersQuery, useUpdateShopMutation, useGetCategoryByGenderQuery } from '@/services/guardService';
 
 // Types pour la structure de données
 interface ProductImage {
@@ -205,16 +205,17 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
   const [tab, setTab] = useState<string>('general');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [updateShop, { isLoading }] = useUpdateShopMutation();
-
+  let initialGender = formData?.shop?.gender;
+  if (!initialGender) initialGender = '1'; 
   // Mise à jour du formData quand initialData change
   useEffect(() => {
     setFormData(initialData);
   }, [initialData]);
-
+  const { data: categoriesByGender } = useGetCategoryByGenderQuery(initialGender);
   // Catégories
   const { data: categoriesData } = useGetCategoriesQuery('guard');
   const categories = categoriesData?.data || [];
-
+  
   // Villes et quartiers
   const { data: townsData } = useGetTownsQuery('guard');
   const towns = townsData?.data || [];
@@ -242,7 +243,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
   const handleCategoriesChange = (selected: number[]) => {
     // Convertir les IDs en objets de catégories
     const selectedCategories = selected.map(id => {
-      const category = categories.find((cat:any) => cat.id === id);
+      const category = categoriesByGender?.categories?.find((cat:any) => cat.id === id);
       return category ? {
         id: category.id,
         category_name: category.category_name,
@@ -251,9 +252,9 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
         category_url: category.category_url || '',
         parent: category.parent || null
       } : null;
-    }).filter(Boolean);
+    }).filter(Boolean) as ShopCategory[];
 
-    //handleShopChange({ categories: selectedCategories });
+    handleShopChange({ categories: selectedCategories });
   };
 
   const handleGalleryChange = (images: ProductImage[]) => {
@@ -310,6 +311,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
   const getSelectedCategoryIds = () => {
     return formData.shop.categories?.map(cat => cat.id) || [];
   };
+  
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -441,11 +443,51 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                     </div>
                     <div>
                       <label className="block text-base font-medium text-gray-700 mb-2">Catégories</label>
-                      <MultiSelect
-                        options={categories}
-                        selected={getSelectedCategoryIds()}
-                        onChange={ids => handleCategoriesChange(ids)}
+                      <Select
+                        isMulti
+                        options={(categoriesByGender?.categories || []).map((cat:any) => ({
+                          value: cat.id,
+                          label: cat.category_name
+                        }))}
+                        value={(categoriesByGender?.categories || [])
+                          .filter((cat:any) => getSelectedCategoryIds().includes(cat.id))
+                          .map((cat:any) => ({
+                            value: cat.id,
+                            label: cat.category_name
+                          }))}
+                        onChange={(selectedOptions) => {
+                          const selectedIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                          handleCategoriesChange(selectedIds);
+                        }}
                         placeholder="Sélectionnez les catégories"
+                        className="w-full text-sm"
+                        classNamePrefix="react-select"
+                        styles={{
+                          control: (base) => ({
+                            ...base,
+                            minHeight: 48,
+                            borderRadius: 12,
+                            borderColor: '#ed7e0f',
+                            boxShadow: 'none',
+                          }),
+                          multiValue: (base) => ({
+                            ...base,
+                            background: 'linear-gradient(90deg, #ed7e0f 0%, #ed7e0f 100%)',
+                            color: '#fff',
+                            borderRadius: 8,
+                          }),
+                          menu: (base) => ({
+                            ...base,
+                            zIndex: 9999,
+                            maxHeight: 240,
+                            overflowY: 'auto',
+                          }),
+                          menuList: (base) => ({
+                            ...base,
+                            maxHeight: 220,
+                            overflowY: 'auto',
+                          }),
+                        }}
                       />
                     </div>
                   </div>
@@ -523,7 +565,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
 
                 {/* Identité */}
                 <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="identity">
-                  <div className="space-y-6 flex max-sm:flex-col gap-4 p-2 sm:p-4 lg:p-8">
+                  <div className="space-y-6 flex items-center max-sm:flex-col gap-4 p-2 sm:p-4 lg:p-8">
                     <ImageUpload
                       label="CNI Recto"
                       value={formData.identity_card_in_front}
@@ -547,7 +589,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                   <div className="space-y-6 p-2 sm:p-4 lg:p-8">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Ville</label>
-                      <Select
+                      <UISelect
                         value={formData.shop?.town || ''}
                         onValueChange={val => handleShopChange({ town: val })}
                       >
@@ -559,11 +601,11 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                             <SelectItem key={town.id} value={town.name}>{town.name}</SelectItem>
                           ))}
                         </SelectContent>
-                      </Select>
+                      </UISelect>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Quartier</label>
-                      <Select
+                      <UISelect
                         value={formData.shop?.quarter || ''}
                         onValueChange={val => handleShopChange({ quarter: val })}
                       >
@@ -575,7 +617,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                             <SelectItem key={quarter.id} value={quarter.name}>{quarter.name}</SelectItem>
                           ))}
                         </SelectContent>
-                      </Select>
+                      </UISelect>
                     </div>
                   </div>
                 </TabsContent>
