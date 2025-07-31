@@ -27,7 +27,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
       case 'active':
         return 'Actif';
       case 'draft':
-        return 'Brouillon';
+        return "En attente";
       case 'out_of_stock':
         return 'Rupture';
       default:
