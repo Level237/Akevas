@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 import AsyncLink from '@/components/ui/AsyncLink';
 import { Card } from '../../../ui/card';
-import { Check, Package, MapPin, Store, Eye } from 'lucide-react';
+import { Check,MapPin, Store, Eye } from 'lucide-react';
 import {motion} from "framer-motion"
 import { Seller } from '@/types/seller';
 import { useState } from 'react';
