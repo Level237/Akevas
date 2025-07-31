@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 import AsyncLink from '@/components/ui/AsyncLink';
 import { Card } from '../../../ui/card';
-import { Check, Package, MapPin, Store } from 'lucide-react';
+import { Check, Package, MapPin, Store, Eye } from 'lucide-react';
 import {motion} from "framer-motion"
 import { Seller } from '@/types/seller';
 import { useState } from 'react';
@@ -26,7 +26,7 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
               <Card className="p-6   to-white border border-[#ed7e0f]/10 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
+                    <h3 className="text-xl max-sm:text-base font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
                       Aperçu de votre boutique
                     </h3>
                     <Button
@@ -53,7 +53,7 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-500">Votre boutique sur la marketplace</p>
-                      <h4 className="text-lg font-bold text-gray-900">
+                      <h4 className="text-lg max-sm:text-base font-bold text-gray-900">
                         {sellerData.sellerData.shop.shop_key || "Nom de votre boutique"}
                       </h4>
                     </div>
@@ -65,22 +65,22 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
                         <div className="p-1.5 bg-[#ed7e0f]/10 rounded-lg">
                           <MapPin className="w-4 h-4 text-[#ed7e0f]" />
                         </div>
-                        <h5 className="font-medium text-gray-700">Localisation</h5>
+                        <h5 className="font-medium max-sm:text-sm text-gray-700">Localisation</h5>
                       </div>
-                      <p className="text-sm text-gray-600 ml-8 mt-1">
-                        {sellerData.sellerData.phone_number || "Non renseignée"}
+                      <p className="text-sm max-sm:text-xs text-gray-600 ml-8 mt-1">
+                        {sellerData.sellerData.shop.town || "Non renseignée"} - {sellerData.sellerData.shop.quarter || "Non renseignée"}
                       </p>
                     </div>
                     
                     <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
                       <div className="flex items-center space-x-2">
                         <div className="p-1.5 bg-[#ed7e0f]/10 rounded-lg">
-                          <Package className="w-4 h-4 text-[#ed7e0f]" />
+                          <Eye className="w-4 h-4 text-[#ed7e0f]" />
                         </div>
-                        <h5 className="font-medium text-gray-700">Catalogue</h5>
+                        <h5 className="font-medium max-sm:text-sm text-gray-700">Nombre de Visites</h5>
                       </div>
-                      <p className="text-sm text-gray-600 ml-8 mt-1">
-                        {sellerData.sellerData.phone_number || 0} produits
+                      <p className="text-sm max-sm:text-xs text-gray-600 ml-8 mt-1">
+                        {sellerData.sellerData.shop.visitTotal || 0} Vues
                       </p>
                     </div>
                   </div>

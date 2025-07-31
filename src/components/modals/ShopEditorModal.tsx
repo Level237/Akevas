@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Select from 'react-select';
 import { Select as UISelect, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { useGetCategoriesQuery, useGetTownsQuery, useGetQuartersQuery, useUpdateShopMutation, useGetCategoryByGenderQuery } from '@/services/guardService';
+import { useGetTownsQuery, useGetQuartersQuery, useUpdateShopMutation, useGetCategoryByGenderQuery } from '@/services/guardService';
 
 // Types pour la structure de données
 interface ProductImage {
@@ -213,14 +213,16 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
   }, [initialData]);
   const { data: categoriesByGender } = useGetCategoryByGenderQuery(initialGender);
   // Catégories
-  const { data: categoriesData } = useGetCategoriesQuery('guard');
-  const categories = categoriesData?.data || [];
+  
+  
   
   // Villes et quartiers
-  const { data: townsData } = useGetTownsQuery('guard');
-  const towns = townsData?.data || [];
-  const { data: quartersData } = useGetQuartersQuery('guard');
-  const quarters = quartersData?.data || [];
+  const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
+
+  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+
+
+  const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === formData.shop?.town);
 
   // Helpers pour update avec gestion d'erreur
   const handleShopChange = (changes: Partial<Shop>) => {
@@ -597,8 +599,8 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                           <SelectValue placeholder="Sélectionnez une ville" />
                         </SelectTrigger>
                         <SelectContent>
-                          {towns.map((town: any) => (
-                            <SelectItem key={town.id} value={town.name}>{town.name}</SelectItem>
+                          {!townsLoading && towns?.towns.map((town: any) => (
+                            <SelectItem key={town.id} value={town.town_name}>{town.town_name}</SelectItem>
                           ))}
                         </SelectContent>
                       </UISelect>
@@ -613,8 +615,8 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                           <SelectValue placeholder="Sélectionnez un quartier" />
                         </SelectTrigger>
                         <SelectContent>
-                          {quarters.map((quarter: any) => (
-                            <SelectItem key={quarter.id} value={quarter.name}>{quarter.name}</SelectItem>
+                          {!quartersLoading && filteredQuarters?.map((quarter: any) => (
+                            <SelectItem key={quarter.id} value={quarter.quarter_name}>{quarter.quarter_name}</SelectItem>
                           ))}
                         </SelectContent>
                       </UISelect>
