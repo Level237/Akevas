@@ -322,7 +322,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
           {/* Mobile Menu Button */}
           <button 
             onClick={toggleSidebar}
-            className="lg:hidden absolute top-4 left-4 z-50"
+            className="lg:hidden max-sm:hidden absolute top-4 left-4 z-50"
           >
             <Menu className="w-6 h-6 text-gray-600" />
           </button>
@@ -425,26 +425,26 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                   <div className="flex flex-col gap-6 sm:gap-4 p-2 sm:p-4 lg:p-3">
                     
                     <div>
-                      <label className="block text-base font-medium text-gray-700 mb-2">Nom de la boutique</label>
+                      <label className="block text-base max-sm:text-xs font-medium text-gray-700 mb-2">Nom de la boutique</label>
                       <Input
                         value={formData.shop?.shop_name || ''}
                         onChange={e => handleShopChange({ shop_name: e.target.value })}
                         placeholder="Nom de votre boutique"
-                        className="w-full bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20 text-base py-2 sm:py-3 px-3 sm:px-4 rounded-lg"
+                        className="w-full max-sm:text-sm bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20 text-base py-2 sm:py-3 px-3 sm:px-4 rounded-lg"
                       />
                     </div>
                     <div>
-                      <label className="block text-base font-medium text-gray-700 mb-2">Description</label>
+                      <label className="block text-base max-sm:text-xs max-sm:text-sm font-medium text-gray-700 mb-2">Description</label>
                       <Textarea
                         value={formData.shop?.shop_description || ''}
-                        onChange={e => handleShopChange({ shop_description: e.target.value })}
+                            onChange={e => handleShopChange({ shop_description: e.target.value })}
                         placeholder="Décrivez votre boutique en quelques mots..."
-                        className="w-full bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20 text-base py-3"
+                        className="w-full max-sm:text-sm bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20 text-base py-3"
                         rows={3}
                       />
                     </div>
                     <div>
-                      <label className="block text-base font-medium text-gray-700 mb-2">Catégories</label>
+                      <label className="block text-base max-sm:text-xs font-medium text-gray-700 mb-2">Catégories</label>
                       <Select
                         isMulti
                         options={(categoriesByGender?.categories || []).map((cat:any) => ({
@@ -499,63 +499,63 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                 <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="personal">
                   <div className="space-y-6 p-2 sm:p-4 lg:p-8">
                     <div className='flex max-sm:flex-col gap-4'>
-                      <div className='w-1/2'>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+                      <div className='w-1/2 max-sm:w-full'>
+                          <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Prénom</label>
                           <Input
                             value={formData.firstName || ''}
                             onChange={e => handleSellerChange({ firstName: e.target.value })}
                             placeholder="Votre prénom"
-                            className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                            className="bg-white border-gray-200 max-sm:text-xs  focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                           />
                       </div>
-                      <div className='w-1/2'>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+                      <div className='w-1/2 max-sm:w-full'>
+                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Nom</label>
                       <Input
                         value={formData.lastName || ''}
                         onChange={e => handleSellerChange({ lastName: e.target.value })}
                         placeholder="Votre nom"
-                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                       />
                     </div>
                     </div>
                     <div className='flex max-sm:flex-col gap-4'>
-                      <div className='w-1/2'>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                      <div className='w-1/2 max-sm:w-full'>
+                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Email</label>
                       <Input
                         value={formData.email || ''}
                         onChange={e => handleSellerChange({ email: e.target.value })}
                         placeholder="Votre email"
                         type="email"
-                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                       />
                     </div>
-                    <div className='w-1/2'>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+                    <div className='w-1/2 max-sm:w-full'>
+                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Téléphone</label>
                       <Input
                         value={formData.phone_number || ''}
                         onChange={e => handleSellerChange({ phone_number: e.target.value })}
                         placeholder="Votre téléphone"
-                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                       />
                     </div>
                     </div>
                    <div className='flex max-sm:flex-col gap-4'>
-                    <div className='w-1/2'>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Date de naissance</label>
+                    <div className='w-1/2 max-sm:w-full'>
+                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Date de naissance</label>
                       <Input
                         value={formData.birthDate || ''}
                         onChange={e => handleSellerChange({ birthDate: e.target.value })}
                         type="date"
-                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                       />
                     </div>
-                    <div className='w-1/2'>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nationalité</label>
+                    <div className='w-1/2 max-sm:w-full'>
+                      <label className="block max-sm:text-xs text-sm font-medium text-gray-700 mb-2">Nationalité</label>
                       <Input
                         value={formData.nationality || ''}
                         onChange={e => handleSellerChange({ nationality: e.target.value })}
                         placeholder="Votre nationalité"
-                        className="bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
                       />
                     </div>
                    </div>
@@ -590,7 +590,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                 <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="location">
                   <div className="space-y-6 p-2 sm:p-4 lg:p-8">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Ville</label>
+                      <label className="block max-sm:text-xs text-sm font-medium text-gray-700 mb-2">Ville</label>
                       <UISelect
                         value={formData.shop?.town || ''}
                         onValueChange={val => handleShopChange({ town: val })}
@@ -606,7 +606,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                       </UISelect>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Quartier</label>
+                      <label className="block max-sm:text-xs text-sm font-medium text-gray-700 mb-2">Quartier</label>
                       <UISelect
                         value={formData.shop?.quarter || ''}
                         onValueChange={val => handleShopChange({ quarter: val })}
