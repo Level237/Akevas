@@ -16,6 +16,7 @@ import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { compressMultipleImages } from '@/lib/imageCompression';
 
 
 
@@ -151,9 +152,37 @@ const CreateProductPage: React.FC = () => {
     setSelectedSubCategories(selected);
   };
 
-  const handleFeaturedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFeaturedImage(e.target.files[0]);
+      try {
+        const file = e.target.files[0];
+        const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
+        
+        let processedFile = file;
+        
+        if (file.size > maxSize) {
+          const { compressImage } = await import('@/lib/imageCompression');
+          processedFile = await compressImage(file, {
+            maxWidth: 1920,
+            maxHeight: 1080,
+            quality: 0.8,
+            maxSizeMB: 2,
+          });
+          
+          toast.success("Image compressée avec succès", {
+            description: `Taille réduite de ${(file.size / 1024 / 1024).toFixed(1)}Mo à ${(processedFile.size / 1024 / 1024).toFixed(1)}Mo`,
+            duration: 3000,
+          });
+        }
+        
+        setFeaturedImage(processedFile);
+      } catch (error) {
+        console.error('Erreur lors de la compression de l\'image:', error);
+        toast.error("Erreur lors de la compression", {
+          description: "Veuillez essayer avec une autre image",
+          duration: 4000,
+        });
+      }
     }
   };
 
@@ -161,10 +190,38 @@ const CreateProductPage: React.FC = () => {
     setFeaturedImage(null);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newImages = Array.from(e.target.files);
-      setImages([...images, ...newImages]);
+      try {
+        const files = e.target.files;
+        const maxImages = 6; // Limite le nombre total d'images
+        
+        if (images.length + files.length > maxImages) {
+          toast.error(`Vous ne pouvez sélectionner que ${maxImages} images au total.`);
+          return;
+        }
+
+        // Compression multiple des images
+        const compressedFiles = await compressMultipleImages(files, {
+          maxWidth: 1920,
+          maxHeight: 1080,
+          quality: 0.8,
+          maxSizeMB: 2,
+        });
+
+        setImages([...images, ...compressedFiles]);
+        
+        toast.success("Images compressées et ajoutées avec succès", {
+          description: `${files.length} image(s) ajoutée(s)`,
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error('Erreur lors de la compression des images:', error);
+        toast.error("Erreur lors de la compression", {
+          description: "Veuillez essayer avec une autre image",
+          duration: 4000,
+        });
+      }
     }
   };
 
@@ -631,12 +688,45 @@ const CreateProductPage: React.FC = () => {
     setVariationFrames(variationFrames.filter(frame => frame.id !== frameId));
   };
 
-  const handleVariationImageUpload = (frameId: string, files: FileList) => {
-    setVariationFrames(variationFrames.map(frame =>
-      frame.id === frameId
-        ? { ...frame, images: [...frame.images, ...Array.from(files)] }
-        : frame
-    ));
+  const handleVariationImageUpload = async (frameId: string, files: FileList) => {
+    try {
+      // Limite le nombre d'images par variation (exemple : 3)
+      const maxImages = 3;
+      const currentFrame = variationFrames.find(frame => frame.id === frameId);
+      const currentImages = currentFrame?.images || [];
+      
+      if (currentImages.length + files.length > maxImages) {
+        toast.error(`Vous ne pouvez sélectionner que ${maxImages} images par variation.`);
+        return;
+      }
+
+      // Compression multiple des images
+      const compressedFiles = await compressMultipleImages(files, {
+        maxWidth: 1920,
+        maxHeight: 1080,
+        quality: 0.8,
+        maxSizeMB: 2,
+      });
+
+      // Mise à jour des variations avec les images compressées
+      setVariationFrames(variationFrames.map(frame =>
+        frame.id === frameId
+          ? { ...frame, images: [...frame.images, ...compressedFiles] }
+          : frame
+      ));
+
+      toast.success("Images compressées et ajoutées avec succès", {
+        description: `${files.length} image(s) ajoutée(s) à la variation`,
+        duration: 3000,
+      });
+
+    } catch (error) {
+      console.error('Erreur lors de la compression des images:', error);
+      toast.error("Erreur lors de la compression", {
+        description: "Veuillez essayer avec une autre image",
+        duration: 4000,
+      });
+    }
   };
 
   const removeVariationImage = (frameId: string, imageIndex: number) => {
