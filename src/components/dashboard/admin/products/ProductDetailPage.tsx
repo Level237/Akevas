@@ -207,11 +207,11 @@ export default function ProductDetailPageAdmin() {
               </div>
 
               {/* Variations si produit variable */}
-              {product.variations && product.variations.length > 0 && (
+              {!isLoading && product.variations && product.variations.length > 0 && (
                 <div>
                   <h2 className="text-lg font-semibold mb-2">Variations</h2>
                   <div className="space-y-4">
-                    {product.variations.map((variation: any, idx: number) => (
+                    {product?.variations.map((variation: any, idx: number) => (
                       <div key={idx} className="border rounded-lg p-3">
                         <div className="flex items-center gap-2 mb-2">
                           <span
@@ -225,19 +225,29 @@ export default function ProductDetailPageAdmin() {
                           <table className="min-w-[300px] text-sm">
                             <thead>
                               <tr>
-                                <th className="px-2 py-1 text-left">Taille</th>
+                                { variation.attributes  && variation.attributes.length > 0 && (
+                                  <th className="px-2 py-1 text-left">Taille</th>
+                                )}
                                 <th className="px-2 py-1 text-left">Prix</th>
                                 <th className="px-2 py-1 text-left">Stock</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {variation.attributes.map((attr: any) => (
+                              {variation.attributes ? variation.attributes.map((attr: any) => (
                                 <tr key={attr.id}>
                                   <td className="px-2 py-1">{attr.value}</td>
                                   <td className="px-2 py-1">{Number(attr.price).toLocaleString()} FCFA</td>
                                   <td className="px-2 py-1">{attr.quantity}</td>
                                 </tr>
-                              ))}
+                              )) : 
+                                
+                                  <tr key={variation.id}>
+                                    
+                                    <td className="px-2 py-1">{variation.price} FCFA</td>
+                                    <td className="px-2 py-1">{variation.quantity}</td>
+                                  </tr>
+                                
+                              }
                             </tbody>
                           </table>
                         </div>
