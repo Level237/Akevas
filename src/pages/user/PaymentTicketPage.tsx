@@ -1,10 +1,10 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle, Package, MapPin, QrCode } from 'lucide-react';
+import { CheckCircle, Package, MapPin, QrCode, Download, Loader2 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useShowPaymentWithReferenceQuery } from '@/services/auth';
 import jsPDF from 'jspdf';
@@ -21,6 +21,7 @@ export default function PaymentTicketPage() {
   const { ref } = useParams();
   const { data: payment, isLoading } = useShowPaymentWithReferenceQuery(ref);
   const ticketRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   if (isLoading || !payment) {
     return <Skeleton className="w-full h-[600px]" />;
@@ -224,17 +225,30 @@ export default function PaymentTicketPage() {
           className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 rounded-xl text-base sm:text-lg font-semibold shadow-lg"
           onClick={async () => {
             if (!ticketRef.current) return;
-            const canvas = await html2canvas(ticketRef.current, { scale: 2 });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const imgWidth = pageWidth - 40;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
-            pdf.save(`ticket-${payment.transaction_ref}.pdf`);
+            setIsDownloading(true);
+            try {
+              const canvas = await html2canvas(ticketRef.current, { scale: 2 });
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+              const pageWidth = pdf.internal.pageSize.getWidth();
+              const imgWidth = pageWidth - 40;
+              const imgHeight = (canvas.height * imgWidth) / canvas.width;
+              pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+              pdf.save(`ticket-${payment.transaction_ref}.pdf`);
+            } catch (error) {
+              console.error('Error downloading ticket:', error);
+            } finally {
+              setIsDownloading(false);
+            }
           }}
+          disabled={isDownloading}
         >
-          Télécharger le ticket
+          {isDownloading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="mr-2 h-4 w-4" />
+          )}
+          {isDownloading ? 'Téléchargement...' : 'Télécharger le ticket'}
         </Button>
       </div>
     </>
