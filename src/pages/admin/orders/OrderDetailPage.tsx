@@ -1,110 +1,177 @@
 import { useParams, useNavigate } from 'react-router-dom';
- // À adapter selon ton service
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Package, MapPin, User, ArrowLeft } from 'lucide-react';
+import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone,Truck, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAdminDetailOrderQuery } from '@/services/adminService';
+import { Button } from '@/components/ui/button';
 
-const getStatusColor = (status: string) => {
-    const statusColors = {
-        '0': 'bg-yellow-100 text-yellow-800',
-        '1': 'bg-blue-100 text-blue-800',
-        '2': 'bg-purple-100 text-purple-800',
-        '3': 'bg-green-100 text-green-800',
-        '4': 'bg-red-100 text-red-800',
-    };
-    return statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800';
-};
 
-const getStatusText = (status: string) => {
-    const statusText = {
-        '0': 'En attente',
-        '1': 'En cours de livraison',
-        '2': 'Livré',
-        '3': 'Annulé',
-    };
-    return statusText[status as keyof typeof statusText] || 'Inconnu';
-};
-
-const isVariedOrder = (orderDetails: any[]) => {
-    return orderDetails.some(
-        (detail: any) => detail.variation_attribute || detail.product_variation
-    );
-};
-
-const getProductDetails = (orderDetails: any[]) => {
-    return orderDetails.map((detail: any) => {
-        // Cas 1: variation_attribute (couleur + taille/pointure)
-        if (detail.variation_attribute && detail.variation_attribute.product_variation) {
-            const variation = detail.variation_attribute.product_variation;
-            return {
-                id: detail.id,
-                name: variation.product_name || 'Produit inconnu',
-                color: variation.color?.name || '',
-                size: detail.variation_attribute.value || '', // taille/pointure
-                quantity: detail.variation_quantity,
-                price: detail.variation_price,
-                image: variation.images?.[0]?.path || '',
-                total: parseInt(detail.variation_quantity) * parseFloat(detail.variation_price)
-            };
-        }
-        // Cas 2: product_variation (couleur seule)
-        else if (detail.product_variation) {
-            return {
-                id: detail.id,
-                name: detail.product_variation.product_name || 'Produit inconnu',
-                color: detail.product_variation.color?.name || '',
-                size: '', // pas de taille
-                quantity: detail.variation_quantity,
-                price: detail.variation_price,
-                image: detail.product_variation.images?.[0]?.path || '',
-                total: parseInt(detail.variation_quantity) * parseFloat(detail.variation_price)
-            };
-        }
-        // Cas 3: produit simple
-        else {
-            return {
-                id: detail.id,
-                name: detail.product?.name || 'Produit inconnu',
-                color: '',
-                size: '',
-                quantity: detail.quantity || 1,
-                price: detail.price || 0,
-                image: detail.product?.product_profile || '',
-                total: (detail.quantity || 1) * (detail.price || 0)
-            };
-        }
+const formatDateSafely = (dateString: string) => {
+  try {
+    if (!dateString) return 'Date non disponible';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Date non disponible';
+    return date.toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
+  } catch (error) {
+    return 'Date non disponible';
+  }
 };
 
-const calculateItemsTotal = (orderDetails: any[]) => {
-    return orderDetails.reduce((total: number, detail: any) => {
-        if (detail.variation_attribute || detail.product_variation) {
-            return total + (parseInt(detail.variation_quantity) * parseFloat(detail.variation_price));
-        } else {
-            return total + ((detail.quantity || 1) * (detail.price || 0));
-        }
-    }, 0);
+const formatPrice = (price: string | number) => {
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+  if (isNaN(numPrice)) return '0 XAF';
+  return `${numPrice.toLocaleString('fr-FR')} XAF`;
+};
+
+const getOrderItems = (order: any) => {
+  const allOrderItems: any[] = [];
+  
+  if (!order) {
+    return allOrderItems;
+  }
+  
+  // Traitement des variations (orderVariations)
+  if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
+    order.orderVariations.forEach((item: any) => {
+      if (item && item.variation_attribute && item.variation_attribute.product_variation) {
+        const variation = item.variation_attribute.product_variation;
+        const attributeValue = item.variation_attribute.value;
+        
+        allOrderItems.push({
+          id: item.id,
+          name: variation.product_name || 'Produit inconnu',
+          color: variation.color?.name || '',
+          size: attributeValue || '',
+          quantity: parseInt(item.variation_quantity) || 0,
+          price: parseFloat(item.variation_price) || 0,
+          image: variation.images?.[0]?.path || '',
+          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+          type: 'variation'
+        });
+      }
+    });
+  }
+  
+  // Traitement des produits simples (order_details)
+  if (order.order_details && Array.isArray(order.order_details) && order.order_details.length > 0) {
+    order.order_details.forEach((item: any) => {
+      // Traitement des variations dans order_details
+      if (item.variation_attribute && item.variation_attribute.product_variation) {
+        const variation = item.variation_attribute.product_variation;
+        const attributeValue = item.variation_attribute.value;
+        
+        allOrderItems.push({
+          id: item.id,
+          name: variation.product_name || 'Produit inconnu',
+          color: variation.color?.name || '',
+          size: attributeValue || '',
+          quantity: parseInt(item.variation_quantity) || 0,
+          price: parseFloat(item.variation_price) || 0,
+          image: variation.images?.[0]?.path || '',
+          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+          type: 'variation'
+        });
+      }
+      // Traitement des produits simples
+      else if (item.product) {
+        allOrderItems.push({
+          id: item.id,
+          name: item.product?.product_name || 'Produit inconnu',
+          color: '',
+          size: '',
+          quantity: parseInt(item.quantity) || 0,
+          price: parseFloat(item.price) || 0,
+          image: item.product?.product_profile || '',
+          total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
+          type: 'simple'
+        });
+      }
+    });
+  }
+  
+  return allOrderItems;
+};
+
+const getTotalItems = (orderItems: any[]) => {
+  return orderItems.reduce((total: number, item: any) => {
+    return total + (item.quantity || 0);
+  }, 0);
+};
+
+const getDeliveryLocation = (order: any) => {
+  if (order.quarter_delivery) {
+    return order.quarter_delivery;
+  }
+  if (order.emplacement) {
+    return order.emplacement;
+  }
+  if (order.addresse) {
+    return order.addresse;
+  }
+  return 'Adresse non spécifiée';
+};
+
+const getStatusInfo = (status: string) => {
+    switch (status) {
+        case "0":
+            return { text: "En attente", color: "bg-yellow-100 text-yellow-700", icon: Clock };
+        case "1":
+            return { text: "En cours", color: "bg-blue-100 text-blue-700", icon: Truck };
+        case "2":
+            return { text: "Livré", color: "bg-green-100 text-green-700", icon: CheckCircle };
+        case "3":
+            return { text: "Annulé", color: "bg-red-100 text-red-700", icon: AlertCircle };
+        default:
+            return { text: "Inconnu", color: "bg-gray-100 text-gray-700", icon: AlertCircle };
+    }
+};
+
+const getPaymentStatus = (isPay: number) => {
+  return isPay === 1 ? { text: "Payé", color: "bg-green-100 text-green-700", icon: CheckCircle } : { text: "En attente", color: "bg-yellow-100 text-yellow-700", icon: Clock };
 };
 
 export default function AdminOrderDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { data: order, isLoading } = useAdminDetailOrderQuery(id);
-    console.log(order)
+    
+    console.log('Order data:', order);
 
-    if (isLoading || !order) {
+    if (isLoading) {
         return <Skeleton className="w-full h-[600px]" />;
     }
 
-    const productDetails = getProductDetails(order?.order_details || []);
-    const itemsTotal = calculateItemsTotal(order?.order_details || []);
-    const isVaried = isVariedOrder(order?.order_details || []);
+    if (!order) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <div className="text-center py-12">
+                    <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500">Commande non trouvée</p>
+                </div>
+            </div>
+        );
+    }
+
+    const orderItems = getOrderItems(order);
+    const totalItems = getTotalItems(orderItems);
+    const hasVariations = orderItems.some((item: any) => item.type === 'variation');
+    const itemsTotal = orderItems.reduce((total: number, item: any) => total + item.total, 0);
+    const statusInfo = getStatusInfo(order.status);
+    const StatusIcon = statusInfo.icon;
+    const paymentStatus = getPaymentStatus(order.isPay);
+    const PaymentIcon = paymentStatus.icon;
+    const deliveryLocation = getDeliveryLocation(order);
 
     return (
-        <div className="max-w-7xl mt-12 mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -119,26 +186,34 @@ export default function AdminOrderDetailPage() {
                     <ArrowLeft className="w-4 h-4" />
                     Retour à la liste des commandes
                 </button>
-                {/* En-tête */}
+
+                {/* En-tête de la commande */}
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <h1 className="text-2xl font-bold">
                             Commande #{order?.id}
                         </h1>
-                        {isVaried && (
+                        {hasVariations && (
                             <Badge className="bg-purple-100 text-purple-800">
                                 Produits variés
                             </Badge>
                         )}
                     </div>
-                    <Badge className={getStatusColor(order?.status)}>
-                        {getStatusText(order?.status)}
-                    </Badge>
+                    <div className="flex items-center gap-3">
+                        <Badge className={`${statusInfo.color}`}>
+                            <StatusIcon className="h-3 w-3 mr-1" />
+                            {statusInfo.text}
+                        </Badge>
+                        <Badge className={`${paymentStatus.color}`}>
+                            <PaymentIcon className="h-3 w-3 mr-1" />
+                            {paymentStatus.text}
+                        </Badge>
+                    </div>
                 </div>
 
-                {/* Infos principales */}
+                {/* Informations principales */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Détails commande */}
+                    {/* Détails de la commande */}
                     <Card className="p-6 space-y-4">
                         <h2 className="text-xl font-semibold flex items-center gap-2">
                             <Package className="w-5 h-5" />
@@ -146,51 +221,51 @@ export default function AdminOrderDetailPage() {
                         </h2>
                         <div className="space-y-3">
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Date de commande</span>
-                                <span className="font-medium">{order?.created_at?.split('T')[0]}</span>
-                            </div>
-
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">Quantité</span>
-                                <span className="font-medium">{productDetails[0].quantity}</span>
+                                <span className="text-gray-600 flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" />
+                                    Date de commande
+                                </span>
+                                <span className="font-medium">{formatDateSafely(order?.created_at)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Total des articles</span>
-                                <span className="font-medium">{itemsTotal} XAF</span>
+                                <span className="font-medium">{formatPrice(itemsTotal)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Frais de livraison</span>
-                                <span className="font-medium">{order?.fee_of_shipping || 0} XAF</span>
+                                <span className="font-medium">{formatPrice(order?.fee_of_shipping || 0)}</span>
                             </div>
                             <div className="flex justify-between border-t pt-2">
                                 <span className="text-gray-800 font-semibold">Total</span>
-                                <span className="font-bold text-lg">{order?.total_amount} XAF</span>
+                                <span className="font-bold text-lg">{formatPrice(order?.total_amount)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Méthode de paiement</span>
-                                <span className="font-medium">{order?.payment_method === "0" && "Mobile Money"}</span>
+                                <span className="font-medium">{order?.payment_method === "0" ? "Mobile Money" : "Carte de crédit"}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Nombre d'articles</span>
+                                <span className="font-medium">{totalItems} article(s)</span>
                             </div>
                         </div>
                     </Card>
 
-                    {/* Client & livraison */}
+                    {/* Adresse de livraison */}
                     <Card className="p-6 space-y-4">
                         <h2 className="text-xl font-semibold flex items-center gap-2">
-                            <User className="w-5 h-5" />
-                            Client
+                            <MapPin className="w-5 h-5" />
+                            Adresse de livraison
                         </h2>
                         <div className="space-y-2">
                             <p className="font-medium">{order?.userName}</p>
-                            <p className="text-gray-600">{order?.userPhone}</p>
+                            <p className="text-gray-600 flex items-center gap-1">
+                                <Phone className="h-3 w-3" />
+                                {order?.userPhone}
+                            </p>
                             <p className="text-gray-600">{order?.email}</p>
-                        </div>
-                        <h2 className="text-xl font-semibold flex items-center gap-2 mt-4">
-                            <MapPin className="w-5 h-5" />
-                            Livraison
-                        </h2>
-                        <div className="space-y-2">
-                            <p className="text-gray-600"> {order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
-                            {order.emplacement == null && order.addresse}</p>
+                            <div className="mt-3 pt-3 border-t">
+                                <p className="text-gray-600">{deliveryLocation}</p>
+                            </div>
                         </div>
                     </Card>
                 </div>
@@ -199,57 +274,105 @@ export default function AdminOrderDetailPage() {
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6">Articles commandés</h2>
                     <div className="space-y-4">
-                        {productDetails.map((item: any) => (
-                            <motion.div
-                                key={item.id}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
-                            >
-                                <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-20 h-20 object-cover rounded-md"
-                                />
-                                <div className="flex-1">
-                                    <h3 className="font-medium">{item.name}</h3>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <p className="text-gray-600">Quantité: {item.quantity}</p>
-                                        {item.color && (
-                                            <Badge variant="outline" className="text-xs">
-                                                {item.color}
-                                            </Badge>
-                                        )}
-                                        {item.size && (
-                                            <Badge variant="outline" className="text-xs">
-                                                {item.size}
-                                            </Badge>
-                                        )}
+                        {orderItems.length > 0 ? (
+                            orderItems.map((item: any) => (
+                                <motion.div
+                                    key={item.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
+                                >
+                                    <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
+                                        <img
+                                            src={item.image}
+                                            alt={item.name}
+                                            className="w-full h-full object-cover rounded-lg"
+                                            onError={(e) => {
+                                                e.currentTarget.src = 'https://via.placeholder.com/80x80?text=Image';
+                                            }}
+                                        />
                                     </div>
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        Prix unitaire: {item.price} XAF
-                                    </p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="font-medium">{item.total} XAF</p>
-                                </div>
-                            </motion.div>
-                        ))}
+                                    <div className="flex-1">
+                                        <h3 className="font-medium">{item.name}</h3>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <p className="text-gray-600">Quantité: {item.quantity}</p>
+                                            {item.color && (
+                                                <Badge variant="outline" className="text-xs">
+                                                    {item.color}
+                                                </Badge>
+                                            )}
+                                            {item.size && (
+                                                <Badge variant="outline" className="text-xs">
+                                                    Taille: {item.size}
+                                                </Badge>
+                                            )}
+                                        </div>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            Prix unitaire: {formatPrice(item.price)}
+                                        </p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-medium">{formatPrice(item.total)}</p>
+                                    </div>
+                                </motion.div>
+                            ))
+                        ) : (
+                            <div className="text-center py-8 text-gray-500">
+                                <Package className="w-12 h-12 mx-auto mb-2" />
+                                <p>Aucun article trouvé pour cette commande</p>
+                            </div>
+                        )}
                     </div>
+                    
                     {/* Résumé des totaux */}
                     <div className="mt-6 pt-4 border-t">
                         <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Sous-total ({productDetails.length} article(s))</span>
-                            <span className="font-medium">{itemsTotal} XAF</span>
+                            <span className="text-gray-600">Sous-total ({totalItems} article(s))</span>
+                            <span className="font-medium">{formatPrice(itemsTotal)}</span>
                         </div>
                         <div className="flex justify-between items-center mt-2">
                             <span className="text-gray-600">Frais de livraison</span>
-                            <span className="font-medium">{order?.fee_of_shipping || 0} XAF</span>
+                            <span className="font-medium">{formatPrice(order?.fee_of_shipping || 0)}</span>
                         </div>
                         <div className="flex justify-between items-center mt-3 pt-3 border-t">
                             <span className="text-lg font-semibold">Total</span>
-                            <span className="text-lg font-bold">{order?.total_amount} XAF</span>
+                            <span className="text-lg font-bold">{formatPrice(order?.total_amount)}</span>
                         </div>
+                    </div>
+                </Card>
+
+                {/* Actions administrateur */}
+                <Card className="p-6">
+                    <h2 className="text-xl font-semibold mb-6">Actions administrateur</h2>
+                    <div className="flex flex-wrap gap-3">
+                        <Button 
+                            variant="outline" 
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                        >
+                            <Truck className="h-4 w-4 mr-2" />
+                            Marquer comme expédié
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            className="text-green-600 border-green-200 hover:bg-green-50"
+                        >
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Marquer comme livré
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            className="text-red-600 border-red-200 hover:bg-red-50"
+                        >
+                            <AlertCircle className="h-4 w-4 mr-2" />
+                            Annuler la commande
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                        >
+                            <Receipt className="h-4 w-4 mr-2" />
+                            Générer facture
+                        </Button>
                     </div>
                 </Card>
             </motion.div>
