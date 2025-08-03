@@ -3,12 +3,15 @@ import { Card } from '@/components/ui/card';
 import {
     Package,
     MapPin,
+    Receipt,
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetOrderDetailQuery } from '@/services/auth';
+import AsyncLink from '@/components/ui/AsyncLink';
 
 const getOrderItems = (order: any) => {
   const allOrderItems: any[] = [];
@@ -128,9 +131,16 @@ const OrderDetailPage = () => {
                             </Badge>
                         )}
                     </div>
-                    <Badge className={getStatusColor(order?.status === "0" ? "en_attente" : order?.status === "1" ? "confirmé" : order?.status === "2" ? "en_cours" : order?.status === "3" ? "livré" : "annulé")}>
-                        {order?.status === "0" ? "En attente" : order?.status === "1" ? "En cours de livraison" : order?.status === "2" ? "Livré" : "Annulé"}
-                    </Badge>
+                    <div className="flex items-center gap-3">
+                        <Badge className={getStatusColor(order?.status === "0" ? "en_attente" : order?.status === "1" ? "confirmé" : order?.status === "2" ? "en_cours" : order?.status === "3" ? "livré" : "annulé")}>
+                            {order?.status === "0" ? "En attente" : order?.status === "1" ? "En cours de livraison" : order?.status === "2" ? "Livré" : "Annulé"}
+                        </Badge>
+                        <Button className="bg-green-600 hover:bg-green-700 text-white" asChild>
+                            <AsyncLink to={`/user/payment/${payment?.transaction_ref}`}>
+                                <Receipt className="w-4 h-4 mr-2" /> Voir le ticket
+                            </AsyncLink>
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Informations principales */}
