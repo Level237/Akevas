@@ -195,7 +195,7 @@ export default function PaymentTicketPage() {
               <span className="font-medium">{order.fee_of_shipping || 0} XAF</span>
             </div>
               <div className="flex justify-between items-center text-xs sm:text-base">
-              <span className="text-gray-600">TVA (19.25%)</span>
+              <span className="text-gray-600">TVA (5%)</span>
               <span className="font-medium">{((parseFloat(order.total_amount) * TAX_RATE)).toFixed(2)} XAF</span>
             </div>
               <div className="flex justify-between items-center mt-2 pt-2 border-t text-base sm:text-lg">
