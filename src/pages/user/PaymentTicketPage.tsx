@@ -139,7 +139,7 @@ export default function PaymentTicketPage() {
                 image = item.product_variation.images?.[0]?.path || '';
                 total = parseInt(item.variation_quantity) * parseFloat(item.variation_price);
               } else {
-                name = item.product?.name || 'Produit inconnu';
+                name = item.product?.product_name || 'Produit inconnu';
                 color = '';
                 size = '';
                 quantity = item.quantity || 1;
