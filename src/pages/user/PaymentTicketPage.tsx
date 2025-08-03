@@ -17,6 +17,9 @@ const statusMap: Record<string, { label: string; color: string }> = {
   '3': { label: 'Annulé', color: 'bg-red-100 text-red-800' },
 };
 
+
+const TAX_RATE = 0.05;
+
 export default function PaymentTicketPage() {
   const { ref } = useParams();
   const { data: payment, isLoading } = useShowPaymentWithReferenceQuery(ref);
@@ -57,7 +60,48 @@ export default function PaymentTicketPage() {
   
   const order = payment.order;
   const status = statusMap[order.status] || statusMap['0'];
-  const details = order.order_details;
+  
+  // Combiner les deux types de détails de commande
+  const allOrderItems = [] as any[];
+  
+  // Ajouter les produits avec variation (orderVariations)
+  if (order.orderVariations && order.orderVariations.length > 0) {
+    order.orderVariations.forEach((item: any) => {
+      if (item.variation_attribute && item.variation_attribute.product_variation) {
+        const variation = item.variation_attribute.product_variation;
+        const attributeValue = item.variation_attribute.value;
+        
+        allOrderItems.push({
+          id: item.id,
+          name: variation.product_name || 'Produit inconnu',
+          color: variation.color?.name || '',
+          size: attributeValue || '',
+          quantity: parseInt(item.variation_quantity),
+          price: parseFloat(item.variation_price),
+          image: variation.images?.[0]?.path || '',
+          total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
+          type: 'variation'
+        });
+      }
+    });
+  }
+  
+  // Ajouter les produits sans variation (order_details)
+  if (order.order_details && order.order_details.length > 0) {
+    order.order_details.forEach((item: any) => {
+      allOrderItems.push({
+        id: item.id,
+        name: item.product?.product_name || 'Produit inconnu',
+        color: '',
+        size: '',
+        quantity: parseInt(item.quantity),
+        price: parseFloat(item.price),
+        image: item.product?.product_profile || '',
+        total: parseInt(item.quantity) * parseFloat(item.price),
+        type: 'simple'
+      });
+    });
+  }
   
   return (
     <>
@@ -112,70 +156,33 @@ export default function PaymentTicketPage() {
             <Package className="w-5 h-5" /> Détails de la commande
           </h2>
           <div className="space-y-3 sm:space-y-4">
-            {details.map((item: any) => {
-              let name = 'Produit inconnu';
-              let color = '';
-              let size = '';
-              let quantity = 1;
-              let price = 0;
-              let image = '';
-              let total = 0;
-
-              if (item.variation_attribute && item.variation_attribute.product_variation) {
-                const variation = item.variation_attribute.product_variation;
-                name = variation.product_name || 'Produit inconnu';
-                color = variation.color?.name || '';
-                size = item.variation_attribute.value || '';
-                quantity = item.variation_quantity;
-                price = item.variation_price;
-                image = variation.images?.[0]?.path || '';
-                total = parseInt(item.variation_quantity) * parseFloat(item.variation_price);
-              } else if (item.product_variation) {
-                name = item.product_variation.product_name || 'Produit inconnu';
-                color = item.product_variation.color?.name || '';
-                size = '';
-                quantity = item.variation_quantity;
-                price = item.variation_price;
-                image = item.product_variation.images?.[0]?.path || '';
-                total = parseInt(item.variation_quantity) * parseFloat(item.variation_price);
-              } else {
-                name = item.product?.product_name || 'Produit inconnu';
-                color = '';
-                size = '';
-                quantity = item.quantity || 1;
-                price = item.price || 0;
-                image = item.product?.product_profile || '';
-                total = (item.quantity || 1) * (item.price || 0);
-              }
-
-              return (
-                <div key={item.id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4">
-                  <img
-                    src={image}
-                    alt={name}
-                    className="w-16 h-16 object-cover rounded-md border"
-                  />
-                  <div className="flex-1">
-                    <div className="font-medium">{name}</div>
-                    <div className="flex items-center gap-2 text-xs mt-1">
-                      <span className="text-gray-600">Quantité: {quantity}</span>
-                      {color && (
-                        <Badge variant="outline" className="text-xs">
-                          {color}
-                        </Badge>
-                      )}
-                      {size && (
-                        <Badge variant="outline" className="text-xs">
-                          {size}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">Prix unitaire: {price} XAF</div>
+            {allOrderItems.map((item: any) => (
+              <div key={item.id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-16 h-16 object-cover rounded-md border"
+                />
+                <div className="flex-1">
+                  <div className="font-medium">{item.name}</div>
+                  <div className="flex items-center gap-2 text-xs mt-1">
+                    <span className="text-gray-600">Quantité: {item.quantity}</span>
+                    {item.color && (
+                      <Badge variant="outline" className="text-xs">
+                        {item.color}
+                      </Badge>
+                    )}
+                    {item.size && (
+                      <Badge variant="outline" className="text-xs">
+                        {item.size}
+                      </Badge>
+                    )}
                   </div>
-                  <div className="text-right font-semibold">{total} XAF</div>
+                  <div className="text-xs text-gray-500 mt-1">Prix unitaire: {item.price} XAF</div>
                 </div>
-              );
-            })}
+                <div className="text-right font-semibold">{item.total} XAF</div>
+              </div>
+            ))}
           </div>
           <div className="mt-5 sm:mt-6 pt-4 border-t">
             <div className="flex flex-col gap-2">
@@ -186,6 +193,10 @@ export default function PaymentTicketPage() {
               <div className="flex justify-between items-center text-xs sm:text-base">
               <span className="text-gray-600">Frais de livraison</span>
               <span className="font-medium">{order.fee_of_shipping || 0} XAF</span>
+            </div>
+              <div className="flex justify-between items-center text-xs sm:text-base">
+              <span className="text-gray-600">TVA (19.25%)</span>
+              <span className="font-medium">{((parseFloat(order.total_amount) * TAX_RATE)).toFixed(2)} XAF</span>
             </div>
               <div className="flex justify-between items-center mt-2 pt-2 border-t text-base sm:text-lg">
                 <span className="font-semibold">Total</span>
@@ -207,7 +218,7 @@ export default function PaymentTicketPage() {
               user: payment.user,
               amount: payment.price,
               date: order.created_at,
-              products: details.map((item: any) => item.product_variation?.product_name)
+              products: allOrderItems.map((item: any) => item.name)
             })}
               size={140}
             level="H"
