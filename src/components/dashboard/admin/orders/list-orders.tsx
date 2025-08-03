@@ -2,7 +2,7 @@ import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { CheckCheck, Eye, Package, User, Calendar, MapPin, Phone, Truck, Clock, CheckCircle, AlertCircle, CreditCard, DollarSign, ShoppingBag } from "lucide-react";
+import { CheckCheck, Eye, Package, Calendar, MapPin, Phone, Truck, Clock, CheckCircle, AlertCircle, DollarSign} from "lucide-react";
 import { useAdminListOrdersQuery } from "@/services/adminService";
 import AsyncLink from "@/components/ui/AsyncLink";
 import { Card, CardContent } from '@/components/ui/card';
@@ -110,18 +110,7 @@ const getTotalItems = (orderItems: any[]) => {
   }, 0);
 };
 
-const getProductImage = (orderItems: any[]) => {
-  if (orderItems.length > 0) {
-    // Essayer d'abord de trouver une image valide
-    const itemWithImage = orderItems.find(item => item.image && item.image !== '');
-    if (itemWithImage) {
-      return itemWithImage.image;
-    }
-    // Si aucune image trouvée, retourner la première image disponible
-    return orderItems[0].image || '';
-  }
-  return '';
-};
+
 
 const getDeliveryLocation = (order: any) => {
   if (order.quarter_delivery) {

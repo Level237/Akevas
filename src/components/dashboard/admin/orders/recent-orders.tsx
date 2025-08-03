@@ -1,26 +1,11 @@
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import AsyncLink from "@/components/ui/AsyncLink";
 import { Loader2, Package, ArrowRight } from "lucide-react";
 import { useAdminRecentOrdersQuery } from "@/services/adminService";
 
-const formatDateSafely = (dateString: string) => {
-  try {
-    if (!dateString) return 'Date non disponible';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Date non disponible';
-    return date.toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  } catch (error) {
-    return 'Date non disponible';
-  }
-};
+
 
 const getOrderItems = (order: any) => {
   const allOrderItems: any[] = [];
