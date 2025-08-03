@@ -133,7 +133,7 @@ const OrdersPage = () => {
                 className="space-y-6"
             >
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Mes Commandes</h1>
+                    <h1 className="text-2xl max-sm:text-lg font-bold">Mes Commandes</h1>
                     <Button variant="outline" asChild>
                         <AsyncLink to="/products">Continuer mes achats</AsyncLink>
                     </Button>
@@ -207,7 +207,7 @@ const OrdersPage = () => {
                                             />
                                         </div>
                                         <div className="flex-1 space-y-2">
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex max-sm:flex-col items-center gap-2">
                                                 <h3 className="font-medium">Commande #{orderId}</h3>
                                                 <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeColor(orderData?.status)}`}>
                                                     {getStatusText(orderData?.status)}
@@ -218,25 +218,25 @@ const OrdersPage = () => {
                                                     </span>
                                                 )}
                                             </div>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-sm  text-gray-500">
                                                 {totalItems} article(s) • {order.price || orderData?.total_amount} XAF
                                             </p>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-sm  text-gray-500">
                                                 Commandé le {new Date(orderData?.created_at).toLocaleDateString()}
                                             </p>
                                             {/* Affichage des détails des produits */}
-                                            <div className="text-xs text-gray-600">
+                                            <div className="text-xs  text-gray-600">
                                                 {orderItems.slice(0, 2).map((item: any, index: number) => (
-                                                    <div key={index} className="flex items-center gap-2">
-                                                        <span>• {item.name}</span>
+                                                    <div key={index} className="flex  items-center gap-2">
+                                                        <span className="max-sm:text-xs">• {item.name}</span>
                                                         {item.color && (
                                                             <span className="text-purple-600">({item.color})</span>
                                                         )}
                                                         {item.size && (
-                                                            <span className="text-blue-600">Taille: {item.size}</span>
+                                                            <span className="text-blue-600 max-sm:text-xs">Taille: {item.size}</span>
                                                         )}
                                                         <span>x{item.quantity}</span>
-                                                        <span className="text-gray-500">({item.price} XAF)</span>
+                                                        <span className="text-gray-500 max-sm:text-xs">({item.price} XAF)</span>
                                                     </div>
                                                 ))}
                                                 {orderItems.length > 2 && (
