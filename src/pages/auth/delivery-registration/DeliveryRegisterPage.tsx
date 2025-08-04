@@ -23,6 +23,7 @@ import { SelectItem } from '@/components/ui/select';
 import { SelectValue } from '@/components/ui/select';
 import { useDispatch } from 'react-redux';
 import { setPersonalInfoDelivery } from '@/store/delivery/deliverySlice';
+import { Input } from '@/components/ui/input';
 const steps = [
   {
     id: 1,
@@ -73,10 +74,18 @@ const DeliveryRegisterPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    if (name === 'phone') {
+      const newValue = value.replace(/^\+?237\s?/, '');
+      setFormData(prev => ({
+        ...prev,
+        [name]: newValue
+      }));
+    } else {
+      setFormData(prev => ({
+          ...prev,
+        [name]: value
+      }));
+    }
   };
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -226,19 +235,27 @@ const DeliveryRegisterPage: React.FC = () => {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Téléphone
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-
-                      />
-                    </div>
+                    <div className="">
+            <label className="max-sm:text-sm" htmlFor="phone">Numéro de Téléphone</label>
+            <div className="flex items-center bg-white/80 rounded-xl shadow-sm border border-gray-200 focus-within:border-blue-500 transition-all">
+              <button
+                type="button"
+                className="flex items-center justify-center w-10 h-10 rounded-l-xl border-none focus:outline-none cursor-default"
+                tabIndex={-1}
+                disabled
+              >
+                <span role="img" aria-label="Cameroun" className="text-white text-sm">🇨🇲</span>
+              </button>
+              <span className="px-3 text-gray-700 font-semibold select-none text-sm bg-gray-50">+237</span>
+            <Input
+               type="tel"
+               name="phone"
+               value={formData.phone}
+               onChange={handleChange}
+               className="w-full bg-white px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+            />
+            </div>
+          </div>
                   </div>
 
                   <div className="grid max-sm:grid-cols-1 grid-cols-2 gap-6">
