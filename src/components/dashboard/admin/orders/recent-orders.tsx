@@ -160,7 +160,7 @@ export default function RecentOrdersAdmin() {
                                     </div>
                                 </div>
                                 <Button variant="outline" size="sm">
-                                    <AsyncLink to={`/admin/orders/${order.order.id}`}>Voir détails</AsyncLink>
+                                    <AsyncLink to={`/admin/order/${order.order.id}`}>Voir détails</AsyncLink>
                                 </Button>
                             </div>
                         );

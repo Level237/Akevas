@@ -17,11 +17,9 @@ const StoreCard = ({
 }: StoreCardProps) => {
 
   return (
-    <motion.div
-      className="w-[300px] max-sm:w-[95%] mx-auto max-sm:h-[250px] h-[400px] relative rounded-2xl overflow-hidden cursor-pointer"
+    <div
+      className="w-[300px] max-sm:w-[95%] mx-auto max-sm:h-[250px] h-[350px] relative rounded-2xl overflow-hidden cursor-pointer"
       onClick={openModal}
-      whileHover={{ scale: 1.03 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <motion.div
         className="absolute inset-0"
@@ -45,11 +43,8 @@ const StoreCard = ({
         
       </motion.div>
 
-      <motion.div
+      <div
         className="absolute bottom-0 w-full sm:p-6 p-4 space-y-3 sm:space-y-4 z-10"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
       >
         <div className="space-y-1 sm:space-y-2">
           <h3 className="text-xl sm:text-lg max-sm:text-sm font-bold text-white">{shop.shop_key}</h3>
@@ -77,13 +72,13 @@ const StoreCard = ({
         </div>
 
         <Button
-          className="w-full max-sm:hidden bg-[#ed702d] border-0 text-white font-medium text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3 mt-2 sm:mt-4"
+          className="w-full max-sm:hidden bg-[#ed702d] border-0 text-white font-medium text-sm sm:text-xs px-4 py-2 sm:px-6 sm:py-3 mt-2 sm:mt-4"
         >
 
           Découvrir la boutique
         </Button>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }
 StoreCard.displayName = 'StoreCard';
