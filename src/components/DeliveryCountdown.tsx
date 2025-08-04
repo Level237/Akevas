@@ -184,7 +184,7 @@ const DeliveryCountdown = ({ orderId }: CountdownProps) => {
     }
 
     return (
-        <div className="bg-white rounded-lg  shadow-sm p-6 mb-6">
+        <div className="bg-white mx-24 max-sm:mx-4 rounded-lg  shadow-sm p-6 mb-6">
 
             <div className="flex items-center mt-20 gap-3 mb-6">
                 <Clock className="text-[#ed7e0f]" size={24} />
