@@ -38,7 +38,7 @@ export function Header() {
     <header className="fixed top-0 right-0 left-0 md:left-64 z-30 h-16 border-b bg-white/50 backdrop-blur-sm">
       <div className="flex items-center justify-between h-full px-4">
         <div className="flex-1 flex items-center gap-4">
-          <div className="w-full max-w-[400px]">
+          <div className="w-full max-sm:hidden max-w-[400px]">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
               <Input
