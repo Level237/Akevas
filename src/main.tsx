@@ -3,7 +3,13 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  rootElement.setAttribute('translate', 'no');        // désactive la traduction automatique
+  rootElement.classList.add('notranslate');           // renforcé par la classe CSS
+}
+
+createRoot(rootElement!).render(
   <StrictMode>
     <App />
   </StrictMode>,
