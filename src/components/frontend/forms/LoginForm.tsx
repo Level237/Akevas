@@ -54,17 +54,12 @@ export default function LoginForm() {
     }
   }
   return (
-    <div className="flex flex-col px-8 py-6 ">
-      <a href="/" className="inline-flex items-center gap-2 text-orange-600 hover:underline font-medium">
+    <div className="flex flex-col px-2 py-6 ">
+      <a href="/" className="inline-flex items-center gap-2 mx-2 text-orange-600 hover:underline font-medium">
             <ArrowLeft className="w-5 h-5" />
           
           </a>
-      <div className="mb-2 md:px-2">
-        
-         
-         
-        
-      </div>
+   
 
       <div className="flex flex-col space-y-6 md:px-16 mx-16 max-sm:mx-1">
         <div className="space-y-2 flex justify-center items-center ">
