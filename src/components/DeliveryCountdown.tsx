@@ -28,7 +28,7 @@ const DeliveryCountdown = ({ orderId }: CountdownProps) => {
     const [deliveryReport, setDeliveryReport] = useState<DeliveryReport | null>(null)
     const [startTime, setStartTime] = useState<Date | null>(null)
     const [takeOrder, { isLoading: isTakingOrder }] = useTakeOrderMutation()
-    const [cancelOrder, { isLoading: isCancellingOrder }] = useCancelOrderMutation()
+    const [cancelOrder] = useCancelOrderMutation()
     const reportRef = useRef<HTMLDivElement>(null)
     const [completeOrder] = useCompleteOrderMutation()
 
