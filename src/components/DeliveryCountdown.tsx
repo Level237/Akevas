@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { Clock, AlertCircle, XCircle, Loader2 } from 'lucide-react'
 import MobileNav from './ui/mobile-nav'
-import { useTakeOrderMutation, useCompleteOrderMutation } from '../services/auth'
+import { useTakeOrderMutation, useCompleteOrderMutation, useCancelOrderMutation } from '../services/auth'
 import { format } from 'date-fns'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
@@ -28,6 +28,7 @@ const DeliveryCountdown = ({ orderId }: CountdownProps) => {
     const [deliveryReport, setDeliveryReport] = useState<DeliveryReport | null>(null)
     const [startTime, setStartTime] = useState<Date | null>(null)
     const [takeOrder, { isLoading: isTakingOrder }] = useTakeOrderMutation()
+    const [cancelOrder, { isLoading: isCancellingOrder }] = useCancelOrderMutation()
     const reportRef = useRef<HTMLDivElement>(null)
     const [completeOrder] = useCompleteOrderMutation()
 
@@ -176,11 +177,12 @@ const DeliveryCountdown = ({ orderId }: CountdownProps) => {
     const circumference = 2 * Math.PI * radius
     const strokeDashoffset = circumference - (getProgressPercentage() / 100) * circumference
 
-    const cancelCountdown = () => {
+    const cancelCountdown = async   () => {
         setTimeLeft(0)
         setIsRunning(false)
         localStorage.removeItem(`countdown_end_${orderId}`)
         localStorage.removeItem(`countdown_start_${orderId}`)
+        await cancelOrder(orderId)
     }
 
     return (

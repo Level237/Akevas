@@ -126,6 +126,13 @@ export const authService = createApi({
             }),
             invalidatesTags: ['Auth'],
         }),
+        cancelOrder: builder.mutation({
+            query: (orderId) => ({
+                url: `/api/v1/cancel/order/${orderId}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Auth'],
+        }),
         orderHistory: builder.query({
             query: () => '/api/v1/orders/history',
             providesTags: ['Auth'],
@@ -172,6 +179,7 @@ export const {
     useShowOrderQuery,
     useGetOrdersByQuarterQuery,
     useTakeOrderMutation,
+    useCancelOrderMutation,
     useOrderHistoryQuery,
     useCompleteOrderMutation,
     useGetStatOverwiewQuery,
