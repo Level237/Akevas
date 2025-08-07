@@ -195,7 +195,15 @@ export const authService = createApi({
                 url:`/api/v1/show/payment/${ref}`,
                 method:"GET"
             })
-        })
+        }),
+        updateUser: builder.mutation({
+            query: (formData) => ({
+                url: "/api/v1/update/user",
+                method: "PATCH",
+                body: formData,
+            }),
+            invalidatesTags: ['Auth'],
+        }),
     })
 })
 
@@ -222,5 +230,6 @@ export const {
     useShowPaymentWithReferenceQuery,
     useVerifyPaymentMutation,
     useInitPayinMutation,
-    useVerifyPayinMutation
+    useVerifyPayinMutation,
+    useUpdateUserMutation
 } = authService

@@ -24,6 +24,7 @@ import AsyncLink from '@/components/ui/AsyncLink'
 
 const AccountPage = () => {
     const { data: userData } = useGetUserQuery('Auth')
+    console.log(userData)
     const [logout] = useLogoutMutation()
     const [activeTab, setActiveTab] = useState('account')
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -60,7 +61,7 @@ const AccountPage = () => {
                 { icon: User, label: "Profil", href: "/user/profile", description: "Gérer vos informations" },
                 { icon: ShoppingBag, label: "Commandes", href: "/user/orders", description: "Historique des commandes" },
                 { icon: Bell, label: "Notifications", href: "", description: "Centre de notifications" },
-                { icon: CreditCard, label: "Paiement", href: "", description: "Moyens de paiement" },
+               
             ]
         },
         {
