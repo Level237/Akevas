@@ -4,12 +4,12 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Mail, User, Phone, CheckCircle, Loader2 } from 'lucide-react';
 
 const ProfilePage = () => {
-  const { data: userData, isLoading } = useGetUserQuery('Auth');
+  const { data: userData } = useGetUserQuery('Auth');
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [form, setForm] = useState({
     email: userData?.email || '',
     userName: userData?.userName || '',
-    phone: userData?.phone || '',
+    phone_number: userData?.phone_number || '',
   });
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -18,7 +18,7 @@ const ProfilePage = () => {
     setForm({
       email: userData?.email || '',
       userName: userData?.userName || '',
-      phone: userData?.phone_number || '',
+      phone_number: userData?.phone_number || '',
     });
   }, [userData]);
 
@@ -31,7 +31,12 @@ const ProfilePage = () => {
     setSuccess('');
     setError('');
     try {
-      await updateUser(form).unwrap();
+      const res = await updateUser({
+        email: form.email,
+        userName: form.userName,
+        phone_number: form.phone_number,
+      });
+      console.log(res);
       setSuccess('Profil mis à jour avec succès !');
     } catch (err) {
       setError("Erreur lors de la mise à jour du profil.");
@@ -64,7 +69,7 @@ const ProfilePage = () => {
           <Mail className="w-4 h-4 text-[#ed7e0f]" /> {form.email || 'Email'}
         </p>
         <p className="text-sm max-sm:text-xs text-gray-500 mb-6 flex items-center gap-2">
-          <Phone className="w-4 h-4 text-[#ed7e0f]" /> {form.phone || 'Téléphone'}
+          <Phone className="w-4 h-4 text-[#ed7e0f]" /> {form.phone_number || 'Téléphone'}
         </p>
         <form className="w-full space-y-5" onSubmit={handleSubmit}>
           <div className="relative">
@@ -104,12 +109,12 @@ const ProfilePage = () => {
             <div className="flex items-center rounded-xl border border-gray-300 focus-within:ring-2 focus-within:ring-[#ed7e0f] bg-gray-50">
               <Phone className="ml-3 max-sm:w-4 max-sm:h-4 text-gray-400 w-5 h-5" />
               <input
-                id="phone"
-                name="phone"
+                id="phone_number"
+                name="phone_number"
                 type="tel"
                 autoComplete="tel"
                 required
-                value={form.phone}
+                value={form.phone_number}
                 onChange={handleChange}
                 className="flex-1 bg-transparent placeholder:text-xs max-sm:text-xs border-none focus:ring-0 px-3 py-2 text-gray-900 placeholder-gray-400 rounded-xl"
               />

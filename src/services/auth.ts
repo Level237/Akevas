@@ -199,7 +199,7 @@ export const authService = createApi({
         updateUser: builder.mutation({
             query: (formData) => ({
                 url: "/api/v1/update/user",
-                method: "PATCH",
+                method: "POST",
                 body: formData,
             }),
             invalidatesTags: ['Auth'],
