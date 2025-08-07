@@ -1,16 +1,18 @@
-import { useRef, useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Mail, Phone, Shield, Edit2, Camera } from 'lucide-react';
+import { LogOut, User, Mail, Phone, Shield, Edit2, Camera, CheckCircle, Loader2, ArrowLeft, Lock } from 'lucide-react';
 import { logoutUser } from '@/lib/logout';
-import { useLogoutMutation, useGetUserQuery } from '@/services/auth';
+import { useLogoutMutation, useGetUserQuery, useUpdateUserMutation } from '@/services/auth';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminAccountPage() {
   const { data: userData } = useGetUserQuery('Auth');
   const [logout] = useLogoutMutation();
+  const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
+  const navigate = useNavigate();
 
   // Avatar state
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -23,10 +25,21 @@ export default function AdminAccountPage() {
     phone_number: userData?.phone_number || '',
   });
   const [editing, setEditing] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
   // Password change UI
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwords, setPasswords] = useState({ old: '', new: '', confirm: '' });
+
+  // Mettre à jour le formulaire quand userData arrive
+  useEffect(() => {
+    setForm({
+      userName: userData?.userName || userData?.firstName || '',
+      email: userData?.email || '',
+      phone_number: userData?.phone_number || '',
+    });
+  }, [userData]);
 
   const handleLogout = async () => {
     await logout('Auth');
@@ -37,10 +50,21 @@ export default function AdminAccountPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleProfileSubmit = (e: React.FormEvent) => {
+  const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: call update profile API
-    setEditing(false);
+    setSuccess('');
+    setError('');
+    try {
+      await updateUser({
+        email: form.email,
+        userName: form.userName,
+        phone_number: form.phone_number,
+      }).unwrap();
+      setSuccess('Profil mis à jour avec succès !');
+      setEditing(false);
+    } catch (err) {
+      setError("Erreur lors de la mise à jour du profil.");
+    }
   };
 
   const handlePasswordChange = (e: React.FormEvent) => {
@@ -59,18 +83,17 @@ export default function AdminAccountPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-orange-50 via-white to-orange-100">
-      {/* Sidebar améliorée */}
-      <aside className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl px-0 py-0 mt-12 ml-4 max-w-xs w-full border border-orange-100 relative md:sticky md:top-24 overflow-hidden flex flex-col">
-        {/* Header avatar section */}
-        <div className="bg-gradient-to-br from-orange-200 to-orange-400 flex flex-col items-center justify-center py-10 px-6 relative">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex flex-col items-center justify-start py-0 px-4 sm:px-6 lg:px-8 relative">
+      {/* Header visuel */}
+      <div className="w-full h-48 bg-gradient-to-r from-orange-500 to-orange-600 relative flex items-end justify-center">
+        <div className="absolute -bottom-14 z-10">
           <div className="relative group">
-            <Avatar className="w-28 h-28 border-4 border-white shadow-xl">
+            <Avatar className="h-28 w-28 shadow-xl border-4 border-white">
               {avatar ? (
                 <AvatarImage src={avatar} alt="Avatar" className="object-cover" />
               ) : (
                 <AvatarFallback className="bg-gradient-to-br from-orange-200 to-orange-400 text-white text-4xl font-bold flex items-center justify-center">
-                  <User className="w-16 h-16" />
+                  {form.userName?.charAt(0) || <User className="w-16 h-16" />}
                 </AvatarFallback>
               )}
             </Avatar>
@@ -91,115 +114,131 @@ export default function AdminAccountPage() {
               onChange={handleAvatarChange}
             />
           </div>
-          <div className="mt-4 text-xl font-bold text-white text-center">{form.userName}</div>
-          <div className="flex items-center gap-2 text-orange-50 text-base mt-1">
-            <Shield className="w-5 h-5 text-white/80" />
-            <span className="font-medium">Administrateur</span>
-          </div>
         </div>
-        {/* Infos section */}
-        <div className="flex flex-col gap-4 px-8 py-8">
-          <div className="flex items-center gap-2 text-gray-600 text-base">
-            <Mail className="w-4 h-4" />
-            <span>{form.email}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600 text-base">
-            <Phone className="w-4 h-4" />
-            <span>{form.phone_number || 'Non renseigné'}</span>
-          </div>
-        </div>
-        {/* Actions section */}
-        <div className="w-full flex flex-col gap-2 mt-auto px-8 pb-8 border-t pt-6">
-          <Button
-            variant={showPasswordForm ? "default" : "outline"}
-            className="w-full"
-            onClick={() => setShowPasswordForm((v) => !v)}
-          >
-            Modifier le mot de passe
-          </Button>
-          <Button variant="destructive" className="w-full" onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" /> Déconnexion
-          </Button>
-        </div>
-      </aside>
+      </div>
 
-      {/* Main content dans une Card */}
-      <main className="flex-1 flex flex-col justify-center px-8 py-16">
-        <Card className="max-w-2xl w-full mx-auto">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-2xl font-bold text-gray-900">Mon profil</CardTitle>
-            {!editing && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-orange-500"
-                onClick={() => setEditing(true)}
-                aria-label="Modifier le profil"
-              >
-                <Edit2 className="w-5 h-5" />
-              </Button>
-            )}
-          </CardHeader>
-          <form onSubmit={handleProfileSubmit} autoComplete="off">
-            <CardContent className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="relative">
-                  <Label htmlFor="userName">Nom d'utilisateur</Label>
-                  <div className="relative">
-                    <Input
-                      id="userName"
-                      name="userName"
-                      type="text"
-                      placeholder="Nom d'utilisateur"
-                      value={form.userName}
-                      onChange={handleInputChange}
-                      disabled={!editing}
-                      autoComplete="username"
-                      className="pl-10"
-                    />
-                    <User className="absolute left-2 top-1/2 -translate-y-1/2 text-orange-400 w-5 h-5" />
-                  </div>
-                </div>
-                <div className="relative">
-                  <Label htmlFor="email">Email</Label>
-                  <div className="relative">
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="Adresse email"
-                      value={form.email}
-                      onChange={handleInputChange}
-                      disabled={!editing}
-                      autoComplete="email"
-                      className="pl-10"
-                    />
-                    <Mail className="absolute left-2 top-1/2 -translate-y-1/2 text-orange-400 w-5 h-5" />
-                  </div>
-                </div>
-                <div className="relative">
-                  <Label htmlFor="phone_number">Numéro de téléphone</Label>
-                  <div className="relative">
-                    <Input
-                      id="phone_number"
-                      name="phone_number"
-                      type="tel"
-                      placeholder="Numéro de téléphone"
-                      value={form.phone_number}
-                      onChange={handleInputChange}
-                      disabled={!editing}
-                      autoComplete="tel"
-                      className="pl-10"
-                    />
-                    <Phone className="absolute left-2 top-1/2 -translate-y-1/2 text-orange-400 w-5 h-5" />
-                  </div>
-                </div>
+      {/* Carte profil principale */}
+      <div className="w-full max-w-4xl mt-20 bg-white rounded-2xl shadow-2xl p-8 pt-16 relative">
+        {/* Badge de rôle et bouton retour */}
+        <div className="absolute right-8 top-8 flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-orange-500"
+            onClick={() => navigate('/admin/dashboard')}
+            aria-label="Retour au tableau de bord"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-600 border border-orange-200">
+            <Shield className="w-3 h-3 inline mr-1" />
+            Administrateur
+          </span>
+        </div>
+
+        {/* Informations du profil */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+            <User className="w-5 h-5 text-orange-500" /> {form.userName || 'Administrateur'}
+          </h2>
+          <p className="text-sm text-gray-500 mb-2 flex items-center justify-center gap-2">
+            <Mail className="w-4 h-4 text-orange-500" /> {form.email || 'Email'}
+          </p>
+          <p className="text-sm text-gray-500 mb-6 flex items-center justify-center gap-2">
+            <Phone className="w-4 h-4 text-orange-500" /> {form.phone_number || 'Téléphone'}
+          </p>
+        </div>
+
+        {/* Messages de succès/erreur */}
+        {success && (
+          <div className="mb-6 flex items-center justify-center gap-2 text-green-600 text-sm animate-fade-in">
+            <CheckCircle className="w-4 h-4" /> {success}
+          </div>
+        )}
+        {error && (
+          <div className="mb-6 text-center text-red-600 text-sm animate-fade-in">{error}</div>
+        )}
+
+        {/* Formulaire de profil */}
+        <form onSubmit={handleProfileSubmit} autoComplete="off" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="relative">
+              <Label htmlFor="userName" className="text-sm font-medium text-gray-700 mb-2 block">Nom d'utilisateur</Label>
+              <div className="relative">
+                <Input
+                  id="userName"
+                  name="userName"
+                  type="text"
+                  placeholder="Nom d'utilisateur"
+                  value={form.userName}
+                  onChange={handleInputChange}
+                  autoComplete="username"
+                  className="pl-10 border-gray-300 focus:ring-2 focus:ring-orange-300 focus:border-orange-300"
+                />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-400 w-5 h-5" />
               </div>
-            </CardContent>
-            {editing && (
-              <CardFooter className="flex justify-end gap-3 mt-4">
-                <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">
-                  Enregistrer les modifications
+            </div>
+            <div className="relative">
+              <Label htmlFor="email" className="text-sm font-medium text-gray-700 mb-2 block">Email</Label>
+              <div className="relative">
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Adresse email"
+                  value={form.email}
+                  onChange={handleInputChange}
+                  autoComplete="email"
+                  className="pl-10 border-gray-300 focus:ring-2 focus:ring-orange-300 focus:border-orange-300"
+                />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-400 w-5 h-5" />
+              </div>
+            </div>
+            <div className="relative">
+              <Label htmlFor="phone_number" className="text-sm font-medium text-gray-700 mb-2 block">Numéro de téléphone</Label>
+              <div className="relative">
+                <Input
+                  id="phone_number"
+                  name="phone_number"
+                  type="tel"
+                  placeholder="Numéro de téléphone"
+                  value={form.phone_number}
+                  onChange={handleInputChange}
+                  
+                  autoComplete="tel"
+                  className="pl-10 border-gray-300 focus:ring-2 focus:ring-orange-300 focus:border-orange-300"
+                />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-400 w-5 h-5" />
+              </div>
+            </div>
+          </div>
+
+          {/* Boutons d'action */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-6">
+            {!editing ? (
+              <Button
+                type="button"
+                onClick={() => setEditing(true)}
+                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg px-8"
+              >
+                <Edit2 className="w-4 h-4 mr-2" />
+                Modifier le profil
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  type="submit" 
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg px-8"
+                  disabled={isUpdating}
+                >
+                  {isUpdating ? (
+                    <>
+                      <Loader2 className="animate-spin w-4 h-4 mr-2" />
+                      Mise à jour...
+                    </>
+                  ) : (
+                    'Enregistrer les modifications'
+                  )}
                 </Button>
                 <Button
                   type="button"
@@ -211,64 +250,84 @@ export default function AdminAccountPage() {
                       phone_number: userData?.phone_number || '',
                     });
                     setEditing(false);
+                    setSuccess('');
+                    setError('');
                   }}
                 >
                   Annuler
                 </Button>
-              </CardFooter>
+              </>
             )}
-          </form>
+          </div>
+        </form>
 
-          {/* Password change form */}
-          {showPasswordForm && (
-            <form className="mt-10 space-y-4" onSubmit={handlePasswordChange}>
-              <h3 className="text-md font-semibold mb-2">Changer le mot de passe</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="old">
-                    Ancien mot de passe
-                  </label>
-                  <input
-                    id="old"
-                    name="old"
-                    type="password"
-                    className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-300 bg-gray-50 text-lg"
-                    value={passwords.old}
-                    onChange={e => setPasswords({ ...passwords, old: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="new">
-                    Nouveau mot de passe
-                  </label>
-                  <input
-                    id="new"
-                    name="new"
-                    type="password"
-                    className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-300 bg-gray-50 text-lg"
-                    value={passwords.new}
-                    onChange={e => setPasswords({ ...passwords, new: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="confirm">
-                    Confirmer le nouveau mot de passe
-                  </label>
-                  <input
-                    id="confirm"
-                    name="confirm"
-                    type="password"
-                    className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-300 bg-gray-50 text-lg"
-                    value={passwords.confirm}
-                    onChange={e => setPasswords({ ...passwords, confirm: e.target.value })}
-                    required
-                  />
-                </div>
+        {/* Section mot de passe */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="text-center mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center justify-center gap-2">
+              <Lock className="w-5 h-5 text-orange-500" />
+              Sécurité du compte
+            </h3>
+            <p className="text-sm text-gray-500">Modifiez votre mot de passe pour sécuriser votre compte</p>
+          </div>
+
+          {!showPasswordForm ? (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                onClick={() => setShowPasswordForm(true)}
+                className="border-orange-200 text-orange-600 hover:bg-orange-50"
+              >
+                <Lock className="w-4 h-4 mr-2" />
+                Modifier le mot de passe
+              </Button>
+            </div>
+          ) : (
+            <form className="max-w-md mx-auto space-y-4" onSubmit={handlePasswordChange}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="old">
+                  Ancien mot de passe
+                </label>
+                <input
+                  id="old"
+                  name="old"
+                  type="password"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 bg-gray-50"
+                  value={passwords.old}
+                  onChange={e => setPasswords({ ...passwords, old: e.target.value })}
+                  required
+                />
               </div>
-              <div className="flex gap-3 mt-2">
-                <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="new">
+                  Nouveau mot de passe
+                </label>
+                <input
+                  id="new"
+                  name="new"
+                  type="password"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 bg-gray-50"
+                  value={passwords.new}
+                  onChange={e => setPasswords({ ...passwords, new: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="confirm">
+                  Confirmer le nouveau mot de passe
+                </label>
+                <input
+                  id="confirm"
+                  name="confirm"
+                  type="password"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 bg-gray-50"
+                  value={passwords.confirm}
+                  onChange={e => setPasswords({ ...passwords, confirm: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="flex gap-3 justify-center pt-4">
+                <Button type="submit" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
                   Changer le mot de passe
                 </Button>
                 <Button
@@ -284,8 +343,22 @@ export default function AdminAccountPage() {
               </div>
             </form>
           )}
-        </Card>
-      </main>
+        </div>
+
+        {/* Bouton de déconnexion */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="flex justify-center">
+            <Button 
+              variant="destructive" 
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              <LogOut className="mr-2 h-4 w-4" /> 
+              Déconnexion
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
