@@ -23,7 +23,7 @@ export default function Header({ userData }: { userData: User | null | undefined
   ]
 
   return (
-    <header className="bg-white border-b max-sm:sticky max-sm:top-0">
+    <header className="bg-white border-b max-sm:sticky max-sm:z-50 max-sm:top-0">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
