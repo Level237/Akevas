@@ -105,7 +105,7 @@ const CheckoutPage: React.FC = () => {
   const shipping = getDeliveryFee();
   const total = s == "1" ? subtotal + shipping : parseInt(totalPrice || '0') + shipping;
   console.log(totalPrice)
-  const totalWithTax =total * (1 + TAX_RATE) ; ; // Calculate total with tax
+  const totalWithTax =total * (1 + TAX_RATE) ; // Calculate total with tax
   const totalQuantity=cartItems.reduce((sum, item) => sum + parseInt(item.quantity.toString()), 0);
  console.log(totalQuantity)
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -770,7 +770,7 @@ const CheckoutPage: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="text-lg font-medium">Total (TTC)</span>
                     <span className="text-lg font-bold">
-                      {Math.round(totalWithTax)} Fcfa
+                      {totalWithTax} Fcfa
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">TVA incluse</p>
@@ -849,7 +849,7 @@ const CheckoutPage: React.FC = () => {
                     } Fcfa FCFA</p>
                 </div>
                 <div>
-                  <p className="font-medium">Montant total:{Math.round(totalWithTax)} Fcfa FCFA</p>
+                  <p className="font-medium">Montant total:{totalWithTax} Fcfa FCFA</p>
                 </div>
               </div>
 
