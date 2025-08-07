@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useGetUserQuery } from '@/services/auth'
 import {
     Bell,
-    CreditCard,
     Lock,
     Settings,
     ShoppingBag,
