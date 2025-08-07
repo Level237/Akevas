@@ -54,6 +54,7 @@ import PaymentSuccessPage from "@/pages/payment/PaymentSuccessPage";
 import PaymentCancelPage from "@/pages/payment/PaymentCancelPage";
 import PaymentErrorPage from "@/pages/payment/PaymentErrorPage";
 import AdminAccountPage from "@/pages/admin/account";
+import ProfilePage from "@/pages/user/ProfilePage";
 
 
 
@@ -236,7 +237,12 @@ export const routes = createBrowserRouter([
       }, {
         path: 'user/orders',
         element: <OrdersPage />
-      }, {
+      },
+      {
+        path: 'user/profile',
+        element: <ProfilePage />
+      },
+      {
         path: 'account',
         element: <AccountPage />
       },{
