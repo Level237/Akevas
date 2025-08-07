@@ -31,12 +31,11 @@ const ProfilePage = () => {
     setSuccess('');
     setError('');
     try {
-      const res = await updateUser({
+      await updateUser({
         email: form.email,
         userName: form.userName,
         phone_number: form.phone_number,
       });
-      console.log(res);
       setSuccess('Profil mis à jour avec succès !');
     } catch (err) {
       setError("Erreur lors de la mise à jour du profil.");
