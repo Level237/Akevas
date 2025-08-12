@@ -8,11 +8,11 @@ const staggeredBaseQuery = async (args: any, api: any, extraOptions: any) => {
     //baseUrl: "http://127.0.0.1:8000",
     credentials: "include",
     timeout: 10000,
-    
+
     prepareHeaders: (headers) => {
       return headers;
     },
-    
+
     validateStatus: (response) => {
       if (!response) return false;
       return response.status >= 200 && response.status < 300;

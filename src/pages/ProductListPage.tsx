@@ -40,19 +40,19 @@ const ProductListPage: React.FC = () => {
   });
   const [expandedSections, setExpandedSections] = useState<string[]>(['categories']);
 
-    const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
   const [sortBy, setSortBy] = useState('popular');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const { data: { productList,totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery(currentPage);
+  const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery(currentPage);
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   })
 
-  
+
   const safeProducts = productList || [];
   const normalizedProducts = safeProducts.map(normalizeProduct);
   const toggleSection = useCallback((sectionId: string) => {
@@ -84,7 +84,7 @@ const ProductListPage: React.FC = () => {
     // Si vous avez une fonction de recherche/filtrage qui dépend des filtres
     // vous pouvez l'appeler ici
     // handleSearch();
-    
+
     // Optionnel : Afficher une notification de confirmation
     toast.success("Filtres réinitialisés", {
       duration: 2000,
@@ -112,15 +112,15 @@ const ProductListPage: React.FC = () => {
     });
   };
 
-  
+
 
 
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       <Header />
-      
-      
-        <ScrollRestoration />
+
+
+      <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* En-tête avec filtres mobiles et tri */}
         <div className="flex items-center justify-between mb-8">
@@ -134,13 +134,13 @@ const ProductListPage: React.FC = () => {
               (acc, curr) => acc + curr.length,
               0
             ) > 0 && (
-              <span className="ml-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">
-                {Object.values(selectedFilters).reduce(
-                  (acc, curr) => acc + curr.length,
-                  0
-                )}
-              </span>
-            )}
+                <span className="ml-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">
+                  {Object.values(selectedFilters).reduce(
+                    (acc, curr) => acc + curr.length,
+                    0
+                  )}
+                </span>
+              )}
           </button>
 
           <div className="flex items-center gap-4">
@@ -162,11 +162,10 @@ const ProductListPage: React.FC = () => {
             <div className="hidden sm:flex items-center gap-2 bg-white rounded-lg shadow-sm p-1">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded ${
-                  viewMode === 'grid'
+                className={`p-2 rounded ${viewMode === 'grid'
                     ? 'bg-gray-100 text-gray-900'
                     : 'text-gray-500 hover:text-gray-900'
-                }`}
+                  }`}
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -174,11 +173,10 @@ const ProductListPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded ${
-                  viewMode === 'list'
+                className={`p-2 rounded ${viewMode === 'list'
                     ? 'bg-gray-100 text-gray-900'
                     : 'text-gray-500 hover:text-gray-900'
-                }`}
+                  }`}
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -198,17 +196,17 @@ const ProductListPage: React.FC = () => {
                   (acc, curr) => acc + curr.length,
                   0
                 ) > 0 && (
-                  <button
-                    onClick={() => {
-                      setSelectedFilters({
-                        categories: []
-                      });
-                    }}
-                    className="text-sm text-blue-600 hover:text-blue-700"
-                  >
-                    Réinitialiser
-                  </button>
-                )}
+                    <button
+                      onClick={() => {
+                        setSelectedFilters({
+                          categories: []
+                        });
+                      }}
+                      className="text-sm text-blue-600 hover:text-blue-700"
+                    >
+                      Réinitialiser
+                    </button>
+                  )}
               </div>
 
               <div className="space-y-6">
@@ -238,7 +236,7 @@ const ProductListPage: React.FC = () => {
                         className="overflow-hidden"
                       >
                         <div className="space-y-2">
-                          {!categoriesLoading && categories.map((category:any) => (
+                          {!categoriesLoading && categories.map((category: any) => (
                             <motion.div
                               key={category.id}
                               whileHover={{ x: 4 }}
@@ -255,7 +253,7 @@ const ProductListPage: React.FC = () => {
                                   <div className="flex items-center ml-3 gap-3">
                                     <div className="w-8 h-8 rounded-lg overflow-hidden">
                                       <OptimizedImage
-                                        src={category.category_profile} 
+                                        src={category.category_profile}
                                         alt={category.category_name}
                                         className="w-full h-full object-cover"
                                       />
@@ -310,7 +308,7 @@ const ProductListPage: React.FC = () => {
                   </AnimatePresence>
                 </div>
 
-                
+
               </div>
             </div>
           </div>
@@ -318,63 +316,62 @@ const ProductListPage: React.FC = () => {
           {/* Liste des produits */}
           <div className="lg:col-span-3">
             <div className={viewMode === 'grid' ? 'grid grid-cols-2   max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
-              { !isLoading && normalizedProducts && normalizedProducts.map((product:Product) => (
+              {!isLoading && normalizedProducts && normalizedProducts.map((product: Product) => (
                 <ProductCard product={product} viewMode={viewMode} />
               ))}
               <div>
                 <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
-                    {currentPage > 1 && (
-                        <button 
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
-                        >
-                            Précédent
-                        </button>
-                    )}
-                    
-                    <div className="flex items-center gap-1">
-                        {Array.from({ length: totalPages }, (_, index) => {
-                            const pageNumber = index + 1;
-                            
-                            // Afficher seulement les pages proches de la page courante
-                            if (
-                                pageNumber === 1 ||
-                                pageNumber === totalPages ||
-                                (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
-                            ) {
-                                return (
-                                    <button
-                                        key={pageNumber}
-                                        onClick={() => handlePageChange(pageNumber)}
-                                        className={`w-10 h-10 rounded-lg ${
-                                            currentPage === pageNumber
-                                                ? 'bg-[#ed7e0f] text-white'
-                                                : 'bg-white hover:bg-gray-50'
-                                        }`}
-                                    >
-                                        {pageNumber}
-                                    </button>
-                                );
-                            } else if (
-                                pageNumber === currentPage - 3 ||
-                                pageNumber === currentPage + 3
-                            ) {
-                                return <span key={pageNumber}>...</span>;
-                            }
-                            return null;
-                        })}
-                    </div>
+                  {currentPage > 1 && (
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                    >
+                      Précédent
+                    </button>
+                  )}
 
-                    {currentPage < totalPages && (
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
-                        >
-                            Suivant
-                        </button>
-                    )}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, index) => {
+                      const pageNumber = index + 1;
+
+                      // Afficher seulement les pages proches de la page courante
+                      if (
+                        pageNumber === 1 ||
+                        pageNumber === totalPages ||
+                        (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
+                      ) {
+                        return (
+                          <button
+                            key={pageNumber}
+                            onClick={() => handlePageChange(pageNumber)}
+                            className={`w-10 h-10 rounded-lg ${currentPage === pageNumber
+                                ? 'bg-[#ed7e0f] text-white'
+                                : 'bg-white hover:bg-gray-50'
+                              }`}
+                          >
+                            {pageNumber}
+                          </button>
+                        );
+                      } else if (
+                        pageNumber === currentPage - 3 ||
+                        pageNumber === currentPage + 3
+                      ) {
+                        return <span key={pageNumber}>...</span>;
+                      }
+                      return null;
+                    })}
+                  </div>
+
+                  {currentPage < totalPages && (
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                    >
+                      Suivant
+                    </button>
+                  )}
                 </div>
-            </div>
+              </div>
             </div>
           </div>
         </div>
@@ -390,7 +387,7 @@ const ProductListPage: React.FC = () => {
             className="fixed inset-0 z-50 lg:hidden"
           >
             <div className="absolute inset-0 bg-black bg-opacity-25" />
-            
+
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -436,7 +433,7 @@ const ProductListPage: React.FC = () => {
                           className="overflow-hidden"
                         >
                           <div className="space-y-2">
-                            {!categoriesLoading && categories.map((category:any) => (
+                            {!categoriesLoading && categories.map((category: any) => (
                               <motion.div
                                 key={category.id}
                                 whileHover={{ x: 4 }}
@@ -452,8 +449,8 @@ const ProductListPage: React.FC = () => {
                                     />
                                     <div className="flex items-center ml-3 gap-3">
                                       <div className="w-8 h-8 rounded-lg overflow-hidden">
-                                        <OptimizedImage 
-                                          src={category.category_profile} 
+                                        <OptimizedImage
+                                          src={category.category_profile}
                                           alt={category.category_name}
                                           className="w-full h-full object-cover"
                                         />
@@ -523,7 +520,7 @@ const ProductListPage: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <MobileNav/>
+      <MobileNav />
     </div>
   );
 };

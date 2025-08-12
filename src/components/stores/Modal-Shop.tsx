@@ -1,20 +1,21 @@
 import { Separator } from "../ui/separator";
 import { motion } from "framer-motion";
 import { useGetShopQuery } from "@/services/guardService";
-import { ExternalLink,Star, X,ShoppingBag, Clock, MapPin,Badge } from "lucide-react";
+import { ExternalLink, Star, X, ShoppingBag, Clock, MapPin, Badge } from "lucide-react";
 import { StoreBadges } from "../seller/store-badge";
 import { Button } from "../ui/button";
-import { Category,Product } from "@/types/products";
+import { Category, Product } from "@/types/products";
 import AsyncLink from "../ui/AsyncLink";
 import { memo, useCallback, useMemo } from "react";
 import OptimizedImage from "../OptimizedImage";
+import { normalizeProduct } from "@/lib/normalizeProduct";
 
-export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isModalOpen:boolean,setIsModalOpen:React.Dispatch<React.SetStateAction<boolean>>,shopId:string}) {
+export default memo(function ModalShop({ isModalOpen, setIsModalOpen, shopId }: { isModalOpen: boolean, setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>, shopId: string }) {
   const closeModal = useCallback(() => setIsModalOpen(false), [setIsModalOpen]);
-  const {data:{data:shop}={},isLoading}=useGetShopQuery(shopId, {
+  const { data: { data: shop } = {}, isLoading } = useGetShopQuery(shopId, {
     skip: !isModalOpen
   })
- 
+
   const backgroundStyle = useMemo(() => ({
     backgroundImage: `url(${shop?.shop?.shop_profile})`,
     backgroundPosition: "cover",
@@ -27,7 +28,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
     <>
       <div className="flex justify-center items-center">
         <div onClick={closeModal} className='fixed top-0 z-[999999999999999999999] backdrop-blur-sm bg-[#5a525263] inset-0 w-full h-full' />
-        
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -94,12 +95,12 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
             <div className="max-h-[90vh] overflow-y-auto">
               <div className="relative">
                 <div className="relative h-72 w-full" style={backgroundStyle}>
-                  
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <div className='flex items-end justify-between'>
-                          <div>
-                          <h2 className="text-3xl font-bold">{shop.shop.shop_key}</h2>
+                      <div>
+                        <h2 className="text-3xl font-bold">{shop.shop.shop_key}</h2>
                         <div className="mt-4 flex flex-wrap items-center gap-4">
                           <div className="flex items-center gap-1">
                             <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -121,9 +122,9 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                             isThrift={true}
                           />
                         </div>
-                          </div>
+                      </div>
 
-                          {/*<div className='max-sm:hidden'>
+                      {/*<div className='max-sm:hidden'>
                             <Button className='bg-transparent max-sm:text-sm hover:bg-black hover:text-white' variant={'outline'}>Suivre la boutique<UserPlus/></Button>
                           </div>*/}
                     </div>
@@ -142,25 +143,25 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                 <div className="md:col-span-3">
                   <div className="mb-6">
                     <div className='flex max-sm:mb-6 items-center justify-between'>
-                    <h3 className="mb-4 max-sm:mb-0 text-lg max-sm:text-sm font-semibold">Catégories de la boutique</h3>
-                    <AsyncLink to={`/shop/${shop.shop.shop_id}`}>
-                    <Button className="px-12 ma max-sm:flex hidden bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 gap-2">
-                      Visiter
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                    </AsyncLink>
-                   
+                      <h3 className="mb-4 max-sm:mb-0 text-lg max-sm:text-sm font-semibold">Catégories de la boutique</h3>
+                      <AsyncLink to={`/shop/${shop.shop.shop_id}`}>
+                        <Button className="px-12 ma max-sm:flex hidden bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 gap-2">
+                          Visiter
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </AsyncLink>
+
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 
-                      {!isLoading &&  shop && shop.shop && shop.shop.categories?.map((category:Category) => (
-                          <div
-                              key={category.id}
+                      {!isLoading && shop && shop.shop && shop.shop.categories?.map((category: Category) => (
+                        <div
+                          key={category.id}
                           className="rounded-lg border bg-gray-50 p-3 text-center"
                         >
                           <div className="text-sm font-medium">{category.category_name}</div>
-                          
+
                         </div>
                       ))}
                     </div>
@@ -169,11 +170,11 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                   <Separator className="my-6" />
 
                   <div>
-                    {!isLoading && shop && shop.shop &&  shop.shop.products_count > 0 && (
-                    <div className="mb-6 flex items-center justify-between">
-                      <h3 className="text-lg max-sm:text-sm font-semibold">Featured Products</h3>
-                     <AsyncLink to={`/shop/${shop.shop.shop_id}`}> <Button variant="outline">Voir tout les produits</Button></AsyncLink>
-                    </div>
+                    {!isLoading && shop && shop.shop && shop.shop.products_count > 0 && (
+                      <div className="mb-6 flex items-center justify-between">
+                        <h3 className="text-lg max-sm:text-sm font-semibold">Produits mis en avant</h3>
+                        <AsyncLink to={`/shop/${shop.shop.shop_id}`}> <Button variant="outline">Voir tout les produits</Button></AsyncLink>
+                      </div>
                     )}
                     <ProductGrid products={shop && shop.shop ? shop.shop.products : []} />
                   </div>
@@ -202,7 +203,7 @@ export default memo(function ModalShop({isModalOpen,setIsModalOpen,shopId}:{isMo
                       <Clock className="h-5 w-5 text-gray-500" />
                       <div>
                         <div className="font-medium">Membre depuis</div>
-                        <div className="text-sm text-gray-500">{ new Date(shop.created_at).toLocaleDateString()}</div>
+                        <div className="text-sm text-gray-500">{new Date(shop.created_at).toLocaleDateString()}</div>
                       </div>
                     </div>
 
@@ -235,13 +236,48 @@ const ProductGrid = memo(function ProductGrid({ products }: { products: Product[
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={normalizeProduct(product)} />
       ))}
     </div>
   );
 });
 
 const ProductCard = memo(function ProductCard({ product }: { product: Product }) {
+  // Récupérer jusqu'à 4 couleurs uniques des variations
+  const colorSwatches = useMemo(() => {
+    if (!product.variations || product.variations.length === 0) return [];
+    const seen = new Set();
+    const colors = [];
+    for (const variation of product.variations) {
+      if (
+        variation.color &&
+        variation.color.hex &&
+        !seen.has(variation.color.hex)
+      ) {
+        colors.push({
+          name: variation.color.name,
+          hex: variation.color.hex,
+        });
+        seen.add(variation.color.hex);
+      }
+      if (colors.length === 4) break;
+    }
+    return colors;
+  }, [product.variations]);
+
+  const variationsCount = product.variations?.length || 0;
+
+  // Déterminer quelle image afficher
+  const productImage = useMemo(() => {
+    if (product.variations && product.variations.length > 0 && product.variations[0].images && product.variations[0].images.length > 0) {
+      const firstImageArray = product.variations[0].images[0];
+      if (firstImageArray && firstImageArray.length > 0) {
+        return firstImageArray[0].path || product.product_profile;
+      }
+    }
+    return product.product_profile;
+  }, [product.variations, product.product_profile]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -250,14 +286,34 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
       className="group relative cursor-pointer  overflow-hidden rounded-lg border bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md"
     >
       <a href={`/produit/${product.product_url}`}>
-      <div className="relative mb-3 aspect-square max-sm:w-full overflow-hidden rounded-lg">
-        <OptimizedImage
-          src={product.product_profile}
-          alt={product.product_name}
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        
-      </div>
+        <div className="relative mb-3 aspect-square max-sm:w-full overflow-hidden rounded-lg">
+          {productImage && <OptimizedImage
+            src={productImage}
+            alt={product.product_name}
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />}
+
+
+          {/* Affichage des couleurs si variations */}
+          {colorSwatches.length > 0 && (
+            <div className="absolute bottom-2 left-2 flex items-center gap-1">
+              {colorSwatches.map((color) => (
+                <div
+                  key={color.hex}
+                  title={color.name}
+                  className="w-4 h-4 rounded-full border-2 border-white shadow"
+                  style={{
+                    backgroundColor: color.hex,
+                    boxShadow: "0 0 0 1px #ccc"
+                  }}
+                />
+              ))}
+              {variationsCount > 4 && (
+                <span className="text-xs text-gray-500 ml-1 bg-white/80 px-1 rounded">+{variationsCount - 4}</span>
+              )}
+            </div>
+          )}
+        </div>
       </a>
       <h4 className="mb-2 line-clamp-2 text-sm font-medium">
         {product.product_name}
