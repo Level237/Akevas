@@ -833,12 +833,7 @@ const CheckoutPage: React.FC = () => {
                   }</p>
                   <p>Frais de livraison: {shipping} FCFA</p>
                   <p>TVA:  {s == "1" ?
-                    (cartItems.reduce((sum, item) => {
-                      const price = item.selectedVariation?.attributes?.price
-                        ? parseFloat(item.selectedVariation.attributes.price)
-                        : parseFloat(item.product.product_price);
-                      return sum + (price * item.quantity);
-                    }, 0) * TAX_RATE).toFixed(2)
+                    (total * TAX_RATE).toFixed(2)
                     : (parseInt(totalPrice || '0') * TAX_RATE).toFixed(2)
                   } Fcfa FCFA</p>
                 </div>
