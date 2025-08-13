@@ -36,10 +36,10 @@ const CheckoutPage: React.FC = () => {
   const [quarter, setQuarter] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [paymentPhone, setPaymentPhone] = useState<string>('');
-  const [showModal,setShowModal]=useState(false)
+  const [showModal, setShowModal] = useState(false)
   const params = new URLSearchParams(window.location.search);
   const s = params.get('s');
-  const variations=params.get('variation');
+  const variations = params.get('variation');
   const residence = params.get('residence');
   const totalPrice = params.get('price');
   const cartItems = useSelector((state: RootState) => state.cart.cartItems)
@@ -67,8 +67,8 @@ const CheckoutPage: React.FC = () => {
   const dispatch = useDispatch();
 
   // Mock cart items
-  useEffect(()=>{
-    
+  useEffect(() => {
+
     setPhone(userDataAuth?.phone_number);
   },)
   console.log(JSON.parse(variations || '{}'))
@@ -80,9 +80,9 @@ const CheckoutPage: React.FC = () => {
   const productLocation =
     s === "1"
       ? (uniqueCities.length === 1
-          ? uniqueCities[0]
-          : selectedCity // si plusieurs villes, on prend celle choisie
-        )
+        ? uniqueCities[0]
+        : selectedCity // si plusieurs villes, on prend celle choisie
+      )
       : residence;
   const deliveryFees = {
     pickup: 0,
@@ -90,8 +90,8 @@ const CheckoutPage: React.FC = () => {
     remotePickup: 2500,
     remoteDelivery: 3500
   };
-  
-  
+
+
   const otherLocation = productLocation === "Yaoundé" ? "Douala" : "Yaoundé";
   const isMultiCity = s === "1" && uniqueCities.length > 1;
   const getDeliveryFee = () => {
@@ -105,9 +105,9 @@ const CheckoutPage: React.FC = () => {
   const shipping = getDeliveryFee();
   const total = s == "1" ? subtotal + shipping : parseInt(totalPrice || '0') + shipping;
   console.log(totalPrice)
-  const totalWithTax =total * (1 + TAX_RATE) ; // Calculate total with tax
-  const totalQuantity=cartItems.reduce((sum, item) => sum + parseInt(item.quantity.toString()), 0);
- console.log(totalQuantity)
+  const totalWithTax = total * (1 + TAX_RATE); // Calculate total with tax
+  const totalQuantity = cartItems.reduce((sum, item) => sum + parseInt(item.quantity.toString()), 0);
+  console.log(totalQuantity)
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAddress(prev => ({ ...prev, [name]: value }));
@@ -120,29 +120,29 @@ const CheckoutPage: React.FC = () => {
       alert('Veuillez choisir un quartier de livraison');
       return;
     }
-    
+
     if (!paymentPhone) {
       alert('Veuillez entrer un numéro de téléphone pour le paiement');
       return;
     }
-    
+
     setShowConfirmModal(true);
   };
 
-  const getPrice=(item:any)=>{
-    if(item.selectedVariation?.attributes?.price){
-        return item.selectedVariation?.attributes?.price;
+  const getPrice = (item: any) => {
+    if (item.selectedVariation?.attributes?.price) {
+      return item.selectedVariation?.attributes?.price;
     }
-    if(item.selectedVariation && item.selectedVariation.isColorOnly){
+    if (item.selectedVariation && item.selectedVariation.isColorOnly) {
       return item.selectedVariation?.price;
     }
-    else{
+    else {
       return item.product.product_price
     }
   }
-  const confirmPayment = async() => {
+  const confirmPayment = async () => {
     let productsPayments;
-    const formData=new FormData();
+    const formData = new FormData();
     setIsLoading(true);
     if (s === '1') {
       productsPayments = cartItems.map(item => ({
@@ -150,93 +150,93 @@ const CheckoutPage: React.FC = () => {
         attributeVariationId: item.selectedVariation?.attributes?.id ?? null,
         productVariationId: item.selectedVariation?.id ?? null,
         quantity: item.quantity,
-        hasVariation:item.selectedVariation ? true : false,
+        hasVariation: item.selectedVariation ? true : false,
         price: getPrice(item),
         name: item.product.product_name,
-        
+
       }));
 
-      formData.append("s","1");
-      if(quarter){
-        formData.append("quarter",quarter);
+      formData.append("s", "1");
+      if (quarter) {
+        formData.append("quarter", quarter);
       }
-      if(totalQuantity){
-          formData.append("quantity",totalQuantity.toString());
+      if (totalQuantity) {
+        formData.append("quantity", totalQuantity.toString());
       }
       let deliveryInfos;
       formData.append("isMultiCity", isMultiCity ? "true" : "false");
-      if(isMultiCity){
-        deliveryInfos=shipping=== 1500 ? `Récupérer en magasin de ${selectedCity}` : `Expédition et livraison à domicile dans la ville de ${selectedCity}`
-        formData.append("delivery_info",deliveryInfos)
+      if (isMultiCity) {
+        deliveryInfos = shipping === 1500 ? `Récupérer en magasin de ${selectedCity}` : `Expédition et livraison à domicile dans la ville de ${selectedCity}`
+        formData.append("delivery_info", deliveryInfos)
       }
-     
-      
-      sessionStorage.setItem("paymentMethod",selectedPayment);
+
+
+      sessionStorage.setItem("paymentMethod", selectedPayment);
       sessionStorage.setItem("paymentPhone", paymentPhone);
-      sessionStorage.setItem("phone",phone)
-      formData.append("amount",Math.round(totalWithTax).toString()); // Use total with tax
+      sessionStorage.setItem("phone", phone)
+      formData.append("amount", Math.round(totalWithTax).toString()); // Use total with tax
       formData.append('productsPayments', JSON.stringify(productsPayments))
-      
+
       //formData.append("address",totalWithTax.toString()); // Use total with tax
-      formData.append("phone",phone);
-      formData.append("address",address.address);
-      formData.append("shipping",shipping.toString());
-      formData.append("paymentMethod",selectedPayment);
+      formData.append("phone", phone);
+      formData.append("address", address.address);
+      formData.append("shipping", shipping.toString());
+      formData.append("paymentMethod", selectedPayment);
       formData.append("paymentPhone", paymentPhone);
 
-      let formDataObject:any = {};
-        for (const [key, value] of formData.entries()) {
-          formDataObject[key] = value;
-        }
-        
-        sessionStorage.setItem("formDataPayment",JSON.stringify(formDataObject));
-        window.location.href = "/pay/mobile-money";
-    }else if (s === '0') {
-      
-        if(productId){
-          formData.append("productId",productId);
-        }
-        if(quantity){
-          formData.append("quantity",quantity);
-        }
-        if(name){
-          formData.append("name",name);
-        }
-        if(price){
-          formData.append("price",price);
-        }
-        if(totalWithTax){ // Use total with tax
-          formData.append("amount",totalWithTax.toString());
-        }
-        if(variations){
-          formData.append('hasVariation','true');
-          formData.append("variations",variations);
-        }else{
-          formData.append('hasVariation','false');
-        }
-        formData.append("s","0");
-        if(quarter){
-          formData.append("quarter",quarter);
-        }
-        formData.append("phone",phone);
-        formData.append("address",address.address);
-        formData.append("shipping",shipping.toString());
-        formData.append("paymentMethod",selectedPayment);
-        formData.append("paymentPhone", paymentPhone);
-        let formDataObject:any = {};
-        for (const [key, value] of formData.entries()) {
-          formDataObject[key] = value;
-        }
-        
-        sessionStorage.setItem("formDataPayment",JSON.stringify(formDataObject));
-        window.location.href = "/pay/mobile-money";
+      let formDataObject: any = {};
+      for (const [key, value] of formData.entries()) {
+        formDataObject[key] = value;
+      }
+
+      sessionStorage.setItem("formDataPayment", JSON.stringify(formDataObject));
+      window.location.href = "/pay/mobile-money";
+    } else if (s === '0') {
+
+      if (productId) {
+        formData.append("productId", productId);
+      }
+      if (quantity) {
+        formData.append("quantity", quantity);
+      }
+      if (name) {
+        formData.append("name", name);
+      }
+      if (price) {
+        formData.append("price", price);
+      }
+      if (totalWithTax) { // Use total with tax
+        formData.append("amount", totalWithTax.toString());
+      }
+      if (variations) {
+        formData.append('hasVariation', 'true');
+        formData.append("variations", variations);
+      } else {
+        formData.append('hasVariation', 'false');
+      }
+      formData.append("s", "0");
+      if (quarter) {
+        formData.append("quarter", quarter);
+      }
+      formData.append("phone", phone);
+      formData.append("address", address.address);
+      formData.append("shipping", shipping.toString());
+      formData.append("paymentMethod", selectedPayment);
+      formData.append("paymentPhone", paymentPhone);
+      let formDataObject: any = {};
+      for (const [key, value] of formData.entries()) {
+        formDataObject[key] = value;
+      }
+
+      sessionStorage.setItem("formDataPayment", JSON.stringify(formDataObject));
+      window.location.href = "/pay/mobile-money";
     }
     setIsLoading(true);
-    
+
   };
-  
+
   // 1. Regrouper les produits par ville
-  const productsByCity = cartItems.reduce((acc:any, item) => {
+  const productsByCity = cartItems.reduce((acc: any, item) => {
     const city = item.product.residence || 'Ville inconnue';
     if (!acc[city]) acc[city] = [];
     acc[city].push({
@@ -249,7 +249,7 @@ const CheckoutPage: React.FC = () => {
   }, {});
 
   // 2. Vérifier s'il y a plusieurs villes
-  
+
   console.log('dd')
   console.log(isMultiCity)
   function handleRemoveFromCart(product: any, selectedVariation?: any) {
@@ -259,7 +259,7 @@ const CheckoutPage: React.FC = () => {
     }));
   }
 
-  
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -275,118 +275,118 @@ const CheckoutPage: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
               <h2 className="text-xl font-semibold mb-6">Options de livraison</h2>
               {isMultiCity && (
-  <div className="relative flex items-center gap-4 mb-6 px-5 py-4 rounded-2xl border border-red-200 bg-gradient-to-r from-red-50 via-white to-red-100 shadow-lg">
-    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 border border-red-200 mr-2">
-      <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
-      </svg>
-    </div>
-    <div className="flex-1">
-      <span className="block text-base font-semibold text-red-700 mb-1">Attention</span>
-      <span className="block text-sm text-red-600">Les produits sélectionnés dans votre panier ne sont pas dans la même ville.</span>
-    </div>
-    <button
-      className="ml-auto px-4 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold shadow hover:from-red-600 hover:to-red-700 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-red-300"
-      onClick={() => setShowModal(true)}
-    >
-      <span className="flex items-center gap-2">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0A9 9 0 11 3 12a9 9 0 0118 0z" />
-        </svg>
-        Voir
-      </span>
-    </button>
-  </div>
-)}
-
-{/* Modal Produits par ville */}
-{showModal && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-0 relative overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-blue-100">
-        <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v6m0 0c-4.418 0-8-1.79-8-4V7a2 2 0 012-2h12a2 2 0 012 2v6c0 2.21-3.582 4-8 4z" />
-        </svg>
-        <h2 className="text-lg font-bold text-blue-700">Produits par ville</h2>
-        <button
-          className="ml-auto text-gray-400 hover:text-gray-700 text-2xl"
-          onClick={() => setShowModal(false)}
-          aria-label="Fermer"
-        >
-          &times;
-        </button>
-      </div>
-      {/* Body */}
-      <div className="p-6 max-h-[70vh] overflow-y-auto">
-        {Object.entries(productsByCity as any[]).map(([city, products]) => (
-          <div key={city} className="mb-8">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold shadow">{city}</span>
-              <span className="text-xs text-gray-400">({products.length} produit{products.length > 1 ? 's' : ''})</span>
-            </div>
-            <div className="space-y-3">
-              {(products as any[]).map((product: any) => (
-                <div
-                  key={product.id}
-                  className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-white rounded-xl p-3 shadow-sm hover:shadow-md transition group"
-                >
-                  <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg border object-cover" />
+                <div className="relative flex items-center gap-4 mb-6 px-5 py-4 rounded-2xl border border-red-200 bg-gradient-to-r from-red-50 via-white to-red-100 shadow-lg">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 border border-red-200 mr-2">
+                    <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+                    </svg>
+                  </div>
                   <div className="flex-1">
-                    <div className="font-medium text-gray-900 group-hover:text-blue-700 transition">{product.name}</div>
-                    <div className="text-xs text-gray-500">Qté: {product.quantity}</div>
+                    <span className="block text-base font-semibold text-red-700 mb-1">Attention</span>
+                    <span className="block text-sm text-red-600">Les produits sélectionnés dans votre panier ne sont pas dans la même ville.</span>
                   </div>
                   <button
-                    className="px-3 py-1 bg-red-500 text-white rounded-lg font-semibold shadow hover:bg-red-600 transition"
-                    onClick={() => handleRemoveFromCart(product, product.selectedVariation)}
+                    className="ml-auto px-4 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold shadow hover:from-red-600 hover:to-red-700 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-red-300"
+                    onClick={() => setShowModal(true)}
                   >
-                    Supprimer
+                    <span className="flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0A9 9 0 11 3 12a9 9 0 0118 0z" />
+                      </svg>
+                      Voir
+                    </span>
                   </button>
                 </div>
-              ))}
-            </div>
-          </div>
-        ))}
-        <div className="flex justify-end mt-2">
-          <button
-            className="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
-            onClick={() => setShowModal(false)}
-          >
-            Fermer
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+              )}
+
+              {/* Modal Produits par ville */}
+              {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                  <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-0 relative overflow-hidden">
+                    {/* Header */}
+                    <div className="flex items-center gap-3 px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-blue-100">
+                      <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v6m0 0c-4.418 0-8-1.79-8-4V7a2 2 0 012-2h12a2 2 0 012 2v6c0 2.21-3.582 4-8 4z" />
+                      </svg>
+                      <h2 className="text-lg font-bold text-blue-700">Produits par ville</h2>
+                      <button
+                        className="ml-auto text-gray-400 hover:text-gray-700 text-2xl"
+                        onClick={() => setShowModal(false)}
+                        aria-label="Fermer"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                    {/* Body */}
+                    <div className="p-6 max-h-[70vh] overflow-y-auto">
+                      {Object.entries(productsByCity as any[]).map(([city, products]) => (
+                        <div key={city} className="mb-8">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold shadow">{city}</span>
+                            <span className="text-xs text-gray-400">({products.length} produit{products.length > 1 ? 's' : ''})</span>
+                          </div>
+                          <div className="space-y-3">
+                            {(products as any[]).map((product: any) => (
+                              <div
+                                key={product.id}
+                                className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-white rounded-xl p-3 shadow-sm hover:shadow-md transition group"
+                              >
+                                <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg border object-cover" />
+                                <div className="flex-1">
+                                  <div className="font-medium text-gray-900 group-hover:text-blue-700 transition">{product.name}</div>
+                                  <div className="text-xs text-gray-500">Qté: {product.quantity}</div>
+                                </div>
+                                <button
+                                  className="px-3 py-1 bg-red-500 text-white rounded-lg font-semibold shadow hover:bg-red-600 transition"
+                                  onClick={() => handleRemoveFromCart(product, product.selectedVariation)}
+                                >
+                                  Supprimer
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex justify-end mt-2">
+                        <button
+                          className="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                          onClick={() => setShowModal(false)}
+                        >
+                          Fermer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               {isMultiCity && (
-  <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Choisissez la ville de livraison :
-    </label>
-    <select
-      value={selectedCity}
-      onChange={e => setSelectedCity(e.target.value)}
-      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-    >
-      <option value="">-- Sélectionnez une ville --</option>
-      {uniqueCities.map(city => (
-        <option key={city} value={city}>{city}</option>
-      ))}
-    </select>
-    {selectedCity === '' && (
-      <p className="text-xs text-red-500 mt-1">Veuillez choisir une ville pour la livraison.</p>
-    )}
-  </div>
-)}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Choisissez la ville de livraison :
+                  </label>
+                  <select
+                    value={selectedCity}
+                    onChange={e => setSelectedCity(e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                  >
+                    <option value="">-- Sélectionnez une ville --</option>
+                    {uniqueCities.map(city => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </select>
+                  {selectedCity === '' && (
+                    <p className="text-xs text-red-500 mt-1">Veuillez choisir une ville pour la livraison.</p>
+                  )}
+                </div>
+              )}
               <div className="mb-4">
                 <p className="text-sm text-gray-600 mb-2">
                   Localisation du produit : <span className="font-semibold">
                     {s === "1"
                       ? (uniqueCities.length === 1
-                          ? uniqueCities[0]
-                          : selectedCity
-                        )
+                        ? uniqueCities[0]
+                        : selectedCity
+                      )
                       : residence}
                   </span>
                 </p>
@@ -396,62 +396,62 @@ const CheckoutPage: React.FC = () => {
                 {/* Si tous les produits sont de la même ville, affiche les 4 options */}
                 {!isMultiCity && (
                   <>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="pickup"
-                    name="deliveryOption"
-                    value="pickup"
-                    checked={address.deliveryOption === 'pickup'}
-                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
-                    className="mr-2"
-                  />
-                  <label htmlFor="pickup">
-                    Récupérer en magasin de {productLocation} (0 XAF)
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="localDelivery"
-                    name="deliveryOption"
-                    value="localDelivery"
-                    checked={address.deliveryOption === 'localDelivery'}
-                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
-                    className="mr-2"
-                  />
-                  <label htmlFor="localDelivery">
-                    Livraison à domicile {quarter} (1 500 XAF)
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="remotePickup"
-                    name="deliveryOption"
-                    value="remotePickup"
-                    checked={address.deliveryOption === 'remotePickup'}
-                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
-                    className="mr-2"
-                  />
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="pickup"
+                        name="deliveryOption"
+                        value="pickup"
+                        checked={address.deliveryOption === 'pickup'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'pickup' }))}
+                        className="mr-2"
+                      />
+                      <label htmlFor="pickup">
+                        Récupérer en magasin de {productLocation} (0 XAF)
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="localDelivery"
+                        name="deliveryOption"
+                        value="localDelivery"
+                        checked={address.deliveryOption === 'localDelivery'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'localDelivery' }))}
+                        className="mr-2"
+                      />
+                      <label htmlFor="localDelivery">
+                        Livraison à domicile {quarter} (1 500 XAF)
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="remotePickup"
+                        name="deliveryOption"
+                        value="remotePickup"
+                        checked={address.deliveryOption === 'remotePickup'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remotePickup' }))}
+                        className="mr-2"
+                      />
                       <label htmlFor="remotePickup">
-                    Expédition au magasin Akevas de {otherLocation} (2 500 XAF)
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="remoteDelivery"
-                    name="deliveryOption"
-                    value="remoteDelivery"
-                    checked={address.deliveryOption === 'remoteDelivery'}
-                    onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
-                    className="mr-2"
-                  />
+                        Expédition au magasin Akevas de {otherLocation} (2 500 XAF)
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="remoteDelivery"
+                        name="deliveryOption"
+                        value="remoteDelivery"
+                        checked={address.deliveryOption === 'remoteDelivery'}
+                        onChange={() => setAddress(prev => ({ ...prev, deliveryOption: 'remoteDelivery' }))}
+                        className="mr-2"
+                      />
                       <label htmlFor="remoteDelivery">
-                    Expédition et livraison à domicile dans la ville de {otherLocation} (3 500 XAF)
-                  </label>
-                </div>
+                        Expédition et livraison à domicile dans la ville de {otherLocation} (3 500 XAF)
+                      </label>
+                    </div>
                   </>
                 )}
 
@@ -495,21 +495,21 @@ const CheckoutPage: React.FC = () => {
               {/* Champ quartier et adresse pour Livraison à domicile */}
               {(address.deliveryOption === 'localDelivery' || address.deliveryOption === 'remoteDelivery') && (
                 <>
-                                <div className="space-y-2 mb-6">
-                  <Label htmlFor="street">Choisir un quartier de livraison</Label>
-                  <Select
-                    name="quarter"
-                    value={quarter}
-                    disabled={quartersLoading}
-                    onValueChange={(value) => setQuarter(value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choisir un quartier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {quartersLoading ? (
-                        <SelectItem value="loading">Chargement des quartiers...</SelectItem>
-                      ) : (
+                  <div className="space-y-2 mb-6">
+                    <Label htmlFor="street">Choisir un quartier de livraison</Label>
+                    <Select
+                      name="quarter"
+                      value={quarter}
+                      disabled={quartersLoading}
+                      onValueChange={(value) => setQuarter(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choisir un quartier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {quartersLoading ? (
+                          <SelectItem value="loading">Chargement des quartiers...</SelectItem>
+                        ) : (
                           quarters?.quarters
                             .filter((q: any) => {
                               if (address.deliveryOption === 'remoteDelivery') {
@@ -522,11 +522,11 @@ const CheckoutPage: React.FC = () => {
                               return q.town_name === (isMultiCity ? selectedCity : productLocation);
                             })
                             .map((quarter: any) => (
-                          <SelectItem key={quarter.id} value={quarter.quarter_name}>
-                            {quarter.quarter_name}
-                          </SelectItem>
-                        ))
-                      )}
+                              <SelectItem key={quarter.id} value={quarter.quarter_name}>
+                                {quarter.quarter_name}
+                              </SelectItem>
+                            ))
+                        )}
                         {quarters?.quarters.filter((q: any) => {
                           if (address.deliveryOption === 'remoteDelivery') {
                             if (isMultiCity) return q.town_name === selectedCity;
@@ -534,26 +534,26 @@ const CheckoutPage: React.FC = () => {
                           }
                           return q.town_name === (isMultiCity ? selectedCity : productLocation);
                         }).length === 0 && (
-                          <SelectItem value="no-quarters">Aucun quartier trouvé, veuillez vérifier votre ville</SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
+                            <SelectItem value="no-quarters">Aucun quartier trouvé, veuillez vérifier votre ville</SelectItem>
+                          )}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div className="col-span-2 mb-8">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Adresse de livraison (mentionnez les détails de votre adresse de livraison)
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={address.address}
-                    onChange={handleAddressChange}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                  />
-                </div>
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      value={address.address}
+                      onChange={handleAddressChange}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                    />
+                  </div>
                 </>
               )}
-              
+
               <div className="space-y-4 mb-6">
                 <div className="col-span-2 sm:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -589,7 +589,7 @@ const CheckoutPage: React.FC = () => {
                     type="text"
                     name="phone"
                     value={phone}
-                    onChange={(e:any)=>setPhone(e.target.value)}
+                    onChange={(e: any) => setPhone(e.target.value)}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                   />
                 </div>
@@ -637,7 +637,7 @@ const CheckoutPage: React.FC = () => {
                     className="h-12 max-sm:h-8 object-contain mb-4"
                   />
                   <h3 className="font-medium max-sm:text-xs text-center">Orange money</h3>
-                  
+
                   {selectedPayment === 'cm.orange' && (
                     <div className="absolute top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
@@ -657,7 +657,7 @@ const CheckoutPage: React.FC = () => {
                     className="h-12 max-sm:h-8 object-contain mb-4"
                   />
                   <h3 className="font-medium max-sm:text-xs text-center">Momo Payment </h3>
-                  
+
                   {selectedPayment === 'cm.mtn' && (
                     <div className="absolute  top-2 right-2 w-4 h-4 bg-[#ed7e0f] rounded-full" />
                   )}
@@ -665,7 +665,7 @@ const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Champ de téléphone pour le paiement */}
-             
+
             </div>
           </div>
 
@@ -678,18 +678,18 @@ const CheckoutPage: React.FC = () => {
 
               {/* Articles */}
               <div className="space-y-4 mb-6">
-                {s == "1" && cartItems.map((item:any) => (
+                {s == "1" && cartItems.map((item: any) => (
                   <div key={item.product.id} className="flex gap-4">
-                    {item.selectedVariation ?  <img
+                    {item.selectedVariation ? <img
                       src={item.selectedVariation?.images[0]}
                       alt={item.product.product_name}
                       className="w-16 h-16 object-cover rounded-lg"
-                    /> :  <img
-                    src={item.product.product_profile}
-                    alt={item.product.product_name}
-                    className="w-16 h-16 object-cover rounded-lg"
-                  />}
-                   
+                    /> : <img
+                      src={item.product.product_profile}
+                      alt={item.product.product_name}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />}
+
                     <div className="flex-1">
                       <h3 className="text-sm font-medium">{item.product.product_name}</h3>
                       {item.selectedVariation && (
@@ -737,9 +737,9 @@ const CheckoutPage: React.FC = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-500">Sous-total</span>
                   <span className="font-medium">
-                    {s == "1" ? 
+                    {s == "1" ?
                       cartItems.reduce((sum, item) => {
-                        const price = item.selectedVariation?.attributes?.price 
+                        const price = item.selectedVariation?.attributes?.price
                           ? parseFloat(item.selectedVariation.attributes.price)
                           : parseFloat(item.product.product_price);
                         return sum + (price * item.quantity);
@@ -755,13 +755,8 @@ const CheckoutPage: React.FC = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-500">TVA</span>
                   <span className="font-medium">
-                    {s == "1" ? 
-                      (cartItems.reduce((sum, item) => {
-                        const price = item.selectedVariation?.attributes?.price 
-                          ? parseFloat(item.selectedVariation.attributes.price)
-                          : parseFloat(item.product.product_price);
-                        return sum + (price * item.quantity);
-                      }, 0) * TAX_RATE).toFixed(2)
+                    {s == "1" ?
+                      (total * TAX_RATE).toFixed(2)
                       : (parseInt(totalPrice || '0') * TAX_RATE).toFixed(2)
                     } Fcfa
                   </span>
@@ -780,12 +775,11 @@ const CheckoutPage: React.FC = () => {
               {/* Bouton de paiement */}
               <button
                 onClick={handlePayment}
-                disabled={paymentPhone.trim().length !=9 || (isMultiCity && !selectedCity)}
-              className={`w-full mt-6 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
-                paymentPhone.trim().length !=9 || (isMultiCity && !selectedCity) 
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-70' 
+                disabled={paymentPhone.trim().length != 9 || (isMultiCity && !selectedCity)}
+                className={`w-full mt-6 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${paymentPhone.trim().length != 9 || (isMultiCity && !selectedCity)
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-70'
                   : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/80'
-              }`}
+                  }`}
               >
                 {isLoading ? 'Traitement...' : 'Payer maintenant'}
               </button>
@@ -796,7 +790,7 @@ const CheckoutPage: React.FC = () => {
                   <Shield className="w-4 h-4" />
                   <span>Paiement 100% sécurisé</span>
                 </div>
-               
+
               </div>
             </div>
           </div>
@@ -821,7 +815,7 @@ const CheckoutPage: React.FC = () => {
           ) : (
             <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
               <h2 className="text-xl font-semibold mb-4">Résumé de la commande</h2>
-              
+
               <div className="space-y-4 mb-6">
                 <div className="border-b pb-2">
                   <p className="font-medium">Informations client</p>
@@ -833,20 +827,20 @@ const CheckoutPage: React.FC = () => {
                 <div className="border-b pb-2">
                   <p className="font-medium">Mode de livraison</p>
                   <p>{address.deliveryOption === 'pickup' ? 'Récupération en magasin' :
-                      address.deliveryOption === 'localDelivery' ? `Livraison à ${quarter}` :
+                    address.deliveryOption === 'localDelivery' ? `Livraison à ${quarter}` :
                       address.deliveryOption === 'remotePickup' ? 'Expédition au magasin' :
-                      'Expédition et livraison à domicile'
+                        'Expédition et livraison à domicile'
                   }</p>
                   <p>Frais de livraison: {shipping} FCFA</p>
-                  <p>TVA:  {s == "1" ? 
-                      (cartItems.reduce((sum, item) => {
-                        const price = item.selectedVariation?.attributes?.price 
-                          ? parseFloat(item.selectedVariation.attributes.price)
-                          : parseFloat(item.product.product_price);
-                        return sum + (price * item.quantity);
-                      }, 0) * TAX_RATE).toFixed(2)
-                      : (parseInt(totalPrice || '0') * TAX_RATE).toFixed(2)
-                    } Fcfa FCFA</p>
+                  <p>TVA:  {s == "1" ?
+                    (cartItems.reduce((sum, item) => {
+                      const price = item.selectedVariation?.attributes?.price
+                        ? parseFloat(item.selectedVariation.attributes.price)
+                        : parseFloat(item.product.product_price);
+                      return sum + (price * item.quantity);
+                    }, 0) * TAX_RATE).toFixed(2)
+                    : (parseInt(totalPrice || '0') * TAX_RATE).toFixed(2)
+                  } Fcfa FCFA</p>
                 </div>
                 <div>
                   <p className="font-medium">Montant total:{totalWithTax} Fcfa FCFA</p>
