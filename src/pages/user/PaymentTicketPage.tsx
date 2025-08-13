@@ -37,7 +37,7 @@ export default function PaymentTicketPage() {
           <div className="flex flex-col items-center">
             <div className="bg-red-100 rounded-full p-4 mb-4 animate-bounce">
               <svg className="w-10 h-10 text-[#ed7e0f]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 9l-6 6m0-6l6 6" />
               </svg>
             </div>
@@ -46,7 +46,7 @@ export default function PaymentTicketPage() {
               Oups ! Aucun ticket ne correspond à cette référence.<br />
               Veuillez vérifier le lien ou réessayer plus tard.
             </p>
-            <Button 
+            <Button
               onClick={() => window.location.href = '/'}
               className="bg-[#ed7e0f] to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg transition-all duration-200"
             >
@@ -57,20 +57,20 @@ export default function PaymentTicketPage() {
       </div>
     );
   }
-  
+
   const order = payment.order;
   const status = statusMap[order.status] || statusMap['0'];
-  
+
   // Combiner les deux types de détails de commande
   const allOrderItems = [] as any[];
-  
+
   // Ajouter les produits avec variation (orderVariations)
   if (order.orderVariations && order.orderVariations.length > 0) {
     order.orderVariations.forEach((item: any) => {
       if (item.variation_attribute && item.variation_attribute.product_variation) {
         const variation = item.variation_attribute.product_variation;
         const attributeValue = item.variation_attribute.value;
-        
+
         allOrderItems.push({
           id: item.id,
           name: variation.product_name || 'Produit inconnu',
@@ -85,7 +85,7 @@ export default function PaymentTicketPage() {
       }
     });
   }
-  
+
   // Ajouter les produits sans variation (order_details)
   if (order.order_details && order.order_details.length > 0) {
     order.order_details.forEach((item: any) => {
@@ -102,7 +102,7 @@ export default function PaymentTicketPage() {
       });
     });
   }
-  
+
   return (
     <>
       <div
@@ -140,7 +140,7 @@ export default function PaymentTicketPage() {
           </div>
           <div className="flex flex-col sm:flex-row items-start gap-2 mt-4">
             <div className="flex flex-row items-center gap-2">
-            <MapPin className="w-5 h-5 text-gray-500" />
+              <MapPin className="w-5 h-5 text-gray-500" />
               <span className="text-gray-700 font-medium text-xs sm:text-base">Emplacement de livraison :</span>
             </div>
             <span className="text-gray-600 text-xs sm:text-sm break-words">
@@ -187,17 +187,17 @@ export default function PaymentTicketPage() {
           <div className="mt-5 sm:mt-6 pt-4 border-t">
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center text-xs sm:text-base">
-              <span className="text-gray-600">Sous-total ({order.itemsCount} article(s))</span>
-              <span className="font-medium">{order.total_amount} XAF</span>
-            </div>
+                <span className="text-gray-600">Sous-total ({order.itemsCount} article(s))</span>
+                <span className="font-medium">{allOrderItems.reduce((acc, item) => acc + item.total, 0)} XAF</span>
+              </div>
               <div className="flex justify-between items-center text-xs sm:text-base">
-              <span className="text-gray-600">Frais de livraison</span>
-              <span className="font-medium">{order.fee_of_shipping || 0} XAF</span>
-            </div>
+                <span className="text-gray-600">Frais de livraison</span>
+                <span className="font-medium">{order.fee_of_shipping || 0} XAF</span>
+              </div>
               <div className="flex justify-between items-center text-xs sm:text-base">
-              <span className="text-gray-600">TVA (5%)</span>
-              <span className="font-medium">{((parseFloat(order.total_amount) * TAX_RATE)).toFixed(2)} XAF</span>
-            </div>
+                <span className="text-gray-600">TVA (5%)</span>
+                <span className="font-medium">{((parseFloat(order.total_amount) * TAX_RATE)).toFixed(2)} XAF</span>
+              </div>
               <div className="flex justify-between items-center mt-2 pt-2 border-t text-base sm:text-lg">
                 <span className="font-semibold">Total</span>
                 <span className="font-bold">{order.total_amount} XAF</span>
@@ -212,18 +212,18 @@ export default function PaymentTicketPage() {
             <QrCode className="w-5 h-5" /> QR Code du ticket
           </h2>
           <div className="flex justify-center  w-full">
-          <QRCodeCanvas
-            value={JSON.stringify({
-              ref: payment.transaction_ref,
-              user: payment.user,
-              amount: payment.price,
-              date: order.created_at,
-              products: allOrderItems.map((item: any) => item.name)
-            })}
+            <QRCodeCanvas
+              value={JSON.stringify({
+                ref: payment.transaction_ref,
+                user: payment.user,
+                amount: payment.price,
+                date: order.created_at,
+                products: allOrderItems.map((item: any) => item.name)
+              })}
               size={140}
-            level="H"
-            includeMargin={true}
-          />
+              level="H"
+              includeMargin={true}
+            />
           </div>
           <div className="text-xs text-gray-500 mt-2 text-center">
             Scannez pour vérifier ou partager ce ticket
