@@ -1,4 +1,4 @@
-import { Coins, LogOut, Menu, User, Bell } from 'lucide-react'
+import { Coins, Menu, Bell } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { AvatarImage } from '@radix-ui/react-avatar'
 import React, { useState } from 'react'
@@ -6,10 +6,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 import { Seller } from '@/types/seller'
 
-import { useLogoutMutation } from '@/services/auth'
-import AsyncLink from '@/components/ui/AsyncLink'
-import { logoutUser } from '@/lib/logout'
+
 import logo from '@/assets/favicon.png'
+import DropdownAccount from './dropdown-account'
 
 import { Link } from 'react-router-dom'
 
@@ -21,14 +20,7 @@ export default function Header({
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>
   sellerData: Seller | null | undefined
 }) {
-  const [logout] = useLogoutMutation()
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-
-  const handleLogout = async () => {
-    await logout('Auth')
-    logoutUser()
-  }
 
   // Responsive: show search as overlay on mobile
   const SearchBar = () => (
@@ -131,11 +123,11 @@ export default function Header({
               <Coins className="w-4 h-4 mr-1" />
               <span>{sellerData?.shop?.coins ?? 0}</span>
             </div>
-            {/* Avatar + menu */}
-            <div className="relative">
+
+            {/* Avatar + DropdownAccount */}
+            <DropdownAccount sellerData={sellerData}>
               <motion.div
                 whileTap={{ scale: 0.97 }}
-                onClick={() => setUserMenuOpen((v) => !v)}
                 className="flex items-center gap-1 cursor-pointer group"
               >
                 <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-gray-200 group-hover:border-[#ed7e0f] transition-colors">
@@ -148,32 +140,7 @@ export default function Header({
                   {sellerData?.shop?.shop_name}
                 </p>
               </motion.div>
-              <AnimatePresence>
-                {userMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 z-50 mt-2 w-44 bg-white rounded-lg shadow-lg overflow-hidden  border border-gray-100"
-                  >
-                    <AsyncLink to="/account">
-                      <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        Mon profil
-                      </div>
-                    </AsyncLink>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-gray-100"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Déconnexion
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            </DropdownAccount>
           </div>
         </div>
       </div>

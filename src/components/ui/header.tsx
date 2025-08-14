@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Search, X, Menu, Clock, TrendingUp, Lock,CheckCircle } from 'lucide-react'
+import { Search, X, Menu, Clock, TrendingUp, Lock, CheckCircle } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
 import AsyncLink from './AsyncLink';
-import DropdownAccount from './dropdown-account';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { Button } from './button';
@@ -14,6 +13,7 @@ import { useGetUserQuery } from '@/services/auth';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
 import { Badge } from './badge';
+import DropdownAccount from '../dashboard/seller/layouts/dropdown-account';
 // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
@@ -143,37 +143,33 @@ const Header = () => {
 
 
   // Memoize les composants qui peuvent être réutilisés
-  const headerActions = useMemo(() => (
+  const headerActions = (
     <div className="flex items-center gap-4">
+      <DropdownAccount sellerData={seller}>
+        <motion.div
+          whileTap={{ scale: 0.97 }}
+          className="flex items-center gap-1 cursor-pointer group"
+        >
+          <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-gray-200 group-hover:border-[#ed7e0f] transition-colors">
+            <AvatarFallback className="bg-gradient-to-br from-[#ed7e0f] to-[#f19b45] text-white">
+              {seller?.firstName?.charAt(0) || '?'}
+            </AvatarFallback>
+            <AvatarImage className="object-cover" src={seller?.shop?.shop_profile || ''} />
+          </Avatar>
+
+        </motion.div>
+      </DropdownAccount>
       <button
         onClick={handleSearchToggle}
         className="text-gray-700 hover:text-[#ed7e0f]"
       >
         <Search className="w-6 h-6" />
       </button>
-      <DropdownAccount currentUser={userData}>
-        {!userData && !isLoading && (
-          <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
-            <User className="h-6 w-6" />
-          </div>
-        )}
-        {userData && userData.role_id === 2 && (
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={userData.shop.shop_profile} />
-            <AvatarFallback>{userData.firstName.charAt(0)}</AvatarFallback>
-          </Avatar>
-        )}
-        {userData && (userData.role_id === 1 || userData.role_id === 3) && (
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={userData.profile} />
-            <AvatarFallback>{userData?.userName.charAt(0)}</AvatarFallback>
-          </Avatar>
-        )}
-      </DropdownAccount>
+
 
 
     </div>
-  ), [userData, handleSearchToggle]);
+  );
 
   return (
     <>
@@ -240,37 +236,28 @@ const Header = () => {
 
               {/* Actions (compte, panier, etc.) */}
               <div className="flex items-center gap-4">
-                <DropdownAccount currentUser={userData}>
-                  {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                    <User className="h-7 w-7" />
-
-                  </div>}
-                  {userData && userData.role_id === 2 && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-
-                    <Avatar>
-                      <AvatarImage src={userData.shop.shop_profile} />
-                      <AvatarFallback>
-                        {userData.firstName.charAt(0)}
+                <DropdownAccount sellerData={seller}>
+                  <motion.div
+                    whileTap={{ scale: 0.97 }}
+                    className="flex items-center gap-1 cursor-pointer group"
+                  >
+                    <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-gray-200 group-hover:border-[#ed7e0f] transition-colors">
+                      <AvatarFallback className="bg-gradient-to-br from-[#ed7e0f] to-[#f19b45] text-white">
+                        {seller?.firstName?.charAt(0) || '?'}
                       </AvatarFallback>
+                      <AvatarImage className="object-cover" src={seller?.shop?.shop_profile || ''} />
                     </Avatar>
-                  </div>}
-                  {userData && (userData.role_id === 1 || userData.role_id === 3 || userData.role_id === 4) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                    <Avatar>
-                      <AvatarImage src={userData.profile} />
-                      <AvatarFallback>
-                        {userData.role_id === 4 ? userData?.firstName.charAt(0) : userData?.userName.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>}
+
+                  </motion.div>
                 </DropdownAccount>
 
                 {userData && userData.shop.isSubscribe === 1 ? (
                   <div className="relative group">
-                    <Button 
+                    <Button
                       variant="ghost"
                       className="relative bg-gradient-to-br from-[#ed7e0f] via-orange-500 to-[#d97100] text-white hover:from-[#d97100] hover:via-orange-600 hover:to-[#ed7e0f] rounded-xl px-5 py-2.5 flex items-center gap-3 transition-all duration-500 shadow-lg hover:shadow-orange-500/30 transform hover:-translate-y-0.5"
                     >
-                      <Badge 
+                      <Badge
                         variant="secondary"
                         className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold tracking-wider px-2.5"
                       >
@@ -294,9 +281,9 @@ const Header = () => {
                   </AsyncLink>
                 )}
 
-                
 
-                  
+
+
               </div>
             </div>
           </div>
