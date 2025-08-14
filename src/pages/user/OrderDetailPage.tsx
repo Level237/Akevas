@@ -125,7 +125,7 @@ const OrderDetailPage = () => {
                 className="space-y-8"
             >
                 {/* En-tête de la commande */}
-                <div className="flex justify-between items-center">
+                <div className="flex max-sm:flex-col max-sm:items-start max-sm:gap-4 justify-between items-center">
                     <div className="flex items-center gap-3">
                         <h1 className="text-2xl font-bold">
                             Commande #{order?.id}
