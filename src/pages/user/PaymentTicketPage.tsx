@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle, Package, MapPin, QrCode, Download, Loader2 } from 'lucide-react';
+import { Package, QrCode, Download, Loader2 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useShowPaymentWithReferenceQuery } from '@/services/auth';
 import jsPDF from 'jspdf';
