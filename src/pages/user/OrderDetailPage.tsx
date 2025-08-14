@@ -208,7 +208,7 @@ const OrderDetailPage = () => {
                                     key={item.id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="flex max-sm:flex-col max-sm:items-center max-sm:gap-4 items-center gap-4 p-4 bg-gray-50 rounded-lg"
+                                    className="flex max-sm:flex-col  max-sm:items-center max-sm:gap-4 items-center gap-4 p-4 bg-gray-50 rounded-lg"
                                 >
                                     <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
                                         <img
@@ -221,9 +221,9 @@ const OrderDetailPage = () => {
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="font-medium">{item.name}</h3>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <p className="text-gray-600">Quantité: {item.quantity}</p>
+                                        <h3 className="font-medium max-sm:mb-2">{item.name}</h3>
+                                        <div className="flex max-sm:mb-2  items-center gap-2 mt-1">
+                                            <p className="text-gray-600  max-sm:text-sm">Quantité: {item.quantity}</p>
                                             {item.color && (
                                                 <Badge variant="outline" className="text-xs">
                                                     {item.color}

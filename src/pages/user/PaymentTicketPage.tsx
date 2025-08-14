@@ -157,15 +157,15 @@ export default function PaymentTicketPage() {
           </h2>
           <div className="space-y-3 sm:space-y-4">
             {allOrderItems.map((item: any) => (
-              <div key={item.id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4">
+              <div key={item.id} className="flex max-sm:flex-col items-center gap-4 bg-gray-50 rounded-lg p-4">
                 <img
                   src={item.image}
                   alt={item.name}
                   className="w-16 h-16 object-cover rounded-md border"
                 />
                 <div className="flex-1">
-                  <div className="font-medium">{item.name}</div>
-                  <div className="flex items-center gap-2 text-xs mt-1">
+                  <div className="font-medium max-sm:mb-2">{item.name}</div>
+                  <div className="flex items-center max-sm:mb-2 gap-2 text-xs mt-1">
                     <span className="text-gray-600">Quantité: {item.quantity}</span>
                     {item.color && (
                       <Badge variant="outline" className="text-xs">
@@ -180,7 +180,7 @@ export default function PaymentTicketPage() {
                   </div>
                   <div className="text-xs text-gray-500 mt-1">Prix unitaire: {item.price} XAF</div>
                 </div>
-                <div className="text-right font-semibold">{item.total} XAF</div>
+                <div className="text-right max-sm:hidden font-semibold">{item.total} XAF</div>
               </div>
             ))}
           </div>
