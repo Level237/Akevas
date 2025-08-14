@@ -18,7 +18,7 @@ const statusMap: Record<string, { label: string; color: string }> = {
 };
 
 
-const TAX_RATE = 0.05;
+
 
 export default function PaymentTicketPage() {
   const { ref } = useParams();
