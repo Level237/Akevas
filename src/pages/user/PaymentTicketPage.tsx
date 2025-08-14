@@ -108,6 +108,10 @@ export default function PaymentTicketPage() {
       <div
         className="max-w-2xl mx-auto px-2 py-4 sm:px-4 sm:py-10"
         ref={ticketRef}
+        style={{
+          minWidth: '320px', // Largeur minimale pour mobile
+          width: '100%'
+        }}
       >
         {/* Header Card */}
         <Card className="p-4 sm:p-6 mb-4 sm:mb-6 shadow-xl border-2 border-green-100 rounded-2xl">
@@ -163,8 +167,8 @@ export default function PaymentTicketPage() {
                   alt={item.name}
                   className="w-16 h-16 object-cover rounded-md border"
                 />
-                <div className="flex-1">
-                  <div className="font-medium max-sm:mb-2">{item.name}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium max-sm:mb-2 text-sm sm:text-base">{item.name}</div>
                   <div className="flex items-center max-sm:mb-2 gap-2 text-xs mt-1">
                     <span className="text-gray-600">Quantité: {item.quantity}</span>
                     {item.color && (
@@ -174,13 +178,13 @@ export default function PaymentTicketPage() {
                     )}
                     {item.size && (
                       <Badge variant="outline" className="text-xs">
-                        {item.size}
+                        Taille: {item.size}
                       </Badge>
                     )}
                   </div>
                   <div className="text-xs text-gray-500 mt-1">Prix unitaire: {item.price} XAF</div>
                 </div>
-                <div className="text-right max-sm:hidden font-semibold">{item.total} XAF</div>
+                <div className="text-right max-sm:text-center max-sm:w-full font-semibold text-sm sm:text-base">{item.total} XAF</div>
               </div>
             ))}
           </div>
@@ -207,11 +211,11 @@ export default function PaymentTicketPage() {
         </Card>
 
         {/* QR Code Card */}
-        <Card className="p-4 sm:p-6 mb-4  sm:mb-6 flex flex-col items-center rounded-2xl">
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6 flex flex-col items-center rounded-2xl">
           <h2 className="text-base sm:text-lg font-semibold mb-2 flex items-center gap-2">
             <QrCode className="w-5 h-5" /> QR Code du ticket
           </h2>
-          <div className="flex justify-center  w-full">
+          <div className="flex justify-center w-full">
             <QRCodeCanvas
               value={JSON.stringify({
                 ref: payment.transaction_ref,
@@ -238,13 +242,70 @@ export default function PaymentTicketPage() {
             if (!ticketRef.current) return;
             setIsDownloading(true);
             try {
-              const canvas = await html2canvas(ticketRef.current, { scale: 2 });
+              // Optimisations pour mobile
+              const canvas = await html2canvas(ticketRef.current, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                width: Math.max(320, ticketRef.current.scrollWidth),
+                height: ticketRef.current.scrollHeight,
+                scrollX: 0,
+                scrollY: 0
+              });
+
               const imgData = canvas.toDataURL('image/png');
-              const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+              const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'pt',
+                format: 'a4',
+                compress: true
+              });
+
               const pageWidth = pdf.internal.pageSize.getWidth();
-              const imgWidth = pageWidth - 40;
+              const pageHeight = pdf.internal.pageSize.getHeight();
+              const margin = 20;
+              const imgWidth = pageWidth - (2 * margin);
               const imgHeight = (canvas.height * imgWidth) / canvas.width;
-              pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+
+              // Si l'image est trop haute, on la divise sur plusieurs pages
+              if (imgHeight <= pageHeight - (2 * margin)) {
+                // Une seule page
+                pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+              } else {
+                // Plusieurs pages
+                let heightLeft = imgHeight;
+
+                let page = 1;
+
+                while (heightLeft > 0) {
+                  const currentHeight = Math.min(pageHeight - (2 * margin), heightLeft);
+                  const currentCanvas = document.createElement('canvas');
+                  currentCanvas.width = canvas.width;
+                  currentCanvas.height = currentHeight;
+                  const ctx = currentCanvas.getContext('2d');
+
+                  if (ctx) {
+                    ctx.drawImage(
+                      canvas,
+                      0, (imgHeight - heightLeft) * (canvas.width / imgWidth),
+                      canvas.width, currentHeight * (canvas.width / imgWidth),
+                      0, 0,
+                      canvas.width, currentHeight
+                    );
+                  }
+
+                  const currentImgData = currentCanvas.toDataURL('image/png');
+                  pdf.addImage(currentImgData, 'PNG', margin, margin, imgWidth, currentHeight);
+
+                  heightLeft -= currentHeight;
+                  if (heightLeft > 0) {
+                    pdf.addPage();
+                    page++;
+                  }
+                }
+              }
+
               pdf.save(`ticket-${payment.transaction_ref}.pdf`);
             } catch (error) {
               console.error('Error downloading ticket:', error);
