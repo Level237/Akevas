@@ -6,67 +6,67 @@ import { ArrowRight, Loader2, Package } from 'lucide-react';
 import AsyncLink from '@/components/ui/AsyncLink';
 
 const getOrderItems = (order: any) => {
-  const allOrderItems: any[] = [];
-  
-  // Ajouter les produits avec variation (orderVariations)
-  if (order.orderVariations && order.orderVariations.length > 0) {
-    order.orderVariations.forEach((item: any) => {
-      if (item.variation_attribute && item.variation_attribute.product_variation) {
-        const variation = item.variation_attribute.product_variation;
-        const attributeValue = item.variation_attribute.value;
-        
-        allOrderItems.push({
-          id: item.id,
-          name: variation.product_name || 'Produit inconnu',
-          color: variation.color?.name || '',
-          size: attributeValue || '',
-          quantity: parseInt(item.variation_quantity),
-          price: parseFloat(item.variation_price),
-          image: variation.images?.[0]?.path || '',
-          total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
-          type: 'variation'
+    const allOrderItems: any[] = [];
+
+    // Ajouter les produits avec variation (orderVariations)
+    if (order.orderVariations && order.orderVariations.length > 0) {
+        order.orderVariations.forEach((item: any) => {
+            if (item.variation_attribute && item.variation_attribute.product_variation) {
+                const variation = item.variation_attribute.product_variation;
+                const attributeValue = item.variation_attribute.value;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    size: attributeValue || '',
+                    quantity: parseInt(item.variation_quantity),
+                    price: parseFloat(item.variation_price),
+                    image: variation.images?.[0]?.path || '',
+                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
+                    type: 'variation'
+                });
+            }
         });
-      }
-    });
-  }
-  
-  // Ajouter les produits sans variation (order_details)
-  if (order.order_details && order.order_details.length > 0) {
-    order.order_details.forEach((item: any) => {
-      allOrderItems.push({
-        id: item.id,
-        name: item.product?.product_name || 'Produit inconnu',
-        color: '',
-        size: '',
-        quantity: parseInt(item.quantity),
-        price: parseFloat(item.price),
-        image: item.product?.product_profile || '',
-        total: parseInt(item.quantity) * parseFloat(item.price),
-        type: 'simple'
-      });
-    });
-  }
-  
-  return allOrderItems;
+    }
+
+    // Ajouter les produits sans variation (order_details)
+    if (order.order_details && order.order_details.length > 0) {
+        order.order_details.forEach((item: any) => {
+            allOrderItems.push({
+                id: item.id,
+                name: item.product?.product_name || 'Produit inconnu',
+                color: '',
+                size: '',
+                quantity: parseInt(item.quantity),
+                price: parseFloat(item.price),
+                image: item.product?.product_profile || '',
+                total: parseInt(item.quantity) * parseFloat(item.price),
+                type: 'simple'
+            });
+        });
+    }
+
+    return allOrderItems;
 };
 
 const getProductImage = (orderItems: any[]) => {
-  if (orderItems.length > 0) {
-    // Essayer d'abord de trouver une image valide
-    const itemWithImage = orderItems.find(item => item.image && item.image !== '');
-    if (itemWithImage) {
-      return itemWithImage.image;
+    if (orderItems.length > 0) {
+        // Essayer d'abord de trouver une image valide
+        const itemWithImage = orderItems.find(item => item.image && item.image !== '');
+        if (itemWithImage) {
+            return itemWithImage.image;
+        }
+        // Si aucune image trouvée, retourner la première image disponible
+        return orderItems[0].image || '';
     }
-    // Si aucune image trouvée, retourner la première image disponible
-    return orderItems[0].image || '';
-  }
-  return '';
+    return '';
 };
 
 const getTotalItems = (orderItems: any[]) => {
-  return orderItems.reduce((total: number, item: any) => {
-    return total + (item.quantity || 0);
-  }, 0);
+    return orderItems.reduce((total: number, item: any) => {
+        return total + (item.quantity || 0);
+    }, 0);
 };
 
 const getStatusBadgeColor = (status: string) => {
@@ -91,32 +91,32 @@ const getStatusText = (status: string) => {
 };
 
 const RecentOrders = () => {
-    const { data, isLoading} = useGetRecentOrdersQuery("Auth");
+    const { data, isLoading } = useGetRecentOrdersQuery("Auth");
     return (
         <div>
             <Card className="p-6">
-                <div className='flex flex-row items-center justify-between'>
-                        <h2 className="text-xl font-semibold max-sm:text-md mb-6">Dernières commandes</h2>
+                <div className='flex flex-row mb-6  items-center justify-between'>
+                    <h2 className="text-xl font-semibold max-sm:text-lg ">commandes recentes</h2>
 
-                        <Button className='bg-[#ed7e0f] hover:bg-[#ed7e0f]' size="sm" asChild>
-                            <AsyncLink to="/user/orders">Voir plus <ArrowRight/></AsyncLink>
-                        </Button>
+                    <Button className='bg-[#ed7e0f] hover:bg-[#ed7e0f]' size="sm" asChild>
+                        <AsyncLink to="/user/orders">Voir plus <ArrowRight /></AsyncLink>
+                    </Button>
                 </div>
-                
+
                 <div className="space-y-4">
                     {!isLoading && data?.map((order: any) => {
                         const orderItems = getOrderItems(order.order);
                         const totalItems = getTotalItems(orderItems);
                         const hasVariations = orderItems.some((item: any) => item.type === 'variation');
-                        
+
                         return (
                             <div key={order.id} className="flex flex-col md:flex-row items-center gap-4 p-4 bg-gray-50 rounded-lg">
                                 <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
                                     <img
-                                        src={getProductImage(orderItems)} 
-                                        alt={orderItems[0]?.name || 'Produit'} 
-                                        width={64} 
-                                        height={64} 
+                                        src={getProductImage(orderItems)}
+                                        alt={orderItems[0]?.name || 'Produit'}
+                                        width={64}
+                                        height={64}
                                         className="w-full h-full object-cover rounded-lg"
                                         onError={(e) => {
                                             e.currentTarget.src = 'https://via.placeholder.com/64x64?text=Image';
@@ -124,13 +124,13 @@ const RecentOrders = () => {
                                     />
                                 </div>
                                 <div className="flex-1 space-y-1">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex max-sm:mb-3 max-sm:grid max-sm:grid-cols-2 max-sm:items-start max-sm:gap-2 items-center gap-2">
                                         <h3 className="font-medium">Commande #{order.order.id}</h3>
-                                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeColor(order.order.status)}`}>
+                                        <span className={`px-2 py-1 rounded-full max-sm:text-center text-xs ${getStatusBadgeColor(order.order.status)}`}>
                                             {getStatusText(order.order.status)}
                                         </span>
                                         {hasVariations && (
-                                            <span className="px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">Produits variés</span>
+                                            <span className="px-2 py-1 max-sm:px- rounded-full text-xs bg-purple-100 text-purple-800">Produits variés</span>
                                         )}
                                     </div>
                                     <p className="text-xs text-gray-500">

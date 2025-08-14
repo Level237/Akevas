@@ -28,16 +28,16 @@ const UserDashboardPage = () => {
         {/* Dernières commandes */}
         <div
           className="lg:col-span-2"
-         
-          
+
+
         >
           <RecentOrders />
         </div>
 
         {/* Actions rapides */}
         <div
-         
-         
+
+          className='max-sm:mb-12'
         >
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-6">Actions rapides</h2>
