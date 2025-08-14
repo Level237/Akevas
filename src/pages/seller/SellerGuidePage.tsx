@@ -89,15 +89,15 @@ const SellerGuidePage = () => {
     <div className="min-h-screen bg-gray-50">
       <TopBar />
       <Header />
-      <MobileNav/>
+      <MobileNav />
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-[#ed7e0f] to-[#6e0a13] text-white py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-6">
+            <h1 className="text-4xl max-sm:text-3xl font-bold mb-6">
               Guide du vendeur Akevas
             </h1>
-            <p className="text-xl opacity-90">
+            <p className="text-xl max-sm:text-lg opacity-90">
               Tout ce que vous devez savoir pour réussir sur notre marketplace
             </p>
           </div>
@@ -113,8 +113,8 @@ const SellerGuidePage = () => {
                 <Users className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold">2M+</h3>
-                <p className="text-gray-600">Clients actifs</p>
+                <h3 className="text-2xl max-sm:text-xl font-bold">2M+</h3>
+                <p className="text-gray-600 max-sm:text-sm">Clients actifs</p>
               </div>
             </div>
           </div>
@@ -124,8 +124,8 @@ const SellerGuidePage = () => {
                 <Store className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold">50k+</h3>
-                <p className="text-gray-600">Vendeurs satisfaits</p>
+                <h3 className="text-2xl max-sm:text-xl font-bold">50k+</h3>
+                <p className="text-gray-600 max-sm:text-sm">Vendeurs satisfaits</p>
               </div>
             </div>
           </div>
@@ -135,8 +135,8 @@ const SellerGuidePage = () => {
                 <Banknote className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold">500M+</h3>
-                <p className="text-gray-600">Ventes mensuelles</p>
+                <h3 className="text-2xl max-sm:text-xl font-bold">500M+</h3>
+                <p className="text-gray-600 max-sm:text-sm">Ventes mensuelles</p>
               </div>
             </div>
           </div>
@@ -167,12 +167,11 @@ const SellerGuidePage = () => {
                         style={{ color: category.color }}
                       />
                     </div>
-                    <h3 className="text-xl font-semibold">{category.category}</h3>
+                    <h3 className="text-xl max-sm:text-lg font-semibold">{category.category}</h3>
                   </div>
                   <ChevronDown
-                    className={`w-5 h-5 transition-transform ${
-                      openCategory === category.category ? 'rotate-180' : ''
-                    }`}
+                    className={`w-5 h-5 transition-transform ${openCategory === category.category ? 'rotate-180' : ''
+                      }`}
                   />
                 </div>
               </button>
@@ -203,11 +202,10 @@ const SellerGuidePage = () => {
                             className="w-full px-6 py-4 text-left hover:bg-gray-50"
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-medium">{item.question}</span>
+                              <span className="font-medium max-sm:text-sm">{item.question}</span>
                               <ChevronDown
-                                className={`w-5 h-5 transition-transform ${
-                                  openQuestion === item.question ? 'rotate-180' : ''
-                                }`}
+                                className={`w-5 h-5 transition-transform ${openQuestion === item.question ? 'rotate-180' : ''
+                                  }`}
                               />
                             </div>
                           </button>
@@ -221,7 +219,7 @@ const SellerGuidePage = () => {
                                 transition={{ duration: 0.3 }}
                                 className="overflow-hidden"
                               >
-                                <div className="px-6 py-4 border-t text-gray-600">
+                                <div className="px-6 py-4 max-sm:text-sm border-t text-gray-600">
                                   {item.answer}
                                 </div>
                               </motion.div>
@@ -251,7 +249,7 @@ const SellerGuidePage = () => {
             <AsyncLink to="/seller-registration/personal-info"> <button className="bg-[#ed7e0f] text-white px-8 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
               Devenir vendeur
             </button></AsyncLink>
-           
+
           </div>
         </div>
       </div>
