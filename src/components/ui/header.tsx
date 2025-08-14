@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, Menu, Clock, TrendingUp, Lock, CheckCircle } from 'lucide-react'
+import { Search, X, Menu, Clock, TrendingUp, Lock, CheckCircle, User } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,7 @@ import { useGetUserQuery } from '@/services/auth';
 import { CategoryNavigation } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
 import { Badge } from './badge';
-import DropdownAccount from '../dashboard/seller/layouts/dropdown-account';
+import DropdownAccount from './dropdown-account';
 // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
   'Robe d\'été fleurie',
@@ -145,19 +145,43 @@ const Header = () => {
   // Memoize les composants qui peuvent être réutilisés
   const headerActions = (
     <div className="flex items-center gap-4">
-      <DropdownAccount sellerData={seller}>
-        <motion.div
-          whileTap={{ scale: 0.97 }}
-          className="flex items-center gap-1 cursor-pointer group"
-        >
-          <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-gray-200 group-hover:border-[#ed7e0f] transition-colors">
-            <AvatarFallback className="bg-gradient-to-br from-[#ed7e0f] to-[#f19b45] text-white">
-              {seller?.firstName?.charAt(0) || '?'}
-            </AvatarFallback>
-            <AvatarImage className="object-cover" src={seller?.shop?.shop_profile || ''} />
-          </Avatar>
-
-        </motion.div>
+      <DropdownAccount currentUser={userData}>
+        {!userData && !isLoading && (
+          <motion.div
+            whileTap={{ scale: 0.97 }}
+            className="flex items-center gap-1 cursor-pointer group"
+          >
+            <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
+              <User className="h-6 w-6" />
+            </div>
+          </motion.div>
+        )}
+        {userData && userData.role_id === 2 && (
+          <motion.div
+            whileTap={{ scale: 0.97 }}
+            className="flex items-center gap-1 cursor-pointer group"
+          >
+            <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-gray-200 group-hover:border-[#ed7e0f] transition-colors">
+              <AvatarFallback className="bg-gradient-to-br from-[#ed7e0f] to-[#f19b45] text-white">
+                {userData.firstName?.charAt(0) || '?'}
+              </AvatarFallback>
+              <AvatarImage className="object-cover" src={userData.shop?.shop_profile || ''} />
+            </Avatar>
+          </motion.div>
+        )}
+        {userData && (userData.role_id === 1 || userData.role_id === 3) && (
+          <motion.div
+            whileTap={{ scale: 0.97 }}
+            className="flex items-center gap-1 cursor-pointer group"
+          >
+            <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-gray-200 group-hover:border-[#ed7e0f] transition-colors">
+              <AvatarFallback className="bg-gradient-to-br from-[#ed7e0f] to-[#f19b45] text-white">
+                {userData?.userName?.charAt(0) || '?'}
+              </AvatarFallback>
+              <AvatarImage className="object-cover" src={userData.profile || ''} />
+            </Avatar>
+          </motion.div>
+        )}
       </DropdownAccount>
       <button
         onClick={handleSearchToggle}
@@ -236,7 +260,7 @@ const Header = () => {
 
               {/* Actions (compte, panier, etc.) */}
               <div className="flex items-center gap-4">
-                <DropdownAccount sellerData={seller}>
+                <DropdownAccount currentUser={userData}>
                   <motion.div
                     whileTap={{ scale: 0.97 }}
                     className="flex items-center gap-1 cursor-pointer group"
