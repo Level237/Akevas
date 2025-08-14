@@ -125,7 +125,7 @@ const OrderDetailPage = () => {
                 className="space-y-8"
             >
                 {/* En-tête de la commande */}
-                <div className="flex max-sm:flex-col max-sm:items-start max-sm:gap-4 justify-between items-center">
+                <div className="flex max-sm:flex-col max-sm:justify-between max-sm:gap-4 justify-between items-center">
                     <div className="flex items-center gap-3">
                         <h1 className="text-2xl font-bold">
                             Commande #{order?.id}
@@ -152,48 +152,48 @@ const OrderDetailPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Détails de la commande */}
                     <Card className="p-6 space-y-4">
-                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                        <h2 className="text-xl max-sm:text-lg font-semibold flex items-center gap-2">
                             <Package className="w-5 h-5" />
                             Détails de la commande
                         </h2>
                         <div className="space-y-3">
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Date de commande</span>
-                                <span className="font-medium">{order?.created_at ? order.created_at.split('T')[0] : 'Date non disponible'}</span>
+                                <span className="text-gray-600 max-sm:text-sm">Date de commande</span>
+                                <span className="font-medium max-sm:text-sm">{order?.created_at ? order.created_at.split('T')[0] : 'Date non disponible'}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Total des articles</span>
-                                <span className="font-medium">{itemsTotal} XAF</span>
+                                <span className="text-gray-600 max-sm:text-sm">Total des articles</span>
+                                <span className="font-medium max-sm:text-sm">{itemsTotal} XAF</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Frais de livraison</span>
-                                <span className="font-medium">{order?.fee_of_shipping || 0} XAF</span>
+                                <span className="text-gray-600 max-sm:text-sm">Frais de livraison</span>
+                                <span className="font-medium max-sm:text-sm">{order?.fee_of_shipping || 0} XAF</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600">TVA (5%)</span>
-                                <span className="font-medium">{taxAmount.toFixed(2)} XAF</span>
+                                <span className="text-gray-600 max-sm:text-sm">TVA (5%)</span>
+                                <span className="font-medium max-sm:text-sm">{taxAmount.toFixed(2)} XAF</span>
                             </div>
                             <div className="flex justify-between border-t pt-2">
-                                <span className="text-gray-800 font-semibold">Total (TTC)</span>
-                                <span className="font-bold text-lg">{totalWithTax.toFixed(2)} XAF</span>
+                                <span className="text-gray-800 font-semibold max-sm:text-sm">Total (TTC)</span>
+                                <span className="font-bold text-lg max-sm:text-sm">{totalWithTax.toFixed(2)} XAF</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Méthode de paiement</span>
-                                <span className="font-medium">{order?.payment_method === "0" ? "Carte de crédit" : "Mobile Money"}</span>
+                                <span className="text-gray-600 max-sm:text-sm">Méthode de paiement</span>
+                                <span className="font-medium max-sm:text-sm">{order?.payment_method === "0" ? "Carte de crédit" : "Mobile Money"}</span>
                             </div>
                         </div>
                     </Card>
 
                     {/* Adresse de livraison */}
                     <Card className="p-6 space-y-4">
-                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                        <h2 className="text-xl max-sm:text-lg font-semibold flex items-center gap-2">
                             <MapPin className="w-5 h-5" />
                             Adresse de livraison
                         </h2>
                         <div className="space-y-2">
-                            <p className="font-medium">{order?.userName}</p>
-                            <p className="text-gray-600">{order?.emplacement}</p>
-                            <p className="text-gray-600">{order?.userPhone}</p>
+                            <p className="font-medium max-sm:text-sm">{order?.userName}</p>
+                            <p className="text-gray-600 max-sm:text-sm">{order?.emplacement}</p>
+                            <p className="text-gray-600 max-sm:text-sm">{order?.userPhone}</p>
                         </div>
                     </Card>
                 </div>
@@ -208,7 +208,7 @@ const OrderDetailPage = () => {
                                     key={item.id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
+                                    className="flex max-sm:flex-col max-sm:items-center max-sm:gap-4 items-center gap-4 p-4 bg-gray-50 rounded-lg"
                                 >
                                     <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
                                         <img
@@ -235,11 +235,11 @@ const OrderDetailPage = () => {
                                                 </Badge>
                                             )}
                                         </div>
-                                        <p className="text-sm text-gray-500 mt-1">
+                                        <p className="text-sm  text-gray-500 mt-1">
                                             Prix unitaire: {item.price} XAF
                                         </p>
                                     </div>
-                                    <div className="text-right">
+                                    <div className="text-right max-sm:hidden">
                                         <p className="font-medium">{item.total} XAF</p>
                                     </div>
                                 </motion.div>
@@ -255,20 +255,20 @@ const OrderDetailPage = () => {
                     {/* Résumé des totaux */}
                     <div className="mt-6 pt-4 border-t">
                         <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Sous-total ({totalItems} article(s))</span>
-                            <span className="font-medium">{itemsTotal} XAF</span>
+                            <span className="text-gray-600 max-sm:text-sm">Sous-total ({totalItems} article(s))</span>
+                            <span className="font-medium max-sm:text-sm">{itemsTotal} XAF</span>
                         </div>
                         <div className="flex justify-between items-center mt-2">
-                            <span className="text-gray-600">Frais de livraison</span>
-                            <span className="font-medium">{order?.fee_of_shipping || 0} XAF</span>
+                            <span className="text-gray-600 max-sm:text-sm">Frais de livraison</span>
+                            <span className="font-medium max-sm:text-sm">{order?.fee_of_shipping || 0} XAF</span>
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600">TVA (5%)</span>
                             <span className="font-medium">{taxAmount.toFixed(2)} XAF</span>
                         </div>
                         <div className="flex justify-between items-center mt-3 pt-3 border-t">
-                            <span className="text-lg font-semibold">Total (TTC)</span>
-                            <span className="text-lg font-bold">{totalWithTax.toFixed(2)} XAF</span>
+                            <span className="text-lg max-sm:text-sm font-semibold">Total (TTC)</span>
+                            <span className="text-lg max-sm:text-sm font-bold">{totalWithTax.toFixed(2)} XAF</span>
                         </div>
                     </div>
                 </Card>
