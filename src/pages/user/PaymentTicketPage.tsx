@@ -260,14 +260,7 @@ export default function PaymentTicketPage() {
                 }
 
                 // Ajouter le QR code sur la dernière page
-                if (currentPage > 1) {
-                  // Trouver le composant QRCodeCanvas existant dans le DOM
-                  const existingQRCode = document.querySelector('canvas');
-                  if (existingQRCode) {
-                    const qrImgData = existingQRCode.toDataURL('image/png');
-                    pdf.addImage(qrImgData, 'PNG', margin, margin + availableHeight, 140, 200);
-                  }
-                }
+
               }
 
               pdf.save(`ticket-${payment.transaction_ref}.pdf`);
