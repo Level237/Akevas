@@ -7,7 +7,7 @@ import AsyncLink from '@/components/ui/AsyncLink';
 
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
-
+    console.log(order)
     // Ajouter les produits avec variation (orderVariations)
     if (order.orderVariations && order.orderVariations.length > 0) {
         order.orderVariations.forEach((item: any) => {
@@ -19,6 +19,7 @@ const getOrderItems = (order: any) => {
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
+                    hex: variation.color?.hex || "",
                     size: attributeValue || '',
                     quantity: parseInt(item.variation_quantity),
                     price: parseFloat(item.variation_price),
@@ -139,15 +140,11 @@ const RecentOrders = () => {
                                     <div className="text-xs text-gray-600">
                                         {orderItems.slice(0, 2).map((item: any, index: number) => (
                                             <div key={index} className="flex items-center gap-2">
-                                                <span>• {item.name}</span>
-                                                {item.color && (
-                                                    <span className="text-purple-600">({item.color})</span>
-                                                )}
-                                                {item.size && (
-                                                    <span className="text-blue-600">Taille: {item.size}</span>
-                                                )}
+                                                <span className='truncate'>• {item.name}</span>
+
+
                                                 <span>x{item.quantity}</span>
-                                                <span className="text-gray-500">({item.price} XAF)</span>
+                                                <span className="text-gray-500 max-sm:text-xs">({item.price} XAF)</span>
                                             </div>
                                         ))}
                                         {orderItems.length > 2 && (
