@@ -273,13 +273,20 @@ export default function PaymentTicketPage() {
                 // Une seule page
                 pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
               } else {
-                // Plusieurs pages
-                let heightLeft = imgHeight;
+                // Plusieurs pages - réserver de l'espace pour le QR code sur la dernière page
+                const qrCodeHeight = 200; // Hauteur approximative pour le QR code + titre
+                const availableHeight = pageHeight - (2 * margin) - qrCodeHeight;
 
-                let page = 1;
+                let heightLeft = imgHeight;
+                let currentPage = 1;
 
                 while (heightLeft > 0) {
-                  const currentHeight = Math.min(pageHeight - (2 * margin), heightLeft);
+                  const isLastPage = heightLeft <= availableHeight;
+                  const currentHeight = Math.min(
+                    isLastPage ? availableHeight : pageHeight - (2 * margin),
+                    heightLeft
+                  );
+
                   const currentCanvas = document.createElement('canvas');
                   currentCanvas.width = canvas.width;
                   currentCanvas.height = currentHeight;
@@ -301,7 +308,17 @@ export default function PaymentTicketPage() {
                   heightLeft -= currentHeight;
                   if (heightLeft > 0) {
                     pdf.addPage();
-                    page++;
+                    currentPage++;
+                  }
+                }
+
+                // Ajouter le QR code sur la dernière page
+                if (currentPage > 1) {
+                  // Trouver le composant QRCodeCanvas existant dans le DOM
+                  const existingQRCode = document.querySelector('canvas');
+                  if (existingQRCode) {
+                    const qrImgData = existingQRCode.toDataURL('image/png');
+                    pdf.addImage(qrImgData, 'PNG', margin, margin + availableHeight, 140, 200);
                   }
                 }
               }
