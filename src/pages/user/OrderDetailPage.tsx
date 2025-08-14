@@ -13,81 +13,83 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useGetOrderDetailQuery } from '@/services/auth';
 import AsyncLink from '@/components/ui/AsyncLink';
 
+const TAX_RATE = 0.05; // 5% de TVA
+
 const getOrderItems = (order: any) => {
-  const allOrderItems: any[] = [];
-  console.log(order)
-  // Vérifier si order existe
-  if (!order) {
-    console.log('Order is null or undefined');
+    const allOrderItems: any[] = [];
+    console.log(order)
+    // Vérifier si order existe
+    if (!order) {
+        console.log('Order is null or undefined');
+        return allOrderItems;
+    }
+
+    console.log('Processing order:', order);
+    console.log('orderVariations:', order.orderVariations);
+    console.log('order_details:', order.order_details);
+    console.log('order_details type:', typeof order.order_details);
+    console.log('order_details isArray:', Array.isArray(order.order_details));
+
+    // Ajouter les produits avec variation (orderVariations)
+    if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
+        console.log('Processing orderVariations...');
+        order.orderVariations.forEach((item: any) => {
+            console.log('Processing variation item:', item);
+            if (item && item.variation_attribute && item.variation_attribute.product_variation) {
+                const variation = item.variation_attribute.product_variation;
+                const attributeValue = item.variation_attribute.value;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    size: attributeValue || '',
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: parseFloat(item.variation_price) || 0,
+                    image: variation.images?.[0]?.path || '',
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    type: 'variation'
+                });
+            }
+        });
+    }
+
+    // Ajouter les produits sans variation (order_details)
+    if (order.order_details && order.order_details.length > 0) {
+        console.log('Processing order_details...');
+        order.order_details.forEach((item: any) => {
+            console.log('Processing order_detail item:', item);
+            if (item && item.product) {
+                allOrderItems.push({
+                    id: item.id,
+                    name: item.product?.product_name || 'Produit inconnu',
+                    color: '',
+                    size: '',
+                    quantity: parseInt(item.quantity) || 0,
+                    price: parseFloat(item.price) || 0,
+                    image: item.product?.product_profile || '',
+                    total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
+                    type: 'simple'
+                });
+            }
+        });
+    }
+
+    console.log('Final allOrderItems:', allOrderItems);
     return allOrderItems;
-  }
-  
-  console.log('Processing order:', order);
-  console.log('orderVariations:', order.orderVariations);
-  console.log('order_details:', order.order_details);
-  console.log('order_details type:', typeof order.order_details);
-  console.log('order_details isArray:', Array.isArray(order.order_details));
-  
-  // Ajouter les produits avec variation (orderVariations)
-  if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
-    console.log('Processing orderVariations...');
-    order.orderVariations.forEach((item: any) => {
-      console.log('Processing variation item:', item);
-      if (item && item.variation_attribute && item.variation_attribute.product_variation) {
-        const variation = item.variation_attribute.product_variation;
-        const attributeValue = item.variation_attribute.value;
-        
-        allOrderItems.push({
-          id: item.id,
-          name: variation.product_name || 'Produit inconnu',
-          color: variation.color?.name || '',
-          size: attributeValue || '',
-          quantity: parseInt(item.variation_quantity) || 0,
-          price: parseFloat(item.variation_price) || 0,
-          image: variation.images?.[0]?.path || '',
-          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
-          type: 'variation'
-        });
-      }
-    });
-  }
-  
-  // Ajouter les produits sans variation (order_details)
-  if (order.order_details && order.order_details.length > 0) {
-    console.log('Processing order_details...');
-    order.order_details.forEach((item: any) => {
-      console.log('Processing order_detail item:', item);
-      if (item && item.product) {
-        allOrderItems.push({
-          id: item.id,
-          name: item.product?.product_name || 'Produit inconnu',
-          color: '',
-          size: '',
-          quantity: parseInt(item.quantity) || 0,
-          price: parseFloat(item.price) || 0,
-          image: item.product?.product_profile || '',
-          total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
-          type: 'simple'
-        });
-      }
-    });
-  }
-  
-  console.log('Final allOrderItems:', allOrderItems);
-  return allOrderItems;
 };
 
 const getTotalItems = (orderItems: any[]) => {
-  return orderItems.reduce((total: number, item: any) => {
-    return total + (item.quantity || 0);
-  }, 0);
+    return orderItems.reduce((total: number, item: any) => {
+        return total + (item.quantity || 0);
+    }, 0);
 };
 
 const OrderDetailPage = () => {
     const { id } = useParams();
     const { data: payment, isLoading } = useGetOrderDetailQuery(id);
     console.log('Payment data:', payment);
-    
+
     const getStatusColor = (status: string) => {
         const statusColors = {
             'en_attente': 'bg-yellow-100 text-yellow-800',
@@ -111,6 +113,9 @@ const OrderDetailPage = () => {
     const totalItems = getTotalItems(orderItems);
     const hasVariations = orderItems.some((item: any) => item.type === 'variation');
     const itemsTotal = orderItems.reduce((total: number, item: any) => total + item.total, 0);
+    const shippingFee = Number(order?.fee_of_shipping || 0);
+    const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
+    const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -164,9 +169,13 @@ const OrderDetailPage = () => {
                                 <span className="text-gray-600">Frais de livraison</span>
                                 <span className="font-medium">{order?.fee_of_shipping || 0} XAF</span>
                             </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">TVA (5%)</span>
+                                <span className="font-medium">{taxAmount.toFixed(2)} XAF</span>
+                            </div>
                             <div className="flex justify-between border-t pt-2">
-                                <span className="text-gray-800 font-semibold">Total</span>
-                                <span className="font-bold text-lg">{payment?.price} XAF</span>
+                                <span className="text-gray-800 font-semibold">Total (TTC)</span>
+                                <span className="font-bold text-lg">{totalWithTax.toFixed(2)} XAF</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Méthode de paiement</span>
@@ -242,7 +251,7 @@ const OrderDetailPage = () => {
                             </div>
                         )}
                     </div>
-                    
+
                     {/* Résumé des totaux */}
                     <div className="mt-6 pt-4 border-t">
                         <div className="flex justify-between items-center">
@@ -253,9 +262,13 @@ const OrderDetailPage = () => {
                             <span className="text-gray-600">Frais de livraison</span>
                             <span className="font-medium">{order?.fee_of_shipping || 0} XAF</span>
                         </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-600">TVA (5%)</span>
+                            <span className="font-medium">{taxAmount.toFixed(2)} XAF</span>
+                        </div>
                         <div className="flex justify-between items-center mt-3 pt-3 border-t">
-                            <span className="text-lg font-semibold">Total</span>
-                            <span className="text-lg font-bold">{payment?.price} XAF</span>
+                            <span className="text-lg font-semibold">Total (TTC)</span>
+                            <span className="text-lg font-bold">{totalWithTax.toFixed(2)} XAF</span>
                         </div>
                     </div>
                 </Card>
