@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Package, QrCode, Download, Loader2 } from 'lucide-react';
+import { CheckCircle, MapPin, QrCode, Download, Loader2 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useShowPaymentWithReferenceQuery } from '@/services/auth';
 import jsPDF from 'jspdf';
@@ -113,116 +113,71 @@ export default function PaymentTicketPage() {
           width: '100%'
         }}
       >
-        {/* Order Details Card */}
-        <Card className="p-4 sm:p-6 mb-4 sm:mb-6 rounded-2xl">
-          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center gap-2">
-            <Package className="w-5 h-5" /> Détails de la commande
+        {/* Header Card */}
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6 shadow-xl border-2 border-green-100 rounded-2xl">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <CheckCircle className="w-12 h-12 sm:w-10 sm:h-10 text-green-500 flex-shrink-0" />
+            <div className="text-center sm:text-left">
+              <h1 className="text-xl sm:text-2xl font-bold">Paiement réussi</h1>
+              <p className="text-gray-600 text-xs sm:text-sm">
+                Merci pour votre achat, <span className="font-semibold">{payment.user}</span> !
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center sm:items-start mb-2">
+            <Badge className="bg-green-100 text-green-800 text-xs sm:text-sm px-2 py-1 rounded-lg">
+              Réf. paiement : {payment.transaction_ref}
+            </Badge>
+            <Badge className="bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 py-1 rounded-lg">
+              Commande : #{order.id}
+            </Badge>
+            <Badge className={`${status.color} text-xs sm:text-sm px-2 py-1 rounded-lg`}>
+              {status.label}
+            </Badge>
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2">
+            <div className="flex flex-row items-center justify-between w-full sm:w-auto">
+              <div className="text-base sm:text-lg font-semibold">Montant payé</div>
+              <div className="text-lg sm:text-2xl font-bold text-green-700 ml-2 sm:ml-4">{payment.price} XAF</div>
+            </div>
+            <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
+              <div className="text-xs sm:text-sm text-gray-500">Date de commande</div>
+              <div className="font-medium text-xs sm:text-base ml-2 sm:ml-4">{order.created_at.split('T')[0]}</div>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row items-start gap-2 mt-4">
+            <div className="flex flex-row items-center gap-2">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <span className="text-gray-700 font-medium text-xs sm:text-base">Emplacement de livraison :</span>
+            </div>
+            <span className="text-gray-600 text-xs sm:text-sm break-words">
+              {order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
+              {order.emplacement == null && order.addresse}
+            </span>
+          </div>
+        </Card>
+
+        {/* QR Code Card */}
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6 flex flex-col items-center rounded-2xl">
+          <h2 className="text-base sm:text-lg font-semibold mb-2 flex items-center gap-2">
+            <QrCode className="w-5 h-5" /> QR Code du ticket
           </h2>
-
-          {/* Informations principales en haut */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">Référence :</span>
-                <Badge className="bg-blue-100 text-blue-800 text-xs px-2 py-1">
-                  {payment.transaction_ref}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">Statut :</span>
-                <Badge className={`${status.color} text-xs px-2 py-1`}>
-                  {status.label}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">Date :</span>
-                <span className="text-sm">{order.created_at.split('T')[0]}</span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="text-center sm:text-right">
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">{payment.price} XAF</div>
-                <div className="text-sm text-gray-500">Montant payé</div>
-              </div>
-            </div>
+          <div className="flex justify-center w-full">
+            <QRCodeCanvas
+              value={JSON.stringify({
+                ref: payment.transaction_ref,
+                user: payment.user,
+                amount: payment.price,
+                date: order.created_at,
+                products: allOrderItems.map((item: any) => item.name)
+              })}
+              size={140}
+              level="H"
+              includeMargin={true}
+            />
           </div>
-
-          {/* Articles commandés */}
-          <div className="space-y-3 sm:space-y-4 mb-6">
-            {allOrderItems.map((item: any) => (
-              <div key={item.id} className="flex max-sm:flex-col items-center gap-4 bg-gray-50 rounded-lg p-4">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-16 h-16 object-cover rounded-md border"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium max-sm:mb-2 text-sm sm:text-base">{item.name}</div>
-                  <div className="flex items-center max-sm:mb-2 gap-2 text-xs mt-1">
-                    <span className="text-gray-600">Quantité: {item.quantity}</span>
-                    {item.color && (
-                      <Badge variant="outline" className="text-xs">
-                        {item.color}
-                      </Badge>
-                    )}
-                    {item.size && (
-                      <Badge variant="outline" className="text-xs">
-                        Taille: {item.size}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">Prix unitaire: {item.price} XAF</div>
-                </div>
-                <div className="text-right max-sm:text-center max-sm:w-full font-semibold text-sm sm:text-base">{item.total} XAF</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Résumé des totaux */}
-          <div className="pt-4 border-t">
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center text-xs sm:text-base">
-                <span className="text-gray-600">Sous-total ({order.itemsCount} article(s))</span>
-                <span className="font-medium">{allOrderItems.reduce((acc, item) => acc + item.total, 0)} XAF</span>
-              </div>
-              <div className="flex justify-between items-center text-xs sm:text-base">
-                <span className="text-gray-600">Frais de livraison</span>
-                <span className="font-medium">{order.fee_of_shipping || 0} XAF</span>
-              </div>
-              <div className="flex justify-between items-center text-xs sm:text-base">
-                <span className="text-gray-600">TVA (5%)</span>
-                <span className="font-medium">{((parseFloat(order.total_amount) * TAX_RATE)).toFixed(2)} XAF</span>
-              </div>
-              <div className="flex justify-between items-center mt-2 pt-2 border-t text-base sm:text-lg">
-                <span className="font-semibold">Total</span>
-                <span className="font-bold">{order.total_amount} XAF</span>
-              </div>
-            </div>
-          </div>
-
-          {/* QR Code intégré */}
-          <div className="mt-6 pt-4 border-t flex flex-col items-center">
-            <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
-              <QrCode className="w-5 h-5" /> Code QR du ticket
-            </h3>
-            <div className="flex justify-center w-full">
-              <QRCodeCanvas
-                value={JSON.stringify({
-                  ref: payment.transaction_ref,
-                  user: payment.user,
-                  amount: payment.price,
-                  date: order.created_at,
-                  products: allOrderItems.map((item: any) => item.name)
-                })}
-                size={140}
-                level="H"
-                includeMargin={true}
-              />
-            </div>
-            <div className="text-xs text-gray-500 mt-2 text-center">
-              Scannez pour vérifier ou partager ce ticket
-            </div>
+          <div className="text-xs text-gray-500 mt-2 text-center">
+            Scannez pour vérifier ou partager ce ticket
           </div>
         </Card>
       </div>
