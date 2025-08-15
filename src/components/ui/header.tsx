@@ -267,7 +267,7 @@ const Header = () => {
                   >
                     <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border-2 border-gray-200 group-hover:border-[#ed7e0f] transition-colors">
                       <AvatarFallback className="bg-gradient-to-br from-[#ed7e0f] to-[#f19b45] text-white">
-                        {seller?.firstName?.charAt(0) || '?'}
+                        {seller?.firstName?.charAt(0) || <User className="w-4 h-4" />}
                       </AvatarFallback>
                       <AvatarImage className="object-cover" src={seller?.shop?.shop_profile || ''} />
                     </Avatar>
