@@ -607,18 +607,27 @@ const ProductDetailPage: React.FC = () => {
                     </div>
 
                     {/* CTA Buttons */}
-                    <div className="space-y-3 mt-6">
-                      <button
-                        onClick={() => setIsDrawerOpen(true)}
-                        disabled={getProductQuantity() == 0}
-                        className={`w-full px-6 py-3.5 rounded-xl font-medium transition-colors ${getProductQuantity() === 0
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90'
-                          }`}
-                      >
 
-                        {getProductQuantity() == 0 ? 'Rupture de stock' : 'Acheter maintenant'}
-                      </button>
+                    <div className="space-y-3 mt-6">
+                      {getProductQuantity() > 0 &&
+                        <button
+                          onClick={() => setIsDrawerOpen(true)}
+                          disabled={getProductQuantity() == 0}
+                          className={`w-full px-6 py-3.5 rounded-xl font-medium transition-colors ${getProductQuantity() === 0
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90'
+                            }`}
+                        >
+
+                          {getProductQuantity() == 0 ? 'Rupture de stock' : 'Acheter maintenant'}
+                        </button>
+                      }
+
+                      {getProductQuantity() == 0 &&
+                        <div className='px-3 py-4 text-sm text-center font-medium bg-red-100 text-red-800 rounded-full'>
+                          Rupture de stock
+                        </div>
+                      }
 
                       {!showCartButton ? (
                         <button
@@ -649,7 +658,7 @@ const ProductDetailPage: React.FC = () => {
                         </AsyncLink>
                       )}
 
-                      {/* Section WhatsApp */}
+
                       <div className="border-t pt-4">
                         <button
                           onClick={openWhatsApp}
