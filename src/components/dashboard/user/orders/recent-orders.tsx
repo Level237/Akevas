@@ -11,6 +11,7 @@ const getOrderItems = (order: any) => {
     // Ajouter les produits avec variation (orderVariations)
     if (order.orderVariations && order.orderVariations.length > 0) {
         order.orderVariations.forEach((item: any) => {
+            // Cas 1: variation_attribute existe avec product_variation
             if (item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
                 const attributeValue = item.variation_attribute.value;
@@ -21,6 +22,23 @@ const getOrderItems = (order: any) => {
                     color: variation.color?.name || '',
                     hex: variation.color?.hex || "",
                     size: attributeValue || '',
+                    quantity: parseInt(item.variation_quantity),
+                    price: parseFloat(item.variation_price),
+                    image: variation.images?.[0]?.path || '',
+                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
+                    type: 'variation'
+                });
+            }
+            // Cas 2: variation_attribute est null mais product_variation existe directement
+            else if (item.product_variation) {
+                const variation = item.product_variation;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    hex: variation.color?.hex || "",
+                    size: '',
                     quantity: parseInt(item.variation_quantity),
                     price: parseFloat(item.variation_price),
                     image: variation.images?.[0]?.path || '',
