@@ -38,7 +38,7 @@ const ProductDetailPage: React.FC = () => {
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const { data: { data: similarProducts } = {}, isLoading: isLoadingSimilarProducts } = useGetSimilarProductsQuery(product?.id);
   const [showCartButton, setShowCartButton] = useState(false);
- console.log(product)
+  console.log(product)
   const dispatch = useDispatch();
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -47,11 +47,11 @@ const ProductDetailPage: React.FC = () => {
   console.log(product)
   const handleAddToCart = async () => {
     setIsLoadingCart(true);
-    
+
     // Si selectedVariant a des attributs, transformer l'array en objet unique
     let modifiedSelectedVariant = selectedVariant;
     if (selectedVariant?.attributes && selectedVariant.attributes.length > 0) {
-      const foundAttribute = selectedVariant.attributes.find((variant:any) => variant.value === currentInfo.attribute);
+      const foundAttribute = selectedVariant.attributes.find((variant: any) => variant.value === currentInfo.attribute);
       if (foundAttribute) {
         modifiedSelectedVariant = {
           ...selectedVariant,
@@ -59,17 +59,17 @@ const ProductDetailPage: React.FC = () => {
         };
       }
     }
-    
 
-    dispatch(addItem({ 
-      product, 
+
+    dispatch(addItem({
+      product,
       quantity,
       selectedVariation: modifiedSelectedVariant
     }));
-   
+
     await new Promise(resolve => setTimeout(resolve, 1000));
     toast.success("Produit ajouté au panier avec succès", {
-      position: "top-center", 
+      position: "top-center",
       duration: 6000,
       style: {
         backgroundColor: "#ed7e0f",
@@ -90,13 +90,13 @@ const ProductDetailPage: React.FC = () => {
       // Si une variante est sélectionnée, retourner toutes ses images
       return selectedVariant.images?.map((path: any) => ({ path })) || [];
     }
-    
+
     // Sinon, retourner les images du produit principal
     const mainImage = { path: product?.product_profile };
     const productImages = product?.product_images || [];
     return [mainImage, ...productImages];
   };
-  
+
 
 
   // Modifier l'useEffect pour initialiser la première variation et son premier attribut
@@ -116,13 +116,13 @@ const ProductDetailPage: React.FC = () => {
   const getCurrentProductInfo = () => {
     if (product?.variations && product.variations.length > 0) {
       const currentVariant = selectedVariant || product.variations[0];
-      
+
       // Cas où la variation a des attributs
       if (currentVariant.attributes && currentVariant.attributes.length > 0) {
-        const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute) 
+        const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute)
           || currentVariant.attributes[0];
-          
-          
+
+
         return {
           attributeVariationId: selectedAttr.id,
           productVariationId: currentVariant.id,
@@ -135,7 +135,7 @@ const ProductDetailPage: React.FC = () => {
           attribute: selectedAttr.value
         };
       }
-      
+
       // Cas où la variation est simple (couleur uniquement)
       return {
         attributeVariationId: null,
@@ -201,7 +201,7 @@ const ProductDetailPage: React.FC = () => {
     // Si on clique sur une image de la liste des images du produit principal
     const allImages = getAllImages();
     const currentImage = allImages[selectedImage];
-    
+
     // Si l'image cliquée est une image du produit principal et qu'une variante est sélectionnée
     if (selectedVariant && currentImage?.path === product?.product_profile) {
       setSelectedVariant(null); // Désélectionner la variante
@@ -235,7 +235,7 @@ const ProductDetailPage: React.FC = () => {
     const whatsappUrl = `https://wa.me/237678080249?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
-  
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -307,7 +307,7 @@ const ProductDetailPage: React.FC = () => {
                               src={image.path}
                               alt={`${product.product_name} ${idx + 1}`}
                               className="w-full h-full object-cover"
-                              
+
                             />
                           </button>
                         ))}
@@ -343,7 +343,7 @@ const ProductDetailPage: React.FC = () => {
                         src={getAllImages()[selectedImage]?.path || product.product_profile}
                         alt={product.product_name}
                         className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-100'}`}
-                       
+
                       />
                     </motion.div>
 
@@ -389,12 +389,12 @@ const ProductDetailPage: React.FC = () => {
                     </span>
                     {getProductQuantity() > 0 ? <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
                       En stock
-                      
+
                     </span> : <span className="px-3 py-1 text-sm font-medium bg-red-100 text-red-800 rounded-full">
                       Rupture de stock
-                      
+
                     </span>}
-                    
+
                   </div>
 
                   <h1 className="text-2xl font-bold text-gray-900">{product.product_name}</h1>
@@ -410,18 +410,17 @@ const ProductDetailPage: React.FC = () => {
                         {/* Grille des variations */}
                         <div className="space-y-4">
                           <h3 className="text-lg font-semibold text-gray-900">Options disponibles</h3>
-                          
+
                           {/* Sélection de la couleur */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {product.variations.map((variation: any) => (
                               <button
                                 key={variation.id}
                                 onClick={() => handleVariantSelect(variation)}
-                                className={`flex items-center p-2 border rounded-lg transition-all ${
-                                  selectedVariant?.id === variation.id
-                                    ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 ring-1 ring-[#ed7e0f]/20'
-                                    : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                                }`}
+                                className={`flex items-center p-2 border rounded-lg transition-all ${selectedVariant?.id === variation.id
+                                  ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 ring-1 ring-[#ed7e0f]/20'
+                                  : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                                  }`}
                               >
                                 <div className="w-12 h-12 mr-3 rounded-md overflow-hidden">
                                   <OptimizedImage
@@ -432,7 +431,7 @@ const ProductDetailPage: React.FC = () => {
                                 </div>
                                 <div>
                                   <div className="flex items-center mb-1">
-                                    <div 
+                                    <div
                                       className="w-3 h-3 rounded-full border mr-2"
                                       style={{ backgroundColor: variation.color.hex }}
                                     />
@@ -455,11 +454,10 @@ const ProductDetailPage: React.FC = () => {
                                   <button
                                     key={attr.id}
                                     onClick={() => handleAttributeSelect(attr.value)}
-                                    className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
-                                      selectedAttribute === attr.value
-                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 text-[#ed7e0f]'
-                                        : 'border-gray-200 hover:border-gray-300'
-                                    }`}
+                                    className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all ${selectedAttribute === attr.value
+                                      ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 text-[#ed7e0f]'
+                                      : 'border-gray-200 hover:border-gray-300'
+                                      }`}
                                   >
                                     {attr.value}
                                   </button>
@@ -475,7 +473,7 @@ const ProductDetailPage: React.FC = () => {
                         <div className="bg-gray-50 rounded-lg p-4">
                           <div className="flex items-center gap-3 mb-3">
                             {currentInfo.color && (
-                              <div 
+                              <div
                                 className="w-6 h-6 rounded-full border"
                                 style={{ backgroundColor: currentInfo.color.hex }}
                               />
@@ -588,7 +586,7 @@ const ProductDetailPage: React.FC = () => {
                       </div>
 
                       {/* Prix de livraison */}
-                      
+
 
                       {/* Sécurité */}
                       <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
@@ -612,15 +610,24 @@ const ProductDetailPage: React.FC = () => {
                     <div className="space-y-3 mt-6">
                       <button
                         onClick={() => setIsDrawerOpen(true)}
-                        className="w-full bg-[#ed7e0f] text-white px-6 py-3.5 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors"
+                        disabled={getProductQuantity() == 0}
+                        className={`w-full px-6 py-3.5 rounded-xl font-medium transition-colors ${getProductQuantity() === 0
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90'
+                          }`}
                       >
-                        Acheter maintenant
+
+                        {getProductQuantity() == 0 ? 'Rupture de stock' : 'Acheter maintenant'}
                       </button>
+
                       {!showCartButton ? (
                         <button
                           onClick={handleAddToCart}
-                          disabled={isLoadingCart}
-                          className="w-full bg-gray-100 text-gray-700 px-6 py-3.5 flex items-center justify-center gap-2 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                          disabled={isLoadingCart || getProductQuantity() == 0}
+                          className={`w-full px-6 py-3.5 flex items-center justify-center gap-2 rounded-xl font-medium transition-colors ${getProductQuantity() == 0
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}>
                           {isLoadingCart ? (
                             <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent rounded-full">
                               <span className="sr-only">Loading...</span>
@@ -628,7 +635,7 @@ const ProductDetailPage: React.FC = () => {
                           ) : (
                             <>
                               <ShoppingCart className="w-5 h-5" />
-                              Ajouter au panier
+                              {getProductQuantity() == 0 ? 'Rupture de stock' : 'Ajouter au panier'}
                             </>
                           )}
                         </button>
