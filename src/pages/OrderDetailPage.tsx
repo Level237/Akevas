@@ -11,6 +11,7 @@ const OrderDetailPage = () => {
     const navigate = useNavigate()
     const [isAccepting, setIsAccepting] = useState(false)
     const { data: orderData, isLoading } = useShowOrderQuery(orderId)
+    console.log(orderData)
     const [activeDelivery, setActiveDelivery] = useState<string | null>(null)
     const [showWarningModal, setShowWarningModal] = useState(false)
     console.log(orderData)
@@ -67,8 +68,6 @@ const OrderDetailPage = () => {
             console.error('Erreur lors du refus:', error)
         }
     }
-
-    const isVariedOrder = orderData?.order_details?.[0]?.product_variation !== undefined;
 
     return (
         <div className="min-h-screen bg-[#F8F9FC]">
@@ -131,7 +130,15 @@ const OrderDetailPage = () => {
                                     <MapPin className="text-green-500 mt-1" size={20} />
                                     <div>
                                         <p className="font-medium">Adresse de livraison</p>
-                                        <p className="text-gray-600">{orderData.quarter_delivery}</p>
+                                        <p className="text-gray-600">{orderData.order.quarter_delivery} - {orderData.order.address}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start gap-3">
+                                    <MapPin className="text-green-500 mt-1" size={20} />
+                                    <div>
+                                        <p className="font-medium">Numéro de téléphone du client</p>
+                                        <p className="text-gray-600">{orderData.order.userPhone}</p>
                                     </div>
                                 </div>
                             </div>
@@ -140,51 +147,59 @@ const OrderDetailPage = () => {
                             <div className="border-t pt-6">
                                 <h2 className="text-lg font-semibold mb-4">Détails des produits</h2>
                                 <div className="space-y-4">
-                                    {orderData?.order_details?.map((orderDetail: any) => (
-                                        <div
-                                            key={isVariedOrder ? orderDetail?.product_variation?.id : orderDetail?.product?.id}
-                                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <img
-                                                    src={
-                                                        isVariedOrder
-                                                            ? orderDetail?.product_variation?.images?.[0]?.path
-                                                            : orderDetail?.product?.product_profile
-                                                    }
-                                                    alt={
-                                                        isVariedOrder
-                                                            ? orderDetail?.product_variation?.product_name
-                                                            : orderDetail?.product?.product_name
-                                                    }
-                                                    className="w-10 h-10 rounded-lg"
-                                                />
-                                                <div>
-                                                    <p className="font-medium">
-                                                        {isVariedOrder
-                                                            ? orderDetail?.product_variation?.product_name
-                                                            : orderDetail?.product?.product_name}
-                                                    </p>
-                                                    {isVariedOrder && (
-                                                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                            <span>Couleur: {orderDetail?.product_variation?.color?.name}</span>
-                                                            {/* Ajoute d'autres infos de variation si besoin */}
-                                                        </div>
-                                                    )}
-                                                    {!isVariedOrder && (
-                                                        <p className="text-sm text-gray-600">
-                                                            {/* Ajoute d'autres infos produit simple si besoin */}
+                                    {orderData?.order.order_details?.map((orderDetail: any) => {
+                                        const isCurrentOrderDetailVaried = orderDetail?.product_variation !== undefined;
+                                        return (
+                                            <div
+                                                key={isCurrentOrderDetailVaried ? orderDetail?.product_variation?.id : orderDetail?.product?.id}
+                                                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <img
+                                                        src={
+                                                            isCurrentOrderDetailVaried
+                                                                ? orderDetail?.product_variation?.images?.[0]?.path
+                                                                : orderDetail?.product?.product_profile
+                                                        }
+                                                        alt={
+                                                            isCurrentOrderDetailVaried
+                                                                ? orderDetail?.product_variation?.product_name
+                                                                : orderDetail?.product?.product_name
+                                                        }
+                                                        className="w-10 h-10 rounded-lg"
+                                                    />
+                                                    <div>
+                                                        <p className="font-medium">
+                                                            {isCurrentOrderDetailVaried
+                                                                ? orderDetail?.product_variation?.product_name
+                                                                : orderDetail?.product?.product_name}
                                                         </p>
-                                                    )}
+                                                        {isCurrentOrderDetailVaried && (
+                                                            <div className="flex items-center gap-2 text-xs text-gray-600">
+                                                                <span>Couleur: {orderDetail?.product_variation?.color?.name}</span>
+                                                                {orderDetail?.product_variation?.attributes?.[0]?.value && (
+                                                                    <span>Taille: {orderDetail?.product_variation?.attributes?.[0]?.value}</span>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                        {!isCurrentOrderDetailVaried && (
+                                                            <p className="text-sm text-gray-600">
+                                                                {/* Ajoute d'autres infos produit simple si besoin */}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="font-medium">
+                                                        Quantité: {isCurrentOrderDetailVaried ? orderDetail.variation_quantity : orderDetail.quantity}
+                                                    </span>
+                                                    <p className="text-sm text-gray-600">
+                                                        Total: {orderDetail.price * (isCurrentOrderDetailVaried ? orderDetail.variation_quantity : orderDetail.quantity)} FCFA
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <span className="font-medium">
-                                                    Quantité: {isVariedOrder ? orderDetail.variation_quantity : orderDetail.quantity}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
                             </div>
                         </div>
