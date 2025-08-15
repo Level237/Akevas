@@ -9,7 +9,7 @@ import { Package, Clock, CheckCircle2, XCircle } from 'lucide-react';
 
 const OrdersPage = () => {
     const { data: { data: sellerData } = {}, isLoading } = useCurrentSellerQuery<SellerResponse>('seller');
-
+    console.log(sellerData)
     const getOrderStatus = (status: string) => {
         switch (status) {
             case "0":

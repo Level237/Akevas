@@ -131,18 +131,18 @@ export default function ProductListOverview({ products, isLoading }: { products:
                 <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(product.status ? 'active' : 'draft')}`}>{getStatusText(product.status ? 'active' : 'draft')}</span>
               </div>
               <div className="flex justify-end gap-2 mt-2">
-                <a target="_blank" href={`https://akevas.com/produit/${product.product_url}`}> 
+                <a target="_blank" href={`https://akevas.com/produit/${product.product_url}`}>
                   <button className="p-2 hover:bg-gray-100 rounded-lg" title="Voir">
                     <Eye className="w-5 h-5 text-gray-600" />
                   </button>
                 </a>
                 <AsyncLink
-                to={`/seller/product/edit/${product.product_url}`}
-                className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
-                
-              >
-                <Edit className="w-5 h-5" />
-              </AsyncLink>
+                  to={`/seller/product/edit/${product.product_url}`}
+                  className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+
+                >
+                  <Edit className="w-5 h-5" />
+                </AsyncLink>
                 <button className="p-2 hover:bg-gray-100 rounded-lg" title="Supprimer">
                   <Trash2 className="w-5 h-5 text-gray-600" />
                 </button>
@@ -190,7 +190,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                       left: `${idx * 16}px`,
                       zIndex: 10 - idx,
                       width: '48px',
-                      height: '48px', 
+                      height: '48px',
                       top: `${idx * 6}px`,
                       background: '#fff',
                       transition: 'transform 0.2s',
@@ -206,21 +206,20 @@ export default function ProductListOverview({ products, isLoading }: { products:
                   />
                 )}
               </div>
-              
+
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-gray-900">{product.product_name}</h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    product.variations && product.variations.length > 0 
-                    ? 'bg-blue-50 text-blue-600' 
-                    : 'bg-gray-50 text-gray-600'
-                  }`}>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${product.variations && product.variations.length > 0
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'bg-gray-50 text-gray-600'
+                    }`}>
                     {product.variations && product.variations.length > 0 ? 'Varié' : 'Simple'}
                   </span>
                 </div>
-                
+
                 <p className="text-sm text-gray-500 mt-1">{formatDate(product.created_at)}</p>
-                
+
                 <div className="flex flex-wrap gap-2 mt-3">
                   {product.product_categories.map((category) => (
                     <span key={category.id} className="px-3 max-sm:px-1 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-600 border border-gray-100">
@@ -235,21 +234,21 @@ export default function ProductListOverview({ products, isLoading }: { products:
               <div className="text-center">
                 <span className="text-sm text-gray-500 block mb-1">Prix</span>
                 <div className="font-semibold max-sm:text-xs text-gray-900">
-                  {product.variations && product.variations.length > 0 
-                    ? "Variable" 
+                  {product.variations && product.variations.length > 0
+                    ? "Variable"
                     : `${product?.product_price?.toLocaleString()} FCFA`}
                 </div>
               </div>
-              
+
               <div className="text-center border-x border-gray-200">
                 <span className="text-sm text-gray-500 block mb-1">Stock</span>
-                <div className="font-semibold text-gray-900">
-                  {product.variations && product.variations.length > 0 
-                    ? "Variable" 
+                <div className="font-semibold max-sm:text-xs text-gray-900">
+                  {product.variations && product.variations.length > 0
+                    ? "Variable"
                     : product.product_quantity}
                 </div>
               </div>
-              
+
               <div className="text-center">
                 <span className="text-sm text-gray-500 block mb-1">Statut</span>
                 <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(product.status ? 'active' : 'draft')}`}>
@@ -259,7 +258,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
             </div>
 
             <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
-              <a 
+              <a
                 href={`https://akevas.com/produit/${product.product_url}`}
                 target="_blank"
                 className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -268,15 +267,15 @@ export default function ProductListOverview({ products, isLoading }: { products:
                 <Eye className="w-5 h-5" />
               </a>
               <AsyncLink
-               to={`/seller/product/edit/${product.product_url}`}
-                className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" 
-                
+                to={`/seller/product/edit/${product.product_url}`}
+                className="p-2 text-gray-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+
               >
                 <Edit className="w-5 h-5" />
               </AsyncLink>
               <button
-                
-                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+
+                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 title="Supprimer"
               >
                 <Trash2 className="w-5 h-5" />

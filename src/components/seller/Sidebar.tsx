@@ -50,21 +50,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
       icon: Package,
       label: "Produits",
       active: false,
-      disabled: true,
+      disabled: false,
       href: "/seller/products"
     },
     {
       icon: ShoppingCart,
       label: "Commandes",
       active: false,
-      disabled: true,
-      href: "/seller/orders"
+      disabled: false,
+      href: "/orders"
     },
     {
       icon: User,
       label: "Mon compte",
       active: false,
-      disabled: true,
+      disabled: false,
       href: "/account"
     },
     {
