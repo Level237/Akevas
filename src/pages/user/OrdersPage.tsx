@@ -20,74 +20,91 @@ import { useGetOrdersQuery } from '@/services/auth';
 import { useState } from 'react';
 
 const getOrderItems = (order: any) => {
-  const allOrderItems: any[] = [];
-  
-  // Vérifier si order existe
-  if (!order) {
+    const allOrderItems: any[] = [];
+
+    // Vérifier si order existe
+    if (!order) {
+        return allOrderItems;
+    }
+
+    // Ajouter les produits avec variation (orderVariations)
+    if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
+        order.orderVariations.forEach((item: any) => {
+            // Cas 1: variation_attribute existe avec product_variation
+            if (item && item.variation_attribute && item.variation_attribute.product_variation) {
+                const variation = item.variation_attribute.product_variation;
+                const attributeValue = item.variation_attribute.value;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    size: attributeValue || '',
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: parseFloat(item.variation_price) || 0,
+                    image: variation.images?.[0]?.path || '',
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    type: 'variation'
+                });
+            }
+            // Cas 2: variation_attribute est null mais product_variation existe directement
+            else if (item && item.product_variation) {
+                const variation = item.product_variation;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    size: '',
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: parseFloat(item.variation_price) || 0,
+                    image: variation.images?.[0]?.path || '',
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    type: 'variation'
+                });
+            }
+        });
+    }
+
+    // Ajouter les produits sans variation (order_details)
+    if (order.order_details && Array.isArray(order.order_details) && order.order_details.length > 0) {
+        order.order_details.forEach((item: any) => {
+            if (item && item.product) {
+                allOrderItems.push({
+                    id: item.id,
+                    name: item.product?.product_name || 'Produit inconnu',
+                    color: '',
+                    size: '',
+                    quantity: parseInt(item.quantity) || 0,
+                    price: parseFloat(item.price) || 0,
+                    image: item.product?.product_profile || '',
+                    total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
+                    type: 'simple'
+                });
+            }
+        });
+    }
+
     return allOrderItems;
-  }
-  
-  // Ajouter les produits avec variation (orderVariations)
-  if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
-    order.orderVariations.forEach((item: any) => {
-      if (item && item.variation_attribute && item.variation_attribute.product_variation) {
-        const variation = item.variation_attribute.product_variation;
-        const attributeValue = item.variation_attribute.value;
-        
-        allOrderItems.push({
-          id: item.id,
-          name: variation.product_name || 'Produit inconnu',
-          color: variation.color?.name || '',
-          size: attributeValue || '',
-          quantity: parseInt(item.variation_quantity) || 0,
-          price: parseFloat(item.variation_price) || 0,
-          image: variation.images?.[0]?.path || '',
-          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
-          type: 'variation'
-        });
-      }
-    });
-  }
-  
-  // Ajouter les produits sans variation (order_details)
-  if (order.order_details && Array.isArray(order.order_details) && order.order_details.length > 0) {
-    order.order_details.forEach((item: any) => {
-      if (item && item.product) {
-        allOrderItems.push({
-          id: item.id,
-          name: item.product?.product_name || 'Produit inconnu',
-          color: '',
-          size: '',
-          quantity: parseInt(item.quantity) || 0,
-          price: parseFloat(item.price) || 0,
-          image: item.product?.product_profile || '',
-          total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
-          type: 'simple'
-        });
-      }
-    });
-  }
-  
-  return allOrderItems;
 };
 
 const getProductImage = (orderItems: any[]) => {
-  if (orderItems.length > 0) {
-    // Essayer d'abord de trouver une image valide
-    const itemWithImage = orderItems.find(item => item.image && item.image !== '');
-    if (itemWithImage) {
-      return itemWithImage.image;
+    if (orderItems.length > 0) {
+        // Essayer d'abord de trouver une image valide
+        const itemWithImage = orderItems.find(item => item.image && item.image !== '');
+        if (itemWithImage) {
+            return itemWithImage.image;
+        }
+        // Si aucune image trouvée, retourner la première image disponible
+        return orderItems[0].image || '';
     }
-    // Si aucune image trouvée, retourner la première image disponible
-    return orderItems[0].image || '';
-  }
-  return '';
+    return '';
 };
 
 const getTotalItems = (orderItems: any[]) => {
-  return orderItems.reduce((total: number, item: any) => {
-    return total + (item.quantity || 0);
-  }, 0);
+    return orderItems.reduce((total: number, item: any) => {
+        return total + (item.quantity || 0);
+    }, 0);
 };
 
 const OrdersPage = () => {
@@ -96,7 +113,7 @@ const OrdersPage = () => {
     const [statusFilter, setStatusFilter] = useState('all');
 
     console.log(orders)
-    
+
     const getStatusBadgeColor = (status: string) => {
         const statusColors = {
             '0': 'bg-yellow-100 text-yellow-800',
@@ -188,7 +205,7 @@ const OrdersPage = () => {
                                 const totalItems = getTotalItems(orderItems);
                                 const hasVariations = orderItems.some((item: any) => item.type === 'variation');
                                 const orderId = order?.order?.id || order?.id;
-                                
+
                                 return (
                                     <motion.div
                                         key={order.id || orderId}

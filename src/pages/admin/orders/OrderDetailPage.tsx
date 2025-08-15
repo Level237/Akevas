@@ -3,120 +3,115 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone,Truck, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone, Truck, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAdminDetailOrderQuery } from '@/services/adminService';
 import { Button } from '@/components/ui/button';
 
 
 const formatDateSafely = (dateString: string) => {
-  try {
-    if (!dateString) return 'Date non disponible';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Date non disponible';
-    return date.toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  } catch (error) {
-    return 'Date non disponible';
-  }
+    try {
+        if (!dateString) return 'Date non disponible';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Date non disponible';
+        return date.toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch (error) {
+        return 'Date non disponible';
+    }
 };
 
 const formatPrice = (price: string | number) => {
-  const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-  if (isNaN(numPrice)) return '0 XAF';
-  return `${numPrice.toLocaleString('fr-FR')} XAF`;
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+    if (isNaN(numPrice)) return '0 XAF';
+    return `${numPrice.toLocaleString('fr-FR')} XAF`;
 };
 
 const getOrderItems = (order: any) => {
-  const allOrderItems: any[] = [];
-  
-  if (!order) {
+    const allOrderItems: any[] = [];
+    console.log(order)
+    // Ajouter les produits avec variation (orderVariations)
+    if (order.orderVariations && order.orderVariations.length > 0) {
+        order.orderVariations.forEach((item: any) => {
+            // Cas 1: variation_attribute existe avec product_variation
+            if (item.variation_attribute && item.variation_attribute.product_variation) {
+                const variation = item.variation_attribute.product_variation;
+                const attributeValue = item.variation_attribute.value;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    hex: variation.color?.hex || "",
+                    size: attributeValue || '',
+                    quantity: parseInt(item.variation_quantity),
+                    price: parseFloat(item.variation_price),
+                    image: variation.images?.[0]?.path || '',
+                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
+                    type: 'variation'
+                });
+            }
+            // Cas 2: variation_attribute est null mais product_variation existe directement
+            else if (item.product_variation) {
+                const variation = item.product_variation;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    hex: variation.color?.hex || "",
+                    size: '',
+                    quantity: parseInt(item.variation_quantity),
+                    price: parseFloat(item.variation_price),
+                    image: variation.images?.[0]?.path || '',
+                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
+                    type: 'variation'
+                });
+            }
+        });
+    }
+
+    // Ajouter les produits sans variation (order_details)
+    if (order.order_details && order.order_details.length > 0) {
+        order.order_details.forEach((item: any) => {
+            allOrderItems.push({
+                id: item.id,
+                name: item.product?.product_name || 'Produit inconnu',
+                color: '',
+                size: '',
+                quantity: parseInt(item.quantity),
+                price: parseFloat(item.price),
+                image: item.product?.product_profile || '',
+                total: parseInt(item.quantity) * parseFloat(item.price),
+                type: 'simple'
+            });
+        });
+    }
+
     return allOrderItems;
-  }
-  
-  // Traitement des variations (orderVariations)
-  if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
-    order.orderVariations.forEach((item: any) => {
-      if (item && item.variation_attribute && item.variation_attribute.product_variation) {
-        const variation = item.variation_attribute.product_variation;
-        const attributeValue = item.variation_attribute.value;
-        
-        allOrderItems.push({
-          id: item.id,
-          name: variation.product_name || 'Produit inconnu',
-          color: variation.color?.name || '',
-          size: attributeValue || '',
-          quantity: parseInt(item.variation_quantity) || 0,
-          price: parseFloat(item.variation_price) || 0,
-          image: variation.images?.[0]?.path || '',
-          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
-          type: 'variation'
-        });
-      }
-    });
-  }
-  
-  // Traitement des produits simples (order_details)
-  if (order.order_details && Array.isArray(order.order_details) && order.order_details.length > 0) {
-    order.order_details.forEach((item: any) => {
-      // Traitement des variations dans order_details
-      if (item.variation_attribute && item.variation_attribute.product_variation) {
-        const variation = item.variation_attribute.product_variation;
-        const attributeValue = item.variation_attribute.value;
-        
-        allOrderItems.push({
-          id: item.id,
-          name: variation.product_name || 'Produit inconnu',
-          color: variation.color?.name || '',
-          size: attributeValue || '',
-          quantity: parseInt(item.variation_quantity) || 0,
-          price: parseFloat(item.variation_price) || 0,
-          image: variation.images?.[0]?.path || '',
-          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
-          type: 'variation'
-        });
-      }
-      // Traitement des produits simples
-      else if (item.product) {
-        allOrderItems.push({
-          id: item.id,
-          name: item.product?.product_name || 'Produit inconnu',
-          color: '',
-          size: '',
-          quantity: parseInt(item.quantity) || 0,
-          price: parseFloat(item.price) || 0,
-          image: item.product?.product_profile || '',
-          total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
-          type: 'simple'
-        });
-      }
-    });
-  }
-  
-  return allOrderItems;
 };
 
 const getTotalItems = (orderItems: any[]) => {
-  return orderItems.reduce((total: number, item: any) => {
-    return total + (item.quantity || 0);
-  }, 0);
+    return orderItems.reduce((total: number, item: any) => {
+        return total + (item.quantity || 0);
+    }, 0);
 };
 
 const getDeliveryLocation = (order: any) => {
-  if (order.quarter_delivery) {
-    return order.quarter_delivery;
-  }
-  if (order.emplacement) {
-    return order.emplacement;
-  }
-  if (order.addresse) {
-    return order.addresse;
-  }
-  return 'Adresse non spécifiée';
+    if (order.quarter_delivery) {
+        return order.quarter_delivery;
+    }
+    if (order.emplacement) {
+        return order.emplacement;
+    }
+    if (order.addresse) {
+        return order.addresse;
+    }
+    return 'Adresse non spécifiée';
 };
 
 const getStatusInfo = (status: string) => {
@@ -135,14 +130,14 @@ const getStatusInfo = (status: string) => {
 };
 
 const getPaymentStatus = (isPay: number) => {
-  return isPay === 1 ? { text: "Payé", color: "bg-green-100 text-green-700", icon: CheckCircle } : { text: "En attente", color: "bg-yellow-100 text-yellow-700", icon: Clock };
+    return isPay === 1 ? { text: "Payé", color: "bg-green-100 text-green-700", icon: CheckCircle } : { text: "En attente", color: "bg-yellow-100 text-yellow-700", icon: Clock };
 };
 
 export default function AdminOrderDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { data: order, isLoading } = useAdminDetailOrderQuery(id);
-    
+
     console.log('Order data:', order);
 
     if (isLoading) {
@@ -323,7 +318,7 @@ export default function AdminOrderDetailPage() {
                             </div>
                         )}
                     </div>
-                    
+
                     {/* Résumé des totaux */}
                     <div className="mt-6 pt-4 border-t">
                         <div className="flex justify-between items-center">
@@ -345,29 +340,29 @@ export default function AdminOrderDetailPage() {
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6">Actions administrateur</h2>
                     <div className="flex flex-wrap gap-3">
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             className="text-blue-600 border-blue-200 hover:bg-blue-50"
                         >
                             <Truck className="h-4 w-4 mr-2" />
                             Marquer comme expédié
                         </Button>
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             className="text-green-600 border-green-200 hover:bg-green-50"
                         >
                             <CheckCircle className="h-4 w-4 mr-2" />
                             Marquer comme livré
                         </Button>
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             className="text-red-600 border-red-200 hover:bg-red-50"
                         >
                             <AlertCircle className="h-4 w-4 mr-2" />
                             Annuler la commande
                         </Button>
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             className="text-purple-600 border-purple-200 hover:bg-purple-50"
                         >
                             <Receipt className="h-4 w-4 mr-2" />

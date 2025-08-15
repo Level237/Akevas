@@ -2,7 +2,7 @@ import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { CheckCheck, Eye, Package, Calendar, MapPin, Phone, Truck, Clock, CheckCircle, AlertCircle, DollarSign} from "lucide-react";
+import { CheckCheck, Eye, Package, Calendar, MapPin, Phone, Truck, Clock, CheckCircle, AlertCircle, DollarSign } from "lucide-react";
 import { useAdminListOrdersQuery } from "@/services/adminService";
 import AsyncLink from "@/components/ui/AsyncLink";
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,123 +10,115 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const formatDateSafely = (dateString: string) => {
-  try {
-    if (!dateString) return 'Date non disponible';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Date non disponible';
-    return date.toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  } catch (error) {
-    return 'Date non disponible';
-  }
+    try {
+        if (!dateString) return 'Date non disponible';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Date non disponible';
+        return date.toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch (error) {
+        return 'Date non disponible';
+    }
 };
 
 const formatPrice = (price: string | number) => {
-  const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-  if (isNaN(numPrice)) return '0 XAF';
-  return `${numPrice.toLocaleString('fr-FR')} XAF`;
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+    if (isNaN(numPrice)) return '0 XAF';
+    return `${numPrice.toLocaleString('fr-FR')} XAF`;
 };
 
 const getOrderItems = (order: any) => {
-  const allOrderItems: any[] = [];
-  
-  if (!order) {
+    const allOrderItems: any[] = [];
+    console.log(order)
+    // Ajouter les produits avec variation (orderVariations)
+    if (order.orderVariations && order.orderVariations.length > 0) {
+        order.orderVariations.forEach((item: any) => {
+            // Cas 1: variation_attribute existe avec product_variation
+            if (item.variation_attribute && item.variation_attribute.product_variation) {
+                const variation = item.variation_attribute.product_variation;
+                const attributeValue = item.variation_attribute.value;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    hex: variation.color?.hex || "",
+                    size: attributeValue || '',
+                    quantity: parseInt(item.variation_quantity),
+                    price: parseFloat(item.variation_price),
+                    image: variation.images?.[0]?.path || '',
+                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
+                    type: 'variation'
+                });
+            }
+            // Cas 2: variation_attribute est null mais product_variation existe directement
+            else if (item.product_variation) {
+                const variation = item.product_variation;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    hex: variation.color?.hex || "",
+                    size: '',
+                    quantity: parseInt(item.variation_quantity),
+                    price: parseFloat(item.variation_price),
+                    image: variation.images?.[0]?.path || '',
+                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
+                    type: 'variation'
+                });
+            }
+        });
+    }
+
+    // Ajouter les produits sans variation (order_details)
+    if (order.order_details && order.order_details.length > 0) {
+        order.order_details.forEach((item: any) => {
+            allOrderItems.push({
+                id: item.id,
+                name: item.product?.product_name || 'Produit inconnu',
+                color: '',
+                size: '',
+                quantity: parseInt(item.quantity),
+                price: parseFloat(item.price),
+                image: item.product?.product_profile || '',
+                total: parseInt(item.quantity) * parseFloat(item.price),
+                type: 'simple'
+            });
+        });
+    }
+
     return allOrderItems;
-  }
-  
-  // Traitement des variations (orderVariations)
-  if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
-    order.orderVariations.forEach((item: any) => {
-      if (item && item.variation_attribute && item.variation_attribute.product_variation) {
-        const variation = item.variation_attribute.product_variation;
-        const attributeValue = item.variation_attribute.value;
-        
-        allOrderItems.push({
-          id: item.id,
-          name: variation.product_name || 'Produit inconnu',
-          color: variation.color?.name || '',
-          size: attributeValue || '',
-          quantity: parseInt(item.variation_quantity) || 0,
-          price: parseFloat(item.variation_price) || 0,
-          image: variation.images?.[0]?.path || '',
-          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
-          type: 'variation',
-          shop_name: variation.shop_name || ''
-        });
-      }
-    });
-  }
-  
-  // Traitement des produits simples (order_details)
-  if (order.order_details && Array.isArray(order.order_details) && order.order_details.length > 0) {
-    order.order_details.forEach((item: any) => {
-      // Traitement des variations dans order_details
-      if (item.variation_attribute && item.variation_attribute.product_variation) {
-        const variation = item.variation_attribute.product_variation;
-        const attributeValue = item.variation_attribute.value;
-        
-        allOrderItems.push({
-          id: item.id,
-          name: variation.product_name || 'Produit inconnu',
-          color: variation.color?.name || '',
-          size: attributeValue || '',
-          quantity: parseInt(item.variation_quantity) || 0,
-          price: parseFloat(item.variation_price) || 0,
-          image: variation.images?.[0]?.path || '',
-          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
-          type: 'variation',
-          shop_name: variation.shop_name || ''
-        });
-      }
-      // Traitement des produits simples
-      else if (item.product) {
-        allOrderItems.push({
-          id: item.id,
-          name: item.product?.product_name || 'Produit inconnu',
-          color: '',
-          size: '',
-          quantity: parseInt(item.quantity) || 0,
-          price: parseFloat(item.price) || 0,
-          image: item.product?.product_profile || '',
-          total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
-          type: 'simple',
-          shop_name: item.product?.shop_name || ''
-        });
-      }
-    });
-  }
-  
-  return allOrderItems;
 };
 
 const getTotalItems = (orderItems: any[]) => {
-  return orderItems.reduce((total: number, item: any) => {
-    return total + (item.quantity || 0);
-  }, 0);
+    return orderItems.reduce((total: number, item: any) => {
+        return total + (item.quantity || 0);
+    }, 0);
 };
 
 
 
 const getDeliveryLocation = (order: any) => {
-  if (order.quarter_delivery) {
-    return order.quarter_delivery;
-  }
-  if (order.emplacement) {
-    return order.emplacement;
-  }
-  if (order.addresse) {
-    return order.addresse;
-  }
-  return 'Adresse non spécifiée';
+    if (order.quarter_delivery) {
+        return order.quarter_delivery;
+    }
+    if (order.emplacement) {
+        return order.emplacement;
+    }
+    if (order.addresse) {
+        return order.addresse;
+    }
+    return 'Adresse non spécifiée';
 };
 
 const getPaymentStatus = (isPay: number) => {
-  return isPay === 1 ? { text: "Payé", color: "bg-green-100 text-green-700", icon: CheckCircle } : { text: "En attente", color: "bg-yellow-100 text-yellow-700", icon: Clock };
+    return isPay === 1 ? { text: "Payé", color: "bg-green-100 text-green-700", icon: CheckCircle } : { text: "En attente", color: "bg-yellow-100 text-yellow-700", icon: Clock };
 };
 
 const getStatusInfo = (status: string) => {
@@ -145,7 +137,7 @@ const getStatusInfo = (status: string) => {
 };
 
 const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }) => {
-    
+
     // Loader for table rows (desktop)
     const renderTableLoader = () => (
         <TableRow>
@@ -222,7 +214,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                             const hasVariations = orderItems.some((item: any) => item.type === 'variation');
                             const deliveryLocation = getDeliveryLocation(orderData);
                             const orderId = order?.order?.id || order?.id;
-                            
+
                             return (
                                 <TableRow key={orderId} className="hover:bg-gray-50">
                                     <TableCell className="font-medium">
@@ -250,7 +242,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                     <TableCell>
                                         <div className="flex items-center gap-1">
                                             <Package className="h-4 w-4 text-gray-400" />
-                                            <span className="font-medium">{totalItems} article(s)</span>
+                                            <span className="font-medium max-sm:text-xs">{totalItems} article(s)</span>
                                             {hasVariations && (
                                                 <Badge className="ml-2 bg-purple-100 text-purple-800 text-xs">
                                                     Variés
@@ -318,7 +310,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                     const hasVariations = orderItems.some((item: any) => item.type === 'variation');
                     const deliveryLocation = getDeliveryLocation(orderData);
                     const orderId = order?.order?.id || order?.id;
-                    
+
                     return (
                         <Card key={orderId} className="overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
                             <CardContent className="p-0">
@@ -364,7 +356,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                             <Package className="h-4 w-4 text-gray-400" />
                                             <span>Produits</span>
                                         </div>
-                                        <span className="font-semibold text-gray-900">
+                                        <span className="font-semibold max-sm:text-xs text-gray-900">
                                             {totalItems} article(s)
                                         </span>
                                     </div>
@@ -422,18 +414,18 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                 {/* Actions */}
                                 <div className="px-4 pb-4 flex items-center gap-2">
                                     <AsyncLink to={`/admin/order/${orderId}`} className="flex-1">
-                                        <Button 
-                                            variant="outline" 
-                                            size="sm" 
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
                                             className="w-full h-10 text-blue-600 border-blue-200 hover:bg-blue-50"
                                         >
                                             <Eye className="h-4 w-4 mr-2" />
                                             Voir les détails
                                         </Button>
                                     </AsyncLink>
-                                    <Button 
-                                        variant="outline" 
-                                        size="sm" 
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
                                         className="h-10 px-3 text-green-600 border-green-200 hover:bg-green-50"
                                     >
                                         <CheckCheck className="h-4 w-4 mr-1" />
@@ -461,10 +453,10 @@ export default React.memo(ListOrders);
 
 export function ListOrdersContainer() {
     const { data: orders, isLoading, error } = useAdminListOrdersQuery('admin')
-    
+
     if (error) {
         console.error('Erreur lors du chargement des commandes:', error);
     }
-    
+
     return <ListOrders orders={orders || []} isLoading={isLoading} />
 }
