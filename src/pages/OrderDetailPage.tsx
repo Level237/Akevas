@@ -6,6 +6,88 @@ import { useShowOrderQuery } from '@/services/auth'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import ModalAlert from '@/components/ui/modal-alert'
 
+const getOrderItems = (order: any) => {
+    const allOrderItems: any[] = [];
+    console.log(order)
+    // Vérifier si order existe
+    if (!order) {
+        console.log('Order is null or undefined');
+        return allOrderItems;
+    }
+
+    console.log('Processing order:', order);
+    console.log('orderVariations:', order.orderVariations);
+    console.log('order_details:', order.order_details);
+    console.log('order_details type:', typeof order.order_details);
+    console.log('order_details isArray:', Array.isArray(order.order_details));
+
+    // Ajouter les produits avec variation (orderVariations)
+    if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
+        console.log('Processing orderVariations...');
+        order.orderVariations.forEach((item: any) => {
+            console.log('Processing variation item:', item);
+
+            // Cas 1: variation_attribute existe avec product_variation
+            if (item && item.variation_attribute && item.variation_attribute.product_variation) {
+                const variation = item.variation_attribute.product_variation;
+                const attributeValue = item.variation_attribute.value;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    size: attributeValue || '',
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: parseFloat(item.variation_price) || 0,
+                    image: variation.images?.[0]?.path || '',
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    type: 'variation'
+                });
+            }
+            // Cas 2: variation_attribute est null mais product_variation existe directement
+            else if (item && item.product_variation) {
+                const variation = item.product_variation;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    size: '',
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: parseFloat(item.variation_price) || 0,
+                    image: variation.images?.[0]?.path || '',
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    type: 'variation'
+                });
+            }
+        });
+    }
+
+    // Ajouter les produits sans variation (order_details)
+    if (order.order_details && order.order_details.length > 0) {
+        console.log('Processing order_details...');
+        order.order_details.forEach((item: any) => {
+            console.log('Processing order_detail item:', item);
+            if (item && item.product) {
+                allOrderItems.push({
+                    id: item.id,
+                    name: item.product?.product_name || 'Produit inconnu',
+                    color: '',
+                    size: '',
+                    quantity: parseInt(item.quantity) || 0,
+                    price: parseFloat(item.price) || 0,
+                    image: item.product?.product_profile || '',
+                    total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
+                    type: 'simple'
+                });
+            }
+        });
+    }
+
+    console.log('Final allOrderItems:', allOrderItems);
+    return allOrderItems;
+};
+
 const OrderDetailPage = () => {
     const { orderId } = useParams()
     const navigate = useNavigate()
@@ -147,59 +229,39 @@ const OrderDetailPage = () => {
                             <div className="border-t pt-6">
                                 <h2 className="text-lg font-semibold mb-4">Détails des produits</h2>
                                 <div className="space-y-4">
-                                    {orderData?.order.order_details?.map((orderDetail: any) => {
-                                        const isCurrentOrderDetailVaried = orderDetail?.product_variation !== undefined;
-                                        return (
-                                            <div
-                                                key={isCurrentOrderDetailVaried ? orderDetail?.product_variation?.id : orderDetail?.product?.id}
-                                                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <img
-                                                        src={
-                                                            isCurrentOrderDetailVaried
-                                                                ? orderDetail?.product_variation?.images?.[0]?.path
-                                                                : orderDetail?.product?.product_profile
-                                                        }
-                                                        alt={
-                                                            isCurrentOrderDetailVaried
-                                                                ? orderDetail?.product_variation?.product_name
-                                                                : orderDetail?.product?.product_name
-                                                        }
-                                                        className="w-10 h-10 rounded-lg"
-                                                    />
-                                                    <div>
-                                                        <p className="font-medium">
-                                                            {isCurrentOrderDetailVaried
-                                                                ? orderDetail?.product_variation?.product_name
-                                                                : orderDetail?.product?.product_name}
-                                                        </p>
-                                                        {isCurrentOrderDetailVaried && (
-                                                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                                                <span>Couleur: {orderDetail?.product_variation?.color?.name}</span>
-                                                                {orderDetail?.product_variation?.attributes?.[0]?.value && (
-                                                                    <span>Taille: {orderDetail?.product_variation?.attributes?.[0]?.value}</span>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                        {!isCurrentOrderDetailVaried && (
-                                                            <p className="text-sm text-gray-600">
-                                                                {/* Ajoute d'autres infos produit simple si besoin */}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <span className="font-medium">
-                                                        Quantité: {isCurrentOrderDetailVaried ? orderDetail.variation_quantity : orderDetail.quantity}
-                                                    </span>
-                                                    <p className="text-sm text-gray-600">
-                                                        Total: {orderDetail.price * (isCurrentOrderDetailVaried ? orderDetail.variation_quantity : orderDetail.quantity)} FCFA
+                                    {getOrderItems(orderData?.order).map((item: any) => (
+                                        <div
+                                            key={item.id}
+                                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    className="w-10 h-10 rounded-lg"
+                                                />
+                                                <div>
+                                                    <p className="font-medium">
+                                                        {item.name}
                                                     </p>
+                                                    {item.type === 'variation' && (
+                                                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                                                            {item.color && <span>Couleur: {item.color}</span>}
+                                                            {item.size && <span>Taille: {item.size}</span>}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
-                                        )
-                                    })}
+                                            <div className="text-right">
+                                                <span className="font-medium">
+                                                    Quantité: {item.quantity}
+                                                </span>
+                                                <p className="text-sm text-gray-600">
+                                                    Total: {item.total} FCFA
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
