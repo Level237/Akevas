@@ -32,36 +32,6 @@ const formatPrice = (price: string | number) => {
     return `${numPrice.toLocaleString('fr-FR')} XAF`;
 };
 
-const getSellerInfo = (order: any) => {
-    let shopInfo = null;
-
-    if (order.orderVariations && order.orderVariations.length > 0) {
-        const firstVariation = order.orderVariations[0];
-        if (firstVariation.variation_attribute?.product_variation?.shop) {
-            shopInfo = firstVariation.variation_attribute.product_variation.shop;
-        } else if (firstVariation.product_variation?.shop) {
-            // Fallback for cases where variation_attribute is null but product_variation exists directly
-            shopInfo = firstVariation.product_variation.shop;
-        }
-    } else if (order.order_details && order.order_details.length > 0) {
-        const firstProduct = order.order_details[0];
-        if (firstProduct.product?.shop) {
-            shopInfo = firstProduct.product.shop;
-        }
-    }
-
-    if (shopInfo) {
-        return {
-            shop_profile: shopInfo.shop_profile || '',
-            shop_name: shopInfo.shop_name || 'Nom de la boutique inconnu',
-            phone: shopInfo.phone || 'Numéro non spécifié',
-            shop_id: shopInfo.shop_id || ''
-        };
-    }
-
-    return null; // No shop information found
-};
-
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
     // Ajouter les produits avec variation (orderVariations)
@@ -82,7 +52,9 @@ const getOrderItems = (order: any) => {
                     price: parseFloat(item.variation_price),
                     image: variation.images?.[0]?.path || '',
                     total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
-                    type: 'variation'
+                    type: 'variation',
+                    shop: variation.shop || null,
+                    seller: variation.shop?.user || null
                 });
             }
             // Cas 2: variation_attribute est null mais product_variation existe directement
@@ -99,7 +71,9 @@ const getOrderItems = (order: any) => {
                     price: parseFloat(item.variation_price),
                     image: variation.images?.[0]?.path || '',
                     total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
-                    type: 'variation'
+                    type: 'variation',
+                    shop: variation.shop || null,
+                    seller: variation.shop?.user || null
                 });
             }
         });
@@ -118,7 +92,9 @@ const getOrderItems = (order: any) => {
                     price: parseFloat(item.price),
                     image: item.product?.product_profile || '',
                     total: parseInt(item.quantity) * parseFloat(item.price),
-                    type: 'simple'
+                    type: 'simple',
+                    shop: item.product?.shop || null,
+                    seller: item.product?.shop?.user || null
                 });
             }
         });
@@ -169,7 +145,7 @@ export default function AdminOrderDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { data: order, isLoading } = useAdminDetailOrderQuery(id);
-
+    console.log(order)
     if (isLoading) {
         return <Skeleton className="w-full h-[600px]" />;
     }
@@ -194,7 +170,6 @@ export default function AdminOrderDetailPage() {
     const paymentStatus = getPaymentStatus(order.isPay);
     const PaymentIcon = paymentStatus.icon;
     const deliveryLocation = getDeliveryLocation(order);
-    const sellerInfo = getSellerInfo(order);
 
     const shippingFee = Number(order?.fee_of_shipping || 0);
     const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
@@ -304,32 +279,6 @@ export default function AdminOrderDetailPage() {
                     </Card>
                 </div>
 
-                {/* Informations du vendeur */}
-                {sellerInfo && (
-                    <Card className="p-6 space-y-4">
-                        <h2 className="text-xl font-semibold flex items-center gap-2">
-                            <img src={sellerInfo.shop_profile} alt="Profile" className="w-6 h-6 rounded-full" />
-                            Boutique du vendeur
-                        </h2>
-                        <div className="space-y-2">
-                            <p className="font-medium">{sellerInfo.shop_name}</p>
-                            <p className="text-gray-600 flex items-center gap-1">
-                                <Phone className="h-3 w-3" />
-                                {sellerInfo.phone}
-                            </p>
-                            <div className="mt-3 pt-3 border-t">
-                                <a
-                                    href={`https://akevas.com/shop/${sellerInfo.shop_id}`}
-                                    target='_blank'
-                                    className="text-orange-600 hover:underline flex items-center gap-1"
-                                >
-                                    Visiter la boutique <ArrowRight className="w-3 h-3" />
-                                </a>
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
                 {/* Articles commandés */}
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6">Articles commandés</h2>
@@ -370,6 +319,25 @@ export default function AdminOrderDetailPage() {
                                         <p className="text-sm text-gray-500 mt-1">
                                             Prix unitaire: {formatPrice(item.price)}
                                         </p>
+                                        {item.shop && (
+                                            <div className="mt-2 pt-2 border-t border-gray-200">
+                                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                    <img src={item.shop.shop_profile} alt="Shop Profile" className="w-5 h-5 rounded-full" />
+                                                    <a
+                                                        href={`https://akevas.com/shop/${item.shop.shop_id}`}
+                                                        target='_blank'
+                                                        className="font-medium text-blue-600 hover:underline flex items-center gap-1"
+                                                    >
+                                                        {item.shop.shop_name}
+                                                        <ArrowRight className="w-3 h-3" />
+                                                    </a>
+                                                </div>
+                                                <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                                                    <Phone className="h-3 w-3" />
+                                                    <span>{item.shop.phone || 'Téléphone non disponible'}</span>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="text-right">
                                         <p className="font-medium">{formatPrice(item.total)}</p>

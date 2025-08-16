@@ -34,7 +34,6 @@ const formatPrice = (price: string | number) => {
 
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
-    console.log(order)
     // Ajouter les produits avec variation (orderVariations)
     if (order.orderVariations && order.orderVariations.length > 0) {
         order.orderVariations.forEach((item: any) => {
@@ -95,6 +94,8 @@ const getOrderItems = (order: any) => {
 
     return allOrderItems;
 };
+
+
 
 const getTotalItems = (orderItems: any[]) => {
     return orderItems.reduce((total: number, item: any) => {
@@ -202,33 +203,36 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                     </TableHeader>
                     <TableBody>
                         {isLoading && renderTableLoader()}
-                        {!isLoading && orders?.length > 0 && orders.map((order) => {
-                            // Utiliser la même logique que OrdersPage pour traiter les données
-                            const orderData = order.order || order;
-                            const statusInfo = getStatusInfo(orderData.status);
+                        {!isLoading && orders?.length > 0 && orders.map((payment: any) => {
+                            // Accéder au premier objet de commande dans le tableau payment.order
+                            const order = payment.order?.[0];
+
+                            // Si aucune commande n'est trouvée dans le tableau, on peut sauter cet élément
+                            if (!order) return null;
+
+                            const statusInfo = getStatusInfo(order.status);
                             const StatusIcon = statusInfo.icon;
-                            const paymentStatus = getPaymentStatus(orderData.isPay);
+                            const paymentStatus = getPaymentStatus(order.isPay);
                             const PaymentIcon = paymentStatus.icon;
-                            const orderItems = getOrderItems(orderData);
+                            const orderItems = getOrderItems(order);
                             const totalItems = getTotalItems(orderItems);
                             const hasVariations = orderItems.some((item: any) => item.type === 'variation');
-                            const deliveryLocation = getDeliveryLocation(orderData);
-                            const orderId = order?.order?.id || order?.id;
+                            const deliveryLocation = getDeliveryLocation(order);
 
                             return (
-                                <TableRow key={orderId} className="hover:bg-gray-50">
+                                <TableRow key={payment.id} className="hover:bg-gray-50">
                                     <TableCell className="font-medium">
                                         <div className="flex items-center gap-3">
                                             <Avatar className="h-10 w-10">
                                                 <AvatarFallback className="text-sm font-medium bg-blue-100 text-blue-700">
-                                                    {orderData?.userName?.charAt(0).toUpperCase() || 'U'}
+                                                    {order?.userName?.charAt(0).toUpperCase() || 'U'}
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div>
-                                                <span className="font-medium text-gray-900">{orderData?.userName || 'Client inconnu'}</span>
+                                                <span className="font-medium text-gray-900">{order?.userName || 'Client inconnu'}</span>
                                                 <div className="text-xs text-gray-500 flex items-center gap-1">
                                                     <Phone className="h-3 w-3" />
-                                                    {orderData?.userPhone || 'Téléphone non disponible'}
+                                                    {order?.userPhone || 'Téléphone non disponible'}
                                                 </div>
                                             </div>
                                         </div>
@@ -236,7 +240,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                     <TableCell>
                                         <div className="flex items-center gap-1 text-sm text-gray-600">
                                             <Calendar className="h-3 w-3" />
-                                            {formatDateSafely(orderData.created_at)}
+                                            {formatDateSafely(order.created_at)}
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -253,7 +257,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                     <TableCell>
                                         <div className="flex items-center gap-1">
                                             <DollarSign className="h-4 w-4 text-green-600" />
-                                            <span className="font-semibold text-gray-900">{formatPrice(orderData.total_amount)}</span>
+                                            <span className="font-semibold text-gray-900">{formatPrice(payment.price)}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -278,7 +282,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex items-center justify-end gap-1">
-                                            <AsyncLink to={`/admin/order/${orderId}`}>
+                                            <AsyncLink to={`/admin/order/${order.id}`}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                                                     <Eye className="h-4 w-4" />
                                                 </Button>
@@ -298,37 +302,40 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
             {/* Mobile Card View */}
             <div className="lg:hidden space-y-4">
                 {isLoading && renderMobileLoader()}
-                {!isLoading && orders?.length > 0 && orders.map((order) => {
+                {!isLoading && orders?.length > 0 && orders.map((payment: any) => {
                     // Utiliser la même logique que OrdersPage pour traiter les données
-                    const orderData = order.order || order;
-                    const statusInfo = getStatusInfo(orderData.status);
+                    const order = payment.order?.[0];
+
+                    // Si aucune commande n'est trouvée dans le tableau, on peut sauter cet élément
+                    if (!order) return null;
+
+                    const statusInfo = getStatusInfo(order.status);
                     const StatusIcon = statusInfo.icon;
-                    const paymentStatus = getPaymentStatus(orderData.isPay);
+                    const paymentStatus = getPaymentStatus(order.isPay);
                     const PaymentIcon = paymentStatus.icon;
-                    const orderItems = getOrderItems(orderData);
+                    const orderItems = getOrderItems(order);
                     const totalItems = getTotalItems(orderItems);
                     const hasVariations = orderItems.some((item: any) => item.type === 'variation');
-                    const deliveryLocation = getDeliveryLocation(orderData);
-                    const orderId = order?.order?.id || order?.id;
+                    const deliveryLocation = getDeliveryLocation(order);
 
                     return (
-                        <Card key={orderId} className="overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
+                        <Card key={payment.id} className="overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
                             <CardContent className="p-0">
                                 {/* Header with Client and Status */}
                                 <div className="p-4 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-12 w-12">
                                             <AvatarFallback className="text-sm font-medium bg-blue-100 text-blue-700">
-                                                {orderData?.userName?.charAt(0).toUpperCase() || 'U'}
+                                                {order?.userName?.charAt(0).toUpperCase() || 'U'}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div>
                                             <h3 className="font-semibold text-lg text-gray-900">
-                                                {orderData?.userName || 'Client inconnu'}
+                                                {order?.userName || 'Client inconnu'}
                                             </h3>
                                             <p className="text-sm text-gray-600 flex items-center gap-1">
                                                 <Calendar className="h-3 w-3" />
-                                                {formatDateSafely(orderData.created_at)}
+                                                {formatDateSafely(order.created_at)}
                                             </p>
                                         </div>
                                     </div>
@@ -367,7 +374,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                                             <span>Total</span>
                                         </div>
                                         <span className="font-semibold text-gray-900">
-                                            {formatPrice(orderData.total_amount)}
+                                            {formatPrice(payment.price)}
                                         </span>
                                     </div>
 
@@ -380,7 +387,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
 
                                     <div className="flex items-center gap-2 text-sm text-gray-600">
                                         <Phone className="h-4 w-4 text-gray-400" />
-                                        <span>{orderData.userPhone || 'Téléphone non disponible'}</span>
+                                        <span>{order.userPhone || 'Téléphone non disponible'}</span>
                                     </div>
 
                                     {/* Product Details */}
@@ -413,7 +420,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
 
                                 {/* Actions */}
                                 <div className="px-4 pb-4 flex items-center gap-2">
-                                    <AsyncLink to={`/admin/order/${orderId}`} className="flex-1">
+                                    <AsyncLink to={`/admin/order/${order.id}`} className="flex-1">
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -446,7 +453,7 @@ const ListOrders = ({ orders, isLoading }: { orders: any[], isLoading: boolean }
                 </div>
             )}
         </div>
-    )
+    );
 }
 
 export default React.memo(ListOrders);
