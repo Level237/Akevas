@@ -3,10 +3,11 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone, Truck, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone, Truck, Clock, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
 import { useAdminDetailOrderQuery } from '@/services/adminService';
 import { Button } from '@/components/ui/button';
 
+const TAX_RATE = 0.05; // 5% de TVA
 
 const formatDateSafely = (dateString: string) => {
     try {
@@ -31,9 +32,38 @@ const formatPrice = (price: string | number) => {
     return `${numPrice.toLocaleString('fr-FR')} XAF`;
 };
 
+const getSellerInfo = (order: any) => {
+    let shopInfo = null;
+
+    if (order.orderVariations && order.orderVariations.length > 0) {
+        const firstVariation = order.orderVariations[0];
+        if (firstVariation.variation_attribute?.product_variation?.shop) {
+            shopInfo = firstVariation.variation_attribute.product_variation.shop;
+        } else if (firstVariation.product_variation?.shop) {
+            // Fallback for cases where variation_attribute is null but product_variation exists directly
+            shopInfo = firstVariation.product_variation.shop;
+        }
+    } else if (order.order_details && order.order_details.length > 0) {
+        const firstProduct = order.order_details[0];
+        if (firstProduct.product?.shop) {
+            shopInfo = firstProduct.product.shop;
+        }
+    }
+
+    if (shopInfo) {
+        return {
+            shop_profile: shopInfo.shop_profile || '',
+            shop_name: shopInfo.shop_name || 'Nom de la boutique inconnu',
+            phone: shopInfo.phone || 'Numéro non spécifié',
+            shop_id: shopInfo.shop_id || ''
+        };
+    }
+
+    return null; // No shop information found
+};
+
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
-    console.log(order)
     // Ajouter les produits avec variation (orderVariations)
     if (order.orderVariations && order.orderVariations.length > 0) {
         order.orderVariations.forEach((item: any) => {
@@ -78,17 +108,19 @@ const getOrderItems = (order: any) => {
     // Ajouter les produits sans variation (order_details)
     if (order.order_details && order.order_details.length > 0) {
         order.order_details.forEach((item: any) => {
-            allOrderItems.push({
-                id: item.id,
-                name: item.product?.product_name || 'Produit inconnu',
-                color: '',
-                size: '',
-                quantity: parseInt(item.quantity),
-                price: parseFloat(item.price),
-                image: item.product?.product_profile || '',
-                total: parseInt(item.quantity) * parseFloat(item.price),
-                type: 'simple'
-            });
+            if (item && item.product) {
+                allOrderItems.push({
+                    id: item.id,
+                    name: item.product?.product_name || 'Produit inconnu',
+                    color: '',
+                    size: '',
+                    quantity: parseInt(item.quantity),
+                    price: parseFloat(item.price),
+                    image: item.product?.product_profile || '',
+                    total: parseInt(item.quantity) * parseFloat(item.price),
+                    type: 'simple'
+                });
+            }
         });
     }
 
@@ -138,8 +170,6 @@ export default function AdminOrderDetailPage() {
     const navigate = useNavigate();
     const { data: order, isLoading } = useAdminDetailOrderQuery(id);
 
-    console.log('Order data:', order);
-
     if (isLoading) {
         return <Skeleton className="w-full h-[600px]" />;
     }
@@ -164,6 +194,11 @@ export default function AdminOrderDetailPage() {
     const paymentStatus = getPaymentStatus(order.isPay);
     const PaymentIcon = paymentStatus.icon;
     const deliveryLocation = getDeliveryLocation(order);
+    const sellerInfo = getSellerInfo(order);
+
+    const shippingFee = Number(order?.fee_of_shipping || 0);
+    const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
+    const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -183,7 +218,7 @@ export default function AdminOrderDetailPage() {
                 </button>
 
                 {/* En-tête de la commande */}
-                <div className="flex justify-between items-center">
+                <div className="flex max-sm:flex-col max-sm:gap-5 justify-between items-center">
                     <div className="flex items-center gap-3">
                         <h1 className="text-2xl font-bold">
                             Commande #{order?.id}
@@ -207,20 +242,20 @@ export default function AdminOrderDetailPage() {
                 </div>
 
                 {/* Informations principales */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1  md:grid-cols-2 gap-6">
                     {/* Détails de la commande */}
-                    <Card className="p-6 space-y-4">
-                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <Card className="p-6 max-sm:w-[100vw] space-y-4">
+                        <h2 className="text-xl max-sm:text-lg font-semibold flex items-center gap-2">
                             <Package className="w-5 h-5" />
                             Détails de la commande
                         </h2>
                         <div className="space-y-3">
                             <div className="flex justify-between">
-                                <span className="text-gray-600 flex items-center gap-1">
+                                <span className="text-gray-600 max-sm:text-md flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
                                     Date de commande
                                 </span>
-                                <span className="font-medium">{formatDateSafely(order?.created_at)}</span>
+                                <span className="font-medium max-sm:text-sm">{formatDateSafely(order?.created_at)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Total des articles</span>
@@ -230,9 +265,13 @@ export default function AdminOrderDetailPage() {
                                 <span className="text-gray-600">Frais de livraison</span>
                                 <span className="font-medium">{formatPrice(order?.fee_of_shipping || 0)}</span>
                             </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">TVA ({TAX_RATE * 100}%)</span>
+                                <span className="font-medium">{formatPrice(taxAmount)}</span>
+                            </div>
                             <div className="flex justify-between border-t pt-2">
-                                <span className="text-gray-800 font-semibold">Total</span>
-                                <span className="font-bold text-lg">{formatPrice(order?.total_amount)}</span>
+                                <span className="text-gray-800 font-semibold">Total (TTC)</span>
+                                <span className="font-bold text-lg">{formatPrice(totalWithTax)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Méthode de paiement</span>
@@ -264,6 +303,32 @@ export default function AdminOrderDetailPage() {
                         </div>
                     </Card>
                 </div>
+
+                {/* Informations du vendeur */}
+                {sellerInfo && (
+                    <Card className="p-6 space-y-4">
+                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                            <img src={sellerInfo.shop_profile} alt="Profile" className="w-6 h-6 rounded-full" />
+                            Boutique du vendeur
+                        </h2>
+                        <div className="space-y-2">
+                            <p className="font-medium">{sellerInfo.shop_name}</p>
+                            <p className="text-gray-600 flex items-center gap-1">
+                                <Phone className="h-3 w-3" />
+                                {sellerInfo.phone}
+                            </p>
+                            <div className="mt-3 pt-3 border-t">
+                                <a
+                                    href={`https://akevas.com/shop/${sellerInfo.shop_id}`}
+                                    target='_blank'
+                                    className="text-orange-600 hover:underline flex items-center gap-1"
+                                >
+                                    Visiter la boutique <ArrowRight className="w-3 h-3" />
+                                </a>
+                            </div>
+                        </div>
+                    </Card>
+                )}
 
                 {/* Articles commandés */}
                 <Card className="p-6">
@@ -329,9 +394,13 @@ export default function AdminOrderDetailPage() {
                             <span className="text-gray-600">Frais de livraison</span>
                             <span className="font-medium">{formatPrice(order?.fee_of_shipping || 0)}</span>
                         </div>
+                        <div className="flex justify-between items-center mt-2">
+                            <span className="text-gray-600">TVA ({TAX_RATE * 100}%)</span>
+                            <span className="font-medium">{formatPrice(taxAmount)}</span>
+                        </div>
                         <div className="flex justify-between items-center mt-3 pt-3 border-t">
                             <span className="text-lg font-semibold">Total</span>
-                            <span className="text-lg font-bold">{formatPrice(order?.total_amount)}</span>
+                            <span className="text-lg font-bold">{formatPrice(totalWithTax)}</span>
                         </div>
                     </div>
                 </Card>
