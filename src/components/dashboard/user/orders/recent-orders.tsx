@@ -123,13 +123,19 @@ const RecentOrders = () => {
                 </div>
 
                 <div className="space-y-4">
-                    {!isLoading && data?.map((order: any) => {
-                        const orderItems = getOrderItems(order.order);
+                    {!isLoading && data?.map((payment: any) => {
+                        // Accéder au premier objet de commande dans le tableau payment.order
+                        const order = payment.order?.[0];
+
+                        // Si aucune commande n'est trouvée dans le tableau, on peut sauter cet élément
+                        if (!order) return null;
+
+                        const orderItems = getOrderItems(order);
                         const totalItems = getTotalItems(orderItems);
                         const hasVariations = orderItems.some((item: any) => item.type === 'variation');
 
                         return (
-                            <div key={order.id} className="flex flex-col md:flex-row items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                            <div key={payment.id} className="flex flex-col md:flex-row items-center gap-4 p-4 bg-gray-50 rounded-lg">
                                 <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
                                     <img
                                         src={getProductImage(orderItems)}
@@ -144,16 +150,16 @@ const RecentOrders = () => {
                                 </div>
                                 <div className="flex-1 space-y-1">
                                     <div className="flex max-sm:mb-3 max-sm:grid max-sm:grid-cols-2 max-sm:items-start max-sm:gap-2 items-center gap-2">
-                                        <h3 className="font-medium">Commande #{order.order.id}</h3>
-                                        <span className={`px-2 py-1 rounded-full max-sm:text-center text-xs ${getStatusBadgeColor(order.order.status)}`}>
-                                            {getStatusText(order.order.status)}
+                                        <h3 className="font-medium">Commande #{order.id}</h3>
+                                        <span className={`px-2 py-1 rounded-full max-sm:text-center text-xs ${getStatusBadgeColor(order.status)}`}>
+                                            {getStatusText(order.status)}
                                         </span>
                                         {hasVariations && (
                                             <span className="px-2 py-1 max-sm:px- rounded-full text-xs bg-purple-100 text-purple-800">Produits variés</span>
                                         )}
                                     </div>
                                     <p className="text-xs text-gray-500">
-                                        {totalItems} article(s) • {order.price} XAF
+                                        {totalItems} article(s) • {payment.price} XAF
                                     </p>
                                     <div className="text-xs text-gray-600">
                                         {orderItems.slice(0, 2).map((item: any, index: number) => (
@@ -173,7 +179,7 @@ const RecentOrders = () => {
                                     </div>
                                 </div>
                                 <Button variant="outline" size="sm">
-                                    <AsyncLink to={`/user/orders/${order.order.id}`}>Voir détails</AsyncLink>
+                                    <AsyncLink to={`/user/orders/${order.id}`}>Voir détails</AsyncLink>
                                 </Button>
                             </div>
                         );
