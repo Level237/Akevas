@@ -17,25 +17,14 @@ const TAX_RATE = 0.05; // 5% de TVA
 
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
-    console.log(order)
     // Vérifier si order existe
     if (!order) {
-        console.log('Order is null or undefined');
         return allOrderItems;
     }
 
-    console.log('Processing order:', order);
-    console.log('orderVariations:', order.orderVariations);
-    console.log('order_details:', order.order_details);
-    console.log('order_details type:', typeof order.order_details);
-    console.log('order_details isArray:', Array.isArray(order.order_details));
-
     // Ajouter les produits avec variation (orderVariations)
     if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
-        console.log('Processing orderVariations...');
         order.orderVariations.forEach((item: any) => {
-            console.log('Processing variation item:', item);
-
             // Cas 1: variation_attribute existe avec product_variation
             if (item && item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
@@ -74,9 +63,7 @@ const getOrderItems = (order: any) => {
 
     // Ajouter les produits sans variation (order_details)
     if (order.order_details && order.order_details.length > 0) {
-        console.log('Processing order_details...');
         order.order_details.forEach((item: any) => {
-            console.log('Processing order_detail item:', item);
             if (item && item.product) {
                 allOrderItems.push({
                     id: item.id,
@@ -93,7 +80,6 @@ const getOrderItems = (order: any) => {
         });
     }
 
-    console.log('Final allOrderItems:', allOrderItems);
     return allOrderItems;
 };
 
@@ -106,7 +92,6 @@ const getTotalItems = (orderItems: any[]) => {
 const OrderDetailPage = () => {
     const { id } = useParams();
     const { data: payment, isLoading } = useGetOrderDetailQuery(id);
-    console.log('Payment data:', payment);
 
     const getStatusColor = (status: string) => {
         const statusColors = {
@@ -124,14 +109,25 @@ const OrderDetailPage = () => {
     }
 
     // Extraire les données de commande depuis le paiement
-    const order = payment?.order;
-    console.log('Extracted order:', order);
-    const orderItems = getOrderItems(order);
-    console.log('Final orderItems in component:', orderItems);
+    const orders = payment?.order; // `order` is now an array
+    const currentOrder = orders?.[0]; // Access the first order object in the array for main display
+
+    if (!currentOrder) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <div className="text-center py-12">
+                    <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500">Commande non trouvée</p>
+                </div>
+            </div>
+        );
+    }
+
+    const orderItems = getOrderItems(currentOrder);
     const totalItems = getTotalItems(orderItems);
     const hasVariations = orderItems.some((item: any) => item.type === 'variation');
     const itemsTotal = orderItems.reduce((total: number, item: any) => total + item.total, 0);
-    const shippingFee = Number(order?.fee_of_shipping || 0);
+    const shippingFee = Number(currentOrder?.fee_of_shipping || 0);
     const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
     const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
@@ -146,7 +142,7 @@ const OrderDetailPage = () => {
                 <div className="flex max-sm:flex-col max-sm:justify-between max-sm:gap-4 justify-between items-center">
                     <div className="flex items-center gap-3">
                         <h1 className="text-2xl font-bold">
-                            Commande #{order?.id}
+                            Commande #{currentOrder?.id}
                         </h1>
                         {hasVariations && (
                             <Badge className="bg-purple-100 text-purple-800">
@@ -155,8 +151,8 @@ const OrderDetailPage = () => {
                         )}
                     </div>
                     <div className="flex items-center gap-3">
-                        <Badge className={getStatusColor(order?.status === "0" ? "en_attente" : order?.status === "1" ? "confirmé" : order?.status === "2" ? "en_cours" : order?.status === "3" ? "livré" : "annulé")}>
-                            {order?.status === "0" ? "En attente" : order?.status === "1" ? "En cours de livraison" : order?.status === "2" ? "Livré" : "Annulé"}
+                        <Badge className={getStatusColor(currentOrder?.status === "0" ? "en_attente" : currentOrder?.status === "1" ? "confirmé" : currentOrder?.status === "2" ? "en_cours" : currentOrder?.status === "3" ? "livré" : "annulé")}>
+                            {currentOrder?.status === "0" ? "En attente" : currentOrder?.status === "1" ? "En cours de livraison" : currentOrder?.status === "2" ? "Livré" : "Annulé"}
                         </Badge>
                         <Button className="bg-green-600 hover:bg-green-700 text-white" asChild>
                             <AsyncLink to={`/user/payment/${payment?.transaction_ref}`}>
@@ -177,7 +173,7 @@ const OrderDetailPage = () => {
                         <div className="space-y-3">
                             <div className="flex justify-between">
                                 <span className="text-gray-600 max-sm:text-sm">Date de commande</span>
-                                <span className="font-medium max-sm:text-sm">{order?.created_at ? order.created_at.split('T')[0] : 'Date non disponible'}</span>
+                                <span className="font-medium max-sm:text-sm">{currentOrder?.created_at ? currentOrder.created_at.split('T')[0] : 'Date non disponible'}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600 max-sm:text-sm">Total des articles</span>
@@ -185,7 +181,7 @@ const OrderDetailPage = () => {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600 max-sm:text-sm">Frais de livraison</span>
-                                <span className="font-medium max-sm:text-sm">{order?.fee_of_shipping || 0} XAF</span>
+                                <span className="font-medium max-sm:text-sm">{currentOrder?.fee_of_shipping || 0} XAF</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600 max-sm:text-sm">TVA (5%)</span>
@@ -197,7 +193,7 @@ const OrderDetailPage = () => {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600 max-sm:text-sm">Méthode de paiement</span>
-                                <span className="font-medium max-sm:text-sm">{order?.payment_method === "0" ? "Carte de crédit" : "Mobile Money"}</span>
+                                <span className="font-medium max-sm:text-sm">{currentOrder?.payment_method === "0" ? "Carte de crédit" : "Mobile Money"}</span>
                             </div>
                         </div>
                     </Card>
@@ -209,9 +205,9 @@ const OrderDetailPage = () => {
                             Adresse de livraison
                         </h2>
                         <div className="space-y-2">
-                            <p className="font-medium max-sm:text-sm">{order?.userName}</p>
-                            <p className="text-gray-600 max-sm:text-sm">{order?.emplacement}</p>
-                            <p className="text-gray-600 max-sm:text-sm">{order?.userPhone}</p>
+                            <p className="font-medium max-sm:text-sm">{currentOrder?.userName}</p>
+                            <p className="text-gray-600 max-sm:text-sm">{currentOrder?.emplacement}</p>
+                            <p className="text-gray-600 max-sm:text-sm">{currentOrder?.userPhone}</p>
                         </div>
                     </Card>
                 </div>
@@ -278,7 +274,7 @@ const OrderDetailPage = () => {
                         </div>
                         <div className="flex justify-between items-center mt-2">
                             <span className="text-gray-600 max-sm:text-sm">Frais de livraison</span>
-                            <span className="font-medium max-sm:text-sm">{order?.fee_of_shipping || 0} XAF</span>
+                            <span className="font-medium max-sm:text-sm">{currentOrder?.fee_of_shipping || 0} XAF</span>
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600">TVA (5%)</span>

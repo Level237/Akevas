@@ -103,9 +103,10 @@ const CheckoutPage: React.FC = () => {
 
   const subtotal = totalCartPrice;
   const shipping = getDeliveryFee();
+  console.log(shipping)
   const total = s == "1" ? subtotal + shipping : parseInt(totalPrice || '0') + shipping;
   console.log(totalPrice)
-  const totalWithTax = total * (1 + TAX_RATE); // Calculate total with tax
+  const totalWithTax = s == "1" ? total + (total * TAX_RATE) : total + (parseInt(totalPrice || '0') * TAX_RATE); // Calculate total with tax
   const totalQuantity = cartItems.reduce((sum, item) => sum + parseInt(item.quantity.toString()), 0);
   console.log(totalQuantity)
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -744,20 +745,20 @@ const CheckoutPage: React.FC = () => {
                           : parseFloat(item.product.product_price);
                         return sum + (price * item.quantity);
                       }, 0).toFixed(2)
-                      : parseInt(totalPrice || '0').toFixed(2)
+                      : totalPrice || '0'
                     } Fcfa
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Livraison</span>
-                  <span className="font-medium text-green-600">{shipping.toFixed(2)} Fcfa</span>
+                  <span className="font-medium text-green-600">{shipping} Fcfa</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">TVA</span>
                   <span className="font-medium">
                     {s == "1" ?
-                      (total * TAX_RATE).toFixed(2)
-                      : (parseInt(totalPrice || '0') * TAX_RATE).toFixed(2)
+                      (total * TAX_RATE)
+                      : (parseInt(totalPrice || '0') * TAX_RATE)
                     } Fcfa
                   </span>
                 </div>
@@ -834,7 +835,7 @@ const CheckoutPage: React.FC = () => {
                   <p>Frais de livraison: {shipping} FCFA</p>
                   <p>TVA:  {s == "1" ?
                     (total * TAX_RATE).toFixed(2)
-                    : (parseInt(totalPrice || '0') * TAX_RATE).toFixed(2)
+                    : (parseInt(totalPrice || '0') * TAX_RATE)
                   } Fcfa FCFA</p>
                 </div>
                 <div>

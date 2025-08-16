@@ -58,50 +58,55 @@ export default function PaymentTicketPage() {
     );
   }
 
-  const order = payment.order;
-  const status = statusMap[order.status] || statusMap['0'];
+  const orders = payment.order; // Access the entire order array
+  // For simplicity, using the status of the first order for the main badge if multiple orders exist
+  const mainOrder = orders[0];
+  const status = statusMap[mainOrder.status] || statusMap['0'];
 
-  // Combiner les deux types de détails de commande
+  // Combiner les deux types de détails de commande de TOUTES les commandes
   const allOrderItems = [] as any[];
+  orders.forEach((order: any) => {
+    // Ajouter les produits avec variation (orderVariations)
+    if (order.orderVariations && order.orderVariations.length > 0) {
+      order.orderVariations.forEach((item: any) => {
+        if (item.variation_attribute && item.variation_attribute.product_variation) {
+          const variation = item.variation_attribute.product_variation;
+          const attributeValue = item.variation_attribute.value;
 
-  // Ajouter les produits avec variation (orderVariations)
-  if (order.orderVariations && order.orderVariations.length > 0) {
-    order.orderVariations.forEach((item: any) => {
-      if (item.variation_attribute && item.variation_attribute.product_variation) {
-        const variation = item.variation_attribute.product_variation;
-        const attributeValue = item.variation_attribute.value;
+          allOrderItems.push({
+            id: item.id,
+            name: variation.product_name || 'Produit inconnu',
+            color: variation.color?.name || '',
+            size: attributeValue || '',
+            quantity: parseInt(item.variation_quantity),
+            price: parseFloat(item.variation_price),
+            image: variation.images?.[0]?.path || '',
+            total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
+            type: 'variation',
+            orderId: order.id // Ajouter l'ID de la commande parente
+          });
+        }
+      });
+    }
 
+    // Ajouter les produits sans variation (order_details)
+    if (order.order_details && order.order_details.length > 0) {
+      order.order_details.forEach((item: any) => {
         allOrderItems.push({
           id: item.id,
-          name: variation.product_name || 'Produit inconnu',
-          color: variation.color?.name || '',
-          size: attributeValue || '',
-          quantity: parseInt(item.variation_quantity),
-          price: parseFloat(item.variation_price),
-          image: variation.images?.[0]?.path || '',
-          total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
-          type: 'variation'
+          name: item.product?.product_name || 'Produit inconnu',
+          color: '',
+          size: '',
+          quantity: parseInt(item.quantity),
+          price: parseFloat(item.price),
+          image: item.product?.product_profile || '',
+          total: parseInt(item.quantity) * parseFloat(item.price),
+          type: 'simple',
+          orderId: order.id // Ajouter l'ID de la commande parente
         });
-      }
-    });
-  }
-
-  // Ajouter les produits sans variation (order_details)
-  if (order.order_details && order.order_details.length > 0) {
-    order.order_details.forEach((item: any) => {
-      allOrderItems.push({
-        id: item.id,
-        name: item.product?.product_name || 'Produit inconnu',
-        color: '',
-        size: '',
-        quantity: parseInt(item.quantity),
-        price: parseFloat(item.price),
-        image: item.product?.product_profile || '',
-        total: parseInt(item.quantity) * parseFloat(item.price),
-        type: 'simple'
       });
-    });
-  }
+    }
+  });
 
   return (
     <>
@@ -128,9 +133,16 @@ export default function PaymentTicketPage() {
             <Badge className="bg-green-100 text-green-800 text-xs sm:text-sm px-2 py-1 rounded-lg">
               Réf. paiement : {payment.transaction_ref}
             </Badge>
-            <Badge className="bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 py-1 rounded-lg">
-              Commande : #{order.id}
-            </Badge>
+            {orders.length > 1 ? (
+              <Badge className="bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 py-1 rounded-lg">
+                Commandes liées : {orders.map((o: any) => `#${o.id}`).join(', ')}
+              </Badge>
+            ) : (
+              <Badge className="bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 py-1 rounded-lg">
+                Commande : #{mainOrder.id}
+              </Badge>
+            )}
+
             <Badge className={`${status.color} text-xs sm:text-sm px-2 py-1 rounded-lg`}>
               {status.label}
             </Badge>
@@ -142,7 +154,7 @@ export default function PaymentTicketPage() {
             </div>
             <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
               <div className="text-xs sm:text-sm text-gray-500">Date de commande</div>
-              <div className="font-medium text-xs sm:text-base ml-2 sm:ml-4">{order.created_at.split('T')[0]}</div>
+              <div className="font-medium text-xs sm:text-base ml-2 sm:ml-4">{mainOrder.created_at.split('T')[0]}</div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row items-start gap-2 mt-4">
@@ -151,11 +163,55 @@ export default function PaymentTicketPage() {
               <span className="text-gray-700 font-medium text-xs sm:text-base">Emplacement de livraison :</span>
             </div>
             <span className="text-gray-600 text-xs sm:text-sm break-words">
-              {order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}
-              {order.emplacement == null && order.addresse}
+              {mainOrder.quarter_delivery !== null ? mainOrder.quarter_delivery : mainOrder.emplacement}
+              {mainOrder.emplacement == null && mainOrder.addresse}
             </span>
           </div>
         </Card>
+
+        {/* Détails des commandes */}
+        {orders.map((order: any) => (
+          <Card key={order.id} className="p-4 sm:p-6 mb-4 sm:mb-6 rounded-2xl shadow-md">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">Détails de la commande #{order.id}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div>
+                <p><strong>Statut:</strong> <Badge className={`${statusMap[order.status]?.color}`}>{statusMap[order.status]?.label}</Badge></p>
+                <p><strong>Total:</strong> {order.total_amount} XAF</p>
+                <p><strong>Articles:</strong> {order.itemsCount}</p>
+              </div>
+              <div>
+                <p><strong>Livraison:</strong> {order.fee_of_shipping} XAF</p>
+                <p><strong>Adresse:</strong> {order.quarter_delivery !== null ? order.quarter_delivery : order.emplacement}{order.emplacement == null && order.addresse}</p>
+                <p><strong>Client:</strong> {order.userName} ({order.userPhone})</p>
+              </div>
+            </div>
+
+            <h3 className="text-md sm:text-lg font-semibold mt-6 mb-4">Articles de la commande #{order.id}</h3>
+            <div className="space-y-3">
+              {allOrderItems.filter((item: any) => item.orderId === order.id).map((item: any) => (
+                <div key={item.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-16 h-16 object-cover rounded"
+                    onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/64x64?text=Image'; }}
+                  />
+                  <div className="flex-1">
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-600">Quantité: {item.quantity}</p>
+                    {item.type === 'variation' && (
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        {item.color && <span>Couleur: {item.color}</span>}
+                        {item.size && <span>Taille: {item.size}</span>}
+                      </div>
+                    )}
+                  </div>
+                  <span className="font-semibold">{item.total} XAF</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        ))}
 
         {/* QR Code Card */}
         <Card className="p-4 sm:p-6 mb-4 sm:mb-6 flex flex-col items-center rounded-2xl">
@@ -168,7 +224,7 @@ export default function PaymentTicketPage() {
                 ref: payment.transaction_ref,
                 user: payment.user,
                 amount: payment.price,
-                date: order.created_at,
+                date: mainOrder.created_at,
                 products: allOrderItems.map((item: any) => item.name)
               })}
               size={140}
