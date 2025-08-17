@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useRecentNotificationsQuery } from '@/services/sellerService';
 import logo from '@/assets/favicon.png'
+import AsyncLink from './AsyncLink';
 
 interface NotificationData {
     id: number,
@@ -105,12 +106,12 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = React.memo(
                             </div>
                         )}
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="mt-4 w-full bg-[#ed7e0f] text-white py-2 rounded-md hover:bg-[#f19b45] transition-colors"
+                    <AsyncLink
+                        to='/seller/notifications'
+                        className="mt-4 p-4 flex items-center w-full bg-[#ed7e0f] text-white py-2 rounded-md hover:bg-[#f19b45] transition-colors"
                     >
                         Voir plus
-                    </button>
+                    </AsyncLink>
                 </div>
             </motion.div>
         );

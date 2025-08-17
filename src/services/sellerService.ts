@@ -82,7 +82,7 @@ export const sellerService = createApi({
             providesTags: ['seller']
         }),
         getNotification: builder.query({
-            query: (id) => `/api/v1/seller/notification/${id}`,
+            query: (id) => `/api/v1/seller/get/notification/${id}`,
             providesTags: ['seller']
         }),
         allNotification: builder.query({

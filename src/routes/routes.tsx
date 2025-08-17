@@ -19,7 +19,6 @@ import AddressInfoPage from "@/pages/auth/seller-registration/AddressInfoPage";
 import { PrivateRoute } from "@/pages/auth/private-route";
 import SellerGuidePage from "@/pages/seller/SellerGuidePage";
 import ShopsPage from "@/pages/ShopsPage";
-import NotificationsPage from "@/pages/NotificationsPage";
 import { AuthenticatePage } from "@/pages/auth/AuthenticatePage";
 import SellerTypePage from "@/pages/auth/seller-registration/SellerTypePage";
 import { GuardRoute } from "@/pages/auth/guard-route";
@@ -38,6 +37,7 @@ import StoreCustomizationPage from "@/pages/StoreCustomizationPage";
 import HelpCenterPage from "@/pages/HelpCenterPage";
 import ReviewsPage from "@/pages/seller/ReviewsPage";
 import EditProductPage from "@/pages/seller/EditProductPage";
+import NotificationsPage from "@/pages/dashboard/seller/notifications";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -65,8 +65,8 @@ export const routes = createBrowserRouter([
     element: <PersonalInfoPage />
   },
   {
-    path:'/help',
-    element:<HelpCenterPage/>
+    path: '/help',
+    element: <HelpCenterPage />
   },
   {
     path: '/seller-registration/security-info',
@@ -124,12 +124,12 @@ export const routes = createBrowserRouter([
         element: <RechargePage />
       },
       {
-        path:'/seller/update-docs',
-        element:<UpdateShopPage/>
+        path: '/seller/update-docs',
+        element: <UpdateShopPage />
       },
       {
-        path:'/shop-reviews',
-        element:<ReviewsPage/>
+        path: '/shop-reviews',
+        element: <ReviewsPage />
       },
       {
 
@@ -151,7 +151,11 @@ export const routes = createBrowserRouter([
       {
         path: '/shop/customize',
         element: <StoreCustomizationPage />
-      }
+      },
+      {
+        path: 'seller/notifications',
+        element: <NotificationsPage />
+      },
     ]
   },
   {
@@ -179,10 +183,7 @@ export const routes = createBrowserRouter([
     path: 'shops',
     element: <ShopsPage />
   },
-  {
-    path: 'notifications',
-    element: <NotificationsPage />
-  },
+
   {
     path: '/authenticate',
     element: <AuthenticatePage />
