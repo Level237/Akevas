@@ -156,6 +156,10 @@ export const routes = createBrowserRouter([
         path: 'seller/notifications',
         element: <NotificationsPage />
       },
+      {
+        path: 'seller/notifications/:notificationId',
+        element: <NotificationsPage />
+      },
     ]
   },
   {

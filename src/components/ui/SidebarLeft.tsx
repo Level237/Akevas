@@ -1,12 +1,30 @@
-import { Home, Store, ShoppingBag, ShoppingCart, User, Bell,Plus } from 'lucide-react';
+import { Home, Store, ShoppingBag, ShoppingCart, User, Bell, Plus } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import AsyncLink from './AsyncLink';
 import { useCurrentSellerQuery } from '@/services/sellerService';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import NotificationDropdown from './NotificationDropdown';
 
 export default function SidebarLeft() {
   const location = useLocation();
   const { data: { data: seller } = {} } = useCurrentSellerQuery('seller');
   const shopId = seller?.shop?.shop_id;
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [notificationRef]);
 
   const navItems = [
     {
@@ -68,10 +86,7 @@ export default function SidebarLeft() {
       </nav>
       {/* Notifications & Profile */}
       <div className="flex flex-col items-center gap-4 mb-2">
-        <button className="relative group w-8 h-8 flex items-center justify-center rounded-xl bg-[#fff7f0] hover:bg-[#ed7e0f]/10 transition">
-          <Bell className="w-5 h-5 text-[#ed7e0f] group-hover:scale-110 transition-transform" />
-          <span className="absolute -top-1 -right-1 bg-[#ed7e0f] text-white text-[9px] px-1 py-0.5 rounded-full font-bold shadow">3</span>
-        </button>
+
         <button className="w-8 h-8 rounded-full bg-[#ed7e0f]/10 flex items-center justify-center text-[#ed7e0f] text-base font-bold border-2 border-[#ed7e0f]/20 hover:border-[#ed7e0f] transition">
           <User className="w-5 h-5" />
         </button>

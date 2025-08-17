@@ -58,37 +58,42 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = React.memo(
                                 const isUnread = notification.read_at === null;
                                 return (
                                     <React.Fragment key={notification.id}>
-                                        <div className={`flex items-start p-3 rounded-lg transition-all duration-200 cursor-pointer hover:shadow-sm ${isUnread
-                                            ? 'bg-gray-100 hover:bg-gray-200 border-l-4 border-[#6e0a13] shadow-sm'
-                                            : 'bg-gray-50 hover:bg-gray-200 border-l-4 border-transparent hover:bg-gray-100'
-                                            }`}>
-                                            <div className="relative">
-                                                <img
-                                                    src={logo}
-                                                    alt="Akevas Logo"
-                                                    className="w-8 h-8 rounded-full mr-3 object-cover"
-                                                />
-                                                {isUnread && (
-                                                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#ed7e0f] rounded-full border-2 border-white"></div>
-                                                )}
+                                        <AsyncLink
+                                            to={`/seller/notifications/${notification.id}`}
+                                            className={`block ${isUnread
+                                                ? 'bg-gray-100 hover:bg-gray-200 border-l-4 border-[#6e0a13] shadow-sm'
+                                                : 'bg-gray-50 hover:bg-gray-200 border-l-4 border-transparent hover:bg-gray-100'
+                                                } p-3 rounded-lg transition-all duration-200 cursor-pointer hover:shadow-sm`}
+                                            OnClick={onClose}
+                                        >
+                                            <div className="flex items-start gap-3">
+                                                <div className="relative">
+                                                    <img
+                                                        src={logo}
+                                                        alt="Akevas Logo"
+                                                        className="w-8 h-8 rounded-full object-cover"
+                                                    />
+                                                    {isUnread && (
+                                                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#ed7e0f] rounded-full border-2 border-white"></div>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={`text-sm font-medium ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>
+                                                        {notification.data.message}
+                                                    </p>
+                                                    <p className="text-gray-500 text-xs mt-1">
+                                                        {new Date(notification.created_at).toLocaleString()}
+                                                    </p>
+                                                    {isUnread && (
+                                                        <div className="flex items-center mt-2">
+                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
+                                                                Nouveau
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className={`text-sm font-medium ${isUnread ? 'text-gray-900' : 'text-gray-700'
-                                                    }`}>
-                                                    {notification.data.message}
-                                                </p>
-                                                <p className="text-gray-500 text-xs mt-1">
-                                                    {new Date(notification.created_at).toLocaleString()}
-                                                </p>
-                                                {isUnread && (
-                                                    <div className="flex items-center mt-2">
-                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
-                                                            Nouveau
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
+                                        </AsyncLink>
                                         {index < notificationsToDisplay.length - 1 && (
                                             <hr className="border-gray-200" />
                                         )}
@@ -109,6 +114,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = React.memo(
                     <AsyncLink
                         to='/seller/notifications'
                         className="mt-4 p-4 flex items-center w-full bg-[#ed7e0f] text-white py-2 rounded-md hover:bg-[#f19b45] transition-colors"
+                        OnClick={onClose}
                     >
                         Voir plus
                     </AsyncLink>

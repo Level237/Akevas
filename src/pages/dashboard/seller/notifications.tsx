@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAllNotificationQuery, useGetNotificationQuery } from '@/services/sellerService';
 import { Bell, CheckCircle, X } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
 import logo from '@/assets/favicon.png';
 import NotificationItem from '@/components/ui/NotificationItem';
 
@@ -18,13 +19,39 @@ interface NotificationData {
 }
 
 const NotificationsPage: React.FC = () => {
+    const { notificationId } = useParams<{ notificationId?: string }>();
+    const navigate = useNavigate();
     const [selectedNotificationId, setSelectedNotificationId] = useState<number | null>(null);
+
     const { data: allNotifications, isLoading } = useAllNotificationQuery("seller");
-    const { data: selectedNotification } = useGetNotificationQuery(selectedNotificationId, {
+    const { data: selectedNotification } = useGetNotificationQuery(notificationId, {
         skip: !selectedNotificationId,
     });
-
     console.log(selectedNotificationId)
+    // Sync URL parameter with state
+    useEffect(() => {
+        if (notificationId) {
+            const id = parseInt(notificationId);
+            if (!isNaN(id)) {
+                setSelectedNotificationId(id);
+            }
+        } else {
+            setSelectedNotificationId(null);
+        }
+    }, [notificationId]);
+
+    // Update URL when notification is selected
+    const handleNotificationSelect = (id: number) => {
+        setSelectedNotificationId(id);
+        navigate(`/seller/notifications/${id}`);
+    };
+
+    // Clear selection and update URL
+    const handleClearSelection = () => {
+        setSelectedNotificationId(null);
+        navigate('/seller/notifications');
+    };
+
     const unreadCount = allNotifications?.filter((n: any) => n.read_at === null).length || 0;
 
     return (
@@ -76,7 +103,7 @@ const NotificationsPage: React.FC = () => {
                                                 key={notification.id}
                                                 notification={notification}
                                                 isSelected={selectedNotificationId === notification.id}
-                                                onClick={() => setSelectedNotificationId(notification.id)}
+                                                onClick={() => handleNotificationSelect(notification.id)}
                                                 variant="list"
                                             />
                                         ))}
@@ -110,7 +137,7 @@ const NotificationsPage: React.FC = () => {
                                             <div className="flex items-center justify-between">
                                                 <h3 className="text-lg font-semibold text-gray-900">Détails de la notification</h3>
                                                 <button
-                                                    onClick={() => setSelectedNotificationId(null)}
+                                                    onClick={handleClearSelection}
                                                     className="p-1 hover:bg-gray-200 rounded-lg transition-colors"
                                                 >
                                                     <X className="w-5 h-5 text-gray-500" />
