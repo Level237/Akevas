@@ -66,10 +66,9 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
 
     if (currentUser.role_id === 2) { // Vendeur
       return [
-        { icon: Store, text: "Ma boutique", href: `/shop/${currentUser.shop?.shop_id}` },
+        { icon: Store, text: "Tableau de bord", href: `/seller/dashboard` },
         { icon: Package, text: "Mes produits", href: "/seller/products" },
-        { icon: BarChart3, text: "Statistiques", href: "/seller/analytics" },
-        { icon: Package, text: "Mes commandes", href: "/seller/orders" },
+        { icon: Package, text: "Mes commandes", href: "/orders" },
       ]
     }
 
