@@ -1,30 +1,17 @@
-import { Home, Store, ShoppingBag, ShoppingCart, User, Bell, Plus } from 'lucide-react';
+import { Home, Store, ShoppingBag, ShoppingCart, User, Plus } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import AsyncLink from './AsyncLink';
 import { useCurrentSellerQuery } from '@/services/sellerService';
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import NotificationDropdown from './NotificationDropdown';
+
+
 
 export default function SidebarLeft() {
   const location = useLocation();
   const { data: { data: seller } = {} } = useCurrentSellerQuery('seller');
   const shopId = seller?.shop?.shop_id;
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const notificationRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
-        setIsNotificationsOpen(false);
-      }
-    }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [notificationRef]);
+
 
   const navItems = [
     {
