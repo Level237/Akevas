@@ -1,7 +1,7 @@
 import { Coins, Menu, Bell } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { AvatarImage } from '@radix-ui/react-avatar'
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { Seller } from '@/types/seller'
@@ -11,6 +11,7 @@ import logo from '@/assets/favicon.png'
 import DropdownAccount from './dropdown-account'
 
 import { Link } from 'react-router-dom'
+import NotificationDropdown from '@/components/ui/NotificationDropdown'
 
 export default function Header({
   setIsSidebarOpen,
@@ -21,6 +22,21 @@ export default function Header({
   sellerData: Seller | null | undefined
 }) {
   const [searchOpen, setSearchOpen] = useState(false)
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [notificationRef]);
 
   // Responsive: show search as overlay on mobile
   const SearchBar = () => (
@@ -109,15 +125,27 @@ export default function Header({
               </svg>
             </button>
             {/* Notifications */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-2 text-gray-500 hover:text-gray-700 relative rounded-full transition-colors bg-gray-50 hover:bg-gray-100"
-              aria-label="Notifications"
+            <div
+              className="relative"
+              ref={notificationRef}
+              onMouseLeave={() => setIsNotificationsOpen(false)}
             >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#ed7e0f] rounded-full"></span>
-            </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 text-gray-500 hover:text-gray-700 relative rounded-full transition-colors bg-gray-50 hover:bg-gray-100"
+                aria-label="Notifications"
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                onMouseEnter={() => setIsNotificationsOpen(true)}
+              >
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#ed7e0f] rounded-full"></span>
+              </motion.button>
+              <NotificationDropdown
+                isOpen={isNotificationsOpen}
+                onClose={() => setIsNotificationsOpen(false)}
+              />
+            </div>
             {/* Coins */}
             <div className="hidden xs:flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full bg-[#fff7f0] border border-[#ed7e0f]/20 text-[#ed7e0f] font-semibold text-xs sm:text-sm">
               <Coins className="w-4 h-4 mr-1" />

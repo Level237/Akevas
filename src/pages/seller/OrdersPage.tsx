@@ -128,7 +128,7 @@ const OrdersPage = () => {
     };
 
     return (
-        <div className="max-w-lg max-sm:mx-0 mx-24 px-4 py-8">
+        <div className=" overflow-hidden max-sm:mx-0 mx-24 px-4 py-8">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900">Commandes</h1>
                 <p className="text-gray-500 mt-2">Gérez vos commandes et suivez leur statut</p>
@@ -136,7 +136,7 @@ const OrdersPage = () => {
 
             <IsLoadingComponents isLoading={isLoading} />
 
-            <div className="space-y-6">
+            <div className="grid grid-cols-3 items-center  gap-x-44">
                 {ordersData?.map((order: any) => {
                     const status = getOrderStatus(order.status);
                     const allOrderItems = getOrderItems(order);
@@ -146,7 +146,7 @@ const OrdersPage = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
-                            className="w-full"
+                            className="w-[26rem]"
                         >
                             <Card className="p-6 flex flex-col h-full">
                                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 pb-4 border-b">
@@ -156,7 +156,7 @@ const OrdersPage = () => {
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <h3 className="font-semibold">Commande #{order.id}</h3>
+                                                <h3 className="font-semibold text-sm">Commande #{order.id}</h3>
                                                 <span className={`text-sm ${status?.color}`}>
                                                     {status?.title}
                                                 </span>
@@ -168,7 +168,7 @@ const OrdersPage = () => {
                                     </div>
 
                                     <div className="flex flex-col lg:items-end">
-                                        <span className="font-semibold text-xl">{formatPrice(order.total_amount)}</span>
+                                        <span className="font-semibold text-sm">{formatPrice(order.total_amount)}</span>
                                         <span className="text-sm text-gray-500">{order.itemsCount} article(s)</span>
                                     </div>
                                 </div>
