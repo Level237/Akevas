@@ -136,7 +136,7 @@ const OrdersPage = () => {
 
             <IsLoadingComponents isLoading={isLoading} />
 
-            <div className="grid grid-cols-3 items-center  gap-x-44">
+            <div className="grid grid-cols-3 max-sm:grid-cols-1 max-sm:mb-12 max-sm:gap-x-0 max-sm:gap-y-6 items-center  gap-x-44">
                 {ordersData?.map((order: any) => {
                     const status = getOrderStatus(order.status);
                     const allOrderItems = getOrderItems(order);
@@ -148,7 +148,7 @@ const OrdersPage = () => {
                             transition={{ duration: 0.5 }}
                             className="w-[26rem]"
                         >
-                            <Card className="p-6 flex flex-col h-full">
+                            <Card className="p-6 max-sm:max-w-[94vw] flex flex-col h-full">
                                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 pb-4 border-b">
                                     <div className="flex items-center gap-4">
                                         <div className={`p-3 rounded-lg ${status?.bgColor}`}>

@@ -27,6 +27,7 @@ import StoreEditorPage from "@/pages/seller/StoreEditorPage";
 import SellerCatalog from "@/pages/SellerCatalog";
 import AccountPage from "@/pages/Account";
 import OrdersPage from "@/pages/seller/OrdersPage";
+import OrderDetailPage from "@/pages/seller/OrderDetailPage";
 import UpdateShopPage from "@/pages/seller/UpdateShopPage";
 import CheckoutBoostPage from "@/pages/seller/CheckoutBoostPage";
 import RechargePage from "@/pages/seller/RechargePage";
@@ -118,6 +119,10 @@ export const routes = createBrowserRouter([
       {
         path: "/orders",
         element: <OrdersPage />
+      },
+      {
+        path: '/seller/orders/:orderId',
+        element: <OrderDetailPage />
       },
       {
         path: '/recharge',

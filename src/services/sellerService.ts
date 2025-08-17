@@ -77,6 +77,10 @@ export const sellerService = createApi({
             query: () => '/api/v1/seller/orders',
             providesTags: ['seller']
         }),
+        showOrder: builder.query({
+            query: (id) => `/api/v1/seller/order/${id}`,
+            providesTags: ['seller']
+        }),
         recentNotifications: builder.query({
             query: () => "/api/v1/seller/recents/notifications",
             providesTags: ['seller']
@@ -103,6 +107,7 @@ export const {
     useUpdateCategoriesMutation,
     useUpdateImagesMutation,
     useGetOrdersQuery,
+    useShowOrderQuery,
     useRecentNotificationsQuery,
     useGetNotificationQuery,
     useAllNotificationQuery
