@@ -4,7 +4,7 @@ import { useShowOrderQuery } from '@/services/sellerService';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Package, Clock, CheckCircle2, XCircle, ArrowLeft, Phone, MapPin, User, Store } from 'lucide-react';
+import { Package, Clock, CheckCircle2, XCircle, ArrowLeft, Phone, MapPin, Store } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
