@@ -76,7 +76,12 @@ export const sellerService = createApi({
         getOrders: builder.query({
             query: () => '/api/v1/seller/orders',
             providesTags: ['seller']
+        }),
+        recentNotifications: builder.query({
+            query: () => "/api/v1/seller/recents/notifications",
+            providesTags: ['seller']
         })
+
     })
 })
 export const {
@@ -89,5 +94,6 @@ export const {
     useBoostShopMutation,
     useUpdateCategoriesMutation,
     useUpdateImagesMutation,
-    useGetOrdersQuery
+    useGetOrdersQuery,
+    useRecentNotificationsQuery
 } = sellerService
