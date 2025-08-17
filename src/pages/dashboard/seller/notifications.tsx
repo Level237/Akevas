@@ -5,6 +5,7 @@ import { Bell, CheckCircle, X, ArrowLeft } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import logo from '@/assets/favicon.png';
 import NotificationItem from '@/components/ui/NotificationItem';
+import AsyncLink from '@/components/ui/AsyncLink';
 
 interface NotificationData {
     id: number;
@@ -28,7 +29,7 @@ const NotificationsPage: React.FC = () => {
     const { data: selectedNotification } = useGetNotificationQuery(notificationId, {
         skip: !selectedNotificationId,
     });
-
+    console.log(selectedNotification)
     // Sync URL parameter with state
     useEffect(() => {
         if (notificationId) {
@@ -181,24 +182,24 @@ const NotificationsPage: React.FC = () => {
                                                         </div>
 
                                                         {/* Order Details */}
-                                                        {selectedNotification.order_id && (
+                                                        {selectedNotification.data.order_id && (
                                                             <div className="bg-gray-50 rounded-lg p-4 mb-4">
                                                                 <h5 className="font-medium text-gray-900 mb-3">Détails de la commande</h5>
                                                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                                                     <div>
                                                                         <span className="text-gray-500">Numéro de commande:</span>
-                                                                        <p className="font-medium">#{selectedNotification.order_id}</p>
+                                                                        <p className="font-medium">#{selectedNotification.data.order_id}</p>
                                                                     </div>
-                                                                    {selectedNotification.customer_name && (
+                                                                    {selectedNotification.data.customer_name && (
                                                                         <div>
                                                                             <span className="text-gray-500">Client:</span>
-                                                                            <p className="font-medium">{selectedNotification.customer_name}</p>
+                                                                            <p className="font-medium">{selectedNotification.data.customer_name}</p>
                                                                         </div>
                                                                     )}
-                                                                    {selectedNotification.total_amount && (
+                                                                    {selectedNotification.data.total_amount && (
                                                                         <div>
                                                                             <span className="text-gray-500">Montant total:</span>
-                                                                            <p className="font-medium">{selectedNotification.total_amount} FCFA</p>
+                                                                            <p className="font-medium">{selectedNotification.data.total_amount} FCFA</p>
                                                                         </div>
                                                                     )}
                                                                     <div>
@@ -232,9 +233,11 @@ const NotificationsPage: React.FC = () => {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#f19b45] transition-colors">
-                                                                Voir la commande
-                                                            </button>
+                                                            <AsyncLink to={`/seller/orders/${selectedNotification.data.order_id}`}>
+                                                                <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#f19b45] transition-colors">
+                                                                    Voir la commande
+                                                                </button>
+                                                            </AsyncLink>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -362,24 +365,24 @@ const NotificationsPage: React.FC = () => {
                                                     </div>
 
                                                     {/* Order Details */}
-                                                    {selectedNotification.order_id && (
+                                                    {selectedNotification.data.order_id && (
                                                         <div className="bg-gray-50 rounded-lg p-3 mb-4">
                                                             <h5 className="font-medium text-gray-900 mb-3 text-sm">Détails de la commande</h5>
                                                             <div className="space-y-2 text-sm">
                                                                 <div className="flex justify-between">
                                                                     <span className="text-gray-500">Numéro:</span>
-                                                                    <span className="font-medium">#{selectedNotification.order_id}</span>
+                                                                    <span className="font-medium">#{selectedNotification.data.order_id}</span>
                                                                 </div>
-                                                                {selectedNotification.customer_name && (
+                                                                {selectedNotification.data.customer_name && (
                                                                     <div className="flex justify-between">
                                                                         <span className="text-gray-500">Client:</span>
-                                                                        <span className="font-medium">{selectedNotification.customer_name}</span>
+                                                                        <span className="font-medium">{selectedNotification.data.customer_name}</span>
                                                                     </div>
                                                                 )}
-                                                                {selectedNotification.total_amount && (
+                                                                {selectedNotification.data.total_amount && (
                                                                     <div className="flex justify-between">
                                                                         <span className="text-gray-500">Montant:</span>
-                                                                        <span className="font-medium">{selectedNotification.total_amount} FCFA</span>
+                                                                        <span className="font-medium">{selectedNotification.data.total_amount} FCFA</span>
                                                                     </div>
                                                                 )}
                                                                 <div className="flex justify-between">
@@ -414,9 +417,11 @@ const NotificationsPage: React.FC = () => {
                                                             )}
                                                         </div>
                                                         <div className="flex flex-col gap-2">
-                                                            <button className="w-full bg-[#ed7e0f] text-white py-3 rounded-lg hover:bg-[#f19b45] transition-colors font-medium">
-                                                                Voir la commande
-                                                            </button>
+                                                            <AsyncLink to={`/seller/orders/${selectedNotification.data.order_id}`}>
+                                                                <button className="w-full bg-[#ed7e0f] text-white py-3 rounded-lg hover:bg-[#f19b45] transition-colors font-medium">
+                                                                    Voir la commande
+                                                                </button>
+                                                            </AsyncLink>
 
                                                         </div>
                                                     </div>

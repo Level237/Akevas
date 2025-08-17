@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useRecentNotificationsQuery } from '@/services/sellerService';
 import logo from '@/assets/favicon.png'
 import AsyncLink from './AsyncLink';
+import { Bell } from 'lucide-react';
 
 interface NotificationData {
     id: number,
@@ -113,10 +114,16 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = React.memo(
                     </div>
                     <AsyncLink
                         to='/seller/notifications'
-                        className="mt-4 p-4 flex items-center w-full bg-[#ed7e0f] text-white py-2 rounded-md hover:bg-[#f19b45] transition-colors"
+                        className="mt-4 p-4 cursor-pointer flex items-center w-full bg-[#ed7e0f] text-white py-2 rounded-md hover:bg-[#f19b45] transition-colors"
                         OnClick={onClose}
                     >
-                        Voir plus
+                        <div className="flex justify-center items-center gap-2 w-full">
+                            <Bell className="w-4 h-4" />
+                            <div>
+                                <p>Voir plus</p>
+                            </div>
+                        </div>
+
                     </AsyncLink>
                 </div>
             </motion.div>
