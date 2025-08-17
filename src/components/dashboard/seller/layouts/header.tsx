@@ -139,7 +139,8 @@ export default function Header({
                 onMouseEnter={() => setIsNotificationsOpen(true)}
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#ed7e0f] rounded-full"></span>
+                {sellerData?.notifications_is_count != 0 && <span className="absolute top-1 p-1 right-1.5 w-2 h-2 bg-[#ed7e0f] rounded-full"></span>}
+
               </motion.button>
               <NotificationDropdown
                 isOpen={isNotificationsOpen}
