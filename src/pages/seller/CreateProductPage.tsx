@@ -72,7 +72,9 @@ const CreateProductPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const typeFromUrl = searchParams.get('type');
+  const saleFromUrl = searchParams.get('sale');
   const [showModal, setShowModal] = useState(true);
+  const [modalStep, setModalStep] = useState<'type' | 'wholesale'>('type');
   const [name, setName] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [city, setCity] = useState('');
@@ -80,9 +82,12 @@ const CreateProductPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   console.log(setIsLoading)
   const [selectedProductType, setSelectedProductType] = useState<'simple' | 'variable' | null>(null);
+  const [isWholesale, setIsWholesale] = useState<boolean | null>(
+    saleFromUrl ? (saleFromUrl === '1' ? true : false) : null
+  );
   const [variations, setVariations] = useState<Variation[]>([]);
 
-  
+
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
@@ -93,7 +98,7 @@ const CreateProductPage: React.FC = () => {
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
   console.log(variants)
-  
+
   const [gender, setGender] = useState<number>(0)
   const [productType, setProductType] = useState<'simple' | 'variable'>(typeFromUrl === 'variable' ? 'variable' : 'simple');
   const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
@@ -106,7 +111,7 @@ const CreateProductPage: React.FC = () => {
 
   //console.log(selectedSubCategories)
   // Liste des catégories disponibles
- 
+
   // Initialisation des attributs avec la propriété affectsPrice
   useEffect(() => {
     if (getAttributes) {
@@ -132,8 +137,8 @@ const CreateProductPage: React.FC = () => {
       ]);
     } else {
       // Si on a déjà un attribut qui affecte le prix, on le remplace par Taille
-      setAttributes(attributes.map(attr => 
-        attr.affectsPrice 
+      setAttributes(attributes.map(attr =>
+        attr.affectsPrice
           ? { ...attr, name: 'Taille', id: 2 }
           : attr
       ));
@@ -157,9 +162,9 @@ const CreateProductPage: React.FC = () => {
       try {
         const file = e.target.files[0];
         const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
-        
+
         let processedFile = file;
-        
+
         if (file.size > maxSize) {
           const { compressImage } = await import('@/lib/imageCompression');
           processedFile = await compressImage(file, {
@@ -168,13 +173,13 @@ const CreateProductPage: React.FC = () => {
             quality: 0.8,
             maxSizeMB: 2,
           });
-          
+
           toast.success("Image compressée avec succès", {
             description: `Taille réduite de ${(file.size / 1024 / 1024).toFixed(1)}Mo à ${(processedFile.size / 1024 / 1024).toFixed(1)}Mo`,
             duration: 3000,
           });
         }
-        
+
         setFeaturedImage(processedFile);
       } catch (error) {
         console.error('Erreur lors de la compression de l\'image:', error);
@@ -195,7 +200,7 @@ const CreateProductPage: React.FC = () => {
       try {
         const files = e.target.files;
         const maxImages = 6; // Limite le nombre total d'images
-        
+
         if (images.length + files.length > maxImages) {
           toast.error(`Vous ne pouvez sélectionner que ${maxImages} images au total.`);
           return;
@@ -210,7 +215,7 @@ const CreateProductPage: React.FC = () => {
         });
 
         setImages([...images, ...compressedFiles]);
-        
+
         toast.success("Images compressées et ajoutées avec succès", {
           description: `${files.length} image(s) ajoutée(s)`,
           duration: 3000,
@@ -229,7 +234,7 @@ const CreateProductPage: React.FC = () => {
     setImages(images.filter((_, i) => i !== index));
   };
 
- 
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -249,7 +254,7 @@ const CreateProductPage: React.FC = () => {
           description: "Veuillez remplir tous les champs obligatoires",
           duration: 4000, // ms
         });
-       
+
         return;
       }
 
@@ -266,13 +271,13 @@ const CreateProductPage: React.FC = () => {
           description: "Veuillez remplir tous les champs obligatoires",
           duration: 4000, // ms
         });
-      
+
         return;
       }
 
       if (gender === 0) {
         toast.error('Le genre du produit est obligatoire', {
-            description: "Veuillez remplir tous les champs obligatoires",
+          description: "Veuillez remplir tous les champs obligatoires",
           duration: 4000, // ms
         });
         return;
@@ -296,7 +301,7 @@ const CreateProductPage: React.FC = () => {
 
       if (!whatsappNumber.trim()) {
         toast.error('Le numéro de téléphone est obligatoire', {
-            description: "Veuillez remplir tous les champs obligatoires",
+          description: "Veuillez remplir tous les champs obligatoires",
           duration: 4000, // ms
         });
         return;
@@ -304,7 +309,7 @@ const CreateProductPage: React.FC = () => {
 
       if (!city) {
         toast.error('La ville du produit est obligatoire', {
-            description: "Veuillez remplir tous les champs obligatoires",
+          description: "Veuillez remplir tous les champs obligatoires",
           duration: 4000, // ms
         });
         return;
@@ -312,7 +317,7 @@ const CreateProductPage: React.FC = () => {
 
       if (!featuredImage) {
         toast.error('L\'image de profil du produit est obligatoire', {
-            description: "Veuillez remplir tous les champs obligatoires",
+          description: "Veuillez remplir tous les champs obligatoires",
           duration: 4000, // ms
         });
         return;
@@ -395,7 +400,7 @@ const CreateProductPage: React.FC = () => {
       }
 
       // Vérifier que chaque variation a une couleur et des images
-      const invalidVariations = variationFrames.some(frame => 
+      const invalidVariations = variationFrames.some(frame =>
         !frame.colorId || frame.images.length === 0
       );
 
@@ -409,7 +414,7 @@ const CreateProductPage: React.FC = () => {
 
       // Vérifier les quantités pour les variations
       if (!attributes.some(attr => attr.affectsPrice)) {
-        const invalidQuantities = variationFrames.some(frame => 
+        const invalidQuantities = variationFrames.some(frame =>
           !frame.quantity || frame.quantity <= 0
         );
 
@@ -422,7 +427,7 @@ const CreateProductPage: React.FC = () => {
         }
       } else {
         // Vérifier les quantités pour les tailles/pointures
-        const invalidSizes = variationFrames.some(frame => 
+        const invalidSizes = variationFrames.some(frame =>
           frame.sizes.some(size => !size.quantity || size.quantity <= 0) ||
           frame.shoeSizes.some(size => !size.quantity || size.quantity <= 0)
         );
@@ -443,11 +448,11 @@ const CreateProductPage: React.FC = () => {
             description: "Tous les champs marqués d'un * sont requis.",
             duration: 4000, // ms
           });
-            return;
+          return;
         }
       } else {
         const invalidPrices = Object.values(sizePrices).some(price => !price || price <= 0) ||
-                            Object.values(shoeSizePrices).some(price => !price || price <= 0);
+          Object.values(shoeSizePrices).some(price => !price || price <= 0);
 
         if (invalidPrices) {
           toast.error('Veuillez remplir tous les champs obligatoires', {
@@ -515,7 +520,7 @@ const CreateProductPage: React.FC = () => {
 
         // Ajouter les variations groupées par couleur
         formData.append('variations', JSON.stringify(Object.values(variationsByColor)));
-        
+
         // Ajouter les images des variations par couleur
         Object.values(variationsByColor).forEach((colorGroup) => {
           colorGroup.images.forEach((image, imageIndex) => {
@@ -523,13 +528,13 @@ const CreateProductPage: React.FC = () => {
           });
         });
       }
-      
+
       // Afficher le contenu du formData pour vérification
       console.log('Contenu du formData:');
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
-      
+
       await addProduct(formData);
       toast.success('Produit créé avec succès', {
         description: "Vous pouvez désormais accéder à votre liste de produits",
@@ -537,7 +542,7 @@ const CreateProductPage: React.FC = () => {
       });
       navigate('/seller/products')
     } catch (error) {
-      
+
 
       toast.error('Une erreur est survenue lors de la création du produit', {
         description: "Veuillez réessayer",
@@ -621,7 +626,7 @@ const CreateProductPage: React.FC = () => {
   };
 
   const updateVariationFrame = (frameId: string, updates: Partial<typeof variationFrames[0]>) => {
-    setVariationFrames(variationFrames.map(frame => 
+    setVariationFrames(variationFrames.map(frame =>
       frame.id === frameId ? { ...frame, ...updates } : frame
     ));
   };
@@ -633,7 +638,7 @@ const CreateProductPage: React.FC = () => {
         if (existingSize) {
           return {
             ...frame,
-            sizes: frame.sizes.map(s => 
+            sizes: frame.sizes.map(s =>
               s.id === sizeId ? { ...s, quantity: s.quantity + quantity } : s
             )
           };
@@ -654,7 +659,7 @@ const CreateProductPage: React.FC = () => {
         if (existingSize) {
           return {
             ...frame,
-            shoeSizes: frame.shoeSizes.map(s => 
+            shoeSizes: frame.shoeSizes.map(s =>
               s.id === sizeId ? { ...s, quantity: s.quantity + quantity } : s
             )
           };
@@ -669,16 +674,16 @@ const CreateProductPage: React.FC = () => {
   };
 
   const removeSizeFromVariation = (frameId: string, sizeId: number) => {
-    setVariationFrames(variationFrames.map(frame => 
-      frame.id === frameId 
+    setVariationFrames(variationFrames.map(frame =>
+      frame.id === frameId
         ? { ...frame, sizes: frame.sizes.filter(s => s.id !== sizeId) }
         : frame
     ));
   };
 
   const removeShoeSizeFromVariation = (frameId: string, sizeId: number) => {
-    setVariationFrames(variationFrames.map(frame => 
-      frame.id === frameId 
+    setVariationFrames(variationFrames.map(frame =>
+      frame.id === frameId
         ? { ...frame, shoeSizes: frame.shoeSizes.filter(s => s.id !== sizeId) }
         : frame
     ));
@@ -694,7 +699,7 @@ const CreateProductPage: React.FC = () => {
       const maxImages = 3;
       const currentFrame = variationFrames.find(frame => frame.id === frameId);
       const currentImages = currentFrame?.images || [];
-      
+
       if (currentImages.length + files.length > maxImages) {
         toast.error(`Vous ne pouvez sélectionner que ${maxImages} images par variation.`);
         return;
@@ -778,11 +783,11 @@ const CreateProductPage: React.FC = () => {
     });
 
     // Filtrer les variations existantes pour éviter les doublons
-    const uniqueVariations = newVariations.filter(newVar => 
-      !variationFrames.some(existing => 
-        existing.colorId === newVar.colorId && 
+    const uniqueVariations = newVariations.filter(newVar =>
+      !variationFrames.some(existing =>
+        existing.colorId === newVar.colorId &&
         (existing.sizes.some(s => newVar.sizes.some(ns => ns.id === s.id)) ||
-         existing.shoeSizes.some(s => newVar.shoeSizes.some(ns => ns.id === s.id)))
+          existing.shoeSizes.some(s => newVar.shoeSizes.some(ns => ns.id === s.id)))
       )
     );
 
@@ -791,12 +796,12 @@ const CreateProductPage: React.FC = () => {
 
   const updateSizePrice = (sizeId: number, price: number) => {
     setSizePrices(prev => ({ ...prev, [sizeId]: price }));
-    
+
     // Mettre à jour toutes les variations qui contiennent cette taille
-    setVariationFrames(prevFrames => 
+    setVariationFrames(prevFrames =>
       prevFrames.map(frame => ({
         ...frame,
-        sizes: frame.sizes.map(size => 
+        sizes: frame.sizes.map(size =>
           size.id === sizeId ? { ...size, price } : size
         )
       }))
@@ -805,12 +810,12 @@ const CreateProductPage: React.FC = () => {
   // Fonction pour mettre à jour le prix d'une pointure
   const updateShoeSizePrice = (sizeId: number, price: number) => {
     setShoeSizePrices(prev => ({ ...prev, [sizeId]: price }));
-    
+
     // Mettre à jour toutes les variations qui contiennent cette pointure
-    setVariationFrames(prevFrames => 
+    setVariationFrames(prevFrames =>
       prevFrames.map(frame => ({
         ...frame,
-        shoeSizes: frame.shoeSizes.map(size => 
+        shoeSizes: frame.shoeSizes.map(size =>
           size.id === sizeId ? { ...size, price } : size
         )
       }))
@@ -829,9 +834,23 @@ const CreateProductPage: React.FC = () => {
 
   const handleConfirmProductType = async () => {
     if (!selectedProductType) return;
-    setProductType(selectedProductType);
-    setShowModal(false);
-    navigate(`/seller/create-product?type=${selectedProductType}`, { replace: true });
+
+    if (modalStep === 'type') {
+      setModalStep('wholesale');
+    } else if (modalStep === 'wholesale') {
+      if (isWholesale === null) return;
+      setProductType(selectedProductType);
+      setShowModal(false);
+      const saleValue = isWholesale ? '1' : '0';
+      navigate(`/seller/create-product?type=${selectedProductType}&sale=${saleValue}`, { replace: true });
+    }
+  };
+
+  const handleBackStep = () => {
+    if (modalStep === 'wholesale') {
+      setModalStep('type');
+      setIsWholesale(null);
+    }
   };
 
   // Effet pour générer les variations structurées
@@ -841,7 +860,7 @@ const CreateProductPage: React.FC = () => {
 
       variationFrames.forEach(frame => {
         const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
-       
+
         if (!color) return;
 
         // Cas 1: Variation couleur uniquement
@@ -858,7 +877,7 @@ const CreateProductPage: React.FC = () => {
             price: globalColorPrice
           });
         }
-        
+
         // Cas 2: Variation couleur + taille
         if (frame.sizes.length > 0) {
           frame.sizes.forEach(sizeItem => {
@@ -916,115 +935,242 @@ const CreateProductPage: React.FC = () => {
     generateStructuredVariations();
   }, [variationFrames, getAttributes, attributes, globalColorPrice, sizePrices, shoeSizePrices]);
 
+  // Effet pour gérer l'initialisation depuis l'URL
+  useEffect(() => {
+    if (typeFromUrl && saleFromUrl) {
+      setSelectedProductType(typeFromUrl as 'simple' | 'variable');
+      setIsWholesale(saleFromUrl === '1');
+      setProductType(typeFromUrl as 'simple' | 'variable');
+      setShowModal(false);
+    } else if (typeFromUrl) {
+      setSelectedProductType(typeFromUrl as 'simple' | 'variable');
+      setModalStep('wholesale');
+    }
+  }, [searchParams]);
+
   return (
     <div className="min-h-screen bg-gray-50   max-sm:pb-16">
       {/* Modal de sélection du type de produit */}
       {showModal && (
-        <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-3xl  overflow-hidden shadow-xl">
-            {/* Header avec bouton de fermeture */}
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
-                Choisir le type de produit
-              </h2>
-              <button 
-                onClick={() => setShowModal(false)}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <X className="w-6 h-6 text-gray-500" />
-              </button>
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl overflow-hidden shadow-lg">
+            {/* Header simple */}
+            <div className="bg-gray-50 px-6 py-4 border-b">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${modalStep === 'type' ? 'bg-[#ed7e0f] text-white' : 'bg-gray-300 text-gray-600'
+                      }`}>
+                      1
+                    </div>
+                    <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${modalStep === 'wholesale' ? 'bg-[#ed7e0f] text-white' : 'bg-gray-300 text-gray-600'
+                      }`}>
+                      2
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      {modalStep === 'type' ? 'Type de produit' : 'Mode de vente'}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {modalStep === 'type' ? 'Étape 1 sur 2' : 'Étape 2 sur 2'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="p-2 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
             </div>
 
             <div className="p-6">
-              <div className="space-y-4">
-                {/* Produit Simple */}
-              <button
-                onClick={() => setSelectedProductType('simple')}
-                  className={`w-full transition-all ${
-                    selectedProductType === 'simple'
-                      ? 'bg-[#ed7e0f]/5 ring-2 ring-[#ed7e0f]'
-                      : 'hover:bg-gray-50 ring-1 ring-gray-200'
-                  } rounded-xl p-4`}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-xl ${
-                      selectedProductType === 'simple'
-                        ? 'bg-[#ed7e0f]/10'
-                        : 'bg-gray-100'
-                    }`}>
-                      <Package className="w-6 h-6 text-[#ed7e0f]" />
+              {/* Étape 1: Sélection du type de produit */}
+              {modalStep === 'type' && (
+                <div>
+                  <div className="text-center mb-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      Quel type de produit ?
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Choisissez le format adapté à votre produit
+                    </p>
                   </div>
-                    <div className="flex-1 text-left">
-                      <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-gray-900">Produit Simple</h3>
+
+                  <div className="space-y-3">
+                    {/* Produit Simple */}
+                    <button
+                      onClick={() => setSelectedProductType('simple')}
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-all ${selectedProductType === 'simple'
+                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
+                        : 'border-gray-200 hover:border-[#ed7e0f]/50 hover:bg-gray-50'
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${selectedProductType === 'simple'
+                          ? 'bg-[#ed7e0f] text-white'
+                          : 'bg-gray-100 text-gray-600'
+                          }`}>
+                          <Package className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">Produit Simple</h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Un seul prix, une seule référence. Idéal pour les accessoires et articles uniques.
+                          </p>
+                        </div>
                         {selectedProductType === 'simple' && (
-                          <div className="px-2 py-1 rounded-full bg-[#ed7e0f]/10 text-[#ed7e0f] text-xs font-medium">
-                            Sélectionné
+                          <div className="w-5 h-5 rounded-full bg-[#ed7e0f] flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
                           </div>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">Un produit unique avec un seul prix et une seule référence. Idéal pour les produits sans variations.</p>
-                  </div>
-                </div>
-              </button>
+                    </button>
 
-                {/* Produit Variable */}
-              <button
-                onClick={() => setSelectedProductType('variable')}
-                  className={`w-full transition-all ${
-                    selectedProductType === 'variable'
-                      ? 'bg-[#ed7e0f]/5 ring-2 ring-[#ed7e0f]'
-                      : 'hover:bg-gray-50 ring-1 ring-gray-200'
-                  } rounded-xl p-4`}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-xl ${
-                      selectedProductType === 'variable'
-                        ? 'bg-[#ed7e0f]/10'
-                        : 'bg-gray-100'
-                    }`}>
-                      <Palette className="w-6 h-6 text-[#ed7e0f]" />
-                  </div>
-                    <div className="flex-1 text-left">
-                      <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-gray-900">Produit Variable</h3>
+                    {/* Produit Variable */}
+                    <button
+                      onClick={() => setSelectedProductType('variable')}
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-all ${selectedProductType === 'variable'
+                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
+                        : 'border-gray-200 hover:border-[#ed7e0f]/50 hover:bg-gray-50'
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${selectedProductType === 'variable'
+                          ? 'bg-[#ed7e0f] text-white'
+                          : 'bg-gray-100 text-gray-600'
+                          }`}>
+                          <Palette className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">Produit Variable</h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Plusieurs variations, tailles, couleurs. Parfait pour vêtements et chaussures.
+                          </p>
+                        </div>
                         {selectedProductType === 'variable' && (
-                          <div className="px-2 py-1 rounded-full bg-[#ed7e0f]/10 text-[#ed7e0f] text-xs font-medium">
-                            Sélectionné
-                  </div>
+                          <div className="w-5 h-5 rounded-full bg-[#ed7e0f] flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
                         )}
+                      </div>
+                    </button>
+                  </div>
                 </div>
-                      <p className="text-sm text-gray-600 mt-1">Un produit configurable avec plusieurs variations, prix et stocks. Parfait pour les vêtements et chaussures.</p>
-            </div>
-          </div>
-                </button>
-        </div>
+              )}
 
-              {/* Footer avec bouton de confirmation */}
-              <div className="mt-8 flex justify-end">
-            <button
+              {/* Étape 2: Configuration de la vente */}
+              {modalStep === 'wholesale' && (
+                <div>
+                  <div className="text-center mb-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      Mode de vente
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Choisissez votre stratégie de vente
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {/* Vente au détail */}
+                    <button
+                      onClick={() => setIsWholesale(false)}
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-all ${isWholesale === false
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-green-300 hover:bg-gray-50'
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${isWholesale === false
+                          ? 'bg-green-500 text-white'
+                          : 'bg-gray-100 text-gray-600'
+                          }`}>
+                          <span className="text-lg">🛍️</span>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">Vente au détail</h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Vente individuelle aux clients finaux. Prix unitaire.
+                          </p>
+                        </div>
+                        {isWholesale === false && (
+                          <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
+                        )}
+                      </div>
+                    </button>
+
+                    {/* Vente en gros */}
+                    <button
+                      onClick={() => setIsWholesale(true)}
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-all ${isWholesale === true
+                        ? 'border-purple-500 bg-purple-50'
+                        : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${isWholesale === true
+                          ? 'bg-purple-500 text-white'
+                          : 'bg-gray-100 text-gray-600'
+                          }`}>
+                          <span className="text-lg">📦</span>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">Vente en gros</h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Vente en grandes quantités aux revendeurs. Tarifs préférentiels.
+                          </p>
+                        </div>
+                        {isWholesale === true && (
+                          <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Boutons de navigation */}
+              <div className="mt-8 flex justify-between items-center">
+                {modalStep === 'wholesale' && (
+                  <button
+                    onClick={handleBackStep}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  >
+                    ← Retour
+                  </button>
+                )}
+
+                <button
                   onClick={handleConfirmProductType}
-                  disabled={!selectedProductType || isLoading}
-                  className={`px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all ${
-                    selectedProductType
-                      ? 'bg-[#6e0a13] to-orange-600 text-white hover:opacity-90'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
+                  disabled={
+                    (modalStep === 'type' && !selectedProductType) ||
+                    (modalStep === 'wholesale' && isWholesale === null) ||
+                    isLoading
+                  }
+                  className={`px-6 py-2 rounded-lg font-medium transition-all ${((modalStep === 'type' && selectedProductType) ||
+                    (modalStep === 'wholesale' && isWholesale !== null)) && !isLoading
+                    ? 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    }`}
                 >
                   {isLoading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Configuration en cours...</span>
-                    </>
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Chargement...</span>
+                    </div>
                   ) : (
-                    <>
-                      <Save className="w-5 h-5" />
-                      <span>Continuer</span>
-                    </>
+                    <span>{modalStep === 'type' ? 'Continuer' : 'Terminer'}</span>
                   )}
-            </button>
-          </div>
-        </div>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -1036,8 +1182,8 @@ const CreateProductPage: React.FC = () => {
             {/* Version mobile */}
             <div className="md:hidden">
               <div className="flex items-center justify-between mb-4">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => navigate("/seller/products")}
                   className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
                 >
@@ -1058,8 +1204,8 @@ const CreateProductPage: React.FC = () => {
                 </button>
               </div>
               <p className="text-sm text-gray-600 text-center">
-                {productType === 'simple' 
-                  ? 'Ajoutez un nouveau produit sans variations' 
+                {productType === 'simple'
+                  ? 'Ajoutez un nouveau produit sans variations'
                   : 'Créez un produit avec plusieurs variations'}
               </p>
             </div>
@@ -1071,14 +1217,14 @@ const CreateProductPage: React.FC = () => {
                   {productType === 'simple' ? 'Créer un produit simple' : 'Créer un produit variable'}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  {productType === 'simple' 
-                    ? 'Ajoutez un nouveau produit sans variations' 
+                  {productType === 'simple'
+                    ? 'Ajoutez un nouveau produit sans variations'
                     : 'Créez un produit avec plusieurs variations'}
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => navigate(-1)}
                   className="px-4 py-2 text-gray-700 bg-white border rounded-xl hover:bg-gray-50"
                 >
@@ -1120,38 +1266,38 @@ const CreateProductPage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
-                  <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                      <input
+                        type="number"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
                         className="w-full max-sm:placeholder:text-md px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                    placeholder="Prix (Fcfa)"
-                  
-                  />
+                        placeholder="Prix (Fcfa)"
+
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                  <input
-                    type="number"
-                    value={stock}
-                    onChange={(e) => setStock(e.target.value)}
+                      <input
+                        type="number"
+                        value={stock}
+                        onChange={(e) => setStock(e.target.value)}
                         className="w-full max-sm:placeholder:text-sm px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                         placeholder="Quantité disponible"
-                  
-                  />
-                </div>
+
+                      />
+                    </div>
                   </div>
                 )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={6}
-                  className="w-full max-sm:placeholder:text-md px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                  placeholder="Description détaillée du produit..."
-                />
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={6}
+                    className="w-full max-sm:placeholder:text-md px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                    placeholder="Description détaillée du produit..."
+                  />
                 </div>
               </div>
 
@@ -1172,41 +1318,41 @@ const CreateProductPage: React.FC = () => {
                   </Select>
                 </div>
 
-              {gender !== 0 && (
+                {gender !== 0 && (
                   <>
                     <div>
-                    <label className="block max-sm:text-sm text-lg font-semibold mb-4">Catégories</label>
+                      <label className="block max-sm:text-sm text-lg font-semibold mb-4">Catégories</label>
                       {isLoadingCategoriesByGender ? (
                         <div className="flex items-center justify-center h-20">
                           <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
-                    </div>
+                        </div>
                       ) : (
-                      <MultiSelect
-                        options={categoriesByGender?.categories}
-                        selected={selectedCategories}
-                        onChange={handleChangeCategories}
+                        <MultiSelect
+                          options={categoriesByGender?.categories}
+                          selected={selectedCategories}
+                          onChange={handleChangeCategories}
                           placeholder="Sélectionner les catégories..."
-                      />
-                    )}
-                  </div>
+                        />
+                      )}
+                    </div>
 
-              {selectedCategories.length > 0 && (
+                    {selectedCategories.length > 0 && (
                       <div>
-                    <label className="block text-lg font-semibold mb-4">Sous catégories</label>
+                        <label className="block text-lg font-semibold mb-4">Sous catégories</label>
                         {isLoadingSubCategoriesByParentId ? (
                           <div className="flex items-center justify-center h-20">
                             <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
-                    </div>
+                          </div>
                         ) : (
-                        <MultiSelect
-                          options={subCategoriesByGender?.categories}
-                          selected={selectedSubCategories}
-                          onChange={handleChangeSubCategories}
+                          <MultiSelect
+                            options={subCategoriesByGender?.categories}
+                            selected={selectedSubCategories}
+                            onChange={handleChangeSubCategories}
                             placeholder="Sélectionner les sous-catégories..."
-                        />
+                          />
+                        )}
+                      </div>
                     )}
-                </div>
-              )}
                   </>
                 )}
               </div>
@@ -1229,7 +1375,7 @@ const CreateProductPage: React.FC = () => {
                         onChange={(e) => setWhatsappNumber(e.target.value)}
                         className="w-full pl-12 pr-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                         placeholder="Ex: +237 656488374"
-                        
+
                       />
                     </div>
                   </div>
@@ -1255,7 +1401,7 @@ const CreateProductPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-                </div>
+            </div>
 
             {/* Colonne latérale */}
             <div className="space-y-6">
@@ -1265,645 +1411,642 @@ const CreateProductPage: React.FC = () => {
                   <div className="bg-white rounded-2xl shadow-sm p-6">
                     <h2 className="text-lg max-sm:text-sm font-semibold mb-4">Photo mise en avant</h2>
                     <div className="aspect-square w-64 max-sm:w-44 h-64 max-sm:h-44 rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
-                  {featuredImage ? (
+                      {featuredImage ? (
                         <div className="relative group h-64">
-                      <img
-                        src={URL.createObjectURL(featuredImage)}
-                        alt="Featured product"
-                        className="w-full max-sm:w-44 h-full max-sm:h-44 object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
-                          type="button"
-                          onClick={removeFeaturedImage}
+                          <img
+                            src={URL.createObjectURL(featuredImage)}
+                            alt="Featured product"
+                            className="w-full max-sm:w-44 h-full max-sm:h-44 object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button
+                              type="button"
+                              onClick={removeFeaturedImage}
                               className="p-2 bg-white/90 rounded-full hover:bg-white"
-                        >
+                            >
                               <X className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
                         <label className="h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
                           <Upload className="w-10 h-10 text-gray-400" />
                           <span className="mt-2 text-sm text-gray-500">Ajouter une photo</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleFeaturedImageUpload}
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleFeaturedImageUpload}
+                          />
+                        </label>
+                      )}
+                    </div>
+                  </div>
 
                   {/* Galerie d'images pour produit simple */}
                   <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold max-sm:text-sm mb-4">Galerie d'images</h2>
+                    <h2 className="text-lg font-semibold max-sm:text-sm mb-4">Galerie d'images</h2>
                     <div className="grid grid-cols-3 gap-4">
                       {images.map((image, index) => (
                         <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt={`Product ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
-                          type="button"
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button
+                              type="button"
                               onClick={() => removeImage(index)}
                               className="p-2 bg-white rounded-full hover:bg-gray-100"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
 
                       <label className="aspect-square rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed border-gray-200">
                         <Upload className="w-8 h-8 max-sm:w-5 max-sm:h-5 text-gray-400" />
                         <span className="mt-2 text-sm max-sm:text-xs text-gray-500">Ajouter</span>
-                    <input
-                      type="file"
+                        <input
+                          type="file"
                           className="hidden"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageUpload}
-                    />
-                  </label>
-                </div>
-              </div>
+                          accept="image/*"
+                          multiple
+                          onChange={handleImageUpload}
+                        />
+                      </label>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>
                   {/* Section des attributs pour produit variable */}
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-lg font-semibold max-sm:text-sm text-gray-900">Attributs du produit</h2>
-                    <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les variations de votre produit</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      className="px-3 py-1.5 max-sm:text-xs text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                      onClick={() => {
-                        setAttributes([]);
-                        setVariants([]);
-                      }}
-                    >
-                      Réinitialiser
-                    </button>
-                  </div>
-                </div>
-
-                {/* Type de variation */}
-                <div className="mb-8">
-                  <h3 className="text-sm font-medium text-gray-700 mb-3">Type de variation</h3>
-                  <div className="grid grid-cols-3 gap-3">
-                    <button
-                      type="button"
-                     
-                      onClick={() => {
-                        setAttributes(attributes.filter(attr => !attr.affectsPrice));
-                        setVariants([]);
-                        setVariationFrames([]);
-                        addVariationFrame();
-                        if (variationFrames.length > 0) {
-                          setVariationFrames([{
-                            id: variationFrames[0].id,
-                            sizes: [],
-                            shoeSizes: [],
-                            images: [],
-                            quantity: undefined
-                          }]);
-                        } else {
-                          addVariationFrame();
-                        }
-                      }}
-                      className={`p-4 h-24 rounded-xl max-sm:text-xs border-2 transition-all ${
-                        !attributes.some(attr => attr.affectsPrice)
-                          ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                          </svg>
-                        </div>
-                        <span className="text-xs font-medium">Couleur uniquement</span>
+                  <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h2 className="text-lg font-semibold max-sm:text-sm text-gray-900">Attributs du produit</h2>
+                        <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les variations de votre produit</p>
                       </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!attributes.some(attr => attr.affectsPrice)) {
-                          setAttributes([
-                            ...attributes,
-                            {
-                              id: 2,
-                              name: 'Taille',
-                              affectsPrice: true,
-                              values: []
-                            }
-                          ]);
-                        } else {
-                          setAttributes(attributes.map(attr => 
-                            attr.affectsPrice 
-                              ? { ...attr, name: 'Taille', id: 2 }
-                              : attr
-                          ));
-                        }
-                        setVariants([]);
-                        setVariationFrames([]);
-                        addVariationFrame();
-                       // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
-                       if (variationFrames.length > 0) {
-                         setVariationFrames([{
-                          id: variationFrames[0].id,
-                           sizes: [],
-                           shoeSizes: [],
-                           images: [],
-                           quantity: undefined
-                         }]);
-                       } else {
-                       addVariationFrame();
-                      }
-                      }}
-                      className={`p-4 h-24 rounded-xl border-2 transition-all ${
-                        attributes.some(attr => attr.name === 'Taille')
-                          ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                          </svg>
-                        </div>
-                        <span className="text-xs font-medium">Couleur et Taille</span>
-                      </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!attributes.some(attr => attr.affectsPrice)) {
-                          setAttributes([
-                            ...attributes,
-                            {
-                              id: 3,
-                              name: 'Pointure',
-                              affectsPrice: true,
-                              values: []
-                            }
-                          ]);
-                        } else {
-                          setAttributes(attributes.map(attr => 
-                            attr.affectsPrice 
-                              ? { ...attr, name: 'Pointure', id: 3 }
-                              : attr
-                          ));
-                        }
-                        setVariants([]);
-                        setVariationFrames([]);
-                        addVariationFrame();
-                       // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
-                       if (variationFrames.length > 0) {
-                         setVariationFrames([{
-                           id: variationFrames[0].id,
-                           sizes: [],
-                           shoeSizes: [],
-                           images: [],
-                           quantity: undefined
-                         }]);
-                       } else {
-                        addVariationFrame();
-                       }
-                      }}
-                      className={`p-4 h-24 rounded-xl border-2 transition-all ${
-                        attributes.some(attr => attr.name === 'Pointure')
-                          ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                          </svg>
-                        </div>
-                        <span className="text-xs font-medium">Couleur et Pointure</span>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
-              
-
-              
-              
-              </div>
-
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <div className="mb-6">
-                  <h2 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variations du produit</h2>
-                  <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les différentes variations de votre produit</p>
-                </div>
-
-                {/* Liste des cadres de variation */}
-                <div className="space-y-6">
-                  {variationFrames.map((frame) => (
-                    <div key={frame.id} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[#ed7e0f]/10 flex items-center justify-center">
-                            <span className="text-[#ed7e0f] font-semibold max-sm:text-xs">
-                              {variationFrames.indexOf(frame) + 1}
-                            </span>
-                          </div>
-                          <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variation {variationFrames.indexOf(frame) + 1}</h3>
-                        </div>
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => removeVariationFrame(frame.id)}
-                          className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                          className="px-3 py-1.5 max-sm:text-xs text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                          onClick={() => {
+                            setAttributes([]);
+                            setVariants([]);
+                          }}
                         >
-                          <X className="w-5 h-5 text-gray-500" />
+                          Réinitialiser
                         </button>
                       </div>
+                    </div>
 
-                      <div className="space-y-6">
-                        {/* Première ligne : Couleur et Taille/Pointure */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {/* Sélection de la couleur */}
-                          <div>
-                            <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Couleur</label>
-                            <Select
-                              value={frame.colorId?.toString()}
-                              onValueChange={(value) => updateVariationFrame(frame.id, { colorId: Number(value) })}
+                    {/* Type de variation */}
+                    <div className="mb-8">
+                      <h3 className="text-sm font-medium text-gray-700 mb-3">Type de variation</h3>
+                      <div className="grid grid-cols-3 gap-3">
+                        <button
+                          type="button"
+
+                          onClick={() => {
+                            setAttributes(attributes.filter(attr => !attr.affectsPrice));
+                            setVariants([]);
+                            setVariationFrames([]);
+                            addVariationFrame();
+                            if (variationFrames.length > 0) {
+                              setVariationFrames([{
+                                id: variationFrames[0].id,
+                                sizes: [],
+                                shoeSizes: [],
+                                images: [],
+                                quantity: undefined
+                              }]);
+                            } else {
+                              addVariationFrame();
+                            }
+                          }}
+                          className={`p-4 h-24 rounded-xl max-sm:text-xs border-2 transition-all ${!attributes.some(attr => attr.affectsPrice)
+                            ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
+                            : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                        >
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                              </svg>
+                            </div>
+                            <span className="text-xs font-medium">Couleur uniquement</span>
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!attributes.some(attr => attr.affectsPrice)) {
+                              setAttributes([
+                                ...attributes,
+                                {
+                                  id: 2,
+                                  name: 'Taille',
+                                  affectsPrice: true,
+                                  values: []
+                                }
+                              ]);
+                            } else {
+                              setAttributes(attributes.map(attr =>
+                                attr.affectsPrice
+                                  ? { ...attr, name: 'Taille', id: 2 }
+                                  : attr
+                              ));
+                            }
+                            setVariants([]);
+                            setVariationFrames([]);
+                            addVariationFrame();
+                            // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
+                            if (variationFrames.length > 0) {
+                              setVariationFrames([{
+                                id: variationFrames[0].id,
+                                sizes: [],
+                                shoeSizes: [],
+                                images: [],
+                                quantity: undefined
+                              }]);
+                            } else {
+                              addVariationFrame();
+                            }
+                          }}
+                          className={`p-4 h-24 rounded-xl border-2 transition-all ${attributes.some(attr => attr.name === 'Taille')
+                            ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
+                            : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                        >
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                              </svg>
+                            </div>
+                            <span className="text-xs font-medium">Couleur et Taille</span>
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!attributes.some(attr => attr.affectsPrice)) {
+                              setAttributes([
+                                ...attributes,
+                                {
+                                  id: 3,
+                                  name: 'Pointure',
+                                  affectsPrice: true,
+                                  values: []
+                                }
+                              ]);
+                            } else {
+                              setAttributes(attributes.map(attr =>
+                                attr.affectsPrice
+                                  ? { ...attr, name: 'Pointure', id: 3 }
+                                  : attr
+                              ));
+                            }
+                            setVariants([]);
+                            setVariationFrames([]);
+                            addVariationFrame();
+                            // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
+                            if (variationFrames.length > 0) {
+                              setVariationFrames([{
+                                id: variationFrames[0].id,
+                                sizes: [],
+                                shoeSizes: [],
+                                images: [],
+                                quantity: undefined
+                              }]);
+                            } else {
+                              addVariationFrame();
+                            }
+                          }}
+                          className={`p-4 h-24 rounded-xl border-2 transition-all ${attributes.some(attr => attr.name === 'Pointure')
+                            ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
+                            : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                        >
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                              </svg>
+                            </div>
+                            <span className="text-xs font-medium">Couleur et Pointure</span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+
+
+
+
+                  </div>
+
+                  <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="mb-6">
+                      <h2 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variations du produit</h2>
+                      <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les différentes variations de votre produit</p>
+                    </div>
+
+                    {/* Liste des cadres de variation */}
+                    <div className="space-y-6">
+                      {variationFrames.map((frame) => (
+                        <div key={frame.id} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                          <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-xl bg-[#ed7e0f]/10 flex items-center justify-center">
+                                <span className="text-[#ed7e0f] font-semibold max-sm:text-xs">
+                                  {variationFrames.indexOf(frame) + 1}
+                                </span>
+                              </div>
+                              <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variation {variationFrames.indexOf(frame) + 1}</h3>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeVariationFrame(frame.id)}
+                              className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
                             >
-                              <SelectTrigger className="bg-gray-50">
-                                <SelectValue placeholder="Choisir une couleur" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {getAttributes?.[0]?.values
-                                  .filter((color: any) => !variationFrames.some(f => f.colorId === color.id && f.id !== frame.id))
-                                  .map((color: any) => (
-                                    <SelectItem key={color.id} value={color.id.toString()}>
-                                      <div className="flex items-center gap-2">
-                                        <div
-                                          className="w-4 h-4 rounded-full border border-gray-200"
-                                          style={{ backgroundColor: color.hex_color }}
-                                        />
-                                        <span>{color.value}</span>
-                                      </div>
-                                    </SelectItem>
-                                  ))}
-                              </SelectContent>
-                            </Select>
+                              <X className="w-5 h-5 text-gray-500" />
+                            </button>
                           </div>
-                          {/* Champ quantité pour couleur uniquement */}
-                          {!attributes.some(attr => attr.affectsPrice) && (
-                            <div>
-                              <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quantité</label>
-                              <input
-                                type="number"
-                                min={1}
-                                value={frame.quantity ?? ''}
-                                onChange={e => updateVariationFrame(frame.id, { quantity: Number(e.target.value) })}
-                                className="w-full px-4 py-2 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
-                                placeholder="Quantité pour cette couleur"
-                               
-                              />
-                            </div>
-                          )}
-                                
-                          {/* Sélection de la taille ou pointure */}
-                          {attributes.some(attr => attr.name === 'Taille') && (
-                            <div>
-                              <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Taille</label>
-                              <div className="space-y-3">
+
+                          <div className="space-y-6">
+                            {/* Première ligne : Couleur et Taille/Pointure */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {/* Sélection de la couleur */}
+                              <div>
+                                <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Couleur</label>
                                 <Select
-                                  onValueChange={(value) => {
-                                    const sizeId = Number(value);
-                                    const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
-                                    if (size) {
-                                      const quantity = prompt(`Quantité pour la taille ${size.value}:`, "1");
-                                      if (quantity && !isNaN(Number(quantity))) {
-                                        addSizeToVariation(frame.id, sizeId, Number(quantity));
-                                      }
-                                    }
-                                  }}
+                                  value={frame.colorId?.toString()}
+                                  onValueChange={(value) => updateVariationFrame(frame.id, { colorId: Number(value) })}
                                 >
                                   <SelectTrigger className="bg-gray-50">
-                                    <SelectValue placeholder="Choisir une taille" />
+                                    <SelectValue placeholder="Choisir une couleur" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {getAttributes?.[1]?.values.map((size: any) => (
-                                      <SelectItem key={size.id} value={size.id.toString()}>
-                                        {size.value}
-                                      </SelectItem>
-                                    ))}
+                                    {getAttributes?.[0]?.values
+                                      .filter((color: any) => !variationFrames.some(f => f.colorId === color.id && f.id !== frame.id))
+                                      .map((color: any) => (
+                                        <SelectItem key={color.id} value={color.id.toString()}>
+                                          <div className="flex items-center gap-2">
+                                            <div
+                                              className="w-4 h-4 rounded-full border border-gray-200"
+                                              style={{ backgroundColor: color.hex_color }}
+                                            />
+                                            <span>{color.value}</span>
+                                          </div>
+                                        </SelectItem>
+                                      ))}
                                   </SelectContent>
                                 </Select>
-
-                                {/* Liste des tailles sélectionnées */}
-                                <div className="flex flex-wrap gap-2">
-                                  {frame.sizes.map((size) => {
-                                    const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === size.id);
-                                    return (
-                                      <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
-                                        <span className="text-sm">{size.quantity} {sizeData?.value}</span>
-                                        <button
-                                          onClick={() => removeSizeFromVariation(frame.id, size.id)}
-                                          className="text-gray-400 hover:text-gray-600"
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </button>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
                               </div>
-                            </div>
-                          )}
+                              {/* Champ quantité pour couleur uniquement */}
+                              {!attributes.some(attr => attr.affectsPrice) && (
+                                <div>
+                                  <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quantité</label>
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    value={frame.quantity ?? ''}
+                                    onChange={e => updateVariationFrame(frame.id, { quantity: Number(e.target.value) })}
+                                    className="w-full px-4 py-2 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
+                                    placeholder="Quantité pour cette couleur"
 
-                          {attributes.some(attr => attr.name === 'Pointure') && (
-                            <div>
-                              <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Pointure</label>
-                              <div className="space-y-3">
-                                <Select
-                                  onValueChange={(value) => {
-                                    const sizeId = Number(value);
-                                    const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
-                                    if (size) {
-                                      const quantity = prompt(`Quantité pour la pointure ${size.value}:`, "1");
-                                      if (quantity && !isNaN(Number(quantity))) {
-                                        addShoeSizeToVariation(frame.id, sizeId, Number(quantity));
-                                      }
-                                    }
-                                  }}
-                                >
-                                  <SelectTrigger className="bg-gray-50">
-                                    <SelectValue placeholder="Choisir une pointure" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {getAttributes?.[3]?.values.map((size: any) => (
-                                      <SelectItem key={size.id} value={size.id.toString()}>
-                                        {size.value}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-
-                                {/* Liste des pointures sélectionnées */}
-                                <div className="flex flex-wrap gap-2">
-                                  {frame.shoeSizes.map((size) => {
-                                    const shoeSizeData = getAttributes?.[3]?.values.find((s: any) => s.id === size.id);
-                                    return (
-                                      <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
-                                        <span className="text-sm">{shoeSizeData?.value}</span>
-                                        <button
-                                          onClick={() => removeShoeSizeFromVariation(frame.id, size.id)}
-                                          className="text-gray-400 hover:text-gray-600"
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </button>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Section images */}
-                        <div>
-                          <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Images de la variation</label>
-                          <div className="grid grid-cols-4 gap-3">
-                            {frame.images.map((image, idx) => (
-                              <div key={idx} className="relative group aspect-square">
-                                <img
-                                  src={URL.createObjectURL(image)}
-                                  alt={`Variation ${idx + 1}`}
-                                  className="w-16 h-16 object-cover rounded-xl"
-                                />
-                                <button
-                                  onClick={() => removeVariationImage(frame.id, idx)}
-                                  className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
-                                >
-                                  <X className="w-4 h-4 text-red-500" />
-                                </button>
-                              </div>
-                            ))}
-                            <label className="aspect-square flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50/80 hover:border-[#ed7e0f] transition-all group">
-                              <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#ed7e0f]" />
-                              <span className="text-xs text-gray-400 group-hover:text-[#ed7e0f]">Ajouter</span>
-                              <input
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                multiple
-                                onChange={(e) => e.target.files && handleVariationImageUpload(frame.id, e.target.files)}
-                              />
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Bouton Ajouter une variation */}
-                <div className="mt-8 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={addVariationFrame}
-                    className="px-4 py-3 bg-transparent border border-[#ed7e0f] hover:bg-[#ed7e0f]/5 text-[#ed7e0f] rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
-                  >
-                    <Plus className="w-5 max-sm:w-4 h-5" />
-                    <span className="max-sm:text-xs">Ajouter une variation</span>
-                  </button>
-                </div>
-              </div>
-
-                {/* Section des prix par taille/pointure */}
-                <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                  <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900 mb-4">Prix des variations</h3>
-                  
-                  {/* Prix global pour les variations de couleur uniquement */}
-                  {!attributes.some(attr => attr.affectsPrice) && (
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">Prix global pour toutes les couleurs</h4>
-                      <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
-                        <input
-                          type="number"
-                          value={globalColorPrice || ''}
-                          onChange={(e) => setGlobalColorPrice(Number(e.target.value))}
-                          placeholder="Prix global (FCFA)"
-                          className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Prix des tailles */}
-                  {getUniqueSizes().length > 0 && (
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des tailles</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                        {getUniqueSizes().map(sizeId => {
-                          const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
-                          return (
-                            <div key={sizeId} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
-                              <span className="font-medium">{size?.value}</span>
-                              <input
-                                type="number"
-                                value={sizePrices[sizeId] || ''}
-                                onChange={(e) => updateSizePrice(sizeId, Number(e.target.value))}
-                                placeholder="Prix (FCFA)"
-                                className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Prix des pointures */}
-                  {getUniqueShoeSizes().length > 0 && (
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des pointures</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                        {getUniqueShoeSizes().map(sizeId => {
-                          const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
-                          return (
-                            <div key={sizeId} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
-                              <span className="font-medium">{size?.value}</span>
-                              <input
-                                type="number"
-                                value={shoeSizePrices[sizeId] || ''}
-                                onChange={(e) => updateShoeSizePrice(sizeId, Number(e.target.value))}
-                                placeholder="Prix (FCFA)"
-                                className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Liste des variations sélectionnées */}
-                {variationFrames.length > 0 && (
-                  <div className="mt-8">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations générées</h3>
-                    <div className="grid grid-cols-1 gap-4">
-                      {variationFrames.map((frame) => {
-                        const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
-                       
-
-                        return (
-                          <div key={frame.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all">
-                            <div className="flex items-center gap-4">
-                              {frame.images.length > 0 ? (
-                                <div className="relative w-20 h-20 flex-shrink-0">
-                                  <img
-                                    src={URL.createObjectURL(frame.images[0])}
-                                    alt="Variation"
-                                    className="w-full h-full object-cover rounded-lg"
                                   />
-                                  {frame.images.length > 1 && (
-                                    <div className="absolute -top-1 -right-1 bg-white rounded-full px-2 py-0.5 border border-gray-100 shadow-sm">
-                                      <span className="text-xs text-gray-500">+{frame.images.length - 1}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              ) : (
-                                <div className="w-20 h-20 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <Image className="w-8 h-8 text-gray-400" />
                                 </div>
                               )}
-                              
-                              <div className="flex-1 min-w-0">
-                                {/* En-tête avec la couleur */}
-                                {color && (
-                                  <div className="flex items-center gap-2 mb-3">
-                                    <div
-                                      className="w-5 h-5 rounded-full border border-gray-200"
-                                      style={{ backgroundColor: color.hex_color }}
+
+                              {/* Sélection de la taille ou pointure */}
+                              {attributes.some(attr => attr.name === 'Taille') && (
+                                <div>
+                                  <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Taille</label>
+                                  <div className="space-y-3">
+                                    <Select
+                                      onValueChange={(value) => {
+                                        const sizeId = Number(value);
+                                        const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
+                                        if (size) {
+                                          const quantity = prompt(`Quantité pour la taille ${size.value}:`, "1");
+                                          if (quantity && !isNaN(Number(quantity))) {
+                                            addSizeToVariation(frame.id, sizeId, Number(quantity));
+                                          }
+                                        }
+                                      }}
+                                    >
+                                      <SelectTrigger className="bg-gray-50">
+                                        <SelectValue placeholder="Choisir une taille" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {getAttributes?.[1]?.values.map((size: any) => (
+                                          <SelectItem key={size.id} value={size.id.toString()}>
+                                            {size.value}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+
+                                    {/* Liste des tailles sélectionnées */}
+                                    <div className="flex flex-wrap gap-2">
+                                      {frame.sizes.map((size) => {
+                                        const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === size.id);
+                                        return (
+                                          <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
+                                            <span className="text-sm">{size.quantity} {sizeData?.value}</span>
+                                            <button
+                                              onClick={() => removeSizeFromVariation(frame.id, size.id)}
+                                              className="text-gray-400 hover:text-gray-600"
+                                            >
+                                              <X className="w-3 h-3" />
+                                            </button>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {attributes.some(attr => attr.name === 'Pointure') && (
+                                <div>
+                                  <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Pointure</label>
+                                  <div className="space-y-3">
+                                    <Select
+                                      onValueChange={(value) => {
+                                        const sizeId = Number(value);
+                                        const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
+                                        if (size) {
+                                          const quantity = prompt(`Quantité pour la pointure ${size.value}:`, "1");
+                                          if (quantity && !isNaN(Number(quantity))) {
+                                            addShoeSizeToVariation(frame.id, sizeId, Number(quantity));
+                                          }
+                                        }
+                                      }}
+                                    >
+                                      <SelectTrigger className="bg-gray-50">
+                                        <SelectValue placeholder="Choisir une pointure" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {getAttributes?.[3]?.values.map((size: any) => (
+                                          <SelectItem key={size.id} value={size.id.toString()}>
+                                            {size.value}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+
+                                    {/* Liste des pointures sélectionnées */}
+                                    <div className="flex flex-wrap gap-2">
+                                      {frame.shoeSizes.map((size) => {
+                                        const shoeSizeData = getAttributes?.[3]?.values.find((s: any) => s.id === size.id);
+                                        return (
+                                          <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
+                                            <span className="text-sm">{shoeSizeData?.value}</span>
+                                            <button
+                                              onClick={() => removeShoeSizeFromVariation(frame.id, size.id)}
+                                              className="text-gray-400 hover:text-gray-600"
+                                            >
+                                              <X className="w-3 h-3" />
+                                            </button>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Section images */}
+                            <div>
+                              <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Images de la variation</label>
+                              <div className="grid grid-cols-4 gap-3">
+                                {frame.images.map((image, idx) => (
+                                  <div key={idx} className="relative group aspect-square">
+                                    <img
+                                      src={URL.createObjectURL(image)}
+                                      alt={`Variation ${idx + 1}`}
+                                      className="w-16 h-16 object-cover rounded-xl"
                                     />
-                                    <span className="text-base font-medium">{color.value}</span>
-                                    {!attributes.some(attr => attr.affectsPrice) && (
-                                      <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
-                                        {globalColorPrice || 0} FCFA
-                                        
-                                      </span>
-                                      
+                                    <button
+                                      onClick={() => removeVariationImage(frame.id, idx)}
+                                      className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
+                                    >
+                                      <X className="w-4 h-4 text-red-500" />
+                                    </button>
+                                  </div>
+                                ))}
+                                <label className="aspect-square flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50/80 hover:border-[#ed7e0f] transition-all group">
+                                  <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#ed7e0f]" />
+                                  <span className="text-xs text-gray-400 group-hover:text-[#ed7e0f]">Ajouter</span>
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={(e) => e.target.files && handleVariationImageUpload(frame.id, e.target.files)}
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Bouton Ajouter une variation */}
+                    <div className="mt-8 flex justify-center">
+                      <button
+                        type="button"
+                        onClick={addVariationFrame}
+                        className="px-4 py-3 bg-transparent border border-[#ed7e0f] hover:bg-[#ed7e0f]/5 text-[#ed7e0f] rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
+                      >
+                        <Plus className="w-5 max-sm:w-4 h-5" />
+                        <span className="max-sm:text-xs">Ajouter une variation</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Section des prix par taille/pointure */}
+                  <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+                    <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900 mb-4">Prix des variations</h3>
+
+                    {/* Prix global pour les variations de couleur uniquement */}
+                    {!attributes.some(attr => attr.affectsPrice) && (
+                      <div className="mb-6">
+                        <h4 className="text-sm font-medium text-gray-700 mb-3">Prix global pour toutes les couleurs</h4>
+                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+                          <input
+                            type="number"
+                            value={globalColorPrice || ''}
+                            onChange={(e) => setGlobalColorPrice(Number(e.target.value))}
+                            placeholder="Prix global (FCFA)"
+                            className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Prix des tailles */}
+                    {getUniqueSizes().length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des tailles</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                          {getUniqueSizes().map(sizeId => {
+                            const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
+                            return (
+                              <div key={sizeId} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+                                <span className="font-medium">{size?.value}</span>
+                                <input
+                                  type="number"
+                                  value={sizePrices[sizeId] || ''}
+                                  onChange={(e) => updateSizePrice(sizeId, Number(e.target.value))}
+                                  placeholder="Prix (FCFA)"
+                                  className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Prix des pointures */}
+                    {getUniqueShoeSizes().length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des pointures</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                          {getUniqueShoeSizes().map(sizeId => {
+                            const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
+                            return (
+                              <div key={sizeId} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+                                <span className="font-medium">{size?.value}</span>
+                                <input
+                                  type="number"
+                                  value={shoeSizePrices[sizeId] || ''}
+                                  onChange={(e) => updateShoeSizePrice(sizeId, Number(e.target.value))}
+                                  placeholder="Prix (FCFA)"
+                                  className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Liste des variations sélectionnées */}
+                  {variationFrames.length > 0 && (
+                    <div className="mt-8">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations générées</h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        {variationFrames.map((frame) => {
+                          const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.colorId);
+
+
+                          return (
+                            <div key={frame.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all">
+                              <div className="flex items-center gap-4">
+                                {frame.images.length > 0 ? (
+                                  <div className="relative w-20 h-20 flex-shrink-0">
+                                    <img
+                                      src={URL.createObjectURL(frame.images[0])}
+                                      alt="Variation"
+                                      className="w-full h-full object-cover rounded-lg"
+                                    />
+                                    {frame.images.length > 1 && (
+                                      <div className="absolute -top-1 -right-1 bg-white rounded-full px-2 py-0.5 border border-gray-100 shadow-sm">
+                                        <span className="text-xs text-gray-500">+{frame.images.length - 1}</span>
+                                      </div>
                                     )}
-                                    <span className="text-xs text-gray-500">Qté: {frame.quantity}</span>
+                                  </div>
+                                ) : (
+                                  <div className="w-20 h-20 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <Image className="w-8 h-8 text-gray-400" />
                                   </div>
                                 )}
 
-                                {/* Grille des tailles/pointures */}
-                                <div className="space-y-3">
-                                  {/* Tailles */}
-                                  {frame.sizes.length > 0 && (
-                                    <div className="flex flex-wrap gap-2">
-                                      {frame.sizes.map(sizeItem => {
-                                        const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === sizeItem.id);
-                                        return (
-                                          <div key={sizeItem.id} className="bg-gray-50 rounded-lg p-2">
-                                            <div className="text-sm font-medium">{sizeData?.value}</div>
-                                            <div className="flex items-center gap-2 mt-1">
-                                              <span className="text-xs text-gray-500">Qté: {sizeItem.quantity}</span>
-                                              <span className="text-xs font-medium text-[#ed7e0f]">{sizePrices[sizeItem.id] || 0} FCFA</span>
-                                            </div>
-                                          </div>
-                                        );
-                                      })}
+                                <div className="flex-1 min-w-0">
+                                  {/* En-tête avec la couleur */}
+                                  {color && (
+                                    <div className="flex items-center gap-2 mb-3">
+                                      <div
+                                        className="w-5 h-5 rounded-full border border-gray-200"
+                                        style={{ backgroundColor: color.hex_color }}
+                                      />
+                                      <span className="text-base font-medium">{color.value}</span>
+                                      {!attributes.some(attr => attr.affectsPrice) && (
+                                        <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
+                                          {globalColorPrice || 0} FCFA
+
+                                        </span>
+
+                                      )}
+                                      <span className="text-xs text-gray-500">Qté: {frame.quantity}</span>
                                     </div>
                                   )}
 
-                                  {/* Pointures */}
-                                  {frame.shoeSizes.length > 0 && (
-                                    <div className="flex flex-wrap gap-2">
-                                      {frame.shoeSizes.map(shoeItem => {
-                                        const shoeSizeData = getAttributes?.[3]?.values.find((s: any) => s.id === shoeItem.id);
-                                        return (
-                                          <div key={shoeItem.id} className="bg-gray-50 rounded-lg p-2">
-                                            <div className="text-sm font-medium">{shoeSizeData?.value}</div>
-                                            <div className="flex items-center gap-2 mt-1">
-                                              <span className="text-xs text-gray-500">Qté: {shoeItem.quantity}</span>
-                                              <span className="text-xs font-medium text-[#ed7e0f]">{shoeSizePrices[shoeItem.id] || 0} FCFA</span>
+                                  {/* Grille des tailles/pointures */}
+                                  <div className="space-y-3">
+                                    {/* Tailles */}
+                                    {frame.sizes.length > 0 && (
+                                      <div className="flex flex-wrap gap-2">
+                                        {frame.sizes.map(sizeItem => {
+                                          const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === sizeItem.id);
+                                          return (
+                                            <div key={sizeItem.id} className="bg-gray-50 rounded-lg p-2">
+                                              <div className="text-sm font-medium">{sizeData?.value}</div>
+                                              <div className="flex items-center gap-2 mt-1">
+                                                <span className="text-xs text-gray-500">Qté: {sizeItem.quantity}</span>
+                                                <span className="text-xs font-medium text-[#ed7e0f]">{sizePrices[sizeItem.id] || 0} FCFA</span>
+                                              </div>
                                             </div>
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                  )}
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+
+                                    {/* Pointures */}
+                                    {frame.shoeSizes.length > 0 && (
+                                      <div className="flex flex-wrap gap-2">
+                                        {frame.shoeSizes.map(shoeItem => {
+                                          const shoeSizeData = getAttributes?.[3]?.values.find((s: any) => s.id === shoeItem.id);
+                                          return (
+                                            <div key={shoeItem.id} className="bg-gray-50 rounded-lg p-2">
+                                              <div className="text-sm font-medium">{shoeSizeData?.value}</div>
+                                              <div className="flex items-center gap-2 mt-1">
+                                                <span className="text-xs text-gray-500">Qté: {shoeItem.quantity}</span>
+                                                <span className="text-xs font-medium text-[#ed7e0f]">{shoeSizePrices[shoeItem.id] || 0} FCFA</span>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
 
-                              <button
-                                onClick={() => removeVariationFrame(frame.id)}
-                                className="p-2 hover:bg-gray-50 rounded-lg transition-colors self-start"
-                              >
-                                <X className="w-5 h-5 text-gray-400" />
-                              </button>
+                                <button
+                                  onClick={() => removeVariationFrame(frame.id)}
+                                  className="p-2 hover:bg-gray-50 rounded-lg transition-colors self-start"
+                                >
+                                  <X className="w-5 h-5 text-gray-400" />
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </>
               )}
             </div>
