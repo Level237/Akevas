@@ -77,15 +77,14 @@ const CreateProductPage: React.FC = () => {
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [city, setCity] = useState('');
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
-  const [isLoading, setIsLoading] = useState(false);
-  console.log(setIsLoading)
+
   const [isWholesale, setIsWholesale] = useState<boolean | null>(
     saleFromUrl ? (saleFromUrl === '1' ? true : false) : null
   );
   const [wholesalePrices, setWholesalePrices] = useState<Array<{
-    minQuantity: number;
-    lotPrice: number;
-  }>>([{ minQuantity: 10, lotPrice: 0 }]);
+    min_quantity: number;
+    wholesale_price: number;
+  }>>([{ min_quantity: 10, wholesale_price: 0 }]);
   const [variations, setVariations] = useState<Variation[]>([]);
 
 
@@ -318,7 +317,7 @@ const CreateProductPage: React.FC = () => {
 
       // Validation spécifique pour la vente en gros
       if (isWholesale) {
-        if (wholesalePrices.some(price => price.minQuantity <= 0 || price.lotPrice <= 0)) {
+        if (wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
           toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
             description: "Veuillez remplir tous les champs obligatoires",
             duration: 4000,
@@ -404,7 +403,7 @@ const CreateProductPage: React.FC = () => {
 
       // Validation spécifique pour la vente en gros
       if (isWholesale) {
-        if (wholesalePrices.some(price => price.minQuantity <= 0 || price.lotPrice <= 0)) {
+        if (wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
           toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
             description: "Veuillez remplir tous les champs obligatoires",
             duration: 4000,
@@ -594,7 +593,7 @@ const CreateProductPage: React.FC = () => {
   };
 
   const addWholesalePrice = () => {
-    setWholesalePrices(prev => [...prev, { minQuantity: 0, lotPrice: 0 }]);
+    setWholesalePrices(prev => [...prev, { min_quantity: 0, wholesale_price: 0 }]);
   };
 
   const removeWholesalePrice = (index: number) => {
@@ -1154,9 +1153,9 @@ const CreateProductPage: React.FC = () => {
                             <input
                               type="number"
                               min="1"
-                              value={price.minQuantity}
+                              value={price.min_quantity}
                               onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
-                                i === index ? { ...p, minQuantity: Number(e.target.value) } : p
+                                i === index ? { ...p, min_quantity: Number(e.target.value) } : p
                               ))}
                               className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                               placeholder="Ex: 10"
@@ -1167,9 +1166,9 @@ const CreateProductPage: React.FC = () => {
                             <input
                               type="number"
                               min="0"
-                              value={price.lotPrice}
+                              value={price.wholesale_price}
                               onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
-                                i === index ? { ...p, lotPrice: Number(e.target.value) } : p
+                                i === index ? { ...p, wholesale_price: Number(e.target.value) } : p
                               ))}
                               className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                               placeholder="Ex: 5000"
