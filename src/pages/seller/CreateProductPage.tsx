@@ -998,14 +998,18 @@ const CreateProductPage: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
-                  {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
+                <div className='flex max-sm:flex-col max-sm:items-start max-sm:justify-start max-sm:gap-0 items-center gap-2'>
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
+                    {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
+
+                  </h1>
                   {isWholesale && (
                     <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-full">
                       📦 Vente en gros
                     </span>
                   )}
-                </h1>
+                </div>
+
                 <button
                   type="submit"
                   className="p-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500"
@@ -1147,9 +1151,9 @@ const CreateProductPage: React.FC = () => {
                             </button>
                           )}
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-2 items-center">
                           <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Quantité minimale</label>
+                            <label className="block text-sm font-semibold max-sm:text-xs text-gray-700 mb-2">Quantité minimale</label>
                             <input
                               type="number"
                               min="1"
@@ -1162,7 +1166,7 @@ const CreateProductPage: React.FC = () => {
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
+                            <label className="block text-sm font-semibold max-sm:text-xs text-gray-700 mb-2">Prix par unité (FCFA)</label>
                             <input
                               type="number"
                               min="0"
