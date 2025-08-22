@@ -6,8 +6,6 @@ import {
   Save,
   Loader2,
   Image,
-  Package,
-  Palette,
 } from 'lucide-react';
 
 import { useAddProductMutation } from '@/services/sellerService';
@@ -84,6 +82,10 @@ const CreateProductPage: React.FC = () => {
   const [isWholesale, setIsWholesale] = useState<boolean | null>(
     saleFromUrl ? (saleFromUrl === '1' ? true : false) : null
   );
+  const [wholesalePrices, setWholesalePrices] = useState<Array<{
+    minQuantity: number;
+    lotPrice: number;
+  }>>([{ minQuantity: 10, lotPrice: 0 }]);
   const [variations, setVariations] = useState<Variation[]>([]);
 
 
@@ -314,6 +316,17 @@ const CreateProductPage: React.FC = () => {
         return;
       }
 
+      // Validation spécifique pour la vente en gros
+      if (isWholesale) {
+        if (wholesalePrices.some(price => price.minQuantity <= 0 || price.lotPrice <= 0)) {
+          toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
+            description: "Veuillez remplir tous les champs obligatoires",
+            duration: 4000,
+          });
+          return;
+        }
+      }
+
       if (!featuredImage) {
         toast.error('L\'image de profil du produit est obligatoire', {
           description: "Veuillez remplir tous les champs obligatoires",
@@ -387,6 +400,17 @@ const CreateProductPage: React.FC = () => {
           duration: 4000, // ms
         });
         return;
+      }
+
+      // Validation spécifique pour la vente en gros
+      if (isWholesale) {
+        if (wholesalePrices.some(price => price.minQuantity <= 0 || price.lotPrice <= 0)) {
+          toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
+            description: "Veuillez remplir tous les champs obligatoires",
+            duration: 4000,
+          });
+          return;
+        }
       }
 
       // Validation des variations
@@ -474,6 +498,12 @@ const CreateProductPage: React.FC = () => {
       formData.append('whatsapp_number', whatsappNumber);
       formData.append('product_residence', city);
       formData.append('type', productType);
+      formData.append('sale', isWholesale ? '1' : '0');
+
+      // Ajouter les données de vente en gros si applicable
+      if (isWholesale) {
+        formData.append('wholesale_prices', JSON.stringify(wholesalePrices));
+      }
 
       if (featuredImage) {
         formData.append('product_profile', featuredImage);
@@ -561,6 +591,16 @@ const CreateProductPage: React.FC = () => {
 
   const handleCityChange = (value: string) => {
     setCity(value);
+  };
+
+  const addWholesalePrice = () => {
+    setWholesalePrices(prev => [...prev, { minQuantity: 0, lotPrice: 0 }]);
+  };
+
+  const removeWholesalePrice = (index: number) => {
+    if (wholesalePrices.length > 1) {
+      setWholesalePrices(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
 
@@ -961,6 +1001,11 @@ const CreateProductPage: React.FC = () => {
                 </button>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
                   {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
+                  {isWholesale && (
+                    <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-full">
+                      📦 Vente en gros
+                    </span>
+                  )}
                 </h1>
                 <button
                   type="submit"
@@ -983,6 +1028,11 @@ const CreateProductPage: React.FC = () => {
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
                   {productType === 'simple' ? 'Créer un produit simple' : 'Créer un produit variable'}
+                  {isWholesale && (
+                    <span className="ml-3 inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-sm font-medium rounded-full">
+                      📦 Vente en gros
+                    </span>
+                  )}
                 </h1>
                 <p className="text-gray-600 mt-1">
                   {productType === 'simple'
@@ -1068,6 +1118,80 @@ const CreateProductPage: React.FC = () => {
                   />
                 </div>
               </div>
+
+              {/* Section Vente en Gros - Visible uniquement si isWholesale est true */}
+              {isWholesale && (
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
+                      <span className="text-2xl">📦</span>
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900">Prix de Gros</h2>
+                      <p className="text-purple-600 text-sm font-medium">Configurez vos tarifs pour les revendeurs</p>
+                    </div>
+                  </div>
+
+                  {/* Prix de gros */}
+                  <div className="space-y-4">
+                    {wholesalePrices.map((price, index) => (
+                      <div key={index} className="bg-white rounded-xl p-4 border border-purple-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm font-medium text-purple-600">Prix #{index + 1}</span>
+                          {wholesalePrices.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeWholesalePrice(index)}
+                              className="p-1 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Quantité minimale</label>
+                            <input
+                              type="number"
+                              min="1"
+                              value={price.minQuantity}
+                              onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
+                                i === index ? { ...p, minQuantity: Number(e.target.value) } : p
+                              ))}
+                              className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                              placeholder="Ex: 10"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={price.lotPrice}
+                              onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
+                                i === index ? { ...p, lotPrice: Number(e.target.value) } : p
+                              ))}
+                              className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                              placeholder="Ex: 5000"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Bouton ajouter un nouveau prix */}
+                  <div className="mt-4 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={addWholesalePrice}
+                      className="px-4 py-2 bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+                    >
+                      + Ajouter un prix
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Catégories et sous-catégories */}
               <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
