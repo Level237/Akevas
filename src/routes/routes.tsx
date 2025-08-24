@@ -23,7 +23,6 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import UserDashboardPage from "@/pages/user/DashboardPage";
 import ListDeveryPage from "@/pages/admin/delivery/ListDeveryPage";
 import DeliveryDetailPage from "@/pages/admin/delivery/DeliveryDetailPage";
-import PaymentPage from "@/pages/payment/PaymentPage";
 import OrderDetailPage from "@/pages/user/OrderDetailPage";
 import OrdersPage from "@/pages/user/OrdersPage";
 import ListCustomerPage from "@/pages/admin/customers/ListCustomerPage";
@@ -64,16 +63,16 @@ export const routes = createBrowserRouter([
     element: <Homepage />
   },
   {
-    path:"*",
-    element:<NotFoundPage/>
+    path: "*",
+    element: <NotFoundPage />
   },
   {
     path: '/legal-terms',
     element: <LegalTermsPage />
   },
   {
-    path:'/privacy-policy', 
-    element:<PrivacyPolicyPage/>
+    path: '/privacy-policy',
+    element: <PrivacyPolicyPage />
   },
   {
     path: '/terms-of-use',
@@ -116,21 +115,17 @@ export const routes = createBrowserRouter([
     element: <><CheckoutPage /><PrivateRoute /></>
   },
   {
-    path: '/payment',
-    element: <PaymentPage />
-  },
-  {
     path: '/payment/success',
     element: <PaymentSuccessPage />,
-},
-{
-  path: '/payment/cancel',
-  element: <PaymentCancelPage />,
-},
-{
-  path: '/payment/error',
-  element: <PaymentErrorPage />,
-},
+  },
+  {
+    path: '/payment/cancel',
+    element: <PaymentCancelPage />,
+  },
+  {
+    path: '/payment/error',
+    element: <PaymentErrorPage />,
+  },
   {
     path: '/shop/:id',
     element: <StorePage />
@@ -170,20 +165,20 @@ export const routes = createBrowserRouter([
         element: <ListOrdersPage />
       },
       {
-        path:"admin/reviews/products",
-        element:<ListReviewPage/>
+        path: "admin/reviews/products",
+        element: <ListReviewPage />
       },
       {
-        path:"admin/reviews/shops",
-        element:<ListShopReviewPage/>
+        path: "admin/reviews/shops",
+        element: <ListShopReviewPage />
       },
       {
-        path:"admin/feedbacks",
-        element:<ListFeedbackPage/>
+        path: "admin/feedbacks",
+        element: <ListFeedbackPage />
       },
       {
-        path:"admin/shop/new",
-        element:<AddShopPage/>
+        path: "admin/shop/new",
+        element: <AddShopPage />
       },
       {
         path: "admin/categories",
@@ -194,11 +189,11 @@ export const routes = createBrowserRouter([
         element: <CreateCategoryPage />
       },
       {
-        path:"/admin/order/:id",
-        element:<AdminOrderDetailPage/>
-      },{
-        path:"/admin/account",
-        element:<AdminAccountPage/>
+        path: "/admin/order/:id",
+        element: <AdminOrderDetailPage />
+      }, {
+        path: "/admin/account",
+        element: <AdminAccountPage />
       }
     ]
   },
@@ -245,20 +240,20 @@ export const routes = createBrowserRouter([
       {
         path: 'account',
         element: <AccountPage />
-      },{
-        path:'/checkout/state',
-        element:<SucessPaymentPage/>
+      }, {
+        path: '/checkout/state',
+        element: <SucessPaymentPage />
       },
       {
-        path:"/user/payment/:ref",
-        element:<PaymentTicketPage/>
+        path: "/user/payment/:ref",
+        element: <PaymentTicketPage />
       },
-      
+
     ]
   },
   {
-    path:'/pay/mobile-money',
-    element:<MobileMoneyPaymentPage/>
+    path: '/pay/mobile-money',
+    element: <MobileMoneyPaymentPage />
   },
   {
     path: '/contact',

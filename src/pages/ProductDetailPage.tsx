@@ -254,15 +254,27 @@ const ProductDetailPage: React.FC = () => {
             </AsyncLink>
           </div>
         )}
-
+        {!isLoading && product && product.status === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Produit non Accessible</h2>
+            <p className="text-gray-600 mb-8">Le produit que vous recherchez n'est pas encore accessible.</p>
+            <AsyncLink
+              to="/shops"
+              className="bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors"
+            >
+              Découvrir nos boutiques
+            </AsyncLink>
+          </div>
+        )}
         {/* Fil d'Ariane */}
-        <nav className="flex max-sm:mx-9 items-center text-sm text-gray-500 mb-8">
+        {!isLoading && product && product.status === 1 && <nav className="flex max-sm:mx-9 items-center text-sm text-gray-500 mb-8">
           <a href="/" className="hover:text-gray-900">Accueil</a>
           <ArrowRight className="w-4 h-4 mx-2" />
           <span className="text-gray-900">{product?.product_name}</span>
-        </nav>
+        </nav>}
 
-        {!isLoading && product && (
+
+        {!isLoading && product && product.status === 1 && (
           <div className="grid grid-cols-1  sticky lg:grid-cols-12 gap-2">
 
             {/* Colonne gauche - Images */}
@@ -678,9 +690,12 @@ const ProductDetailPage: React.FC = () => {
             </div>
           </div>
         )}
-        <SimilarProducts similarProducts={similarProducts} isLoadingSimilarProducts={isLoadingSimilarProducts} />
+        {
+          !isLoading && product && product.status === 1 && <SimilarProducts similarProducts={similarProducts} isLoadingSimilarProducts={isLoadingSimilarProducts} />
+        }
+
         {/* Description et avis */}
-        {!isLoading && product && (
+        {!isLoading && product && product.status === 1 && (
           <>
             <div className="mt-8 bg-white rounded-2xl shadow-sm">
               {/* Onglets d'information */}
