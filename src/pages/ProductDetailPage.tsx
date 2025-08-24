@@ -551,7 +551,12 @@ const ProductDetailPage: React.FC = () => {
                         <input
                           type="number"
                           value={quantity}
-                          onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                          onChange={(e) => {
+                            const val = Math.max(1, Math.min(getProductQuantity(), parseInt(e.target.value) || 1));
+                            setQuantity(val);
+                          }}
+                          max={getProductQuantity()}
+                          min={1}
                           className="w-16  text-center border-x"
                         />
                         <button
