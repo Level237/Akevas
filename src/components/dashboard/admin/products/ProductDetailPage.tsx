@@ -12,7 +12,7 @@ export default function ProductDetailPageAdmin() {
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const [togglePublish] = useTogglePublishMutation();
   const [isImageOpen, setIsImageOpen] = useState<string | null>(null);
-
+  console.log(product)
   // Fonction pour déterminer le type de vente
   const getSaleTypeInfo = (product: any) => {
     if (product.isWholeSale) {
@@ -327,11 +327,63 @@ export default function ProductDetailPageAdmin() {
                   </div>
                 </div>
               )}
+
+              {/* Section Détails du Gros */}
+
             </div>
           </div>
         </CardContent>
       </Card>
+      {product.isWholeSale && product.productWholeSales && product.productWholeSales.length > 0 && (
+        <Card className="mt-8">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                <span className="text-xl">🏪</span>
+              </div>
+              <div>
+                <CardTitle className="text-purple-800">Vente en Gros</CardTitle>
+                <p className="text-sm text-gray-600">Tarifs dégressifs selon la quantité</p>
+              </div>
+            </div>
+          </CardHeader>
 
+          <CardContent>
+            {/* Affichage simple des niveaux */}
+            <div className="space-y-3">
+              {product.productWholeSales.map((wholesale: any, index: number) => (
+                <div key={wholesale.id} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white ${index === 0 ? 'bg-green-500' :
+                      index === 1 ? 'bg-blue-500' :
+                        'bg-purple-500'
+                      }`}>
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-800">
+                        {Number(wholesale.wholesale_price).toLocaleString()} FCFA
+                      </div>
+                      <div className="text-sm text-gray-500">à partir de {wholesale.min_quantity} unités</div>
+                    </div>
+                  </div>
+
+                  {product.product_price && (
+                    <div className="text-right">
+                      <div className="text-sm text-green-600 font-medium">
+                        -{Math.round(((Number(product.product_price) - Number(wholesale.wholesale_price)) / Number(product.product_price)) * 100)}%
+                      </div>
+                      <div className="text-xs text-gray-400">d'économie</div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+
+          </CardContent>
+        </Card>
+      )}
       {/* Section Galerie d'images */}
       <Card className="mt-8">
         <CardHeader>
