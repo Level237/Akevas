@@ -79,7 +79,7 @@ export const guardService = createApi({
             providesTags: ['guard'],
         }),
         filterProducts: builder.query({
-            query: ({ arrayId}) => ({
+            query: ({ arrayId }) => ({
                 url: `/api/filter/products/${arrayId}`,
                 method: "GET",
             }),
@@ -171,36 +171,44 @@ export const guardService = createApi({
                 method: 'GET'
             })
         }),
-        searchByQuery:builder.query({
-            query:({query,userId})=>({
-                url:`/api/search/${query}/${userId}`,
-                method:"GET"
+        searchByQuery: builder.query({
+            query: ({ query, userId }) => ({
+                url: `/api/search/${query}/${userId}`,
+                method: "GET"
             })
         }),
-        getProfileShop:builder.query({
-            query:()=>({
-                url:'/api/get/profile/shop',
-                method:"GET"
+        getProfileShop: builder.query({
+            query: () => ({
+                url: '/api/get/profile/shop',
+                method: "GET"
             })
         }),
-        getModalShop:builder.query({
-            query:()=>({
-                url:"/api/get/modal/shop",
-                method:"Get"
+        getModalShop: builder.query({
+            query: () => ({
+                url: "/api/get/modal/shop",
+                method: "Get"
             })
         }),
-        getCatalogSeller:builder.query({
-            query:(shopKey)=>({
-                url:`/api/catalogue/${shopKey}`,
-                method:"GET"
+        getCatalogSeller: builder.query({
+            query: (shopKey) => ({
+                url: `/api/catalogue/${shopKey}`,
+                method: "GET"
+            })
+        }),
+        allGenders: builder.query({
+            query: () => ({
+                url: "/api/all/genders",
+                method: "GET"
             })
         })
-        
+
+
     }),
 })
 export const {
     useGetShopQuery,
     useGetCategoriesQuery,
+    useAllGendersQuery,
     useGetTownsQuery,
     useGetQuartersQuery,
     useCheckIfEmailExistsMutation,

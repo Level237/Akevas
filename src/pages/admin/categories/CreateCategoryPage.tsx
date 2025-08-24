@@ -8,16 +8,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Upload } from 'lucide-react';
 
 import { toast } from 'sonner';
+import { useAllGendersQuery } from '@/services/guardService';
 
 export default function CreateCategoryPage() {
   const navigate = useNavigate();
- 
-  
+  const { data: genders } = useAllGendersQuery('guardService');
+  // console.log(genders)
   const [formData, setFormData] = useState({
     category_name: '',
-    category_url: '',
     category_profile: null as File | null,
-    description: ''
+    gender_id: 0
   });
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -36,15 +36,15 @@ export default function CreateCategoryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('category_name', formData.category_name);
-      formDataToSend.append('category_url', formData.category_url);
+      formDataToSend.append('gender_id', String(formData.gender_id));
       if (formData.category_profile) {
         formDataToSend.append('category_profile', formData.category_profile);
       }
-      formDataToSend.append('description', formData.description);
+
 
       //await createCategory(formDataToSend).unwrap();
       toast.success('Catégorie créée avec succès');
@@ -86,27 +86,28 @@ export default function CreateCategoryPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category_url">URL de la catégorie</Label>
-                <Input
-                  id="category_url"
-                  value={formData.category_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category_url: e.target.value }))}
-                  placeholder="exemple-categorie"
+                <Label htmlFor="gender_id">Genre</Label>
+                <select
+                  id="gender_id"
+                  value={formData.gender_id}
+                  onChange={e => setFormData(prev => ({ ...prev, gender_id: Number(e.target.value) }))}
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f] sm:text-sm"
                   required
-                />
+                >
+                  <option value={0} disabled>
+                    Sélectionnez un genre
+                  </option>
+                  {Array.isArray(genders) &&
+                    genders.map((gender: any) => (
+                      <option key={gender.id} value={gender.id}>
+                        {gender.gender_name}
+                      </option>
+                    ))}
+                </select>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Entrez une description pour la catégorie"
-                rows={4}
-              />
-            </div>
+
 
             <div className="space-y-2">
               <Label>Image de la catégorie</Label>
@@ -150,7 +151,7 @@ export default function CreateCategoryPage() {
               <Button
                 type="submit"
                 className="bg-[#ed7e0f] hover:bg-[#d66d00] text-white"
-                //disabled={isLoading}
+              //disabled={isLoading}
               >
                 {/*{isLoading ? 'Création en cours...' : 'Créer la catégorie'}*/}
                 Créer la catégorie
