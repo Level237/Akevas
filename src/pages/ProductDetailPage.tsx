@@ -189,7 +189,7 @@ const ProductDetailPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const productId = product?.id
   const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null);
-
+  console.log(product)
   const handleAddToCart = async () => {
     setIsLoadingCart(true);
 
@@ -264,44 +264,98 @@ const ProductDetailPage: React.FC = () => {
         const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute)
           || currentVariant.attributes[0];
 
+        // Calculer le prix en gros si applicable
+        let finalPrice = selectedAttr.price;
+        let wholesaleInfo = null;
+
+        if (product.productWholeSales && product.productWholeSales.length > 0) {
+          // Trier par quantité minimum décroissante pour trouver le bon niveau
+          const sortedWholesale = Array.from(product.productWholeSales).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity));
+
+          // Trouver le niveau de gros applicable pour cette quantité
+          for (const wholesale of sortedWholesale) {
+            if (quantity >= Number(wholesale.min_quantity)) {
+              finalPrice = Number(wholesale.wholesale_price);
+              wholesaleInfo = wholesale;
+              break;
+            }
+          }
+        }
+
         return {
           attributeVariationId: selectedAttr.id,
           productVariationId: currentVariant.id,
-          price: selectedAttr.price,
+          price: finalPrice,
           quantity: selectedAttr.quantity,
           mainImage: currentVariant.images?.[0],
           images: currentVariant.images?.map((path: string) => ({ path })) || [],
           color: currentVariant.color,
           variantName: currentVariant.color.name,
-          attribute: selectedAttr.value
+          attribute: selectedAttr.value,
+          wholesaleInfo,
+          originalPrice: selectedAttr.price
         };
       }
 
       // Cas où la variation est simple (couleur uniquement)
+      let finalPrice = currentVariant.price;
+      let wholesaleInfo = null;
+
+      if (product.productWholeSales && product.productWholeSales.length > 0) {
+        const sortedWholesale = Array.from(product.productWholeSales).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity));
+
+        for (const wholesale of sortedWholesale) {
+          if (quantity >= Number(wholesale.min_quantity)) {
+            finalPrice = Number(wholesale.wholesale_price);
+            wholesaleInfo = wholesale;
+            break;
+          }
+        }
+      }
+
       return {
         attributeVariationId: null,
         productVariationId: currentVariant.id,
-        price: currentVariant.price,
+        price: finalPrice,
         quantity: currentVariant.quantity,
         mainImage: currentVariant.images?.[0],
         images: currentVariant.images?.map((path: string) => ({ path })) || [],
         color: currentVariant.color,
         variantName: currentVariant.color.name,
-        attribute: null
+        attribute: null,
+        wholesaleInfo,
+        originalPrice: currentVariant.price
       };
     }
 
     // Si le produit n'a pas de variations
+    let finalPrice = product?.product_price;
+    let wholesaleInfo = null;
+
+    if (product?.productWholeSales && product.productWholeSales.length > 0) {
+      const sortedWholesale = Array.from(product.productWholeSales).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity));
+
+      for (const wholesale of sortedWholesale) {
+        if (quantity >= Number(wholesale.min_quantity)) {
+          finalPrice = Number(wholesale.wholesale_price);
+          wholesaleInfo = wholesale;
+          break;
+        }
+      }
+    }
+
     return {
       attributeVariationId: null,
       productVariationId: null,
-      price: product?.product_price,
+      price: finalPrice,
       quantity: product?.product_quantity,
       mainImage: product?.product_profile,
       images: product?.product_images || [],
       color: null,
       variantName: null,
-      attribute: null
+      attribute: null,
+      wholesaleInfo,
+      originalPrice: product?.product_price
     };
   };
 
@@ -558,9 +612,32 @@ const ProductDetailPage: React.FC = () => {
                   </div>
 
                   <h1 className="text-2xl font-bold text-gray-900">{product.product_name}</h1>
-                  <span className="text-4xl max-sm:text-3xl font-bold text-[#ed7e0f]">
-                    {currentInfo.price} FCFA
-                  </span>
+
+                  {/* Affichage du prix avec gestion du gros */}
+                  <div className="space-y-2">
+                    {currentInfo.wholesaleInfo ? (
+                      <div>
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-4xl max-sm:text-3xl font-bold text-[#ed7e0f]">
+                            {currentInfo.price} FCFA
+                          </span>
+                          <span className="text-lg text-gray-500 line-through">
+                            {currentInfo.originalPrice} FCFA
+                          </span>
+                          <span className="px-2 py-1 text-sm font-bold text-white bg-green-500 rounded">
+                            -{Math.round(((Number(currentInfo.originalPrice) - Number(currentInfo.price)) / Number(currentInfo.originalPrice)) * 100)}%
+                          </span>
+                        </div>
+                        <div className="text-sm text-green-600 font-medium">
+                          🏪 Tarif gros appliqué (à partir de {currentInfo.wholesaleInfo.min_quantity} unités)
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-4xl max-sm:text-3xl font-bold text-[#ed7e0f]">
+                        {currentInfo.price} FCFA
+                      </span>
+                    )}
+                  </div>
                   {/* Description courte */}
                   <p className="text-gray-800  line-clamp-3">{product.product_description}</p>
                   {/* Variants */}
@@ -655,6 +732,82 @@ const ProductDetailPage: React.FC = () => {
                       )}
                     </div>
                   )}
+
+                  {/* Section Vente en Gros */}
+                  {product?.productWholeSales && product.productWholeSales.length > 0 && (
+                    <div className="mt-6 p-3 bg-white border border-gray-100 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg">🏪</span>
+                        <span className="text-sm font-semibold text-gray-700">Prix en gros</span>
+                      </div>
+                      <table className="w-full text-xs text-gray-700">
+                        <thead>
+                          <tr>
+                            <th className="text-left font-medium pb-1">Qté min.</th>
+                            <th className="text-left font-medium pb-1">Prix/unité</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.from(product.productWholeSales)
+                            .sort((a: any, b: any) => Number(a.min_quantity) - Number(b.min_quantity))
+                            .map((wholesale: any) => {
+                              const isStockInsufficient = Number(wholesale.min_quantity) > getProductQuantity();
+                              const isSelected = quantity === Number(wholesale.min_quantity) && !isStockInsufficient;
+                              return (
+                                <tr key={wholesale.id} className={isSelected ? "bg-[#ed7e0f]/10" : ""}>
+                                  <td className="py-1">{wholesale.min_quantity}+</td>
+                                  <td className="py-1 font-semibold">{Number(wholesale.wholesale_price).toLocaleString()} FCFA</td>
+                                  <td>
+                                    <button
+                                      onClick={() => {
+                                        if (isStockInsufficient) {
+                                          toast.error(
+                                            `Stock insuffisant ! Le stock actuel (${getProductQuantity()} unités) ne permet pas d'atteindre le seuil de ${wholesale.min_quantity} unités pour ce tarif.`,
+                                            {
+                                              duration: 4000,
+                                              position: "top-center",
+                                            }
+                                          );
+                                        } else {
+                                          setQuantity(Number(wholesale.min_quantity));
+                                        }
+                                      }}
+                                      disabled={isStockInsufficient}
+                                      className={`px-2 py-1 rounded text-xs font-medium border transition-all
+                                        ${isSelected
+                                          ? 'bg-[#ed7e0f] text-white border-[#ed7e0f]'
+                                          : isStockInsufficient
+                                            ? 'bg-gray-100 text-gray-400 border-gray-100 cursor-not-allowed'
+                                            : 'bg-white text-gray-700 border-gray-200 hover:border-[#ed7e0f]'
+                                        }`}
+                                    >
+                                      {isStockInsufficient ? "Indisponible" : "Choisir"}
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                        </tbody>
+                      </table>
+                      {(() => {
+                        const insufficientWholesales = Array.from(product.productWholeSales)
+                          .filter((w: any) => Number(w.min_quantity) > getProductQuantity());
+                        if (insufficientWholesales.length > 0) {
+                          return (
+                            <div className="mt-2 flex items-center gap-2 text-xs text-yellow-700">
+                              <span className="text-yellow-600">⚠️</span>
+                              <span>
+                                Certains tarifs nécessitent plus d'unités que le stock disponible ({getProductQuantity()} unités)
+                              </span>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </div>
+                  )}
+
                   {/* Prix et réduction avec design modernisé */}
                   <div className=" p-4 rounded-xl">
                     <div className="flex items-baseline gap-2">
@@ -721,6 +874,50 @@ const ProductDetailPage: React.FC = () => {
                       </span>
                     )}
                   </div>
+
+                  {/* Indicateur de tarif gros */}
+                  {product?.productWholeSales && product.productWholeSales.length > 0 && (
+                    <div className="py-3 border-b">
+                      <div className="space-y-2">
+                        {/* Niveau actuel */}
+                        {currentInfo.wholesaleInfo ? (
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                            <span className="text-green-600 font-medium">
+                              Tarif gros actuel : {Number(currentInfo.wholesaleInfo.wholesale_price).toLocaleString()} FCFA/unité
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            <span className="text-gray-600">
+                              Tarif normal : {Number(currentInfo.originalPrice).toLocaleString()} FCFA/unité
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Prochain seuil */}
+                        {(() => {
+                          const nextWholesale = Array.from(product.productWholeSales)
+                            .sort((a: any, b: any) => Number(a.min_quantity) - Number(b.min_quantity))
+                            .find((w: any) => Number(w.min_quantity) > quantity);
+
+                          if (nextWholesale) {
+                            const remaining = Number(nextWholesale.min_quantity) - quantity;
+                            return (
+                              <div className="flex items-center gap-2 text-sm">
+                                <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+                                <span className="text-blue-600">
+                                  +{remaining} unité{remaining > 1 ? 's' : ''} pour le tarif {Number(nextWholesale.wholesale_price).toLocaleString()} FCFA/unité
+                                </span>
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
 
@@ -767,7 +964,7 @@ const ProductDetailPage: React.FC = () => {
                     <div className="text-center flex items-center justify-between">
                       <p className="text-sm text-gray-500">Prix total :</p>
                       <p className="text-2xl max-sm:text-xl font-bold text-[#ed7e0f] mt-1">
-                        {currentInfo.price} FCFA
+                        {(Number(currentInfo.price) * quantity).toLocaleString()} FCFA
                       </p>
                     </div>
 
