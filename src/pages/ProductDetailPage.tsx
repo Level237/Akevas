@@ -270,10 +270,10 @@ const ProductDetailPage: React.FC = () => {
 
         if (product.productWholeSales && product.productWholeSales.length > 0) {
           // Trier par quantité minimum décroissante pour trouver le bon niveau
-          const sortedWholesale = Array.from(product.productWholeSales).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity));
+          const sortedWholesale = Array.from(product.productWholeSales).sort((a: any, b: any) => Number(b.min_quantity) - Number(a.min_quantity));
 
           // Trouver le niveau de gros applicable pour cette quantité
-          for (const wholesale of sortedWholesale) {
+          for (const wholesale of sortedWholesale as any[]) {
             if (quantity >= Number(wholesale.min_quantity)) {
               finalPrice = Number(wholesale.wholesale_price);
               wholesaleInfo = wholesale;
@@ -302,9 +302,9 @@ const ProductDetailPage: React.FC = () => {
       let wholesaleInfo = null;
 
       if (product.productWholeSales && product.productWholeSales.length > 0) {
-        const sortedWholesale = Array.from(product.productWholeSales).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity));
+        const sortedWholesale = Array.from(product.productWholeSales).sort((a: any, b: any) => Number(b.min_quantity) - Number(a.min_quantity));
 
-        for (const wholesale of sortedWholesale) {
+        for (const wholesale of sortedWholesale as any[]) {
           if (quantity >= Number(wholesale.min_quantity)) {
             finalPrice = Number(wholesale.wholesale_price);
             wholesaleInfo = wholesale;
@@ -333,9 +333,9 @@ const ProductDetailPage: React.FC = () => {
     let wholesaleInfo = null;
 
     if (product?.productWholeSales && product.productWholeSales.length > 0) {
-      const sortedWholesale = Array.from(product.productWholeSales).sort((a, b) => Number(b.min_quantity) - Number(a.min_quantity));
+      const sortedWholesale = Array.from(product.productWholeSales).sort((a: any, b: any) => Number(b.min_quantity) - Number(a.min_quantity));
 
-      for (const wholesale of sortedWholesale) {
+      for (const wholesale of sortedWholesale as any[]) {
         if (quantity >= Number(wholesale.min_quantity)) {
           finalPrice = Number(wholesale.wholesale_price);
           wholesaleInfo = wholesale;
@@ -629,7 +629,7 @@ const ProductDetailPage: React.FC = () => {
                           </span>
                         </div>
                         <div className="text-sm text-green-600 font-medium">
-                          🏪 Tarif gros appliqué (à partir de {currentInfo.wholesaleInfo.min_quantity} unités)
+                          🏪 Tarif gros appliqué (à partir de {(currentInfo.wholesaleInfo as any)?.min_quantity} unités)
                         </div>
                       </div>
                     ) : (
@@ -884,7 +884,7 @@ const ProductDetailPage: React.FC = () => {
                           <div className="flex items-center gap-2 text-sm">
                             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                             <span className="text-green-600 font-medium">
-                              Tarif gros actuel : {Number(currentInfo.wholesaleInfo.wholesale_price).toLocaleString()} FCFA/unité
+                              Tarif gros actuel : {Number((currentInfo.wholesaleInfo as any)?.wholesale_price).toLocaleString()} FCFA/unité
                             </span>
                           </div>
                         ) : (
@@ -903,12 +903,12 @@ const ProductDetailPage: React.FC = () => {
                             .find((w: any) => Number(w.min_quantity) > quantity);
 
                           if (nextWholesale) {
-                            const remaining = Number(nextWholesale.min_quantity) - quantity;
+                            const remaining = Number((nextWholesale as any).min_quantity) - quantity;
                             return (
                               <div className="flex items-center gap-2 text-sm">
                                 <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
                                 <span className="text-blue-600">
-                                  +{remaining} unité{remaining > 1 ? 's' : ''} pour le tarif {Number(nextWholesale.wholesale_price).toLocaleString()} FCFA/unité
+                                  +{remaining} unité{remaining > 1 ? 's' : ''} pour le tarif {Number((nextWholesale as any).wholesale_price).toLocaleString()} FCFA/unité
                                 </span>
                               </div>
                             );
