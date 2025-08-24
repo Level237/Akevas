@@ -555,7 +555,7 @@ const ProductDetailPage: React.FC = () => {
                           className="w-16  text-center border-x"
                         />
                         <button
-                          onClick={() => setQuantity(quantity + 1)}
+                          onClick={() => setQuantity(Math.min(getProductQuantity(), quantity + 1))}
                           className="p-2 text-gray-600 hover:text-gray-900"
                         >
                           +
