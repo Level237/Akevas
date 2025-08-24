@@ -33,8 +33,8 @@ function timeAgo(dateString: string) {
 
 export default function ListProducts({ products, isLoading }: { products: Product[], isLoading: boolean }) {
   const navigate = useNavigate()
-  console.log(products)
-  
+
+
   if (isLoading) {
     return <IsLoadingComponents isLoading={isLoading} />
   }
@@ -127,10 +127,10 @@ export default function ListProducts({ products, isLoading }: { products: Produc
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50">
                       <Trash2 className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      onClick={() => navigate(`/admin/products/${product.product_url}`)} 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      onClick={() => navigate(`/admin/products/${product.product_url}`)}
+                      variant="ghost"
+                      size="icon"
                       className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
                     >
                       <Eye className="h-4 w-4" />
@@ -225,9 +225,9 @@ export default function ListProducts({ products, isLoading }: { products: Produc
                 {/* Actions */}
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="h-8 px-3 text-blue-600 border-blue-200 hover:bg-blue-50"
                       onClick={() => navigate(`/admin/products/${product.product_url}`)}
                     >
@@ -239,7 +239,7 @@ export default function ListProducts({ products, isLoading }: { products: Produc
                       Modifier
                     </Button>
                   </div>
-                  
+
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">

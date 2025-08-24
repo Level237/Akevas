@@ -12,8 +12,8 @@ export interface Product {
     product_url: string,
     shop_created_at: string,
     shop_id: string,
-    review_average:number | null,
-    reviewCount:number | null,
+    review_average: number | null,
+    reviewCount: number | null,
     product_images: Image[],
     product_categories: Category[],
     residence: string,
@@ -21,7 +21,7 @@ export interface Product {
     product_variants: string[] | null,
     variations: Variant[] | null,
     status: boolean,
-    count_seller:string,
+    count_seller: string,
     created_at: string,
 }
 
