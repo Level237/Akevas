@@ -26,6 +26,152 @@ import { ProductReview } from '@/components/products/ProductReview';
 import OptimizedImage from '@/components/OptimizedImage';
 import { toast } from 'sonner';
 
+// Skeleton Loader Component
+const ProductDetailSkeleton = () => (
+  <div className="animate-pulse grid grid-cols-1 lg:grid-cols-12 gap-2">
+    {/* Left column - Images */}
+    <div className="lg:col-span-4">
+      <div className="sticky top-8">
+        <div className="bg-white flex flex-col-reverse lg:flex-row items-start gap-4 rounded-2xl shadow-sm p-4">
+          {/* Thumbnails */}
+          <div className="flex flex-col w-full lg:w-56 gap-4 relative">
+            <div className="flex lg:flex-col gap-2 px-1">
+              {[...Array(4)].map((_, idx) => (
+                <div
+                  key={idx}
+                  className="flex-shrink-0 h-14 w-14 rounded-lg bg-gray-200"
+                />
+              ))}
+            </div>
+          </div>
+          {/* Main image */}
+          <div className="relative w-full lg:w-[60rem] bg-gray-200 rounded-lg overflow-hidden mb-4 h-[300px] lg:h-96" />
+        </div>
+      </div>
+    </div>
+    {/* Center column - Product info */}
+    <div className="lg:col-span-5">
+      <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-20 rounded-full bg-gray-200" />
+            <div className="h-6 w-24 rounded-full bg-gray-200" />
+          </div>
+          <div className="h-8 w-2/3 rounded bg-gray-200" />
+          <div className="h-10 w-1/3 rounded bg-gray-200" />
+          <div className="h-4 w-full rounded bg-gray-200" />
+          <div className="h-4 w-2/3 rounded bg-gray-200" />
+          {/* Variants */}
+          <div className="space-y-6">
+            <div className="border-b pb-6">
+              <div className="space-y-4">
+                <div className="h-6 w-40 rounded bg-gray-200" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {[...Array(3)].map((_, idx) => (
+                    <div key={idx} className="flex items-center p-2 border rounded-lg bg-gray-100">
+                      <div className="w-12 h-12 mr-3 rounded-md bg-gray-200" />
+                      <div>
+                        <div className="flex items-center mb-1">
+                          <div className="w-3 h-3 rounded-full border mr-2 bg-gray-200" />
+                          <div className="h-4 w-16 rounded bg-gray-200" />
+                        </div>
+                        <div className="h-4 w-20 rounded bg-gray-200" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  {[...Array(4)].map((_, idx) => (
+                    <div key={idx} className="px-4 py-2 border rounded-lg bg-gray-200 w-16 h-8" />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-6 h-6 rounded-full border bg-gray-200" />
+                <div className="h-4 w-32 rounded bg-gray-200" />
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <div className="h-4 w-20 rounded bg-gray-200" />
+                <div className="h-4 w-24 rounded bg-gray-200" />
+              </div>
+            </div>
+          </div>
+          {/* Price and discount */}
+          <div className="p-4 rounded-xl">
+            <div className="flex items-baseline gap-2">
+              <div className="h-6 w-24 rounded bg-gray-200" />
+              <div className="h-6 w-12 rounded bg-gray-200" />
+            </div>
+          </div>
+          {/* Stats */}
+          <div className="flex items-center gap-6 py-4 border-b">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-gray-200" />
+              <div className="h-4 w-8 rounded bg-gray-200" />
+              <div className="h-4 w-12 rounded bg-gray-200" />
+            </div>
+            <div className="h-4 w-16 rounded bg-gray-200" />
+            <div className="h-4 w-20 rounded bg-gray-200" />
+          </div>
+          {/* Quantity and stock */}
+          <div className="flex items-center justify-between py-4 border-t border-b">
+            <div className="flex items-center gap-4">
+              <div className="h-4 w-16 rounded bg-gray-200" />
+              <div className="flex items-center border rounded-lg">
+                <div className="w-8 h-8 bg-gray-200" />
+                <div className="w-16 h-8 bg-gray-200" />
+                <div className="w-8 h-8 bg-gray-200" />
+              </div>
+            </div>
+            <div className="h-4 w-24 rounded bg-gray-200" />
+          </div>
+        </div>
+      </div>
+    </div>
+    {/* Right column - Delivery and CTA */}
+    <div className="lg:col-span-3">
+      <div className="sticky top-8">
+        <div className="bg-white rounded-2xl shadow-sm p-4">
+          <div className="space-y-4">
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
+                <div className="w-5 h-5 rounded-full bg-gray-200" />
+                <div className="h-4 w-24 rounded bg-gray-200" />
+                <div className="h-4 w-20 rounded bg-gray-200" />
+                <div className="h-4 w-16 rounded bg-gray-200" />
+              </div>
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
+                <div className="w-4 h-4 rounded-full bg-gray-200" />
+                <div className="h-4 w-24 rounded bg-gray-200" />
+              </div>
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
+                <div className="w-4 h-4 rounded-full bg-gray-200" />
+                <div className="h-4 w-24 rounded bg-gray-200" />
+              </div>
+            </div>
+            <div className="border-t my-4"></div>
+            <div className="text-center flex items-center justify-between">
+              <div className="h-4 w-20 rounded bg-gray-200" />
+              <div className="h-8 w-24 rounded bg-gray-200" />
+            </div>
+            <div className="space-y-3 mt-6">
+              <div className="w-full h-12 rounded-xl bg-gray-200" />
+              <div className="w-full h-12 rounded-xl bg-gray-200" />
+              <div className="w-full h-12 rounded-xl bg-gray-200" />
+              <div className="border-t pt-4">
+                <div className="w-full h-12 rounded-xl bg-gray-200" />
+                <div className="h-4 w-32 rounded bg-gray-200 mx-auto mt-2" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const ProductDetailPage: React.FC = () => {
   const { url } = useParams<{ url: string }>();
   const [selectedImage, setSelectedImage] = useState<number>(0);
@@ -34,17 +180,15 @@ const ProductDetailPage: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  console.log(mousePosition)
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const { data: { data: similarProducts } = {}, isLoading: isLoadingSimilarProducts } = useGetSimilarProductsQuery(product?.id);
   const [showCartButton, setShowCartButton] = useState(false);
-  console.log(product)
   const dispatch = useDispatch();
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const productId = product?.id
   const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null);
-  console.log(product)
+
   const handleAddToCart = async () => {
     setIsLoadingCart(true);
 
@@ -59,7 +203,6 @@ const ProductDetailPage: React.FC = () => {
         };
       }
     }
-
 
     dispatch(addItem({
       product,
@@ -84,20 +227,18 @@ const ProductDetailPage: React.FC = () => {
     setIsLoadingCart(false);
     setShowCartButton(true);
   };
+
   // Helper function to get all images
   const getAllImages = () => {
     if (selectedVariant) {
       // Si une variante est sélectionnée, retourner toutes ses images
       return selectedVariant.images?.map((path: any) => ({ path })) || [];
     }
-
     // Sinon, retourner les images du produit principal
     const mainImage = { path: product?.product_profile };
     const productImages = product?.product_images || [];
     return [mainImage, ...productImages];
   };
-
-
 
   // Modifier l'useEffect pour initialiser la première variation et son premier attribut
   useEffect(() => {
@@ -121,7 +262,6 @@ const ProductDetailPage: React.FC = () => {
       if (currentVariant.attributes && currentVariant.attributes.length > 0) {
         const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute)
           || currentVariant.attributes[0];
-
 
         return {
           attributeVariationId: selectedAttr.id,
@@ -241,6 +381,13 @@ const ProductDetailPage: React.FC = () => {
       <Header />
 
       <main className="">
+        {/* Skeleton Loader */}
+        {isLoading && (
+          <div className="px-2 py-4 sm:px-6 md:px-12 lg:px-24">
+            <ProductDetailSkeleton />
+          </div>
+        )}
+
         {/* Cas où le produit n'est pas trouvé */}
         {!isLoading && !product && (
           <div className="flex flex-col items-center justify-center py-16 px-4">
