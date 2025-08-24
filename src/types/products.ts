@@ -19,6 +19,7 @@ export interface Product {
     product_variants: string[] | null,
     variations: Variant[] | null,
     status: boolean,
+    isWholeSale: boolean,
     created_at: string,
 }
 

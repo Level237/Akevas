@@ -14,7 +14,7 @@ const DashboardProductListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
- 
+
 
 
 
@@ -64,7 +64,7 @@ const DashboardProductListPage = () => {
             </div>
           </div>
 
-        <ProductListContainer/>
+          <ProductListContainer />
         </div>
       </div>
     </div>
