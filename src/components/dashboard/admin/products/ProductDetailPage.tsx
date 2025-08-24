@@ -334,7 +334,7 @@ export default function ProductDetailPageAdmin() {
           </div>
         </CardContent>
       </Card>
-      {product.isWholeSale && product.productWholeSales && product.productWholeSales.length > 0 && (
+      {product.productWholeSales.length > 0 && (
         <Card className="mt-8">
           <CardHeader>
             <div className="flex items-center gap-3">
