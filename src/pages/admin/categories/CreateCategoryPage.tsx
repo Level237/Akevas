@@ -8,19 +8,20 @@ import { ArrowLeft, Upload } from 'lucide-react';
 
 import { toast } from 'sonner';
 import { useAllGendersQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
+import { useAddCategoryMutation } from '@/services/adminService';
 
 export default function CreateCategoryPage() {
   const navigate = useNavigate();
   const { data: genders } = useAllGendersQuery('guardService');
   const { data: categories, isLoading } = useGetCategoriesWithParentIdNullQuery('guardService');
-  console.log(categories.data[0].category_name)
+  const [createCategory] = useAddCategoryMutation()
   const [formData, setFormData] = useState({
     category_name: '',
     category_profile: null as File | null,
     gender_id: 0,
-    parent_category_id: null as number | null
+    parent_id: null as number | null // Renommé de parent_category_id à parent_id
   });
-
+  console.log(formData)
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,11 +46,12 @@ export default function CreateCategoryPage() {
       if (formData.category_profile) {
         formDataToSend.append('category_profile', formData.category_profile);
       }
-      if (formData.parent_category_id) {
-        formDataToSend.append('parent_category_id', String(formData.parent_category_id));
+      if (formData.parent_id) { // Utilisé parent_id ici
+        formDataToSend.append('parent_id', String(formData.parent_id)); // Utilisé parent_id ici
       }
 
-      //await createCategory(formDataToSend).unwrap();
+      await createCategory(formDataToSend);
+
       toast.success('Catégorie créée avec succès');
       navigate('/admin/categories');
     } catch (error) {
@@ -110,18 +112,18 @@ export default function CreateCategoryPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="parent_category_id">Catégorie parente (Optionnel)</Label>
+                <Label htmlFor="parent_id">Catégorie parente (Optionnel)</Label> {/* Mis à jour htmlFor */}
                 <select
-                  id="parent_category_id"
-                  value={formData.parent_category_id || ''}
+                  id="parent_id" // Mis à jour id
+                  value={formData.parent_id || ''} // Utilisé parent_id ici
                   onChange={e => setFormData(prev => ({
                     ...prev,
-                    parent_category_id: e.target.value ? Number(e.target.value) : null
+                    parent_id: e.target.value ? Number(e.target.value) : null // Utilisé parent_id ici
                   }))}
                   className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f] sm:text-sm"
                 >
                   <option value="">Aucune catégorie parente</option>
-                  {Array.isArray(categories.data) && !isLoading &&
+                  {Array.isArray(categories?.data) && !isLoading &&
                     categories?.data?.map((category: any) => (
                       <option key={category.id} value={category.id}>
                         {category.category_name}

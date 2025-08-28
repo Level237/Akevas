@@ -75,10 +75,10 @@ export const adminService = createApi({
             providesTags: ['admin'],
         }),
 
-        adminDetailOrder:builder.query({
-            query:(id)=>({
-                url:`/api/v1/admin/order/${id}`,
-                method:"GET"
+        adminDetailOrder: builder.query({
+            query: (id) => ({
+                url: `/api/v1/admin/order/${id}`,
+                method: "GET"
             })
         }),
         adminActiveStats: builder.query({
@@ -93,59 +93,66 @@ export const adminService = createApi({
             query: () => '/api/v1/admin/active/delivery/stats',
             providesTags: ['admin'],
         }),
-        adminListReviews:builder.query({
-            query:()=>"/api/v1/admin/reviews",
-            providesTags:['admin']
+        adminListReviews: builder.query({
+            query: () => "/api/v1/admin/reviews",
+            providesTags: ['admin']
         }),
-        declineOrValidate:builder.mutation({
-            query:({reviewId,status})=>({
-                url:`/api/v1/decline/or/validate/${reviewId}/${status}`,
-                method:"POST",
-                
+        declineOrValidate: builder.mutation({
+            query: ({ reviewId, status }) => ({
+                url: `/api/v1/decline/or/validate/${reviewId}/${status}`,
+                method: "POST",
+
             }),
-            invalidatesTags:['admin']
+            invalidatesTags: ['admin']
         }),
-        adminListFeedback:builder.query({
-            query:()=>"/api/v1/admin/list/feedbacks",
-            providesTags:['admin']
+        adminListFeedback: builder.query({
+            query: () => "/api/v1/admin/list/feedbacks",
+            providesTags: ['admin']
         }),
-        adminListShopReviews:builder.query({
-            query:()=>'/api/v1/admin/list/shop/reviews',
-            providesTags:['admin']
+        adminListShopReviews: builder.query({
+            query: () => '/api/v1/admin/list/shop/reviews',
+            providesTags: ['admin']
         }),
-        declineOrValidateShopReview:builder.mutation({
-            query:({reviewId,status})=>({
-                url:`/api/v1/decline/or/validate/shop/review/${reviewId}/${status}`,
-                method:"POST",
-                
+        declineOrValidateShopReview: builder.mutation({
+            query: ({ reviewId, status }) => ({
+                url: `/api/v1/decline/or/validate/shop/review/${reviewId}/${status}`,
+                method: "POST",
+
             }),
-            invalidatesTags:['admin']
+            invalidatesTags: ['admin']
         }),
-        sendCoinsToShop:builder.mutation({
-            query:(body)=>({
-                url:`/api/v1/give/coins`,
-                method:"POST",
-                body:body
+        sendCoinsToShop: builder.mutation({
+            query: (body) => ({
+                url: `/api/v1/give/coins`,
+                method: "POST",
+                body: body
             }),
-            invalidatesTags:['admin']
+            invalidatesTags: ['admin']
         }),
-        addShop:builder.mutation({
-            query:(body)=>({
-                url:'/api/v1/add/shop',
-                body:body
+        addShop: builder.mutation({
+            query: (body) => ({
+                url: '/api/v1/add/shop',
+                body: body
             })
 
         }),
-        togglePublish:builder.mutation({
-            query:({product_id})=>({
-                url:`/api/v1/published/product/${product_id}`,
-                method:"POST",
-                
+        togglePublish: builder.mutation({
+            query: ({ product_id }) => ({
+                url: `/api/v1/published/product/${product_id}`,
+                method: "POST",
+
             })
         }),
-        allCategories:builder.query({
-            query:()=>'/api/v1/admin/all/categories',
-            providesTags:['admin']
+        allCategories: builder.query({
+            query: () => '/api/v1/admin/all/categories',
+            providesTags: ['admin']
+        }),
+        addCategory: builder.mutation({
+            query: (body) => ({
+                url: `/api/v1/admin/add/category`,
+                body: body,
+                method: "POST"
+            })
         })
     })
 })
@@ -165,6 +172,7 @@ export const {
     useAdminListCustomersQuery,
     useAdminListOrdersQuery,
     useAdminActiveStatsQuery,
+    useAddCategoryMutation,
     useAdminActiveSellerStatsQuery,
     useAdminDeliveryStatsQuery,
     useAdminListReviewsQuery,
