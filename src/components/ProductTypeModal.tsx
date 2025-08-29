@@ -4,9 +4,10 @@ import { X, Package, Palette, Loader2 } from 'lucide-react';
 interface ProductTypeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (productType: 'simple' | 'variable', isWholesale: boolean) => void;
+    onConfirm: (productType: 'simple' | 'variable', isWholesale: boolean, isOnlyWhole: boolean | null) => void;
     initialProductType?: 'simple' | 'variable' | null;
     initialIsWholesale?: boolean | null;
+    initialIsOnlyWhole?: boolean | null;
 }
 
 const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
@@ -14,11 +15,13 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
     onClose,
     onConfirm,
     initialProductType = null,
-    initialIsWholesale = null
+    initialIsWholesale = null,
+    initialIsOnlyWhole = null
 }) => {
-    const [modalStep, setModalStep] = useState<'type' | 'wholesale'>('type');
+    const [modalStep, setModalStep] = useState<'type' | 'wholesale' | 'onlyWhole'>('type');
     const [selectedProductType, setSelectedProductType] = useState<'simple' | 'variable' | null>(initialProductType);
     const [isWholesale, setIsWholesale] = useState<boolean | null>(initialIsWholesale);
+    const [isOnlyWhole, setIsOnlyWhole] = useState<boolean | null>(initialIsOnlyWhole);
     const [isLoading, setIsLoading] = useState(false);
 
     // Réinitialiser les états quand le modal s'ouvre
@@ -27,8 +30,9 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
             setModalStep('type');
             setSelectedProductType(initialProductType);
             setIsWholesale(initialIsWholesale);
+            setIsOnlyWhole(initialIsOnlyWhole);
         }
-    }, [isOpen, initialProductType, initialIsWholesale]);
+    }, [isOpen, initialProductType, initialIsWholesale, initialIsOnlyWhole]);
 
     const handleConfirm = async () => {
         if (!selectedProductType) return;
@@ -38,9 +42,23 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
         } else if (modalStep === 'wholesale') {
             if (isWholesale === null) return;
 
+            if (isWholesale) {
+                setModalStep('onlyWhole');
+            } else {
+                setIsLoading(true);
+                try {
+                    await onConfirm(selectedProductType, isWholesale, false);
+                    onClose();
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        } else if (modalStep === 'onlyWhole') {
+            if (isOnlyWhole === null) return;
             setIsLoading(true);
             try {
-                await onConfirm(selectedProductType, isWholesale);
+                await onConfirm(selectedProductType, isWholesale!, isOnlyWhole);
+                onClose();
             } finally {
                 setIsLoading(false);
             }
@@ -51,6 +69,9 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
         if (modalStep === 'wholesale') {
             setModalStep('type');
             setIsWholesale(null);
+        } else if (modalStep === 'onlyWhole') {
+            setModalStep('wholesale');
+            setIsOnlyWhole(null);
         }
     };
 
@@ -73,13 +94,22 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
                                     }`}>
                                     2
                                 </div>
+                                {isWholesale && (
+                                    <>
+                                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${modalStep === 'onlyWhole' ? 'bg-[#ed7e0f] text-white' : 'bg-gray-300 text-gray-600'
+                                            }`}>
+                                            3
+                                        </div>
+                                    </>
+                                )}
                             </div>
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-900">
-                                    {modalStep === 'type' ? 'Type de produit' : 'Mode de vente'}
+                                    {modalStep === 'type' ? 'Type de produit' : modalStep === 'wholesale' ? 'Mode de vente' : 'Option de vente en gros'}
                                 </h2>
                                 <p className="text-sm text-gray-500">
-                                    {modalStep === 'type' ? 'Étape 1 sur 2' : 'Étape 2 sur 2'}
+                                    {modalStep === 'type' ? 'Étape 1 sur 2' : modalStep === 'wholesale' ? 'Étape 2 sur 2' : 'Étape 3 sur 3'}
                                 </p>
                             </div>
                         </div>
@@ -241,9 +271,83 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
                         </div>
                     )}
 
+                    {/* Étape 3: Option de vente en gros */}
+                    {modalStep === 'onlyWhole' && (
+                        <div>
+                            <div className="text-center mb-6">
+                                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                    Comment ce produit sera-t-il vendu en gros ?
+                                </h3>
+                                <p className="text-gray-600 text-sm">
+                                    Définissez si le produit est exclusivement en gros ou combiné au détail.
+                                </p>
+                            </div>
+
+                            <div className="space-y-3">
+                                {/* Uniquement en gros */}
+                                <button
+                                    onClick={() => setIsOnlyWhole(true)}
+                                    className={`w-full text-left p-4 rounded-lg border-2 transition-all ${isOnlyWhole === true
+                                        ? 'border-purple-500 bg-purple-50'
+                                        : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2 rounded-lg ${isOnlyWhole === true
+                                            ? 'bg-purple-500 text-white'
+                                            : 'bg-gray-100 text-gray-600'
+                                            }`}>
+                                            <span className="text-lg">📦</span>
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="font-medium text-gray-900">Vendu uniquement en gros</h4>
+                                            <p className="text-sm text-gray-600 mt-1">
+                                                Ce produit ne sera disponible qu'à l'achat en grandes quantités.
+                                            </p>
+                                        </div>
+                                        {isOnlyWhole === true && (
+                                            <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center">
+                                                <div className="w-2 h-2 bg-white rounded-full"></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+
+                                {/* Gros et Détail */}
+                                <button
+                                    onClick={() => setIsOnlyWhole(false)}
+                                    className={`w-full text-left p-4 rounded-lg border-2 transition-all ${isOnlyWhole === false
+                                        ? 'border-green-500 bg-green-50'
+                                        : 'border-gray-200 hover:border-green-300 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2 rounded-lg ${isOnlyWhole === false
+                                            ? 'bg-green-500 text-white'
+                                            : 'bg-gray-100 text-gray-600'
+                                            }`}>
+                                            <span className="text-lg">🛍️ + 📦</span>
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="font-medium text-gray-900">Vendu en gros et au détail</h4>
+                                            <p className="text-sm text-gray-600 mt-1">
+                                                Le produit sera disponible à l'unité et avec des prix de gros.
+                                            </p>
+                                        </div>
+                                        {isOnlyWhole === false && (
+                                            <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                                                <div className="w-2 h-2 bg-white rounded-full"></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Boutons de navigation */}
                     <div className="mt-8 flex justify-between items-center">
-                        {modalStep === 'wholesale' && (
+                        {(modalStep === 'wholesale' || modalStep === 'onlyWhole') && (
                             <button
                                 onClick={handleBackStep}
                                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
@@ -257,10 +361,12 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
                             disabled={
                                 (modalStep === 'type' && !selectedProductType) ||
                                 (modalStep === 'wholesale' && isWholesale === null) ||
+                                (modalStep === 'onlyWhole' && isOnlyWhole === null) ||
                                 isLoading
                             }
                             className={`px-6 py-2 rounded-lg font-medium transition-all ${((modalStep === 'type' && selectedProductType) ||
-                                (modalStep === 'wholesale' && isWholesale !== null)) && !isLoading
+                                (modalStep === 'wholesale' && isWholesale !== null) ||
+                                (modalStep === 'onlyWhole' && isOnlyWhole !== null)) && !isLoading
                                 ? 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90'
                                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                 }`}
@@ -271,7 +377,7 @@ const ProductTypeModal: React.FC<ProductTypeModalProps> = ({
                                     <span>Chargement...</span>
                                 </div>
                             ) : (
-                                <span>{modalStep === 'type' ? 'Continuer' : 'Terminer'}</span>
+                                <span>{modalStep === 'type' ? 'Continuer' : modalStep === 'wholesale' ? (isWholesale ? 'Continuer' : 'Terminer') : 'Terminer'}</span>
                             )}
                         </button>
                     </div>

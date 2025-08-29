@@ -81,12 +81,15 @@ const CreateProductPage: React.FC = () => {
     const [isWholesale, setIsWholesale] = useState<boolean | null>(
         saleFromUrl ? (saleFromUrl === '1' ? true : false) : null
     );
+    const [isOnlyWhole, setIsOnlyWhole] = useState<boolean | null>(
+        searchParams.get('isOnlyWhole') ? (searchParams.get('isOnlyWhole') === '1' ? true : false) : null
+    );
     const [wholesalePrices, setWholesalePrices] = useState<Array<{
         min_quantity: number;
         wholesale_price: number;
     }>>([{ min_quantity: 10, wholesale_price: 0 }]);
     const [variations, setVariations] = useState<Variation[]>([]);
-    console.log(wholesalePrices)
+
 
     const [description, setDescription] = useState('');
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -249,12 +252,11 @@ const CreateProductPage: React.FC = () => {
                 return;
             }
 
-            if (!price || Number(price) <= 0) {
+            if (!(isWholesale && isOnlyWhole) && (!price || Number(price) <= 0)) {
                 toast.error('Le prix du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
                     duration: 4000, // ms
                 });
-
                 return;
             }
 
@@ -498,10 +500,21 @@ const CreateProductPage: React.FC = () => {
             formData.append('product_residence', city);
             formData.append('type', productType);
             formData.append('is_wholesale', isWholesale ? '1' : '0');
+            if (isOnlyWhole !== null) {
+                formData.append('is_only_wholesale', isOnlyWhole ? '1' : '0');
+            }
 
             // Ajouter les données de vente en gros si applicable
             if (isWholesale) {
+                if (!isOnlyWhole) { // Only append product_price if not *only* wholesale
+                    formData.append('product_price', price);
+                }
+
                 formData.append('wholesale_prices', JSON.stringify(wholesalePrices));
+            }
+            else {
+                // If not wholesale, then product_price is always required.
+                formData.append('product_price', price);
             }
 
             if (featuredImage) {
@@ -871,12 +884,15 @@ const CreateProductPage: React.FC = () => {
 
 
 
-    const handleConfirmProductType = async (productType: 'simple' | 'variable', isWholesale: boolean) => {
+    const handleConfirmProductType = async (productType: 'simple' | 'variable', isWholesaleValue: boolean, isOnlyWholeValue: boolean | null) => {
         setProductType(productType);
-        setIsWholesale(isWholesale);
+        setIsWholesale(isWholesaleValue);
+        setIsOnlyWhole(isOnlyWholeValue); // Set the new state
         setShowModal(false);
-        const saleValue = isWholesale ? '1' : '0';
-        navigate(`/seller/create-product?type=${productType}&sale=${saleValue}`, { replace: true });
+        // setCurrentStep(2); // Supprimé car géré par le modal
+        const saleValue = isWholesaleValue ? '1' : '0';
+        const isOnlyWholeParam = isOnlyWholeValue !== null ? `&isOnlyWhole=${isOnlyWholeValue ? '1' : '0'}` : '';
+        navigate(`/seller/create-product?type=${productType}&sale=${saleValue}${isOnlyWholeParam}`, { replace: true });
     };
 
     // Effet pour générer les variations structurées
@@ -980,6 +996,7 @@ const CreateProductPage: React.FC = () => {
                     onConfirm={handleConfirmProductType}
                     initialProductType={null}
                     initialIsWholesale={isWholesale}
+                    initialIsOnlyWhole={isOnlyWhole}
                 />
             )}
 
@@ -1082,17 +1099,19 @@ const CreateProductPage: React.FC = () => {
 
                                 {productType === 'simple' && (
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
-                                            <input
-                                                type="number"
-                                                value={price}
-                                                onChange={(e) => setPrice(e.target.value)}
-                                                className="w-full max-sm:placeholder:text-md px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                                                placeholder="Prix (Fcfa)"
+                                        {(!isWholesale || (isWholesale && isOnlyWhole === false)) && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
+                                                <input
+                                                    type="number"
+                                                    value={price}
+                                                    onChange={(e) => setPrice(e.target.value)}
+                                                    className="w-full max-sm:placeholder:text-md px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                                    placeholder="Prix (Fcfa)"
 
-                                            />
-                                        </div>
+                                                />
+                                            </div>
+                                        )}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
                                             <input
