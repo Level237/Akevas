@@ -153,6 +153,14 @@ export const adminService = createApi({
                 body: body,
                 method: "POST"
             })
+        }),
+        deleteCategory: builder.mutation({
+            query: (id) => ({
+                url: `/api/v1/admin/category/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ['admin']
+
         })
     })
 })
@@ -164,6 +172,7 @@ export const {
     useConfirmOrNotShopMutation,
     useRecentProductsQuery,
     useRecentDeliveryQuery,
+    useDeleteCategoryMutation,
     useAdminListProductsQuery,
     useAdminListDeliveryQuery,
     useGetDeliveryQuery,
