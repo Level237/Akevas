@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 import { useAddProductMutation } from '@/services/sellerService';
-import { useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
+import { useGetAttributeByCategoryQuery, useGetAttributeValueByGroupQuery, useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem } from '@/components/ui/select';
@@ -77,7 +77,9 @@ const CreateProductPage: React.FC = () => {
     const [whatsappNumber, setWhatsappNumber] = useState('');
     const [city, setCity] = useState('');
     const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
-
+    const { data: getAttributesByCategory } = useGetAttributeByCategoryQuery('guard');
+    console.log(getAttributesByCategory)
+    const { data: getAttributeValueByGroup } = useGetAttributeValueByGroupQuery('5')
     const [isWholesale, setIsWholesale] = useState<boolean | null>(
         saleFromUrl ? (saleFromUrl === '1' ? true : false) : null
     );
@@ -986,6 +988,32 @@ const CreateProductPage: React.FC = () => {
         }
     }, [searchParams]);
 
+    const [showPrice, setShowPrice] = useState(false);
+    const [showStock, setShowStock] = useState(false);
+    const [selectedAttributeType, setSelectedAttributeType] = useState('colorOnly');
+    const [selectedAttributeId, setSelectedAttributeId] = useState<number | null>(null);
+
+    const availableAttributes = [
+        {
+            "category_id": 1,
+            "category_name": "Vêtements",
+            "attribute_id": 2,
+            "attribute_name": "Taille"
+        },
+        {
+            "category_id": 3,
+            "category_name": "Chaussures",
+            "attribute_id": 4,
+            "attribute_name": "Pointure"
+        },
+        {
+            "category_id": 5,
+            "category_name": "Mèches",
+            "attribute_id": 5,
+            "attribute_name": "Longueur"
+        }
+    ];
+
     return (
         <div className="min-h-screen bg-gray-50   max-sm:pb-16">
             {/* Modal de sélection du type de produit */}
@@ -1417,11 +1445,11 @@ const CreateProductPage: React.FC = () => {
                                         {/* Type de variation */}
                                         <div className="mb-8">
                                             <h3 className="text-sm font-medium text-gray-700 mb-3">Type de variation</h3>
-                                            <div className="grid grid-cols-3 gap-3">
+                                            <div className="grid grid-cols-2 gap-3">
                                                 <button
                                                     type="button"
-
                                                     onClick={() => {
+                                                        setSelectedAttributeType('colorOnly');
                                                         setAttributes(attributes.filter(attr => !attr.affectsPrice));
                                                         setVariants([]);
                                                         setVariationFrames([]);
@@ -1438,7 +1466,7 @@ const CreateProductPage: React.FC = () => {
                                                             addVariationFrame();
                                                         }
                                                     }}
-                                                    className={`p-4 h-24 rounded-xl max-sm:text-xs border-2 transition-all ${!attributes.some(attr => attr.affectsPrice)
+                                                    className={`p-4 h-24 rounded-xl max-sm:text-xs border-2 transition-all ${selectedAttributeType === 'colorOnly'
                                                         ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
                                                         : 'border-gray-200 hover:border-gray-300'
                                                         }`}
@@ -1455,23 +1483,7 @@ const CreateProductPage: React.FC = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => {
-                                                        if (!attributes.some(attr => attr.affectsPrice)) {
-                                                            setAttributes([
-                                                                ...attributes,
-                                                                {
-                                                                    id: 2,
-                                                                    name: 'Taille',
-                                                                    affectsPrice: true,
-                                                                    values: []
-                                                                }
-                                                            ]);
-                                                        } else {
-                                                            setAttributes(attributes.map(attr =>
-                                                                attr.affectsPrice
-                                                                    ? { ...attr, name: 'Taille', id: 2 }
-                                                                    : attr
-                                                            ));
-                                                        }
+                                                        setSelectedAttributeType('colorAndAttribute');
                                                         setVariants([]);
                                                         setVariationFrames([]);
                                                         addVariationFrame();
@@ -1488,7 +1500,7 @@ const CreateProductPage: React.FC = () => {
                                                             addVariationFrame();
                                                         }
                                                     }}
-                                                    className={`p-4 h-24 rounded-xl border-2 transition-all ${attributes.some(attr => attr.name === 'Taille')
+                                                    className={`p-4 h-24 rounded-xl border-2 transition-all ${selectedAttributeType === 'colorAndAttribute'
                                                         ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
                                                         : 'border-gray-200 hover:border-gray-300'
                                                         }`}
@@ -1499,291 +1511,298 @@ const CreateProductPage: React.FC = () => {
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                                                             </svg>
                                                         </div>
-                                                        <span className="text-xs font-medium">Couleur et Taille</span>
-                                                    </div>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        if (!attributes.some(attr => attr.affectsPrice)) {
-                                                            setAttributes([
-                                                                ...attributes,
-                                                                {
-                                                                    id: 3,
-                                                                    name: 'Pointure',
-                                                                    affectsPrice: true,
-                                                                    values: []
-                                                                }
-                                                            ]);
-                                                        } else {
-                                                            setAttributes(attributes.map(attr =>
-                                                                attr.affectsPrice
-                                                                    ? { ...attr, name: 'Pointure', id: 3 }
-                                                                    : attr
-                                                            ));
-                                                        }
-                                                        setVariants([]);
-                                                        setVariationFrames([]);
-                                                        addVariationFrame();
-                                                        // Remplacer la variation existante ou en créer une nouvelle si aucune n'existe
-                                                        if (variationFrames.length > 0) {
-                                                            setVariationFrames([{
-                                                                id: variationFrames[0].id,
-                                                                sizes: [],
-                                                                shoeSizes: [],
-                                                                images: [],
-                                                                quantity: undefined
-                                                            }]);
-                                                        } else {
-                                                            addVariationFrame();
-                                                        }
-                                                    }}
-                                                    className={`p-4 h-24 rounded-xl border-2 transition-all ${attributes.some(attr => attr.name === 'Pointure')
-                                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
-                                                        : 'border-gray-200 hover:border-gray-300'
-                                                        }`}
-                                                >
-                                                    <div className="flex flex-col items-center gap-2">
-                                                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                                                            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                                                            </svg>
-                                                        </div>
-                                                        <span className="text-xs font-medium">Couleur et Pointure</span>
+                                                        <span className="text-xs font-medium">Couleur et Attribut</span>
                                                     </div>
                                                 </button>
                                             </div>
                                         </div>
 
-
-
-
-
+                                        {selectedAttributeType === 'colorAndAttribute' && (
+                                            <div className="mb-8">
+                                                <label htmlFor="attribute-category" className="block text-sm font-medium text-gray-700 mb-2">Sélectionner la catégorie d'attribut</label>
+                                                <select
+                                                    id="attribute-category"
+                                                    name="attribute-category"
+                                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
+                                                    value={selectedAttributeId || ''}
+                                                    onChange={(e) => {
+                                                        const selectedCat = availableAttributes.find(attr => attr.attribute_id === parseInt(e.target.value));
+                                                        if (selectedCat) {
+                                                            setSelectedAttributeId(selectedCat.attribute_id);
+                                                            setAttributes(prev => {
+                                                                const existingAttribute = prev.find(attr => attr.affectsPrice);
+                                                                if (existingAttribute) {
+                                                                    return prev.map(attr =>
+                                                                        attr.affectsPrice
+                                                                            ? { ...attr, name: selectedCat.attribute_name, id: selectedCat.attribute_id }
+                                                                            : attr
+                                                                    );
+                                                                } else {
+                                                                    return [
+                                                                        ...prev.filter(attr => !attr.affectsPrice),
+                                                                        {
+                                                                            id: selectedCat.attribute_id,
+                                                                            name: selectedCat.attribute_name,
+                                                                            affectsPrice: true,
+                                                                            values: []
+                                                                        }
+                                                                    ];
+                                                                }
+                                                            });
+                                                        } else {
+                                                            // If no category is selected, remove the price-affecting attribute
+                                                            setAttributes(prev => prev.filter(attr => !attr.affectsPrice));
+                                                            setSelectedAttributeId(null);
+                                                        }
+                                                        setVariants([]);
+                                                        setVariationFrames([]);
+                                                        addVariationFrame();
+                                                        if (variationFrames.length > 0) {
+                                                            setVariationFrames([{
+                                                                id: variationFrames[0].id,
+                                                                sizes: [],
+                                                                shoeSizes: [],
+                                                                images: [],
+                                                                quantity: undefined
+                                                            }]);
+                                                        } else {
+                                                            addVariationFrame();
+                                                        }
+                                                    }}
+                                                >
+                                                    <option value="">Sélectionner un attribut</option>
+                                                    {availableAttributes.map(attr => (
+                                                        <option key={attr.attribute_id} value={attr.attribute_id}>
+                                                            {attr.category_name} ({attr.attribute_name})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        )}
                                     </div>
 
-                                    <div className="bg-white rounded-2xl shadow-sm p-6">
-                                        <div className="mb-6">
-                                            <h2 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variations du produit</h2>
-                                            <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les différentes variations de votre produit</p>
-                                        </div>
+                                    {((selectedAttributeType === 'colorAndAttribute' && selectedAttributeId) || selectedAttributeType === 'colorOnly') && (
+                                        <div className="bg-white rounded-2xl shadow-sm p-6">
+                                            <div className="mb-6">
+                                                <h2 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variations du produit</h2>
+                                                <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les différentes variations de votre produit</p>
+                                            </div>
 
-                                        {/* Liste des cadres de variation */}
-                                        <div className="space-y-6">
-                                            {variationFrames.map((frame) => (
-                                                <div key={frame.id} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
-                                                    <div className="flex items-center justify-between mb-6">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-10 h-10 rounded-xl bg-[#ed7e0f]/10 flex items-center justify-center">
-                                                                <span className="text-[#ed7e0f] font-semibold max-sm:text-xs">
-                                                                    {variationFrames.indexOf(frame) + 1}
-                                                                </span>
+                                            {/* Liste des cadres de variation */}
+                                            <div className="space-y-6">
+                                                {variationFrames.map((frame) => (
+                                                    <div key={frame.id} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                                                        <div className="flex items-center justify-between mb-6">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 rounded-xl bg-[#ed7e0f]/10 flex items-center justify-center">
+                                                                    <span className="text-[#ed7e0f] font-semibold max-sm:text-xs">
+                                                                        {variationFrames.indexOf(frame) + 1}
+                                                                    </span>
+                                                                </div>
+                                                                <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variation {variationFrames.indexOf(frame) + 1}</h3>
                                                             </div>
-                                                            <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900">Variation {variationFrames.indexOf(frame) + 1}</h3>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeVariationFrame(frame.id)}
-                                                            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-                                                        >
-                                                            <X className="w-5 h-5 text-gray-500" />
-                                                        </button>
-                                                    </div>
-
-                                                    <div className="space-y-6">
-                                                        {/* Première ligne : Couleur et Taille/Pointure */}
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            {/* Sélection de la couleur */}
-                                                            <div>
-                                                                <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Couleur</label>
-                                                                <Select
-                                                                    value={frame.colorId?.toString()}
-                                                                    onValueChange={(value) => updateVariationFrame(frame.id, { colorId: Number(value) })}
-                                                                >
-                                                                    <SelectTrigger className="bg-gray-50">
-                                                                        <SelectValue placeholder="Choisir une couleur" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        {getAttributes?.[0]?.values
-                                                                            .filter((color: any) => !variationFrames.some(f => f.colorId === color.id && f.id !== frame.id))
-                                                                            .map((color: any) => (
-                                                                                <SelectItem key={color.id} value={color.id.toString()}>
-                                                                                    <div className="flex items-center gap-2">
-                                                                                        <div
-                                                                                            className="w-4 h-4 rounded-full border border-gray-200"
-                                                                                            style={{ backgroundColor: color.hex_color }}
-                                                                                        />
-                                                                                        <span>{color.value}</span>
-                                                                                    </div>
-                                                                                </SelectItem>
-                                                                            ))}
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </div>
-                                                            {/* Champ quantité pour couleur uniquement */}
-                                                            {!attributes.some(attr => attr.affectsPrice) && (
-                                                                <div>
-                                                                    <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quantité</label>
-                                                                    <input
-                                                                        type="number"
-                                                                        min={1}
-                                                                        value={frame.quantity ?? ''}
-                                                                        onChange={e => updateVariationFrame(frame.id, { quantity: Number(e.target.value) })}
-                                                                        className="w-full px-4 py-2 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
-                                                                        placeholder="Quantité pour cette couleur"
-
-                                                                    />
-                                                                </div>
-                                                            )}
-
-                                                            {/* Sélection de la taille ou pointure */}
-                                                            {attributes.some(attr => attr.name === 'Taille') && (
-                                                                <div>
-                                                                    <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Taille</label>
-                                                                    <div className="space-y-3">
-                                                                        <Select
-                                                                            onValueChange={(value) => {
-                                                                                const sizeId = Number(value);
-                                                                                const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
-                                                                                if (size) {
-                                                                                    const quantity = prompt(`Quantité pour la taille ${size.value}:`, "1");
-                                                                                    if (quantity && !isNaN(Number(quantity))) {
-                                                                                        addSizeToVariation(frame.id, sizeId, Number(quantity));
-                                                                                    }
-                                                                                }
-                                                                            }}
-                                                                        >
-                                                                            <SelectTrigger className="bg-gray-50">
-                                                                                <SelectValue placeholder="Choisir une taille" />
-                                                                            </SelectTrigger>
-                                                                            <SelectContent>
-                                                                                {getAttributes?.[1]?.values.map((size: any) => (
-                                                                                    <SelectItem key={size.id} value={size.id.toString()}>
-                                                                                        {size.value}
-                                                                                    </SelectItem>
-                                                                                ))}
-                                                                            </SelectContent>
-                                                                        </Select>
-
-                                                                        {/* Liste des tailles sélectionnées */}
-                                                                        <div className="flex flex-wrap gap-2">
-                                                                            {frame.sizes.map((size) => {
-                                                                                const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === size.id);
-                                                                                return (
-                                                                                    <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
-                                                                                        <span className="text-sm">{size.quantity} {sizeData?.value}</span>
-                                                                                        <button
-                                                                                            onClick={() => removeSizeFromVariation(frame.id, size.id)}
-                                                                                            className="text-gray-400 hover:text-gray-600"
-                                                                                        >
-                                                                                            <X className="w-3 h-3" />
-                                                                                        </button>
-                                                                                    </div>
-                                                                                );
-                                                                            })}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            )}
-
-                                                            {attributes.some(attr => attr.name === 'Pointure') && (
-                                                                <div>
-                                                                    <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Pointure</label>
-                                                                    <div className="space-y-3">
-                                                                        <Select
-                                                                            onValueChange={(value) => {
-                                                                                const sizeId = Number(value);
-                                                                                const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
-                                                                                if (size) {
-                                                                                    const quantity = prompt(`Quantité pour la pointure ${size.value}:`, "1");
-                                                                                    if (quantity && !isNaN(Number(quantity))) {
-                                                                                        addShoeSizeToVariation(frame.id, sizeId, Number(quantity));
-                                                                                    }
-                                                                                }
-                                                                            }}
-                                                                        >
-                                                                            <SelectTrigger className="bg-gray-50">
-                                                                                <SelectValue placeholder="Choisir une pointure" />
-                                                                            </SelectTrigger>
-                                                                            <SelectContent>
-                                                                                {getAttributes?.[3]?.values.map((size: any) => (
-                                                                                    <SelectItem key={size.id} value={size.id.toString()}>
-                                                                                        {size.value}
-                                                                                    </SelectItem>
-                                                                                ))}
-                                                                            </SelectContent>
-                                                                        </Select>
-
-                                                                        {/* Liste des pointures sélectionnées */}
-                                                                        <div className="flex flex-wrap gap-2">
-                                                                            {frame.shoeSizes.map((size) => {
-                                                                                const shoeSizeData = getAttributes?.[3]?.values.find((s: any) => s.id === size.id);
-                                                                                return (
-                                                                                    <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
-                                                                                        <span className="text-sm">{shoeSizeData?.value}</span>
-                                                                                        <button
-                                                                                            onClick={() => removeShoeSizeFromVariation(frame.id, size.id)}
-                                                                                            className="text-gray-400 hover:text-gray-600"
-                                                                                        >
-                                                                                            <X className="w-3 h-3" />
-                                                                                        </button>
-                                                                                    </div>
-                                                                                );
-                                                                            })}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            )}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeVariationFrame(frame.id)}
+                                                                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                                                            >
+                                                                <X className="w-5 h-5 text-gray-500" />
+                                                            </button>
                                                         </div>
 
-                                                        {/* Section images */}
-                                                        <div>
-                                                            <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Images de la variation</label>
-                                                            <div className="grid grid-cols-4 gap-3">
-                                                                {frame.images.map((image, idx) => (
-                                                                    <div key={idx} className="relative group aspect-square">
-                                                                        <img
-                                                                            src={URL.createObjectURL(image)}
-                                                                            alt={`Variation ${idx + 1}`}
-                                                                            className="w-16 h-16 object-cover rounded-xl"
+                                                        <div className="space-y-6">
+                                                            {/* Première ligne : Couleur et Taille/Pointure */}
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                {/* Sélection de la couleur */}
+                                                                <div>
+                                                                    <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Couleur</label>
+                                                                    <Select
+                                                                        value={frame.colorId?.toString()}
+                                                                        onValueChange={(value) => updateVariationFrame(frame.id, { colorId: Number(value) })}
+                                                                    >
+                                                                        <SelectTrigger className="bg-gray-50">
+                                                                            <SelectValue placeholder="Choisir une couleur" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            {getAttributes?.[0]?.values
+                                                                                .filter((color: any) => !variationFrames.some(f => f.colorId === color.id && f.id !== frame.id))
+                                                                                .map((color: any) => (
+                                                                                    <SelectItem key={color.id} value={color.id.toString()}>
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            <div
+                                                                                                className="w-4 h-4 rounded-full border border-gray-200"
+                                                                                                style={{ backgroundColor: color.hex_color }}
+                                                                                            />
+                                                                                            <span>{color.value}</span>
+                                                                                        </div>
+                                                                                    </SelectItem>
+                                                                                ))}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </div>
+                                                                {/* Champ quantité pour couleur uniquement */}
+                                                                {!attributes.some(attr => attr.affectsPrice) && (
+                                                                    <div>
+                                                                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quantité</label>
+                                                                        <input
+                                                                            type="number"
+                                                                            min={1}
+                                                                            value={frame.quantity ?? ''}
+                                                                            onChange={e => updateVariationFrame(frame.id, { quantity: Number(e.target.value) })}
+                                                                            className="w-full px-4 py-2 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
+                                                                            placeholder="Quantité pour cette couleur"
+
                                                                         />
-                                                                        <button
-                                                                            onClick={() => removeVariationImage(frame.id, idx)}
-                                                                            className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
-                                                                        >
-                                                                            <X className="w-4 h-4 text-red-500" />
-                                                                        </button>
                                                                     </div>
-                                                                ))}
-                                                                <label className="aspect-square flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50/80 hover:border-[#ed7e0f] transition-all group">
-                                                                    <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#ed7e0f]" />
-                                                                    <span className="text-xs text-gray-400 group-hover:text-[#ed7e0f]">Ajouter</span>
-                                                                    <input
-                                                                        type="file"
-                                                                        className="hidden"
-                                                                        accept="image/*"
-                                                                        multiple
-                                                                        onChange={(e) => e.target.files && handleVariationImageUpload(frame.id, e.target.files)}
-                                                                    />
-                                                                </label>
+                                                                )}
+
+                                                                {/* Sélection de la taille ou pointure */}
+                                                                {attributes.some(attr => attr.name === 'Taille') && (
+                                                                    <div>
+                                                                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Taille</label>
+                                                                        <div className="space-y-3">
+                                                                            <Select
+                                                                                onValueChange={(value) => {
+                                                                                    const sizeId = Number(value);
+                                                                                    const size = getAttributes?.[1]?.values.find((s: any) => s.id === sizeId);
+                                                                                    if (size) {
+                                                                                        const quantity = prompt(`Quantité pour la taille ${size.value}:`, "1");
+                                                                                        if (quantity && !isNaN(Number(quantity))) {
+                                                                                            addSizeToVariation(frame.id, sizeId, Number(quantity));
+                                                                                        }
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                <SelectTrigger className="bg-gray-50">
+                                                                                    <SelectValue placeholder="Choisir une taille" />
+                                                                                </SelectTrigger>
+                                                                                <SelectContent>
+                                                                                    {getAttributes?.[1]?.values.map((size: any) => (
+                                                                                        <SelectItem key={size.id} value={size.id.toString()}>
+                                                                                            {size.value}
+                                                                                        </SelectItem>
+                                                                                    ))}
+                                                                                </SelectContent>
+                                                                            </Select>
+
+                                                                            {/* Liste des tailles sélectionnées */}
+                                                                            <div className="flex flex-wrap gap-2">
+                                                                                {frame.sizes.map((size) => {
+                                                                                    const sizeData = getAttributes?.[1]?.values.find((s: any) => s.id === size.id);
+                                                                                    return (
+                                                                                        <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
+                                                                                            <span className="text-sm">{size.quantity} {sizeData?.value}</span>
+                                                                                            <button
+                                                                                                onClick={() => removeSizeFromVariation(frame.id, size.id)}
+                                                                                                className="text-gray-400 hover:text-gray-600"
+                                                                                            >
+                                                                                                <X className="w-3 h-3" />
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    );
+                                                                                })}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+
+                                                                {attributes.some(attr => attr.name === 'Pointure') && (
+                                                                    <div>
+                                                                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Pointure</label>
+                                                                        <div className="space-y-3">
+                                                                            <Select
+                                                                                onValueChange={(value) => {
+                                                                                    const sizeId = Number(value);
+                                                                                    const size = getAttributes?.[3]?.values.find((s: any) => s.id === sizeId);
+                                                                                    if (size) {
+                                                                                        const quantity = prompt(`Quantité pour la pointure ${size.value}:`, "1");
+                                                                                        if (quantity && !isNaN(Number(quantity))) {
+                                                                                            addShoeSizeToVariation(frame.id, sizeId, Number(quantity));
+                                                                                        }
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                <SelectTrigger className="bg-gray-50">
+                                                                                    <SelectValue placeholder="Choisir une pointure" />
+                                                                                </SelectTrigger>
+                                                                                <SelectContent>
+                                                                                    {getAttributes?.[3]?.values.map((size: any) => (
+                                                                                        <SelectItem key={size.id} value={size.id.toString()}>
+                                                                                            {size.value}
+                                                                                        </SelectItem>
+                                                                                    ))}
+                                                                                </SelectContent>
+                                                                            </Select>
+
+                                                                            {/* Liste des pointures sélectionnées */}
+                                                                            <div className="flex flex-wrap gap-2">
+                                                                                {frame.shoeSizes.map((size) => {
+                                                                                    const shoeSizeData = getAttributes?.[3]?.values.find((s: any) => s.id === size.id);
+                                                                                    return (
+                                                                                        <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
+                                                                                            <span className="text-sm">{shoeSizeData?.value}</span>
+                                                                                            <button
+                                                                                                onClick={() => removeShoeSizeFromVariation(frame.id, size.id)}
+                                                                                                className="text-gray-400 hover:text-gray-600"
+                                                                                            >
+                                                                                                <X className="w-3 h-3" />
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    );
+                                                                                })}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+
+                                                            {/* Section images */}
+                                                            <div>
+                                                                <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Images de la variation</label>
+                                                                <div className="grid grid-cols-4 gap-3">
+                                                                    {frame.images.map((image, idx) => (
+                                                                        <div key={idx} className="relative group aspect-square">
+                                                                            <img
+                                                                                src={URL.createObjectURL(image)}
+                                                                                alt={`Variation ${idx + 1}`}
+                                                                                className="w-16 h-16 object-cover rounded-xl"
+                                                                            />
+                                                                            <button
+                                                                                onClick={() => removeVariationImage(frame.id, idx)}
+                                                                                className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
+                                                                            >
+                                                                                <X className="w-4 h-4 text-red-500" />
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                    <label className="aspect-square flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50/80 hover:border-[#ed7e0f] transition-all group">
+                                                                        <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#ed7e0f]" />
+                                                                        <span className="text-xs text-gray-400 group-hover:text-[#ed7e0f]">Ajouter</span>
+                                                                        <input
+                                                                            type="file"
+                                                                            className="hidden"
+                                                                            accept="image/*"
+                                                                            multiple
+                                                                            onChange={(e) => e.target.files && handleVariationImageUpload(frame.id, e.target.files)}
+                                                                        />
+                                                                    </label>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                                ))}
 
-                                        {/* Bouton Ajouter une variation */}
-                                        <div className="mt-8 flex justify-center">
-                                            <button
-                                                type="button"
-                                                onClick={addVariationFrame}
-                                                className="px-4 py-3 bg-transparent border border-[#ed7e0f] hover:bg-[#ed7e0f]/5 text-[#ed7e0f] rounded-xl hover:bg-[#ed7e0f]/90 transition-colors flex items-center gap-2"
-                                            >
-                                                <Plus className="w-5 max-sm:w-4 h-5" />
-                                                <span className="max-sm:text-xs">Ajouter une variation</span>
-                                            </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={addVariationFrame}
+                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md text-[#ed7e0f] bg-[#ed7e0f]/10 hover:bg-[#ed7e0f]/20 transition-colors"
+                                                >
+                                                    <Plus className="w-4 h-4" />
+                                                    Ajouter une variation
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
 
                                     {/* Section des prix par taille/pointure */}
                                     <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
