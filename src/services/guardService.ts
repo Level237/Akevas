@@ -112,7 +112,7 @@ export const guardService = createApi({
             providesTags: ['guard'],
         }),
         getParentForCategories: builder.query({
-            query: ({arrayId}) => ({
+            query: ({ arrayId }) => ({
                 url: `/api/filter/categories/${arrayId}`,
                 method: "GET",
             }),
@@ -157,13 +157,31 @@ export const guardService = createApi({
                 method: 'GET'
             }),
             providesTags: ['guard']
+        }),
+        getAttributeByCategory: builder.query({
+            query: () => ({
+                url: "/api/categories/attributes",
+                method: "GET"
+            }),
+            providesTags: ['guard']
+        }),
+        getAttributeValueByGroup: builder.query({
+            query: (id) => ({
+                url: `/api/attributes/value/by/group/${id}`,
+                method: 'GET'
+            }),
+            providesTags: ["guard"]
         })
     }),
+
+
 })
 
 export const {
     useGetShopQuery,
     useGetCategoriesQuery,
+    useGetAttributeByCategoryQuery,
+    useGetAttributeValueByGroupQuery,
     useGetTownsQuery,
     useGetQuartersQuery,
     useCheckIfEmailExistsMutation,
