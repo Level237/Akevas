@@ -1,6 +1,6 @@
 import { Edit, Eye } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
-import { useGetProductsOfTrashQuery, useGetProductsQuery, usePutInTrashMutation } from '@/services/sellerService'
+import { useGetProductsOfTrashQuery, useGetProductsQuery, usePutInTrashMutation, useRestoreProductMutation } from '@/services/sellerService'
 import { Package } from 'lucide-react'
 import { Product } from '@/types/products'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
@@ -9,18 +9,27 @@ import { formatDate } from '@/lib/formatDate'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom';
+import { Upload } from 'lucide-react';
 
-export default function ProductListOverview({ products, isLoading }: { products: Product[], isLoading: boolean }) {
+export default function ProductListOverview({ products, isLoading, isTrashView }: { products: Product[], isLoading: boolean, isTrashView: boolean }) {
   console.log(products)
 
   const [isOpen, setIsOpen] = useState(false);
   const [productId, setProductId] = useState("");
   const [putInTrash, { isLoading: isPuttingInTrash }] = usePutInTrashMutation()
+  const [restoreProduct, { isLoading: isRestoringProduct }] = useRestoreProductMutation()
   // Fonction pour déterminer le type de vente
 
   const handlePutInTrash = async (productId: string) => {
     await putInTrash(productId)
     toast.success("Produit ajouté à la corbeille", {
+      duration: 3000,
+    });
+  }
+
+  const handleRestoreProduct = async (productId: string) => {
+    await restoreProduct(productId)
+    toast.success("Produit restauré avec succès", {
       duration: 3000,
     });
   }
@@ -231,7 +240,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                     onClick={() => openModalTrash(product.id)}
                     className="bg-red-50 cursor-pointer hover:bg-red-100 text-red-700 hover:text-red-800 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    {isTrashView ? <Upload className="w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
                   </button>
 
                   {/* Modal de confirmation pour la corbeille */}
@@ -240,12 +249,12 @@ export default function ProductListOverview({ products, isLoading }: { products:
                       <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-[90vw] p-6 mx-2 animate-fade-in">
                         <div className="flex flex-col items-center text-center">
                           <div className="bg-red-100 rounded-full p-3 mb-3">
-                            <Trash2 className="w-8 h-8 text-red-600" />
+                            {isTrashView ? <Upload className="w-8 h-8 text-red-600" /> : <Trash2 className="w-8 h-8 text-red-600" />}
                           </div>
-                          <h2 className="text-lg font-bold mb-2 text-gray-900">Mettre ce produit à la corbeille ?</h2>
+                          <h2 className="text-lg font-bold mb-2 text-gray-900">{isTrashView ? "Restaurer ce produit ?" : "Mettre ce produit à la corbeille ?"}</h2>
                           <p className="text-gray-600 mb-6 text-sm">
-                            Êtes-vous sûr de vouloir mettre <span className="font-semibold">{product.product_name}</span> à la corbeille ?<br />
-                            Cette action peut être annulée depuis la corbeille.
+                            {isTrashView ? "Êtes-vous sûr de vouloir restaurer" : "Êtes-vous sûr de vouloir mettre"} <span className="font-semibold">{product.product_name}</span> {isTrashView ? "?" : "à la corbeille ?"}<br />
+                            {isTrashView ? "Cette action le rendra visible à nouveau sur votre boutique." : "Cette action peut être annulée depuis la corbeille."}
                           </p>
                           <div className="flex flex-col sm:flex-row gap-3 w-full">
                             <button
@@ -256,13 +265,17 @@ export default function ProductListOverview({ products, isLoading }: { products:
                             </button>
                             <button
                               onClick={async () => {
-                                await handlePutInTrash(productId);
+                                if (isTrashView) {
+                                  await handleRestoreProduct(productId);
+                                } else {
+                                  await handlePutInTrash(productId);
+                                }
                                 setIsOpen(false);
                               }}
-                              disabled={isPuttingInTrash}
+                              disabled={isPuttingInTrash || isRestoringProduct}
                               className="flex-1 text-sm py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition font-semibold"
                             >
-                              {isPuttingInTrash ? "Mise à la corbeille..." : "Mettre à la corbeille"}
+                              {isTrashView ? (isRestoringProduct ? "Restauration..." : "Restaurer") : (isPuttingInTrash ? "Mise à la corbeille..." : "Mettre à la corbeille")}
                             </button>
                           </div>
                         </div>
@@ -440,5 +453,5 @@ export function ProductListContainer() {
   const displayProducts = isTrashView ? (productsTrashData?.data || []) : (products || []);
   const displayLoading = isTrashView ? isLoadingProductsTrash : isLoading;
 
-  return <ProductListOverview products={displayProducts} isLoading={displayLoading} />
+  return <ProductListOverview products={displayProducts} isLoading={displayLoading} isTrashView={isTrashView} />
 }

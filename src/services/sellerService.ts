@@ -100,6 +100,13 @@ export const sellerService = createApi({
             }),
             invalidatesTags: ['seller']
         }),
+        restoreProduct: builder.mutation({
+            query: (id) => ({
+                url: `/api/v1/restore/product/${id}`,
+                method: 'POST'
+            }),
+            invalidatesTags: ['seller']
+        }),
         getProductsOfTrash: builder.query({
             query: () => ({
                 url: '/api/v1/trash/products',
@@ -126,5 +133,6 @@ export const {
     useShowOrderQuery,
     useRecentNotificationsQuery,
     useGetNotificationQuery,
-    useAllNotificationQuery
+    useAllNotificationQuery,
+    useRestoreProductMutation
 } = sellerService
