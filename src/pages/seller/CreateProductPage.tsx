@@ -578,13 +578,13 @@ const CreateProductPage: React.FC = () => {
                 console.log(`${key}:`, value);
             }
 
-            //const reponse = await addProduct(formData);
-            //console.log(reponse)
+            const reponse = await addProduct(formData);
+            console.log(reponse)
             toast.success('Produit créé avec succès', {
                 description: "Vous pouvez désormais accéder à votre liste de produits",
                 duration: 4000, // ms
             });
-            //navigate('/seller/products')
+            navigate('/seller/products')
         } catch (error) {
 
 
@@ -871,7 +871,7 @@ const CreateProductPage: React.FC = () => {
                         },
                         sizes: [],
                         shoeSizes: [],
-                        images: frame.images.map(image => image.name as unknown as File),
+                        images: frame.images.map(image => image as unknown as File),
                         quantity: frame.quantity || 0,
                         price: globalColorPrice || 0,
                     });
@@ -889,7 +889,7 @@ const CreateProductPage: React.FC = () => {
                                 },
                                 sizes: [{ id: attributeValue.id, name: attributeValue.name, quantity: attributeValue.quantity, price: attributeValuePrices[attributeValue.id] || 0 }],
                                 shoeSizes: [],
-                                images: frame.images.map(image => image.name as unknown as File),
+                                images: frame.images.map(image => image as unknown as File),
                                 quantity: attributeValue.quantity || 0,
                                 price: attributeValuePrices[attributeValue.id] || 0,
                             });
@@ -1793,20 +1793,28 @@ const CreateProductPage: React.FC = () => {
                                                                 <div className="flex-1 min-w-0">
                                                                     {/* En-tête avec la couleur */}
                                                                     {color && (
-                                                                        <div className="flex items-center gap-2 mb-3">
-                                                                            <div
-                                                                                className="w-5 h-5 rounded-full border border-gray-200"
-                                                                                style={{ backgroundColor: color.hex_color }}
-                                                                            />
-                                                                            <span className="text-base font-medium">{color.value}</span>
-                                                                            {!attributes.some(attr => attr.affectsPrice) && (
-                                                                                <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
-                                                                                    {globalColorPrice || 0} FCFA
+                                                                        <div className="flex flex-col items-start gap-2 mb-3">
+                                                                            <div className='flex items-center gap-2'>
+                                                                                <div
+                                                                                    className="w-5 h-5 rounded-full border border-gray-200"
+                                                                                    style={{ backgroundColor: color.hex_color }}
+                                                                                />
+                                                                                <span className="text-base font-medium">{color.value}</span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <span className='text-sm'>Prix :</span>
+                                                                                {!attributes.some(attr => attr.affectsPrice) && (
+                                                                                    <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
+                                                                                        {globalColorPrice || 0} FCFA
 
-                                                                                </span>
+                                                                                    </span>
 
-                                                                            )}
-                                                                            <span className="text-xs text-gray-500">Qté: {frame.quantity}</span>
+                                                                                )}
+                                                                            </div>
+                                                                            <div>
+                                                                                <span className="text-xs text-gray-500">Quantité: {frame.quantity}</span>
+                                                                            </div>
+
                                                                         </div>
                                                                     )}
 
