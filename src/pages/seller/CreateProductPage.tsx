@@ -652,13 +652,6 @@ const CreateProductPage: React.FC = () => {
         return Array.from(attributeValueIds);
     };
 
-    const getUniqueShoeSizes = () => {
-        const shoeSizeIds = new Set<number>();
-        variationFrames.forEach(frame => {
-            frame.shoeSizes.forEach(size => shoeSizeIds.add(size.id));
-        });
-        return Array.from(shoeSizeIds);
-    };
 
     const updateAttributeValuePrice = (attributeValueId: number, price: number) => {
         setAttributeValuePrices(prevPrices => ({
@@ -800,33 +793,7 @@ const CreateProductPage: React.FC = () => {
         setVariations([...uniqueVariations]); // Update the main variations state
     };
 
-    const updateSizePrice = (sizeId: number, price: number) => {
-        setSizePrices(prev => ({ ...prev, [sizeId]: price }));
 
-        // Mettre à jour toutes les variations qui contiennent cette taille
-        setVariationFrames(prevFrames =>
-            prevFrames.map(frame => ({
-                ...frame,
-                sizes: frame.sizes.map(size =>
-                    size.id === sizeId ? { ...size, price } : size
-                )
-            }))
-        );
-    };
-    // Fonction pour mettre à jour le prix d'une pointure
-    const updateShoeSizePrice = (sizeId: number, price: number) => {
-        setShoeSizePrices(prev => ({ ...prev, [sizeId]: price }));
-
-        // Mettre à jour toutes les variations qui contiennent cette pointure
-        setVariationFrames(prevFrames =>
-            prevFrames.map(frame => ({
-                ...frame,
-                shoeSizes: frame.shoeSizes.map(size =>
-                    size.id === sizeId ? { ...size, price } : size
-                )
-            }))
-        );
-    };
 
     useEffect(() => {
         const type = searchParams.get('type');
