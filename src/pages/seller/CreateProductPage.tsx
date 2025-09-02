@@ -72,8 +72,8 @@ const CreateProductPage: React.FC = () => {
     const [whatsappNumber, setWhatsappNumber] = useState('');
     const [city, setCity] = useState('');
     const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
-    const { data: getAttributesByCategory } = useGetAttributeByCategoryQuery('guard');
-    console.log(getAttributesByCategory)
+    const { data: availableAttributes, isLoading } = useGetAttributeByCategoryQuery('guard');
+
     const [selectedAttributeId, setSelectedAttributeId] = useState<number | null>(null);
     const [globalColorPrice, setGlobalColorPrice] = useState<number>(0);
     const [selectedAttributeType, setSelectedAttributeType] = useState<string | null>(null);
@@ -884,26 +884,7 @@ const CreateProductPage: React.FC = () => {
 
 
 
-    const availableAttributes = [
-        {
-            "category_id": 1,
-            "category_name": "Vêtements",
-            "attribute_id": 2,
-            "attribute_name": "Taille"
-        },
-        {
-            "category_id": 3,
-            "category_name": "Chaussures",
-            "attribute_id": 4,
-            "attribute_name": "Pointure"
-        },
-        {
-            "category_id": 5,
-            "category_name": "Mèches",
-            "attribute_id": 5,
-            "attribute_name": "Longueur"
-        }
-    ];
+
 
     const addAttributeValueToVariation = (frameId: string, attributeValueId: number, attributeValueName: string, quantity: number) => {
         setVariationFrames(prevFrames =>
@@ -1416,7 +1397,7 @@ const CreateProductPage: React.FC = () => {
                                                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
                                                     value={selectedAttributeId || ''}
                                                     onChange={(e) => {
-                                                        const selectedCat = availableAttributes.find(attr => attr.attribute_id === parseInt(e.target.value));
+                                                        const selectedCat = availableAttributes.find((attr: any) => attr.attribute_id === parseInt(e.target.value));
                                                         if (selectedCat) {
                                                             setSelectedAttributeId(selectedCat.attribute_id);
                                                             setAttributes(prev => {
@@ -1468,7 +1449,7 @@ const CreateProductPage: React.FC = () => {
                                                     }}
                                                 >
                                                     <option value="">Sélectionner un attribut</option>
-                                                    {availableAttributes.map(attr => (
+                                                    {!isLoading && availableAttributes.map((attr: any) => (
                                                         <option key={attr.attribute_id} value={attr.attribute_id}>
                                                             {attr.category_name} ({attr.attribute_name})
                                                         </option>
@@ -1767,7 +1748,7 @@ const CreateProductPage: React.FC = () => {
                                                                                     className="w-5 h-5 rounded-full border border-gray-200"
                                                                                     style={{ backgroundColor: color.hex_color }}
                                                                                 />
-                                                                                <span className="text-base font-medium">{color.value}</span>
+                                                                                <span className="text-base text-sm font-medium">{color.value}</span>
                                                                             </div>
                                                                             <div>
                                                                                 <span className='text-sm'>Prix :</span>
