@@ -68,7 +68,7 @@ const DashboardProductListPage = () => {
             </div>
           </div>
 
-          <ProductListContainer />
+          <ProductListContainer searchQuery={searchQuery} />
         </div>
       </div>
     </div>

@@ -6,12 +6,12 @@ import { Product } from '@/types/products'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import AsyncLink from '@/components/ui/AsyncLink'
 import { formatDate } from '@/lib/formatDate'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom';
 import { Upload } from 'lucide-react';
 
-export default function ProductListOverview({ products, isLoading, isTrashView }: { products: Product[], isLoading: boolean, isTrashView: boolean }) {
+export default function ProductListOverview({ products, isLoading, isTrashView, searchQuery }: { products: Product[], isLoading: boolean, isTrashView: boolean, searchQuery: string }) {
   console.log(products)
 
   const [isOpen, setIsOpen] = useState(false);
@@ -24,13 +24,26 @@ export default function ProductListOverview({ products, isLoading, isTrashView }
     await putInTrash(productId)
     toast.success("Produit ajouté à la corbeille", {
       duration: 3000,
+      action: {
+        label: "Afficher la corbeille",
+        onClick: () => {
+          window.location.href = "/seller/products?s=1";
+        }
+      }
     });
+
   }
 
   const handleRestoreProduct = async (productId: string) => {
     await restoreProduct(productId)
     toast.success("Produit restauré avec succès", {
       duration: 3000,
+      action: {
+        label: "Voir les produits",
+        onClick: () => {
+          window.location.href = "/seller/products";
+        }
+      }
     });
   }
 
@@ -38,6 +51,18 @@ export default function ProductListOverview({ products, isLoading, isTrashView }
     setIsOpen(true)
     setProductId(productId)
   }
+
+  const filteredProducts = useMemo(() => {
+    if (!searchQuery) {
+      return products;
+    }
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    return products.filter(product =>
+      product.product_name.toLowerCase().includes(lowerCaseQuery) ||
+      product.product_categories.some(category => category.category_name.toLowerCase().includes(lowerCaseQuery))
+    );
+  }, [products, searchQuery]);
+
   const getSaleTypeInfo = (product: Product) => {
     if (product.isWholeSale) {
       return {
@@ -107,7 +132,7 @@ export default function ProductListOverview({ products, isLoading, isTrashView }
             <IsLoadingComponents isLoading={isLoading} />
           </div>
         )}
-        {!isLoading && products.length === 0 && (
+        {!isLoading && filteredProducts.length === 0 && (
           <div className="col-span-full text-center py-8">
             <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
             <p className="text-gray-500">Aucun produit trouvé</p>
@@ -119,7 +144,7 @@ export default function ProductListOverview({ products, isLoading, isTrashView }
             </AsyncLink>
           </div>
         )}
-        {!isLoading && products.length > 0 && products.map((product) => {
+        {!isLoading && filteredProducts.length > 0 && filteredProducts.map((product) => {
           const saleInfo = getSaleTypeInfo(product);
           return (
             <div key={product.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
@@ -442,7 +467,7 @@ export default function ProductListOverview({ products, isLoading, isTrashView }
   )
 }
 
-export function ProductListContainer() {
+export function ProductListContainer({ searchQuery }: { searchQuery: string }) {
   const [searchParams] = useSearchParams();
   const isTrashView = searchParams.get('s') === '1';
 
@@ -453,5 +478,5 @@ export function ProductListContainer() {
   const displayProducts = isTrashView ? (productsTrashData?.data || []) : (products || []);
   const displayLoading = isTrashView ? isLoadingProductsTrash : isLoading;
 
-  return <ProductListOverview products={displayProducts} isLoading={displayLoading} isTrashView={isTrashView} />
+  return <ProductListOverview products={displayProducts} isLoading={displayLoading} isTrashView={isTrashView} searchQuery={searchQuery} />
 }
