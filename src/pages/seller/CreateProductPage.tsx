@@ -634,6 +634,7 @@ const CreateProductPage: React.FC = () => {
     const [sizePrices, setSizePrices] = useState<Record<number, number>>({});
     const [shoeSizePrices, setShoeSizePrices] = useState<Record<number, number>>({});
 
+    console.log(setSizePrices, setShoeSizePrices)
     const getUniqueAttributeValues = () => {
         const attributeValueIds = new Set<number>();
         if (selectedAttributeType === 'colorAndAttribute' && selectedAttributeId && getAttributeValueByGroup) {
