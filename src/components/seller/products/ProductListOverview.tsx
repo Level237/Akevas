@@ -1,16 +1,34 @@
 import { Edit, Eye } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
-import { useGetProductsQuery } from '@/services/sellerService'
+import { useGetProductsOfTrashQuery, useGetProductsQuery, usePutInTrashMutation } from '@/services/sellerService'
 import { Package } from 'lucide-react'
 import { Product } from '@/types/products'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
 import AsyncLink from '@/components/ui/AsyncLink'
 import { formatDate } from '@/lib/formatDate'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { useSearchParams } from 'react-router-dom';
 
 export default function ProductListOverview({ products, isLoading }: { products: Product[], isLoading: boolean }) {
   console.log(products)
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [productId, setProductId] = useState("");
+  const [putInTrash, { isLoading: isPuttingInTrash }] = usePutInTrashMutation()
   // Fonction pour déterminer le type de vente
+
+  const handlePutInTrash = async (productId: string) => {
+    await putInTrash(productId)
+    toast.success("Produit ajouté à la corbeille", {
+      duration: 3000,
+    });
+  }
+
+  const openModalTrash = (productId: string) => {
+    setIsOpen(true)
+    setProductId(productId)
+  }
   const getSaleTypeInfo = (product: Product) => {
     if (product.isWholeSale) {
       return {
@@ -208,9 +226,49 @@ export default function ProductListOverview({ products, isLoading }: { products:
                     <Edit className="w-4 h-4" />
 
                   </AsyncLink>
-                  <button className="bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2">
+
+                  <button
+                    onClick={() => openModalTrash(product.id)}
+                    className="bg-red-50 cursor-pointer hover:bg-red-100 text-red-700 hover:text-red-800 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
                     <Trash2 className="w-4 h-4" />
                   </button>
+
+                  {/* Modal de confirmation pour la corbeille */}
+                  {isOpen && productId === product.id && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                      <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-[90vw] p-6 mx-2 animate-fade-in">
+                        <div className="flex flex-col items-center text-center">
+                          <div className="bg-red-100 rounded-full p-3 mb-3">
+                            <Trash2 className="w-8 h-8 text-red-600" />
+                          </div>
+                          <h2 className="text-lg font-bold mb-2 text-gray-900">Mettre ce produit à la corbeille ?</h2>
+                          <p className="text-gray-600 mb-6 text-sm">
+                            Êtes-vous sûr de vouloir mettre <span className="font-semibold">{product.product_name}</span> à la corbeille ?<br />
+                            Cette action peut être annulée depuis la corbeille.
+                          </p>
+                          <div className="flex flex-col sm:flex-row gap-3 w-full">
+                            <button
+                              onClick={() => setIsOpen(false)}
+                              className="flex-1 text-sm py-2 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition"
+                            >
+                              Annuler
+                            </button>
+                            <button
+                              onClick={async () => {
+                                await handlePutInTrash(productId);
+                                setIsOpen(false);
+                              }}
+                              disabled={isPuttingInTrash}
+                              className="flex-1 text-sm py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition font-semibold"
+                            >
+                              {isPuttingInTrash ? "Mise à la corbeille..." : "Mettre à la corbeille"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -358,7 +416,7 @@ export default function ProductListOverview({ products, isLoading }: { products:
                     <Edit className="w-3.5 h-3.5" />
                     Modifier
                   </AsyncLink>
-                  <button className="bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 py-2 px-3 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center justify-center gap-1.5">
+                  <button onClick={() => openModalTrash(product.id)} className="bg-red-50 cursor-pointer hover:bg-red-100 text-red-700 hover:text-red-800 py-2 px-3 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center justify-center gap-1.5">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -367,11 +425,20 @@ export default function ProductListOverview({ products, isLoading }: { products:
           );
         })}
       </div>
-    </div>
+    </div >
   )
 }
 
 export function ProductListContainer() {
-  const { data: { data: products } = {}, isLoading } = useGetProductsQuery('seller')
-  return <ProductListOverview products={products} isLoading={isLoading} />
+  const [searchParams] = useSearchParams();
+  const isTrashView = searchParams.get('s') === '1';
+
+  const { data: { data: products } = {}, isLoading } = useGetProductsQuery('seller');
+  const { data: productsTrashData, isLoading: isLoadingProductsTrash } = useGetProductsOfTrashQuery('seller');
+  console.log(productsTrashData)
+  // Utiliser les produits de la corbeille si ?s=1, sinon les produits normaux
+  const displayProducts = isTrashView ? (productsTrashData?.data || []) : (products || []);
+  const displayLoading = isTrashView ? isLoadingProductsTrash : isLoading;
+
+  return <ProductListOverview products={displayProducts} isLoading={displayLoading} />
 }

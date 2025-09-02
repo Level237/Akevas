@@ -7,9 +7,12 @@ import {
 
 import AsyncLink from '@/components/ui/AsyncLink';
 import { ProductListContainer } from '@/components/seller/products/ProductListOverview';
+import { useSearchParams } from 'react-router-dom';
 
 
 const DashboardProductListPage = () => {
+  const [searchParams] = useSearchParams();
+  const isTrashView = searchParams.get('s') === '1';
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -21,9 +24,10 @@ const DashboardProductListPage = () => {
   return (
     <div className="container mx-24 w-92  max-sm:mx-auto px-4 py-8">
       <div className="mb-6 ">
-        <h1 className="text-2xl  font-bold text-gray-900">Mes produits</h1>
+        <h1 className="text-2xl  font-bold text-gray-900">{isTrashView ? "Corbeille des produits" : "Mes produits"}</h1>
         <p className="text-gray-600 mt-1">
-          Gérez votre catalogue de produits
+          {isTrashView ? '' : "Gérez votre catalogue de produits"}
+
         </p>
       </div>
 

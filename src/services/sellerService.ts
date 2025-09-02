@@ -92,15 +92,31 @@ export const sellerService = createApi({
         allNotification: builder.query({
             query: () => '/api/v1/seller/notifications',
             providesTags: ['seller']
+        }),
+        putInTrash: builder.mutation({
+            query: (id) => ({
+                url: `/api/v1/put/in/trash/${id}`,
+                method: 'POST'
+            }),
+            invalidatesTags: ['seller']
+        }),
+        getProductsOfTrash: builder.query({
+            query: () => ({
+                url: '/api/v1/trash/products',
+                method: 'GET'
+            }),
+            providesTags: ['seller']
         })
+    }),
 
-    })
 })
 export const {
     useCurrentSellerQuery,
     useAddProductMutation,
     useGetProductsQuery,
+    useGetProductsOfTrashQuery,
     useUpdateDocsMutation,
+    usePutInTrashMutation,
     useInitCoinPaymentMutation,
     useVerifyCoinPaymentMutation,
     useBoostShopMutation,
