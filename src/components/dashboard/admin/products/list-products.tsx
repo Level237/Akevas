@@ -76,7 +76,7 @@ export default function ListProducts({ products, isLoading }: { products: Produc
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="font-medium">{product.product_name}</span>
+                    <span className="font-medium truncate w-64">{product.product_name}</span>
                     {product.variations && product.variations.length > 0 && (
                       <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full w-fit">
                         Variations

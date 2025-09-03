@@ -472,7 +472,7 @@ const ProductDetailPage: React.FC = () => {
         {!isLoading && product && product.status === 1 && <nav className="flex max-sm:mx-9 items-center text-sm text-gray-500 mb-8">
           <a href="/" className="hover:text-gray-900">Accueil</a>
           <ArrowRight className="w-4 h-4 mx-2" />
-          <span className="text-gray-900">{product?.product_name}</span>
+          <span className="text-gray-900 truncate w-64">{product?.product_name}</span>
         </nav>}
 
 
@@ -696,7 +696,7 @@ const ProductDetailPage: React.FC = () => {
                                       : 'border-gray-200 hover:border-gray-300'
                                       }`}
                                   >
-                                    {attr.value}
+                                    {attr.value} {attr.label}
                                   </button>
                                 ))}
                               </div>

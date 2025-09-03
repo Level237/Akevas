@@ -67,7 +67,7 @@ export default function ProductDetailPageAdmin() {
       {/* Header avec titre et CTA */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold mb-1">{product.product_name}</h1>
+
           <div className="flex items-center gap-2 mb-3">
             {product.status == 1 ? (
               <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs">Publié</span>
@@ -306,7 +306,7 @@ export default function ProductDetailPageAdmin() {
                             <tbody>
                               {variation.attributes ? variation.attributes.map((attr: any) => (
                                 <tr key={attr.id}>
-                                  <td className="px-2 py-1">{attr.value}</td>
+                                  <td className="px-2 py-1">{attr.value} {attr.label}</td>
                                   <td className="px-2 py-1">{Number(attr.price).toLocaleString()} FCFA</td>
                                   <td className="px-2 py-1">{attr.quantity}</td>
                                 </tr>
