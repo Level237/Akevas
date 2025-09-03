@@ -1528,7 +1528,7 @@ const CreateProductPage: React.FC = () => {
                                                                                                 className="w-4 h-4 rounded-full border border-gray-200"
                                                                                                 style={{ backgroundColor: color.hex_color }}
                                                                                             />
-                                                                                            <span>{color.value}</span>
+                                                                                            <span>{color.value} </span>
                                                                                         </div>
                                                                                     </SelectItem>
                                                                                 ))}
@@ -1584,7 +1584,7 @@ const CreateProductPage: React.FC = () => {
                                                                                             <SelectLabel>{group.group_label}</SelectLabel>
                                                                                             {group.values.map((value: any) => (
                                                                                                 <SelectItem key={value.id} value={value.id.toString()}>
-                                                                                                    {value.value}
+                                                                                                    {value.value} {value.label}
                                                                                                 </SelectItem>
                                                                                             ))}
                                                                                         </SelectGroup>
@@ -1684,9 +1684,9 @@ const CreateProductPage: React.FC = () => {
                                             </div>
                                         )}
 
-                                        {(selectedAttributeType === 'colorAndAttribute' && getUniqueAttributeValues().length > 0 && isWholesale) && (
+                                        {(selectedAttributeType === 'colorAndAttribute' && getUniqueAttributeValues().length > 0) && (
                                             <div className="mb-6">
-                                                <h4 className="text-sm font-medium text-gray-700 mb-3">Prix des Attributs</h4>
+
                                                 <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                                                     {getUniqueAttributeValues().map(attributeValueId => {
                                                         let attributeValueData: any;
@@ -1700,7 +1700,7 @@ const CreateProductPage: React.FC = () => {
                                                         return (
                                                             <div key={attributeValueId} className="flex flex-col items-start gap-3 bg-gray-50 p-3 rounded-xl">
                                                                 <div>
-                                                                    <span className="font-medium text-[#6e0a13]">{attributes.find(attr => attr.id === selectedAttributeId)?.name}:</span> <span>{attributeValueData?.value}</span>
+                                                                    <span className="font-medium text-[#6e0a13]">{attributes.find(attr => attr.id === selectedAttributeId)?.name}:</span> <span>{attributeValueData?.value} {attributeValueData.label}</span>
                                                                 </div>
 
                                                                 <input
@@ -1847,19 +1847,19 @@ const CreateProductPage: React.FC = () => {
                                                                                 />
                                                                                 <span className="text-base text-sm font-medium">{color.value}</span>
                                                                             </div>
-                                                                            <div>
-                                                                                <span className='text-sm'>Prix :</span>
-                                                                                {!attributes.some(attr => attr.affectsPrice) && (
-                                                                                    <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
-                                                                                        {globalColorPrice || 0} FCFA
-
-                                                                                    </span>
-
-                                                                                )}
-                                                                            </div>
-                                                                            <div>
-                                                                                <span className="text-xs text-gray-500">Quantité: {frame.quantity}</span>
-                                                                            </div>
+                                                                            {selectedAttributeType === 'colorOnly' && (
+                                                                                <>
+                                                                                    <div>
+                                                                                        <span className='text-sm'>Prix :</span>
+                                                                                        <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
+                                                                                            {globalColorPrice || 0} FCFA
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <span className="text-xs text-gray-500">Quantité: {frame.quantity}</span>
+                                                                                    </div>
+                                                                                </>
+                                                                            )}
 
                                                                         </div>
                                                                     )}
@@ -1879,7 +1879,7 @@ const CreateProductPage: React.FC = () => {
                                                                                     });
                                                                                     return (
                                                                                         <div key={attributeItem.id} className="bg-gray-50 rounded-lg p-2">
-                                                                                            <div className="text-sm font-medium">{attributeValueData?.value}</div>
+                                                                                            <div className="text-sm font-medium">{attributeValueData?.value} {attributeValueData?.label}</div>
                                                                                             <div className="flex items-center gap-2 mt-1">
                                                                                                 <span className="text-xs text-gray-500">Qté: {attributeItem.quantity}</span>
                                                                                                 <span className="text-xs font-medium text-[#ed7e0f]">{attributeValuePrices[attributeItem.id] || 0} FCFA</span>
