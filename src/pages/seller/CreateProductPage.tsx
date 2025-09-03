@@ -255,6 +255,35 @@ const CreateProductPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        // Validation des prix des variations
+        if (selectedAttributeType === 'colorOnly') {
+            if (!globalColorPrice || globalColorPrice <= 0) {
+                toast.error('Veuillez remplir le prix global pour toutes les couleurs.');
+                return;
+            }
+        } else if (selectedAttributeType === 'colorAndAttribute') {
+            const uniqueAttributeValues = getUniqueAttributeValues();
+            for (const attributeValueId of uniqueAttributeValues) {
+                if (!attributeValuePrices[attributeValueId] || attributeValuePrices[attributeValueId] <= 0) {
+                    toast.error(`Veuillez remplir le prix pour l'attribut ${attributeValueId}.`);
+                    return;
+                }
+                if (isWholesale && isAttributeValueWholesale[attributeValueId]) {
+                    const wholesalePrices = attributeValueWholesalePrices[attributeValueId];
+                    if (!wholesalePrices || wholesalePrices.length === 0) {
+                        toast.error(`Veuillez configurer au moins un palier de prix de gros pour l'attribut ${attributeValueId}.`);
+                        return;
+                    }
+                    for (const wp of wholesalePrices) {
+                        if (!wp.min_quantity || wp.min_quantity <= 0 || !wp.wholesale_price || wp.wholesale_price <= 0) {
+                            toast.error(`Veuillez vérifier les prix de gros et les quantités minimales pour l'attribut ${attributeValueId}.`);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         // Validation pour les produits simples
         if (productType === 'simple') {
             if (!name.trim()) {
@@ -542,43 +571,73 @@ const CreateProductPage: React.FC = () => {
             if (variations.length > 0) {
                 // Regrouper les variations par couleur pour éviter la duplication des images
                 const variationsByColor = variations.reduce((acc, variation) => {
-                    const colorKey = variation.color.id;
-                    if (!acc[colorKey]) {
-                        acc[colorKey] = {
+                    const colorId = variation.color.id;
+                    if (!acc[colorId]) {
+                        acc[colorId] = {
                             color: variation.color,
-                            images: variation.images,
-                            variations: []
+                            images: [], // Initialise le tableau d'images pour ce groupe de couleurs
+                            sizes: [],
+                            shoeSizes: []
                         };
                     }
-                    acc[colorKey].variations.push({
-                        id: variation.id,
-                        quantity: variation.quantity,
-                        size: variation.sizes[0],
-                        shoeSize: variation.shoeSizes[0],
-                        price: variation.price,
-                        isColorOnly: !attributes.some(attr => attr.affectsPrice)
+
+                    // Ajoute les images de la variation actuelle au groupe de couleurs
+                    variation.images.forEach(image => {
+                        // Évite d'ajouter des doublons si une image est déjà présente
+                        if (!acc[colorId].images.some((existingImage: File) => existingImage.name === image.name)) {
+                            acc[colorId].images.push(image);
+                        }
                     });
+
+                    if (selectedAttributeType === 'colorAndAttribute') {
+                        if (variation.sizes && variation.sizes.length > 0) {
+                            variation.sizes.forEach(size => {
+                                const attributeValueId = size.id; // Assuming size.id is the attribute value ID
+                                const wholesaleInfo = isAttributeValueWholesale[attributeValueId] && attributeValueWholesalePrices[attributeValueId]
+                                    ? { is_wholesale: true, wholesale_prices: attributeValueWholesalePrices[attributeValueId] }
+                                    : { is_wholesale: false, wholesale_prices: [] };
+
+                                acc[colorId].sizes.push({
+                                    id: size.id,
+                                    name: size.name,
+                                    quantity: size.quantity,
+                                    price: attributeValuePrices[attributeValueId],
+                                    ...wholesaleInfo
+                                });
+                            });
+                        }
+                        if (variation.shoeSizes && variation.shoeSizes.length > 0) {
+                            variation.shoeSizes.forEach(shoeSize => {
+                                const attributeValueId = shoeSize.id; // Assuming shoeSize.id is the attribute value ID
+                                const wholesaleInfo = isAttributeValueWholesale[attributeValueId] && attributeValueWholesalePrices[attributeValueId]
+                                    ? { is_wholesale: true, wholesale_prices: attributeValueWholesalePrices[attributeValueId] }
+                                    : { is_wholesale: false, wholesale_prices: [] };
+
+                                acc[colorId].shoeSizes.push({
+                                    id: shoeSize.id,
+                                    name: shoeSize.name,
+                                    quantity: shoeSize.quantity,
+                                    price: attributeValuePrices[attributeValueId],
+                                    ...wholesaleInfo
+                                });
+                            });
+                        }
+                    } else if (selectedAttributeType === 'colorOnly') {
+                        acc[colorId].price = globalColorPrice; // Set global price for color only variations
+                        acc[colorId].quantity = variation.quantity;
+
+                    }
+
+
                     return acc;
-                }, {} as Record<number, {
-                    color: { id: number; name: string; hex: string };
-                    images: File[];
-                    variations: Array<{
-                        id: string;
-                        quantity?: number;
-                        size?: { id: number; name: string; quantity: number; price: number };
-                        shoeSize?: { id: number; name: string; quantity: number; price: number };
-                        price: number;
-                        isColorOnly: boolean;
-                    }>;
-                }>);
+                }, {} as Record<string, any>);
 
                 // Ajouter les variations groupées par couleur
                 formData.append('variations', JSON.stringify(Object.values(variationsByColor)));
 
                 // Ajouter les images des variations par couleur
-                Object.values(variationsByColor).forEach((colorGroup) => {
-                    colorGroup.images.forEach((image, imageIndex) => {
-                        console.log(image)
+                Object.values(variationsByColor).forEach((colorGroup: any) => {
+                    colorGroup.images.forEach((image: File, imageIndex: number) => {
                         formData.append(`color_${colorGroup.color.id}_image_${imageIndex}`, image);
                     });
                 });
