@@ -292,6 +292,7 @@ const ProductDetailPage: React.FC = () => {
           color: currentVariant.color,
           variantName: currentVariant.color.name,
           attribute: selectedAttr.value,
+          label: selectedAttr.label,
           wholesaleInfo,
           originalPrice: selectedAttr.price,
           group: selectedAttr.group || null

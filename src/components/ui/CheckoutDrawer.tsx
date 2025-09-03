@@ -19,6 +19,7 @@ interface CheckoutDrawerProps {
             hex: string;
         };
         attribute?: string;
+        label?: string;
         variantName?: string;
         quantity: number;
         group?: string;
@@ -59,6 +60,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
             colorId: currentInfo.color.id,
             colorName: currentInfo.color.name,
             attribute: currentInfo.attribute,
+            label: currentInfo.label,
             attributeVariationId: currentInfo.attributeVariationId,
             productVariationId: currentInfo.productVariationId,
             price: currentInfo.price,
@@ -137,7 +139,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                                         </div>
                                         {currentInfo.attribute && (
                                             <div className="text-sm text-gray-600">
-                                                Taille: {currentInfo.attribute}
+                                                Taille: {currentInfo.attribute} {currentInfo.label}
                                             </div>
                                         )}
                                         <div className="text-sm text-gray-600">
