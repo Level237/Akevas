@@ -188,7 +188,7 @@ const ProductDetailPage: React.FC = () => {
   const [isLoadingCart, setIsLoadingCart] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const productId = product?.id
-  const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null);
+  const [selectedAttribute, setSelectedAttribute] = useState<any | null>(null);
   console.log(product)
   const handleAddToCart = async () => {
     setIsLoadingCart(true);
@@ -208,7 +208,7 @@ const ProductDetailPage: React.FC = () => {
     dispatch(addItem({
       product,
       quantity,
-      selectedVariation: modifiedSelectedVariant
+      selectedVariation: modifiedSelectedVariant ? { ...modifiedSelectedVariant, group: currentInfo.group } : undefined
     }));
 
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -248,7 +248,7 @@ const ProductDetailPage: React.FC = () => {
       setSelectedVariant(firstVariation);
       // Si la variation a des attributs, sélectionner le premier
       if (firstVariation.attributes && firstVariation.attributes.length > 0) {
-        setSelectedAttribute(firstVariation.attributes[0].value);
+        setSelectedAttribute(firstVariation.attributes[0]);
       }
       setSelectedImage(0);
     }
@@ -261,7 +261,7 @@ const ProductDetailPage: React.FC = () => {
 
       // Cas où la variation a des attributs
       if (currentVariant.attributes && currentVariant.attributes.length > 0) {
-        const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute)
+        const selectedAttr = currentVariant.attributes.find((attr: any) => attr.value === selectedAttribute?.value)
           || currentVariant.attributes[0];
 
         // Calculer le prix en gros si applicable
@@ -283,8 +283,8 @@ const ProductDetailPage: React.FC = () => {
         }
 
         return {
-          attributeVariationId: selectedAttr.id,
-          productVariationId: currentVariant.id,
+          attributeVariationId: selectedAttr.id || 0,
+          productVariationId: currentVariant.id || 0,
           price: finalPrice,
           quantity: selectedAttr.quantity,
           mainImage: currentVariant.images?.[0],
@@ -293,7 +293,8 @@ const ProductDetailPage: React.FC = () => {
           variantName: currentVariant.color.name,
           attribute: selectedAttr.value,
           wholesaleInfo,
-          originalPrice: selectedAttr.price
+          originalPrice: selectedAttr.price,
+          group: selectedAttr.group || null
         };
       }
 
@@ -315,7 +316,7 @@ const ProductDetailPage: React.FC = () => {
 
       return {
         attributeVariationId: null,
-        productVariationId: currentVariant.id,
+        productVariationId: currentVariant.id || 0,
         price: finalPrice,
         quantity: currentVariant.quantity,
         mainImage: currentVariant.images?.[0],
@@ -324,7 +325,8 @@ const ProductDetailPage: React.FC = () => {
         variantName: currentVariant.color.name,
         attribute: null,
         wholesaleInfo,
-        originalPrice: currentVariant.price
+        originalPrice: currentVariant.price,
+        group: null
       };
     }
 
@@ -355,7 +357,8 @@ const ProductDetailPage: React.FC = () => {
       variantName: null,
       attribute: null,
       wholesaleInfo,
-      originalPrice: product?.product_price
+      originalPrice: product?.product_price,
+      group: null
     };
   };
 
@@ -372,7 +375,7 @@ const ProductDetailPage: React.FC = () => {
     setSelectedVariant(variant);
     // Réinitialiser l'attribut sélectionné avec le premier de la nouvelle variante
     if (variant.attributes && variant.attributes.length > 0) {
-      setSelectedAttribute(variant.attributes[0].value);
+      setSelectedAttribute(variant.attributes[0]);
     } else {
       setSelectedAttribute(null);
     }
@@ -380,8 +383,8 @@ const ProductDetailPage: React.FC = () => {
   };
 
   // Ajouter un gestionnaire pour la sélection d'attribut
-  const handleAttributeSelect = (value: string) => {
-    setSelectedAttribute(value);
+  const handleAttributeSelect = (attr: any) => {
+    setSelectedAttribute(attr);
   };
 
   // Modifier le gestionnaire de clic sur l'image principale
@@ -690,13 +693,13 @@ const ProductDetailPage: React.FC = () => {
                                 {selectedVariant.attributes.map((attr: any) => (
                                   <button
                                     key={attr.id}
-                                    onClick={() => handleAttributeSelect(attr.value)}
-                                    className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all ${selectedAttribute === attr.value
+                                    onClick={() => handleAttributeSelect(attr)}
+                                    className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all ${selectedAttribute?.value === attr.value
                                       ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 text-[#ed7e0f]'
                                       : 'border-gray-200 hover:border-gray-300'
                                       }`}
                                   >
-                                    {attr.value} {attr.label}
+                                    {attr.group && <span className="text-gray-500 mr-1">({attr.group})</span>} {attr.value} {attr.label}
                                   </button>
                                 ))}
                               </div>
@@ -718,6 +721,7 @@ const ProductDetailPage: React.FC = () => {
                             <h4 className="font-medium text-gray-900">
                               {currentInfo.variantName}
                               {currentInfo.attribute && ` - Taille ${currentInfo.attribute}`}
+                              {currentInfo.group && ` (${currentInfo.group})`}
                             </h4>
                           </div>
 

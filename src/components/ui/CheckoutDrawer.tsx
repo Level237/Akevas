@@ -21,6 +21,7 @@ interface CheckoutDrawerProps {
         attribute?: string;
         variantName?: string;
         quantity: number;
+        group?: string;
     };
     getAllImages: () => Array<{ path: string }>;
 }
@@ -44,7 +45,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
         }
     }, [data])
 
-    
+
     // Fonction pour mettre à jour la quantité avec vérification
     const handleQuantityChange = (newQuantity: number) => {
         // S'assurer que la quantité ne dépasse pas le stock disponible
@@ -67,7 +68,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
         } : null;
 
         // Encoder les informations de variation pour l'URL
-        const variationParams = variationInfo 
+        const variationParams = variationInfo
             ? `&variation=${encodeURIComponent(JSON.stringify(variationInfo))}`
             : '';
 
@@ -126,7 +127,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                                 {currentInfo.color && (
                                     <div className="mt-2 space-y-1">
                                         <div className="flex items-center gap-2">
-                                            <div 
+                                            <div
                                                 className="w-4 h-4 rounded-full border"
                                                 style={{ backgroundColor: currentInfo.color.hex }}
                                             />
@@ -194,8 +195,8 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
                             </div>
                         </div>
                         <div className="flex justify-center">
-                            <button 
-                                onClick={checkOutNavigation} 
+                            <button
+                                onClick={checkOutNavigation}
                                 className="bg-[#ed7e0f] text-white px-12 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors w-full lg:w-auto"
                             >
                                 Procéder à l'achat
