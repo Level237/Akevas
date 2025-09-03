@@ -44,32 +44,32 @@ export function RecentProducts({ products, isLoading }: RecentProductsProps) {
             <div key={product.id} className="flex items-center space-x-4">
               <div className="relative w-16 h-16">
 
-              {getRandomVariationImages(product).slice(0, ).map((img, idx) => (
-                        <img
-                          key={img}
-                          src={img}
-                          alt={product.product_name}
-                          className="absolute rounded-lg object-cover border-2 border-white shadow"
-                          style={{
-                            left: `${idx * 12}px`,
-                            zIndex: 10 - idx,
-                            width: '36px',
-                            height: '36px',
-                            top: `${idx * 4}px`,
-                            background: '#fff'
-                          }}
-                        />
-                      ))}
-                 {getRandomVariationImages(product).length === 0 && (
-                        <img
-                          src={product.product_profile}
-                          alt={product.product_name}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
-                      )}
+                {getRandomVariationImages(product).slice(0,).map((img, idx) => (
+                  <img
+                    key={img}
+                    src={img}
+                    alt={product.product_name}
+                    className="absolute rounded-lg object-cover border-2 border-white shadow"
+                    style={{
+                      left: `${idx * 12}px`,
+                      zIndex: 10 - idx,
+                      width: '36px',
+                      height: '36px',
+                      top: `${idx * 4}px`,
+                      background: '#fff'
+                    }}
+                  />
+                ))}
+                {getRandomVariationImages(product).length === 0 && (
+                  <img
+                    src={product.product_profile}
+                    alt={product.product_name}
+                    className="w-12 h-12 rounded-lg object-cover"
+                  />
+                )}
               </div>
               <div className="flex-1 space-y-1">
-                
+                <p className="text-xs truncate w-64">{product.product_name}</p>
                 <p className="text-sm text-muted-foreground">{product.variations && product.variations.length > 0 ? "prix variable" : product?.product_price?.toLocaleString()}</p>
                 <p className="text-xs text-muted-foreground">Added {new Date(product.created_at).toLocaleDateString()}</p>
               </div>
