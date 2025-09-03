@@ -19,7 +19,7 @@ const VariationModal: React.FC<VariationModalProps> = ({
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<any | null>(null);
-
+  const [selectLabel, setSelectLabel] = useState<any | null>(null);
   // Initialiser la première variation quand le modal s'ouvre
   useEffect(() => {
     if (isOpen && product?.variations && product.variations.length > 0 && !selectedVariant) {
@@ -29,6 +29,8 @@ const VariationModal: React.FC<VariationModalProps> = ({
       // Si la variation a des attributs, sélectionner le premier
       if (firstVariation.attributes && firstVariation.attributes.length > 0) {
         setSelectedSize(firstVariation.attributes[0].value);
+        setSelectLabel(firstVariation.attributes[0].label)
+
       }
     }
   }, [isOpen, product, selectedVariant]);
@@ -42,12 +44,12 @@ const VariationModal: React.FC<VariationModalProps> = ({
   // Fonction pour obtenir le prix actuel
   const getCurrentPrice = () => {
     if (!selectedVariant) return product.product_price;
-    
+
     if (selectedSize && selectedVariant.attributes) {
       const selectedAttribute = selectedVariant.attributes.find((attr: any) => attr.value === selectedSize);
       return selectedAttribute ? selectedAttribute.price : selectedVariant.price || product.product_price;
     }
-    
+
     return selectedVariant.price || product.product_price;
   };
 
@@ -59,14 +61,14 @@ const VariationModal: React.FC<VariationModalProps> = ({
       const selectedAttribute = selectedVariant.attributes.find((attr: any) => attr.value === selectedSize);
       return selectedAttribute ? selectedAttribute.quantity : selectedVariant.quantity || product.product_quantity;
     }
-    
+
     return selectedVariant.quantity || product.product_quantity;
   };
 
   const handleColorSelect = (colorId: string) => {
     setSelectedColor(colorId);
     setSelectedSize(null); // Réinitialiser la taille
-    
+
     // Trouver la variation correspondante
     const variation = product.variations?.find((v: any) => v.color.id.toString() === colorId);
     if (variation) {
@@ -74,6 +76,7 @@ const VariationModal: React.FC<VariationModalProps> = ({
       // Si la variation a des attributs, sélectionner le premier
       if (variation.attributes && variation.attributes.length > 0) {
         setSelectedSize(variation.attributes[0].value);
+        setSelectLabel(variation.attributes[0].label)
       }
     }
   };
@@ -138,8 +141,8 @@ const VariationModal: React.FC<VariationModalProps> = ({
                   <p className="text-xs text-red-600 mt-1">Rupture de stock</p>
                 )}
               </div>
-              <button 
-                onClick={onClose} 
+              <button
+                onClick={onClose}
                 className="p-1 hover:bg-gray-100 rounded-full flex-shrink-0"
               >
                 <X className="w-5 h-5" />
@@ -157,11 +160,10 @@ const VariationModal: React.FC<VariationModalProps> = ({
                       <button
                         key={variation.color.id}
                         onClick={() => handleColorSelect(variation.color.id.toString())}
-                        className={`w-10 h-10 rounded-full border-2 transition-all ${
-                          selectedColor === variation.color.id.toString()
-                            ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20'
-                            : 'border-gray-300 hover:border-gray-400'
-                        }`}
+                        className={`w-10 h-10 rounded-full border-2 transition-all ${selectedColor === variation.color.id.toString()
+                          ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20'
+                          : 'border-gray-300 hover:border-gray-400'
+                          }`}
                         style={{ backgroundColor: variation.color.hex }}
                         title={variation.color.name}
                       />
@@ -183,13 +185,12 @@ const VariationModal: React.FC<VariationModalProps> = ({
                         <button
                           key={attr.id}
                           onClick={() => setSelectedSize(attr.value)}
-                          className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-                            selectedSize === attr.value
-                              ? 'border-[#ed7e0f] bg-[#ed7e0f] text-white'
-                              : 'border-gray-300 hover:border-gray-400'
-                          }`}
+                          className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${selectedSize === attr.value
+                            ? 'border-[#ed7e0f] bg-[#ed7e0f] text-white'
+                            : 'border-gray-300 hover:border-gray-400'
+                            }`}
                         >
-                          {attr.value}
+                          {attr.value} {attr.label}
                         </button>
                       ))}
                     </div>
@@ -216,13 +217,13 @@ const VariationModal: React.FC<VariationModalProps> = ({
                 {selectedVariant && (
                   <div className="bg-blue-50 rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-2">
-                      <div 
+                      <div
                         className="w-4 h-4 rounded-full border"
                         style={{ backgroundColor: selectedVariant.color.hex }}
                       />
                       <h5 className="font-medium text-gray-900">
                         {selectedVariant.color.name}
-                        {selectedSize && ` - Taille ${selectedSize}`}
+                        {selectedSize && ` - Taille ${selectedSize}`} {selectLabel}
                       </h5>
                     </div>
                     <div className="text-sm text-gray-600">

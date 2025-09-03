@@ -20,9 +20,9 @@ const CartPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-      if (hasToken) {
-          setIsAuthenticated(true)
-      }
+    if (hasToken) {
+      setIsAuthenticated(true)
+    }
   }, [hasToken])
 
 
@@ -32,14 +32,14 @@ const CartPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
 
   const handleRemoveItem = (product: Product, selectedVariation?: any) => {
-    dispatch(removeItem({ 
+    dispatch(removeItem({
       product,
       selectedVariation: selectedVariation || undefined
     }));
   }
   const handleUpdateQuantity = (product: Product, quantity: number, selectedVariation?: any) => {
-    dispatch(updateQuantity({ 
-      product, 
+    dispatch(updateQuantity({
+      product,
       quantity,
       selectedVariation: selectedVariation || undefined
     }));
@@ -49,11 +49,11 @@ const CartPage: React.FC = () => {
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       <div className="max-sm:ml-0">
-      <Header />
+        <Header />
       </div>
-     
+
       <MobileNav />
-      
+
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8 max-sm:mb-3">
           <Link
@@ -62,7 +62,7 @@ const CartPage: React.FC = () => {
           >
             <ArrowLeft className="w-5 max-sm:w-4 max-sm:h-4 h-5 mr-2" />
             <span className='max-sm:text-sm'>Retour aux achats</span>
-            
+
           </Link>
         </div>
 
@@ -90,7 +90,7 @@ const CartPage: React.FC = () => {
             <div className="lg:col-span-8">
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div className="p-6 space-y-6">
-                  {cartItems.map((item:any) => (
+                  {cartItems.map((item: any) => (
                     <motion.div
                       key={item.product.id}
                       layout
@@ -106,20 +106,20 @@ const CartPage: React.FC = () => {
                             alt={item.product.product_name}
                             className="w-full h-full object-cover rounded-lg"
                           />
-                        ):(
+                        ) : (
                           <OptimizedImage
-                          src={item.product.product_profile}
-                          alt={item.product.product_name}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
+                            src={item.product.product_profile}
+                            alt={item.product.product_name}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
                         )}
-                      
+
                       </div>
 
                       <div className="flex-1">
                         <div className="flex justify-between mb-2">
                           <div>
-                            <h3 className="font-medium max-sm:text-sm text-gray-900">
+                            <h3 className="font-medium  max-sm:text-sm text-gray-900">
                               {item.product.product_name}
                             </h3>
                             {item.selectedVariation && (
@@ -140,7 +140,7 @@ const CartPage: React.FC = () => {
                                   <div className="flex items-center gap-2">
                                     <span className="text-sm text-gray-500">Taille:</span>
                                     <span className="text-sm text-gray-700">
-                                      {item.selectedVariation.attributes.value}
+                                      {item.selectedVariation.attributes.value} {item.selectedVariation.attributes.label}
                                     </span>
                                   </div>
                                 )}
@@ -179,14 +179,14 @@ const CartPage: React.FC = () => {
                             </button>
                           </div>
                           <span className="font-medium max-sm:text-sm text-gray-900">
-                            
-                            {item.selectedVariation && item.selectedVariation.isColorOnly===true &&
-                             parseFloat(item.selectedVariation?.price) * item.quantity
-                          }
-                          {item.selectedVariation && item.selectedVariation.isColorOnly===false &&
-                             parseFloat(item.selectedVariation?.attributes.price) * item.quantity
-                          }
-                          {!item.selectedVariation && parseFloat(item.product.product_price) * item.quantity}
+
+                            {item.selectedVariation && item.selectedVariation.isColorOnly === true &&
+                              parseFloat(item.selectedVariation?.price) * item.quantity
+                            }
+                            {item.selectedVariation && item.selectedVariation.isColorOnly === false &&
+                              parseFloat(item.selectedVariation?.attributes.price) * item.quantity
+                            }
+                            {!item.selectedVariation && parseFloat(item.product.product_price) * item.quantity}
                           </span>
                         </div>
                       </div>
@@ -264,7 +264,7 @@ const CartPage: React.FC = () => {
                     Procéder au paiement
                   </button>
                 </AsyncLink> :
-                  <button  onClick={() => redirectToLogin({ redirectUrl: '/checkout', productIds: cartItems.map(item => item.product.id), s: "1" })} className="w-full max-sm:text-sm mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
+                  <button onClick={() => redirectToLogin({ redirectUrl: '/checkout', productIds: cartItems.map(item => item.product.id), s: "1" })} className="w-full max-sm:text-sm mt-6 bg-[#ed7e0f] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#ed7e0f]/80 transition-colors">
                     Procéder au paiement
                   </button>
                 }

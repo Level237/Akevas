@@ -42,6 +42,7 @@ export interface Variant {
         id: number;
         value: string;
         quantity: number;
+        label: string;
         price: string;
     }>;
 }
