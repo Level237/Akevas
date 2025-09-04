@@ -82,13 +82,13 @@ const ProductListPage: React.FC = () => {
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [expandedSections, setExpandedSections] = useState<string[]>(['categories']);
 
-    const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
   const [sortBy, setSortBy] = useState('popular');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const { data: { productList,totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery(currentPage);
+  const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery(currentPage);
   const dispatch = useDispatch();
 
   const toggleSection = (sectionId: string) => {
@@ -140,7 +140,7 @@ const ProductListPage: React.FC = () => {
     });
   };
 
-  
+
 
   const ProductCard = ({ product }: { product: Product }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -164,29 +164,29 @@ const ProductListPage: React.FC = () => {
       >
         {viewMode === 'grid' ? (
           <div className="group bg-white max-sm:w-[20.9rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-            
+
             <AsyncLink to={`/produit/${product.product_url}`}>
-            <div className="relative aspect-square">
-              <img
-                src={product.product_profile}
-                alt={product.product_name}
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute top-4 right-4">
-                <button className="p-2 rounded-full bg-white/90 text-gray-900 hover:bg-white transition-colors">
-                  <Heart className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="absolute top-4 left-4 flex flex-col gap-2">
-                <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
-                  Premium
-                </span>
-                <div className="flex items-center bg-white/90 px-2 py-1 rounded-full">
-                  <Star className="w-4 h-4 text-yellow-400" />
-                  <span className="ml-1 text-xs font-medium">12</span>
+              <div className="relative aspect-square">
+                <img
+                  src={product.product_profile}
+                  alt={product.product_name}
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-4 right-4">
+                  <button className="p-2 rounded-full bg-white/90 text-gray-900 hover:bg-white transition-colors">
+                    <Heart className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="absolute top-4 left-4 flex flex-col gap-2">
+                  <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
+                    Premium
+                  </span>
+                  <div className="flex items-center bg-white/90 px-2 py-1 rounded-full">
+                    <Star className="w-4 h-4 text-yellow-400" />
+                    <span className="ml-1 text-xs font-medium">12</span>
+                  </div>
                 </div>
               </div>
-            </div>
             </AsyncLink>
             <div className="p-4">
               <h3 className="font-medium text-gray-900 mb-1 truncate">
@@ -202,7 +202,7 @@ const ProductListPage: React.FC = () => {
                   {product.product_price} Fcfa
                 </span>
                 {!showCartButton ? (
-                  <button 
+                  <button
                     onClick={() => handleAddToCart(product)}
                     disabled={isLoading}
                     className="px-3 py-2 rounded-lg bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90 transition-colors text-sm"
@@ -216,7 +216,7 @@ const ProductListPage: React.FC = () => {
                     )}
                   </button>
                 ) : (
-                  <AsyncLink 
+                  <AsyncLink
                     to="/cart"
                     className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors text-sm"
                   >
@@ -266,26 +266,26 @@ const ProductListPage: React.FC = () => {
                 </div>
                 {
                   !showCartButton ? (
-                       <button  onClick={() => handleAddToCart(product)} className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
-                   {isLoading ? (
-                      <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent text-white rounded-full">
-                        <span className="sr-only">Loading...</span>
-                      </div>
-                    ) : (
-                      "Ajouter au panier"
-                    )}
-                </button>
-                
-                  ): (
-                  <AsyncLink 
-                    to="/cart"
-                    className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors text-sm"
-                  >
-                    Voir le panier
-                  </AsyncLink>
-                )
+                    <button onClick={() => handleAddToCart(product)} className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors">
+                      {isLoading ? (
+                        <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent text-white rounded-full">
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      ) : (
+                        "Ajouter au panier"
+                      )}
+                    </button>
+
+                  ) : (
+                    <AsyncLink
+                      to="/cart"
+                      className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors text-sm"
+                    >
+                      Voir le panier
+                    </AsyncLink>
+                  )
                 }
-               
+
               </div>
             </div>
           </>
@@ -297,8 +297,8 @@ const ProductListPage: React.FC = () => {
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       <Header />
-      
-        <ScrollRestoration />
+
+      <ScrollRestoration />
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* En-tête avec filtres mobiles et tri */}
         <div className="flex items-center justify-between mb-8">
@@ -334,11 +334,10 @@ const ProductListPage: React.FC = () => {
             <div className="hidden sm:flex items-center gap-2 bg-white rounded-lg shadow-sm p-1">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded ${
-                  viewMode === 'grid'
+                className={`p-2 rounded ${viewMode === 'grid'
                     ? 'bg-gray-100 text-gray-900'
                     : 'text-gray-500 hover:text-gray-900'
-                }`}
+                  }`}
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -346,11 +345,10 @@ const ProductListPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded ${
-                  viewMode === 'list'
+                className={`p-2 rounded ${viewMode === 'list'
                     ? 'bg-gray-100 text-gray-900'
                     : 'text-gray-500 hover:text-gray-900'
-                }`}
+                  }`}
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -435,63 +433,62 @@ const ProductListPage: React.FC = () => {
           {/* Liste des produits */}
           <div className="lg:col-span-3">
             <div className={viewMode === 'grid' ? 'grid grid-cols-1 max-sm:flex max-sm:flex-col max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
-              { !isLoading && productList && productList.map((product:Product) => (
+              {!isLoading && productList && productList.map((product: Product) => (
                 <ProductCard product={product} />
               ))}
               <div>
                 <div className="flex items-center justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
-                    {currentPage > 1 && (
-                        <button 
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
-                        >
-                            Précédent
-                        </button>
-                    )}
-                    
-                    <div className="flex items-center gap-1">
-                        {Array.from({ length: totalPages }, (_, index) => {
-                            const pageNumber = index + 1;
-                            
-                            // Afficher seulement les pages proches de la page courante
-                            if (
-                                pageNumber === 1 ||
-                                pageNumber === totalPages ||
-                                (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
-                            ) {
-                                return (
-                                    <button
-                                        key={pageNumber}
-                                        onClick={() => handlePageChange(pageNumber)}
-                                        className={`w-10 h-10 rounded-lg ${
-                                            currentPage === pageNumber
-                                                ? 'bg-[#ed7e0f] text-white'
-                                                : 'bg-white hover:bg-gray-50'
-                                        }`}
-                                    >
-                                        {pageNumber}
-                                    </button>
-                                );
-                            } else if (
-                                pageNumber === currentPage - 3 ||
-                                pageNumber === currentPage + 3
-                            ) {
-                                return <span key={pageNumber}>...</span>;
-                            }
-                            return null;
-                        })}
-                    </div>
+                  {currentPage > 1 && (
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                    >
+                      Précédent
+                    </button>
+                  )}
 
-                    {currentPage < totalPages && (
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
-                        >
-                            Suivant
-                        </button>
-                    )}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, index) => {
+                      const pageNumber = index + 1;
+
+                      // Afficher seulement les pages proches de la page courante
+                      if (
+                        pageNumber === 1 ||
+                        pageNumber === totalPages ||
+                        (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
+                      ) {
+                        return (
+                          <button
+                            key={pageNumber}
+                            onClick={() => handlePageChange(pageNumber)}
+                            className={`w-10 h-10 rounded-lg ${currentPage === pageNumber
+                                ? 'bg-[#ed7e0f] text-white'
+                                : 'bg-white hover:bg-gray-50'
+                              }`}
+                          >
+                            {pageNumber}
+                          </button>
+                        );
+                      } else if (
+                        pageNumber === currentPage - 3 ||
+                        pageNumber === currentPage + 3
+                      ) {
+                        return <span key={pageNumber}>...</span>;
+                      }
+                      return null;
+                    })}
+                  </div>
+
+                  {currentPage < totalPages && (
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                    >
+                      Suivant
+                    </button>
+                  )}
                 </div>
-            </div>
+              </div>
             </div>
           </div>
         </div>
@@ -507,7 +504,7 @@ const ProductListPage: React.FC = () => {
             className="fixed inset-0 z-50 lg:hidden"
           >
             <div className="absolute inset-0 bg-black bg-opacity-25" />
-            
+
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -593,7 +590,7 @@ const ProductListPage: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <MobileNav/>
+      <MobileNav />
     </div>
   );
 };

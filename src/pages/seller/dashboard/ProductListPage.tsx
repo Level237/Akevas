@@ -8,6 +8,10 @@ import {
 import AsyncLink from '@/components/ui/AsyncLink';
 import { ProductListContainer } from '@/components/seller/products/ProductListOverview';
 import { useSearchParams } from 'react-router-dom';
+import { useCurrentSellerQuery } from '@/services/sellerService';
+import SidebarLeft from '@/components/ui/SidebarLeft';
+import MobileNav from '@/components/ui/mobile-nav';
+import AccountNotActivated from '@/components/seller/AccountNotActivated';
 
 
 const DashboardProductListPage = () => {
@@ -18,8 +22,16 @@ const DashboardProductListPage = () => {
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
 
+  const { data: { data: sellerData } = {} } = useCurrentSellerQuery('seller');
 
+  if (sellerData?.isSeller === 0) {
+    return <>
+      <SidebarLeft />
 
+      <MobileNav />
+      <AccountNotActivated />
+    </>;
+  }
 
   return (
     <div className="container mx-24 w-92  max-sm:mx-auto px-4 py-8">

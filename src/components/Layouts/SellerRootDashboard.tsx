@@ -3,64 +3,54 @@ import { useState, useEffect } from 'react';
 import Sidebar from '@/components/seller/Sidebar';
 import Header from '@/components/dashboard/seller/layouts/header';
 import { useCurrentSellerQuery } from '@/services/sellerService';
-import { SellerResponse } from '@/types/seller';
+import AccountNotActivated from '@/components/seller/AccountNotActivated';
 import MobileNav from '../ui/mobile-nav';
 import SidebarLeft from '../ui/SidebarLeft';
-import { shopCategoriesIsEmpty } from '@/lib/shopCategoriesIsEmpty';
 import CategoryModal from '../modals/CategoryModal';
 import { useGetCategoryByGenderQuery } from '@/services/guardService';
 
-export default function SellerRootDashboard({ children }: { children: React.ReactNode }) {
+interface SellerRootDashboardProps {
+  children: React.ReactNode;
+}
+
+const SellerRootDashboard: React.FC<SellerRootDashboardProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const { data: { data: sellerData } = {} } = useCurrentSellerQuery<SellerResponse>('seller')
-  const [categoriesIsEmpty, setCategoriesIsEmpty] = useState<boolean | null>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const { data: { data: sellerData } = {}, isLoading } = useCurrentSellerQuery('seller');
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(sellerData?.shop.gender || '', { skip: !sellerData?.shop.gender });
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [categoriesIsEmpty, setCategoriesIsEmpty] = useState<boolean | null>(null);
 
-  // Genre sélectionné (par défaut celui du shop ou 1)
-  let initialGender = sellerData?.shop?.gender;
-  if (!initialGender) initialGender = '1'; // Valeur par défaut si non défini
-  // const [selectedGender, setSelectedGender] = useState(initialGender);
-
-  // Catégories sélectionnées (ids)
-  const initialSelectedCategories = sellerData?.shop?.categories?.map(cat => parseInt(cat.id)) || [];
-  const [selectedCategories, setSelectedCategories] = useState<number[]>(initialSelectedCategories);
-
-  // Récupération des catégories selon le genre
-  const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(initialGender);
- 
   useEffect(() => {
-    if (Array.isArray(sellerData?.shop?.categories)) {
-      shopCategoriesIsEmpty(sellerData.shop.categories).then(setCategoriesIsEmpty);
+    if (sellerData?.shop?.categories && sellerData.shop.categories.length === 0) {
+      setCategoriesIsEmpty(true);
     } else {
-      setCategoriesIsEmpty(null);
+      setCategoriesIsEmpty(false);
     }
   }, [sellerData?.shop?.categories]);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Handler pour valider la sélection (à adapter pour appel API)
   const handleValidateCategories = () => {
-    // TODO: Appel API pour mettre à jour les catégories du shop
-    console.log('Catégories sélectionnées :', selectedCategories);
+    console.log('Selected Categories:', selectedCategories);
     setShowCategoryModal(false);
   };
 
-  // Handler pour changer le genre (optionnel, si tu veux permettre de changer le genre dans le modal)
-  // const handleChangeGender = (value: number) => {
-  //   setSelectedGender(value);
-  //   setSelectedCategories([]); // reset sélection
-  // };
-  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ed7e0f]"></div>
+      </div>
+    );
+  }
+
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -118,3 +108,5 @@ export default function SellerRootDashboard({ children }: { children: React.Reac
     </div>
   );
 }
+
+export default SellerRootDashboard;
