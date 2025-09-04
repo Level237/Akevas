@@ -503,7 +503,7 @@ const NotificationsPage: React.FC = () => {
                                                         </div>
                                                         <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2">
                                                             <h5 className="font-semibold text-gray-800 mb-2 text-sm">Détails de la vérification</h5>
-                                                            <div className="text-gray-700 text-sm whitespace-normal break-words">
+                                                            <div className="text-gray-700 text-sm whitespace-pre-line break-words">
                                                                 {selectedNotification.data.feedback
                                                                     ? selectedNotification.data.feedback
                                                                     : "Aucun détail supplémentaire fourni."}
