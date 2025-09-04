@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import React, { useState, useRef, useEffect } from "react"
-import { Package, ChevronRight, LogOut, User, Store, BarChart3, HelpCircle } from 'lucide-react'
+import { Package, ChevronRight, LogOut, User, Store, HelpCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import AsyncLink from "./AsyncLink"
@@ -66,29 +66,9 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
 
     if (currentUser.role_id === 2) { // Vendeur
       return [
-        { icon: Store, text: "Tableau de bord", href: `/seller/dashboard` },
-        { icon: Package, text: "Mes produits", href: "/seller/products" },
-        { icon: Package, text: "Mes commandes", href: "/orders" },
-      ]
-    }
-
-    if (currentUser.role_id === 4) { // Livreur
-      return [
-        { icon: BarChart3, text: "Tableau de bord", href: "/delivery/dashboard" },
-        { icon: User, text: "Mon profil", href: "/delivery/profile" },
-      ]
-    }
-
-    if (currentUser.role_id === 1) { // Admin
-      return [
-        { icon: BarChart3, text: "Tableau de bord", href: "/admin/dashboard" },
-      ]
-    }
-
-    if (currentUser.role_id === 3) { // Utilisateur normal
-      return [
-        { icon: BarChart3, text: "Tableau de bord", href: "/user/dashboard" },
-        { icon: Package, text: "Mes commandes", href: "/orders" },
+        { icon: Store, text: "Tableau de bord", href: `/seller/dashboard`, disabled: currentUser.isSeller === 0 },
+        { icon: Package, text: "Mes produits", href: "/seller/products", disabled: currentUser.isSeller === 1 },
+        { icon: Package, text: "Mes commandes", href: "/orders", disabled: currentUser.isSeller === 1 },
       ]
     }
 
@@ -165,7 +145,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                 )}
 
                 {/* Bouton principal pour utilisateurs connectés */}
-                {currentUser && currentUser.role_id === 2 && (
+                {currentUser && currentUser.role_id === 2 && currentUser.isSeller === 1 && (
                   <AsyncLink to={`/shop/${currentUser.shop?.shop_id}`}>
                     <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 text-sm">
                       Voir ma boutique
@@ -179,20 +159,8 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                     </Button>
                   </AsyncLink>
                 )}
-                {currentUser && currentUser.role_id === 1 && (
-                  <AsyncLink to="/admin/dashboard">
-                    <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 text-sm">
-                      Tableau de bord
-                    </Button>
-                  </AsyncLink>
-                )}
-                {currentUser && currentUser.role_id === 3 && (
-                  <AsyncLink to="/user/dashboard">
-                    <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 text-sm">
-                      Tableau de bord
-                    </Button>
-                  </AsyncLink>
-                )}
+
+
               </div>
 
               {/* Menu principal (seulement pour utilisateurs connectés) */}
@@ -208,7 +176,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
                     >
-                      <AsyncLink to={item.href}>
+                      <AsyncLink to={item.href} className={!item.disabled ? 'hidden' : ''}>
                         <div className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
                           <div className="flex items-center gap-3">
                             <item.icon className="h-4 w-4 text-gray-500" />
@@ -264,7 +232,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </div >
   )
 }
 

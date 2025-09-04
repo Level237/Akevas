@@ -14,7 +14,8 @@ export interface Seller {
   identity_card_in_back: string | null,
   identity_card_with_the_person: string | null,
   notifications_is_count: number | null,
-  email: string
+  email: string,
+  isSeller: boolean | number,
   avatar: string,
   feedbacks: any[] | null,
   shop: {

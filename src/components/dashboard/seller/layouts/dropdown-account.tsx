@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion"
 import React, { useState, useRef, useEffect } from "react"
-import { Package, ChevronRight, LogOut, User, ShoppingBag, ChartBarBig } from 'lucide-react'
+import { Package, ChevronRight, LogOut, User, Store } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import AsyncLink from "@/components/ui/AsyncLink"
 import { useLogoutMutation } from "@/services/auth"
@@ -19,9 +19,9 @@ const DropdownAccount = ({ children, sellerData }: { children: React.ReactNode, 
     }
 
     const menuItems = [
-        { icon: ChartBarBig, text: "Dashboard", href: "/seller/dashboard" },
-        { icon: ShoppingBag, text: "Mes produits", href: "/seller/products" },
-        { icon: Package, text: "Mes commandes", href: "/seller/orders" },
+        { icon: Store, text: "Tableau de bord", href: `/seller/dashboard`, disabled: !sellerData?.isSeller },
+        { icon: Package, text: "Mes produits", href: "/seller/products", disabled: sellerData?.isSeller },
+        { icon: Package, text: "Mes commandes", href: "/orders", disabled: sellerData?.isSeller },
     ]
 
     const settingsItems = [
@@ -88,6 +88,7 @@ const DropdownAccount = ({ children, sellerData }: { children: React.ReactNode, 
                             onMouseLeave={handleMouseLeave}
                         >
                             {/* Header avec infos boutique */}
+
                             <div className="px-4 py-3 border-b border-gray-100">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ed7e0f] to-[#f19b45] flex items-center justify-center text-white font-semibold">
@@ -98,11 +99,13 @@ const DropdownAccount = ({ children, sellerData }: { children: React.ReactNode, 
                                         <p className="text-xs text-gray-500">{sellerData?.email}</p>
                                     </div>
                                 </div>
-                                <AsyncLink to={`/shop/${sellerData?.shop?.shop_id}`}>
-                                    <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 text-sm">
-                                        Voir ma boutique
-                                    </Button>
-                                </AsyncLink>
+                                {sellerData?.isSeller == 1 && (
+                                    <AsyncLink to={`/shop/${sellerData?.shop?.shop_id}`}>
+                                        <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 text-sm">
+                                            Voir ma boutique
+                                        </Button>
+                                    </AsyncLink>
+                                )}
                             </div>
 
                             {/* Menu principal */}
@@ -117,7 +120,7 @@ const DropdownAccount = ({ children, sellerData }: { children: React.ReactNode, 
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: index * 0.05 }}
                                     >
-                                        <AsyncLink to={item.href}>
+                                        <AsyncLink to={item.href} className={!item.disabled ? 'hidden' : ''}>
                                             <div className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
                                                 <div className="flex items-center gap-3">
                                                     <item.icon className="h-4 w-4 text-gray-500" />
