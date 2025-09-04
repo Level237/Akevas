@@ -9,10 +9,25 @@ import IdentityInfoStep from '@/components/seller/registration/steps/IdentityInf
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import { setIdentity } from '@/store/seller/registerSlice';
+import { useEffect } from 'react';
 const IdentityInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const firstName = localStorage.getItem("firstName");
+    const lastName = localStorage.getItem("lastName");
+    const email = localStorage.getItem("email");
+    const phone = localStorage.getItem("phone");
+    const birthDate = localStorage.getItem("birthDate");
+    const nationality = localStorage.getItem("nationality");
+
+    if (!firstName || !lastName || !email || !phone || !birthDate || !nationality) {
+      navigate('/seller-registration/personal-info');
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState<SellerFormData['identityInfo']>({
     identity_card_in_front: null,
     identity_card_in_back: null,
@@ -30,7 +45,7 @@ const IdentityInfoPage = () => {
     // Validation
     const requiredFields = ['identity_card_in_front', 'identity_card_in_back', 'identity_card_with_the_person'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
+
     if (missingFields.length > 0) {
       toast.error('Veuillez remplir tous les champs obligatoires', {
         description: "Tous les champs marqués d'un * sont requis.",
@@ -46,10 +61,10 @@ const IdentityInfoPage = () => {
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const identityInfoState={
-        'identity_card_in_front':formData.identity_card_in_front,
-        'identity_card_in_back':formData.identity_card_in_back,
-        'identity_card_with_the_person':formData.identity_card_with_the_person,
+      const identityInfoState = {
+        'identity_card_in_front': formData.identity_card_in_front,
+        'identity_card_in_back': formData.identity_card_in_back,
+        'identity_card_with_the_person': formData.identity_card_with_the_person,
       }
       dispatch(setIdentity(identityInfoState));
       // Animation de succès
@@ -70,7 +85,7 @@ const IdentityInfoPage = () => {
       setIsLoading(false);
     }
   };
-console.log(formData);
+  console.log(formData);
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
@@ -81,21 +96,21 @@ console.log(formData);
             data={formData}
             onUpdate={handleUpdate}
           />
-          <motion.div 
+          <motion.div
             className="mt-8 flex justify-between"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-             <button
-              onClick={()=>navigate(-1)}
+            <button
+              onClick={() => navigate(-1)}
               disabled={isLoading}
               className="relative px-6 py-3 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-             
-              
-                Précedent
-              
+
+
+              Précedent
+
             </button>
             <button
               onClick={handleNext}

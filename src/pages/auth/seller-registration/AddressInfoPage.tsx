@@ -9,15 +9,26 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { setAddressInfo } from '@/store/seller/registerSlice';
+import { useEffect } from 'react';
 const AddressInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const sellerType = localStorage.getItem("sellerType");
+    const productType = localStorage.getItem("productType");
+
+    if (!sellerType || !productType) {
+      navigate('/seller-registration/seller-type');
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState<SellerFormData['addressInfo']>({
     street: null,
     city: null,
   });
-console.log(formData);
+  console.log(formData);
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.addressInfo) {
       setFormData(data.addressInfo);
@@ -25,7 +36,7 @@ console.log(formData);
   };
 
   const handlePrevious = () => {
-    navigate(-1)  ;
+    navigate(-1);
   };
 
   const handleNext = async () => {
@@ -39,7 +50,7 @@ console.log(formData);
         duration: 4000, // ms
       });
       return;
-      
+
     }
 
     setIsLoading(true);
@@ -75,11 +86,11 @@ console.log(formData);
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
         <TopLoader progress={83.5} />
         <div className="max-w-5xl mx-auto">
-          <AddressInfoStep 
+          <AddressInfoStep
             data={formData}
             onUpdate={handleUpdate}
           />
-          <motion.div 
+          <motion.div
             className="mt-8 flex justify-between"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -92,7 +103,7 @@ console.log(formData);
             >
               Précedent
             </button>
-            
+
             <button
               onClick={handleNext}
               disabled={isLoading}

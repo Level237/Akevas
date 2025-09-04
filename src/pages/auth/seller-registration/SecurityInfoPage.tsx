@@ -5,21 +5,32 @@ import TopLoader from '@/components/ui/top-loader';
 import { PageTransition } from '@/components/ui/page-transition';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { motion } from 'framer-motion';
-import { useDispatch} from 'react-redux';
-import { AppDispatch} from '@/store';
-import {setPassword} from '@/store/seller/registerSlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
+import { setPassword } from '@/store/seller/registerSlice';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 const SecurityInfoPage = () => {
-   
+
 
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    const storeTown = localStorage.getItem("storeTown");
+    const storeQuarter = localStorage.getItem("storeQuarter");
+
+    if (!storeTown || !storeQuarter) {
+      window.location.href = '/seller-registration/address-info';
+    }
+  }, [dispatch]);
+
   const [formData, setFormData] = useState<SellerFormData['securityInfo']>({
     password: '',
     confirmPassword: '',
   });
-  
+
 
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.securityInfo) {
@@ -27,7 +38,7 @@ const SecurityInfoPage = () => {
     }
   };
 
- 
+
 
   const handleSubmit = async () => {
     // Validation
@@ -82,32 +93,32 @@ const SecurityInfoPage = () => {
 
       // Nettoyer et naviguer
       document.body.removeChild(element);
-      window.location.href='/seller-registration/generating'
-      
+      window.location.href = '/seller-registration/generating'
+
     } catch (error) {
       console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
   };
- 
+
 
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
         <TopLoader progress={100} />
         <div className="max-w-5xl mx-auto">
-          <SecurityInfoStep 
+          <SecurityInfoStep
             data={formData}
             onUpdate={handleUpdate}
           />
-          <motion.div 
+          <motion.div
             className="mt-8 flex justify-end"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            
+
             <button
               onClick={handleSubmit}
               disabled={isLoading}

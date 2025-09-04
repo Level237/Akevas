@@ -9,10 +9,22 @@ import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { setShopInfo } from '@/store/seller/registerSlice';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
 const ShopInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const identityCardInFront = localStorage.getItem("identity_card_in_front");
+    const identityCardInBack = localStorage.getItem("identity_card_in_back");
+    const identityCardWithThePerson = localStorage.getItem("identity_card_with_the_person");
+
+    if (!identityCardInFront || !identityCardInBack || !identityCardWithThePerson) {
+      navigate('/seller-registration/identity-info');
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState<SellerFormData['shopInfo']>({
     shopName: '',
     description: '',
@@ -38,10 +50,10 @@ const ShopInfoPage = () => {
     const requiredFields = ['shopName', 'description', 'category', 'gender', 'logo', 'images'];
     const missingFields = requiredFields.filter(field => {
       if (field === 'category') {
-        
+
         return !formData.category || formData.category.length === 0;
       }
-      
+
       return !formData[field as keyof typeof formData];
     });
 
@@ -61,7 +73,7 @@ const ShopInfoPage = () => {
       return;
     }
 
-   
+
 
     setIsLoading(true);
 

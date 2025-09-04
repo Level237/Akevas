@@ -9,10 +9,25 @@ import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { setSellerType } from '@/store/seller/registerSlice';
 import { toast } from 'sonner';
+import { useEffect } from 'react';
 const SellerTypePage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const storeName = localStorage.getItem("storeName");
+    const storeDescription = localStorage.getItem("storeDescription");
+    const storeCategories = localStorage.getItem("storeCategories");
+    const storeLogo = localStorage.getItem("storeLogo");
+    const storeImages = localStorage.getItem("storeImages");
+    const storeGender = localStorage.getItem("storeGender");
+
+    if (!storeName || !storeDescription || !storeCategories || !storeLogo || !storeImages || !storeGender) {
+      navigate('/seller-registration/shop-info');
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState<SellerFormData['bankInfo']>({
     sellerType: '',
     productType: '',
@@ -27,12 +42,12 @@ const SellerTypePage = () => {
   const handlePrevious = () => {
     navigate(-1);
   };
-console.log(formData);
+  console.log(formData);
   const handleNext = async () => {
     // Validation
     const requiredFields = ['sellerType', 'productType'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
+
     if (missingFields.length > 0) {
       toast.error('Veuillez remplir tous les champs obligatoires', {
         description: "Tous les champs marqués d'un * sont requis.",
@@ -46,9 +61,9 @@ console.log(formData);
     try {
       // Simuler une requête API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const sellerTypeState={
-        'sellerType':formData.sellerType,
-        'productType':formData.productType,
+      const sellerTypeState = {
+        'sellerType': formData.sellerType,
+        'productType': formData.productType,
       }
       dispatch(setSellerType(sellerTypeState));
       // Animation de succès
@@ -75,11 +90,11 @@ console.log(formData);
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
         <TopLoader progress={66.8} />
         <div className="max-w-5xl mx-auto">
-          <SellerTypeStep 
+          <SellerTypeStep
             data={formData}
             onUpdate={handleUpdate}
           />
-          <motion.div 
+          <motion.div
             className="mt-8 flex justify-between"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
