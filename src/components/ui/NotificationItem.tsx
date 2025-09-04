@@ -1,19 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Clock, CheckCircle } from 'lucide-react';
+import { NotificationData } from '@/types/notifications';
 import logo from '@/assets/favicon.png';
-
-interface NotificationData {
-    id: number;
-    order_id?: number;
-    customer_name?: string;
-    total_amount?: string;
-    data: {
-        message: string;
-    };
-    read_at: string | null;
-    created_at: string;
-}
 
 interface NotificationItemProps {
     notification: NotificationData;

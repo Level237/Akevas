@@ -6,18 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import logo from '@/assets/favicon.png';
 import NotificationItem from '@/components/ui/NotificationItem';
 import AsyncLink from '@/components/ui/AsyncLink';
-
-interface NotificationData {
-    id: number;
-    order_id?: number;
-    customer_name?: string;
-    total_amount?: string;
-    data: {
-        message: string;
-    };
-    read_at: string | null;
-    created_at: string;
-}
+import { NotificationData } from '@/types/notifications';
 
 const NotificationsPage: React.FC = () => {
     const { notificationId } = useParams<{ notificationId?: string }>();
@@ -29,7 +18,7 @@ const NotificationsPage: React.FC = () => {
     const { data: selectedNotification } = useGetNotificationQuery(notificationId, {
         skip: !selectedNotificationId,
     });
-    console.log(selectedNotification)
+
     // Sync URL parameter with state
     useEffect(() => {
         if (notificationId) {
@@ -162,85 +151,150 @@ const NotificationsPage: React.FC = () => {
                                         {/* Notification Content */}
                                         <div className="flex-1 p-6 overflow-y-auto">
                                             {selectedNotification ? (
-                                                <div className="space-y-6">
-                                                    {/* Notification Card */}
-                                                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                                                        <div className="flex items-start gap-4 mb-4">
-                                                            <img
-                                                                src={logo}
-                                                                alt="Akevas Logo"
-                                                                className="w-12 h-12 rounded-full object-cover"
-                                                            />
-                                                            <div className="flex-1">
-                                                                <h4 className="text-lg font-semibold text-gray-900 mb-1">
-                                                                    Nouvelle commande
-                                                                </h4>
-                                                                <p className="text-gray-600">
-                                                                    {selectedNotification.data.message}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Order Details */}
-                                                        {selectedNotification.data.order_id && (
-                                                            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                                                                <h5 className="font-medium text-gray-900 mb-3">Détails de la commande</h5>
-                                                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                                                    <div>
-                                                                        <span className="text-gray-500">Numéro de commande:</span>
-                                                                        <p className="font-medium">#{selectedNotification.data.order_id}</p>
-                                                                    </div>
-                                                                    {selectedNotification.data.customer_name && (
-                                                                        <div>
-                                                                            <span className="text-gray-500">Client:</span>
-                                                                            <p className="font-medium">{selectedNotification.data.customer_name}</p>
-                                                                        </div>
-                                                                    )}
-                                                                    {selectedNotification.data.total_amount && (
-                                                                        <div>
-                                                                            <span className="text-gray-500">Montant total:</span>
-                                                                            <p className="font-medium">{selectedNotification.data.total_amount} FCFA</p>
-                                                                        </div>
-                                                                    )}
-                                                                    <div>
-                                                                        <span className="text-gray-500">Date:</span>
-                                                                        <p className="font-medium">
-                                                                            {new Date(selectedNotification.created_at).toLocaleDateString('fr-FR', {
-                                                                                year: 'numeric',
-                                                                                month: 'long',
-                                                                                day: 'numeric',
-                                                                                hour: '2-digit',
-                                                                                minute: '2-digit'
-                                                                            })}
-                                                                        </p>
-                                                                    </div>
+                                                selectedNotification.type === 'App\\Notifications\\Seller\\NewOrderFromSellerNotification' ? (
+                                                    <div className="space-y-6">
+                                                        {/* Notification Card for New Order */}
+                                                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                                                            <div className="flex items-start gap-4 mb-4">
+                                                                <img
+                                                                    src={logo}
+                                                                    alt="Akevas Logo"
+                                                                    className="w-12 h-12 rounded-full object-cover"
+                                                                />
+                                                                <div className="flex-1">
+                                                                    <h4 className="text-lg font-semibold text-gray-900 mb-1">
+                                                                        Nouvelle commande
+                                                                    </h4>
+                                                                    <p className="text-gray-600 break-words">
+                                                                        {selectedNotification.data.message}
+                                                                    </p>
                                                                 </div>
                                                             </div>
-                                                        )}
 
-                                                        {/* Status */}
-                                                        <div className="flex items-center justify-between">
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="text-sm text-gray-500">Statut:</span>
-                                                                {selectedNotification.read_at ? (
-                                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                                        <CheckCircle className="w-3 h-3 mr-1" />
-                                                                        Lu
-                                                                    </span>
-                                                                ) : (
-                                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
-                                                                        Non lu
-                                                                    </span>
-                                                                )}
+                                                            {/* Order Details */}
+                                                            {selectedNotification.data.order_id && (
+                                                                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                                                                    <h5 className="font-medium text-gray-900 mb-3">Détails de la commande</h5>
+                                                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                                                        <div>
+                                                                            <span className="text-gray-500">Numéro de commande:</span>
+                                                                            <p className="font-medium">#{selectedNotification.data.order_id}</p>
+                                                                        </div>
+                                                                        {selectedNotification.data.customer_name && (
+                                                                            <div>
+                                                                                <span className="text-gray-500">Client:</span>
+                                                                                <p className="font-medium">{selectedNotification.data.customer_name}</p>
+                                                                            </div>
+                                                                        )}
+                                                                        {selectedNotification.data.total_amount && (
+                                                                            <div>
+                                                                                <span className="text-gray-500">Montant total:</span>
+                                                                                <p className="font-medium">{selectedNotification.data.total_amount} FCFA</p>
+                                                                            </div>
+                                                                        )}
+                                                                        <div>
+                                                                            <span className="text-gray-500">Date:</span>
+                                                                            <p className="font-medium">
+                                                                                {new Date(selectedNotification.created_at).toLocaleDateString('fr-FR', {
+                                                                                    year: 'numeric',
+                                                                                    month: 'long',
+                                                                                    day: 'numeric',
+                                                                                    hour: '2-digit',
+                                                                                    minute: '2-digit'
+                                                                                })}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Status */}
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-sm text-gray-500">Statut:</span>
+                                                                    {selectedNotification.read_at ? (
+                                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                            <CheckCircle className="w-3 h-3 mr-1" />
+                                                                            Lu
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
+                                                                            Non lu
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <AsyncLink to={`/seller/orders/${selectedNotification.data.order_id}`}>
+                                                                    <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#f19b45] transition-colors">
+                                                                        Voir la commande
+                                                                    </button>
+                                                                </AsyncLink>
                                                             </div>
-                                                            <AsyncLink to={`/seller/orders/${selectedNotification.data.order_id}`}>
-                                                                <button className="px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#f19b45] transition-colors">
-                                                                    Voir la commande
-                                                                </button>
-                                                            </AsyncLink>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                ) : selectedNotification.type === 'App\\Notifications\\Seller\\NewMessageFromVerificationNotification' ? (
+                                                    <div className="space-y-6">
+                                                        {/* Notification Card for Verification */}
+                                                        <div className="bg-white overflow-y-auto h-[100vh] pb-44 border border-gray-200 rounded-lg p-6 shadow-sm">
+                                                            <div className="flex items-start gap-4 mb-4">
+                                                                <img
+                                                                    src={logo}
+                                                                    alt="Akevas Logo"
+                                                                    className="w-12 h-12 rounded-full object-cover"
+                                                                />
+                                                                <div className="flex-1">
+                                                                    <h4 className="text-lg font-semibold text-gray-900 mb-1">
+                                                                        Notification de vérification d'identité
+                                                                    </h4>
+                                                                    {/* Description */}
+                                                                    <p className="text-gray-600 mb-4 break-words">
+                                                                        {selectedNotification.data.message}
+                                                                    </p>
+
+                                                                    {/* Corps du message lié à la vérification */}
+
+
+
+                                                                </div>
+
+                                                            </div>
+                                                            <div className="bg-gray-50 border  border-gray-200 rounded-lg p-4 mt-2">
+                                                                <h5 className="font-semibold text-gray-800 mb-2">Détails de la vérification</h5>
+                                                                <div className="text-gray-700 text-sm whitespace-pre-line break-words">
+                                                                    {selectedNotification.data.feedback
+                                                                        ? selectedNotification.data.feedback
+                                                                        : "Aucun détail supplémentaire fourni."}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-sm text-gray-500">Statut:</span>
+                                                                    {selectedNotification.read_at ? (
+                                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                            <CheckCircle className="w-3 h-3 mr-1" />
+                                                                            Lu
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
+                                                                            Non lu
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                                                                    OK
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    // Default / Unknown Notification Type
+                                                    <div className="flex flex-col items-center justify-center h-full">
+                                                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                                            <Bell className="w-8 h-8 text-gray-400" />
+                                                        </div>
+                                                        <h3 className="text-lg font-medium text-gray-900 mb-2">Type de notification inconnu</h3>
+                                                        <p className="text-gray-500">Une erreur est survenue lors du chargement de cette notification.</p>
+                                                    </div>
+                                                )
                                             ) : (
                                                 <div className="flex items-center justify-center h-full">
                                                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ed7e0f]"></div>
@@ -345,88 +399,148 @@ const NotificationsPage: React.FC = () => {
                                     {/* Notification Content */}
                                     <div className="flex-1 p-4 overflow-y-auto">
                                         {selectedNotification ? (
-                                            <div className="space-y-4">
-                                                {/* Notification Card */}
-                                                <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                                                    <div className="flex items-start gap-3 mb-4">
-                                                        <img
-                                                            src={logo}
-                                                            alt="Akevas Logo"
-                                                            className="w-10 h-10 rounded-full object-cover"
-                                                        />
-                                                        <div className="flex-1">
-                                                            <h4 className="text-base font-semibold text-gray-900 mb-1">
-                                                                Nouvelle commande
-                                                            </h4>
-                                                            <p className="text-sm text-gray-600">
-                                                                {selectedNotification.data.message}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Order Details */}
-                                                    {selectedNotification.data.order_id && (
-                                                        <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                                                            <h5 className="font-medium text-gray-900 mb-3 text-sm">Détails de la commande</h5>
-                                                            <div className="space-y-2 text-sm">
-                                                                <div className="flex justify-between">
-                                                                    <span className="text-gray-500">Numéro:</span>
-                                                                    <span className="font-medium">#{selectedNotification.data.order_id}</span>
-                                                                </div>
-                                                                {selectedNotification.data.customer_name && (
-                                                                    <div className="flex justify-between">
-                                                                        <span className="text-gray-500">Client:</span>
-                                                                        <span className="font-medium">{selectedNotification.data.customer_name}</span>
-                                                                    </div>
-                                                                )}
-                                                                {selectedNotification.data.total_amount && (
-                                                                    <div className="flex justify-between">
-                                                                        <span className="text-gray-500">Montant:</span>
-                                                                        <span className="font-medium">{selectedNotification.data.total_amount} FCFA</span>
-                                                                    </div>
-                                                                )}
-                                                                <div className="flex justify-between">
-                                                                    <span className="text-gray-500">Date:</span>
-                                                                    <span className="font-medium text-xs">
-                                                                        {new Date(selectedNotification.created_at).toLocaleDateString('fr-FR', {
-                                                                            year: 'numeric',
-                                                                            month: 'short',
-                                                                            day: 'numeric',
-                                                                            hour: '2-digit',
-                                                                            minute: '2-digit'
-                                                                        })}
-                                                                    </span>
-                                                                </div>
+                                            selectedNotification.type === 'App\\Notifications\\Seller\\NewOrderFromSellerNotification' ? (
+                                                <div className="space-y-4">
+                                                    {/* Notification Card */}
+                                                    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                                                        <div className="flex items-start gap-3 mb-4">
+                                                            <img
+                                                                src={logo}
+                                                                alt="Akevas Logo"
+                                                                className="w-10 h-10 rounded-full object-cover"
+                                                            />
+                                                            <div className="flex-1">
+                                                                <h4 className="text-base font-semibold text-gray-900 mb-1">
+                                                                    Nouvelle commande
+                                                                </h4>
+                                                                <p className="text-sm text-gray-600 break-words">
+                                                                    {selectedNotification.data.message}
+                                                                </p>
                                                             </div>
                                                         </div>
-                                                    )}
 
-                                                    {/* Status and Actions */}
-                                                    <div className="space-y-3">
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="text-sm text-gray-500">Statut:</span>
-                                                            {selectedNotification.read_at ? (
-                                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                                    <CheckCircle className="w-3 h-3 mr-1" />
-                                                                    Lu
-                                                                </span>
-                                                            ) : (
-                                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
-                                                                    Non lu
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex flex-col gap-2">
-                                                            <AsyncLink to={`/seller/orders/${selectedNotification.data.order_id}`}>
-                                                                <button className="w-full bg-[#ed7e0f] text-white py-3 rounded-lg hover:bg-[#f19b45] transition-colors font-medium">
-                                                                    Voir la commande
-                                                                </button>
-                                                            </AsyncLink>
+                                                        {/* Order Details */}
+                                                        {selectedNotification.data.order_id && (
+                                                            <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                                                                <h5 className="font-medium text-gray-900 mb-3 text-sm">Détails de la commande</h5>
+                                                                <div className="space-y-2 text-sm">
+                                                                    <div className="flex justify-between">
+                                                                        <span className="text-gray-500">Numéro:</span>
+                                                                        <span className="font-medium">#{selectedNotification.data.order_id}</span>
+                                                                    </div>
+                                                                    {selectedNotification.data.customer_name && (
+                                                                        <div className="flex justify-between">
+                                                                            <span className="text-gray-500">Client:</span>
+                                                                            <span className="font-medium">{selectedNotification.data.customer_name}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    {selectedNotification.data.total_amount && (
+                                                                        <div className="flex justify-between">
+                                                                            <span className="text-gray-500">Montant:</span>
+                                                                            <span className="font-medium">{selectedNotification.data.total_amount} FCFA</span>
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="flex justify-between">
+                                                                        <span className="text-gray-500">Date:</span>
+                                                                        <span className="font-medium text-xs">
+                                                                            {new Date(selectedNotification.created_at).toLocaleDateString('fr-FR', {
+                                                                                year: 'numeric',
+                                                                                month: 'short',
+                                                                                day: 'numeric',
+                                                                                hour: '2-digit',
+                                                                                minute: '2-digit'
+                                                                            })}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
 
+                                                        {/* Status and Actions */}
+                                                        <div className="space-y-3">
+                                                            <div className="flex items-center justify-between">
+                                                                <span className="text-sm text-gray-500">Statut:</span>
+                                                                {selectedNotification.read_at ? (
+                                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                        <CheckCircle className="w-3 h-3 mr-1" />
+                                                                        Lu
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
+                                                                        Non lu
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="flex flex-col gap-2">
+                                                                <AsyncLink to={`/seller/orders/${selectedNotification.data.order_id}`}>
+                                                                    <button className="w-full bg-[#ed7e0f] text-white py-3 rounded-lg hover:bg-[#f19b45] transition-colors font-medium">
+                                                                        Voir la commande
+                                                                    </button>
+                                                                </AsyncLink>
+
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            ) : selectedNotification.type === 'App\\Notifications\\Seller\\NewMessageFromVerificationNotification' ? (
+                                                <div className="space-y-4">
+                                                    {/* Notification Card for Verification */}
+                                                    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                                                        <div className="flex items-start gap-3 mb-4">
+                                                            <img
+                                                                src={logo}
+                                                                alt="Akevas Logo"
+                                                                className="w-10 h-10 rounded-full object-cover"
+                                                            />
+                                                            <div className="flex-1">
+                                                                <h4 className="text-base font-semibold text-gray-900 mb-1">
+                                                                    Notification de vérification d'identité
+                                                                </h4>
+                                                                <p className="text-sm text-gray-600 break-words">
+                                                                    {selectedNotification.data.message}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2">
+                                                            <h5 className="font-semibold text-gray-800 mb-2 text-sm">Détails de la vérification</h5>
+                                                            <div className="text-gray-700 text-sm whitespace-normal break-words">
+                                                                {selectedNotification.data.feedback
+                                                                    ? selectedNotification.data.feedback
+                                                                    : "Aucun détail supplémentaire fourni."}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-sm text-gray-500">Statut:</span>
+                                                                {selectedNotification.read_at ? (
+                                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                        <CheckCircle className="w-3 h-3 mr-1" />
+                                                                        Lu
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
+                                                                        Non lu
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="flex flex-col gap-2">
+                                                                <button className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                                                                    OK
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                // Default / Unknown Notification Type
+                                                <div className="flex flex-col items-center justify-center h-full">
+                                                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                                        <Bell className="w-8 h-8 text-gray-400" />
+                                                    </div>
+                                                    <h3 className="text-lg font-medium text-gray-900 mb-2">Type de notification inconnu</h3>
+                                                    <p className="text-gray-500">Une erreur est survenue lors du chargement de cette notification.</p>
+                                                </div>
+                                            )
                                         ) : (
                                             <div className="flex items-center justify-center h-full">
                                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ed7e0f]"></div>

@@ -1,21 +1,10 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useRecentNotificationsQuery } from '@/services/sellerService';
-import logo from '@/assets/favicon.png'
-import AsyncLink from './AsyncLink';
+import React, { useEffect, useRef } from 'react';
 import { Bell } from 'lucide-react';
-
-interface NotificationData {
-    id: number,
-    order_id?: number;
-    customer_name?: string;
-    total_amount?: string;
-    data: {
-        message: string
-    },
-    read_at: string | null,
-    created_at: string
-}
+import { motion } from 'framer-motion';
+import { useAllNotificationQuery } from '@/services/sellerService';
+import NotificationItem from './NotificationItem';
+import AsyncLink from './AsyncLink';
+import { NotificationData } from '@/types/notifications';
 
 interface NotificationDropdownProps {
     isOpen: boolean;
@@ -24,27 +13,29 @@ interface NotificationDropdownProps {
 
 const NotificationDropdown: React.FC<NotificationDropdownProps> = React.memo(
     ({ isOpen, onClose }) => {
+        const { data: allNotifications, isLoading } = useAllNotificationQuery("seller");
+        const dropdownRef = useRef<HTMLDivElement>(null);
+
+        useEffect(() => {
+            const handleClickOutside = (event: MouseEvent) => {
+                if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                    onClose();
+                }
+            };
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }, [onClose]);
+
         if (!isOpen) return null;
-        const { data: recentNotifications, isLoading } = useRecentNotificationsQuery('seller');
 
-        if (isLoading) {
-            return (
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-0 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 p-4"
-                >
-                    <p className="text-gray-600 text-sm">Loading notifications...</p>
-                </motion.div>
-            );
-        }
-
-        const notificationsToDisplay = recentNotifications ? recentNotifications.slice(-3) : [];
+        const unreadNotifications = allNotifications?.filter((n: NotificationData) => n.read_at === null) || [];
+        const notificationsToDisplay = unreadNotifications.slice(0, 3);
 
         return (
             <motion.div
+                ref={dropdownRef}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -54,59 +45,24 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = React.memo(
                 <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Notifications</h3>
                     <div className="text-gray-600 text-sm space-y-2">
-                        {notificationsToDisplay.length > 0 ? (
-                            notificationsToDisplay.map((notification: NotificationData, index: number) => {
-                                const isUnread = notification.read_at === null;
-                                return (
-                                    <React.Fragment key={notification.id}>
-                                        <AsyncLink
-                                            to={`/seller/notifications/${notification.id}`}
-                                            className={`block ${isUnread
-                                                ? 'bg-gray-100 hover:bg-gray-200 border-l-4 border-[#6e0a13] shadow-sm'
-                                                : 'bg-gray-50 hover:bg-gray-200 border-l-4 border-transparent hover:bg-gray-100'
-                                                } p-3 rounded-lg transition-all duration-200 cursor-pointer hover:shadow-sm`}
-                                            OnClick={onClose}
-                                        >
-                                            <div className="flex items-start gap-3">
-                                                <div className="relative">
-                                                    <img
-                                                        src={logo}
-                                                        alt="Akevas Logo"
-                                                        className="w-8 h-8 rounded-full object-cover"
-                                                    />
-                                                    {isUnread && (
-                                                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#ed7e0f] rounded-full border-2 border-white"></div>
-                                                    )}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className={`text-sm font-medium ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>
-                                                        {notification.data.message}
-                                                    </p>
-                                                    <p className="text-gray-500 text-xs mt-1">
-                                                        {new Date(notification.created_at).toLocaleString()}
-                                                    </p>
-                                                    {isUnread && (
-                                                        <div className="flex items-center mt-2">
-                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#ed7e0f]/10 text-[#ed7e0f]">
-                                                                Nouveau
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </AsyncLink>
-                                        {index < notificationsToDisplay.length - 1 && (
-                                            <hr className="border-gray-200" />
-                                        )}
-                                    </React.Fragment>
-                                );
-                            })
+                        {isLoading ? (
+                            <div className="flex items-center justify-center py-4">
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#ed7e0f]"></div>
+                            </div>
+                        ) : notificationsToDisplay.length > 0 ? (
+                            notificationsToDisplay.map((notification: NotificationData) => (
+                                <NotificationItem
+                                    key={notification.id}
+                                    notification={notification}
+                                    isSelected={false}
+                                    onClick={() => onClose()} // Close dropdown on item click
+                                    variant="list"
+                                />
+                            ))
                         ) : (
                             <div className="text-center py-8">
                                 <div className="w-12 h-12 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5z" />
-                                    </svg>
+                                    <Bell className="w-6 h-6 text-gray-400" />
                                 </div>
                                 <p className="text-gray-500 text-sm">Aucune notification</p>
                             </div>
@@ -120,10 +76,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = React.memo(
                         <div className="flex justify-center items-center gap-2 w-full">
                             <Bell className="w-4 h-4" />
                             <div>
-                                <p>Voir plus</p>
+                                <p>Voir toutes les notifications</p>
                             </div>
                         </div>
-
                     </AsyncLink>
                 </div>
             </motion.div>

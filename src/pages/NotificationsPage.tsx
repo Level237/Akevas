@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell,Store, Truck, ShoppingBag, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { Bell, Store, Truck, ShoppingBag, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import { ScrollRestoration } from 'react-router-dom';
