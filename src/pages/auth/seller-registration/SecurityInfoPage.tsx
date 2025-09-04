@@ -12,9 +12,8 @@ import { toast } from 'sonner';
 import { useEffect } from 'react';
 
 const SecurityInfoPage = () => {
-
-
   const [isLoading, setIsLoading] = useState(false);
+  const [acceptTermsError, setAcceptTermsError] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -29,21 +28,30 @@ const SecurityInfoPage = () => {
   const [formData, setFormData] = useState<SellerFormData['securityInfo']>({
     password: '',
     confirmPassword: '',
+    acceptTerms: false,
   });
-
 
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.securityInfo) {
       setFormData(data.securityInfo);
+      // Clear error if user checks the box
+      if (data.securityInfo.acceptTerms) {
+        setAcceptTermsError(null);
+      }
     }
   };
 
-
-
   const handleSubmit = async () => {
     // Validation
-    const requiredFields = ['password', 'confirmPassword'];
+    const requiredFields = ['password', 'confirmPassword', 'acceptTerms'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+
+    // Check specifically for acceptTerms
+    if (!formData.acceptTerms) {
+      setAcceptTermsError("Veuillez lire et cocher la case de condition générale de confidentialité.");
+    } else {
+      setAcceptTermsError(null);
+    }
 
     if (missingFields.length > 0) {
       toast.error('Veuillez remplir tous les champs obligatoires', {
@@ -102,7 +110,6 @@ const SecurityInfoPage = () => {
     }
   };
 
-
   return (
     <PageTransition>
       <div className="min-h-screen bg-[#F8F9FC] py-8 px-4">
@@ -112,13 +119,17 @@ const SecurityInfoPage = () => {
             data={formData}
             onUpdate={handleUpdate}
           />
+          {acceptTermsError && (
+            <div className="mt-4 mx-44  text-red-600 text-sm font-medium">
+              {acceptTermsError}
+            </div>
+          )}
           <motion.div
             className="mt-8 flex justify-end"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-
             <button
               onClick={handleSubmit}
               disabled={isLoading}

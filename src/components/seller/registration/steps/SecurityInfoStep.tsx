@@ -20,7 +20,7 @@ const SecurityInfoStep: React.FC<SecurityInfoStepProps> = ({ data, onUpdate }) =
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
+
     // Vérifier la force du mot de passe
     if (name === 'password') {
       const strength = checkPasswordStrength(value);
@@ -155,21 +155,34 @@ const SecurityInfoStep: React.FC<SecurityInfoStepProps> = ({ data, onUpdate }) =
         </Card>
 
         {/* Règles de mot de passe */}
-        <Card className="p-4 bg-[#ed7e0f]/10 border border-[#ed7e0f]/20">
-          <div className="space-y-2">
-            <h3 className="font-medium text-[#ed7e0f] flex items-center gap-2">
-              <Lock className="w-4 h-4" />
-              Règles de sécurité
-            </h3>
-            <ul className="text-sm text-[#ed7e0f] space-y-1 list-disc list-inside">
-              <li>Au moins 8 caractères</li>
-              <li>Au moins une lettre majuscule</li>
-              <li>Au moins une lettre minuscule</li>
-              <li>Au moins un chiffre</li>
-              <li>Au moins un caractère spécial (!@#$%^&*)</li>
-            </ul>
-          </div>
-        </Card>
+        <div className="flex items-start gap-2 mt-4">
+          <input
+            id="acceptTerms"
+            type="checkbox"
+            checked={data.acceptTerms || false}
+            onChange={e => {
+              onUpdate({
+                securityInfo: {
+                  ...data,
+                  acceptTerms: e.target.checked,
+                },
+              });
+            }}
+            className="accent-[#ed7e0f] w-5 h-5"
+          />
+          <label htmlFor="acceptTerms" className="text-sm text-gray-700 select-none">
+            J'ai lu et j'accepte les&nbsp;
+            <a
+              href="https://akevas.com/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#ed7e0f] underline hover:text-[#ed7e0f]/80"
+            >
+              conditions générales et la politique de confidentialité
+            </a>
+            .
+          </label>
+        </div>
       </motion.div>
     </div>
   );

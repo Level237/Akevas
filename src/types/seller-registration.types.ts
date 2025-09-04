@@ -33,6 +33,7 @@ export interface SellerFormData {
   securityInfo: {
     password: string;
     confirmPassword: string;
+    acceptTerms: boolean;
   };
   // Informations d'adresse
   addressInfo: {
