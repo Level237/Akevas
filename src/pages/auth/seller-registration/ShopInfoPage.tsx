@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import { setShopInfo } from '@/store/seller/registerSlice';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
+
 const ShopInfoPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +35,9 @@ const ShopInfoPage = () => {
     gender: 0,
   });
   const [categoryError, setCategoryError] = useState('');
+
   console.log(formData.logo);
+
   const handleUpdate = (data: Partial<SellerFormData>) => {
     if (data.shopInfo) {
       setFormData(data.shopInfo);
@@ -47,33 +50,43 @@ const ShopInfoPage = () => {
 
   const handleNext = async () => {
     // Validation
-    const requiredFields = ['shopName', 'description', 'category', 'gender', 'logo', 'images'];
-    const missingFields = requiredFields.filter(field => {
-      if (field === 'category') {
+    let hasError = false;
 
-        return !formData.category || formData.category.length === 0;
-      }
-
-      return !formData[field as keyof typeof formData];
-    });
-
+    // Category validation
     if (!formData.category || formData.category.length === 0) {
       setCategoryError('La catégorie ne peut pas être vide.');
       toast.error('Veuillez sélectionner au moins une catégorie.');
-      return;
+      hasError = true;
     } else {
       setCategoryError('');
     }
 
-    if (missingFields.length > 0) {
-      toast.error('Veuillez remplir tous les champs obligatoires', {
-        description: "Tous les champs marqués d'un * sont requis.",
-        duration: 4000, // ms
-      });
-      return;
+    // Images validation
+    if (!formData.images || formData.images.length === 0) {
+
+      toast.error('Stocker au moins une image de votre boutique.');
+      hasError = true;
+    } else {
+
     }
 
+    // Other required fields
+    const requiredFields = ['shopName', 'description', 'logo', 'gender'];
+    const missingFields = requiredFields.filter(field => {
+      return !formData[field as keyof typeof formData];
+    });
 
+    if (missingFields.length > 0) {
+      toast.error('Veuillez remplir tous les champs obligatoires', {
+        description: "Tous les champs marqués d\'un * sont requis.",
+        duration: 4000, // ms
+      });
+      hasError = true;
+    }
+
+    if (hasError) {
+      return;
+    }
 
     setIsLoading(true);
 
@@ -123,6 +136,7 @@ const ShopInfoPage = () => {
             data={formData}
             onUpdate={handleUpdate}
             categoryError={categoryError}
+
           />
           <motion.div
             className="mt-8 flex justify-between"
