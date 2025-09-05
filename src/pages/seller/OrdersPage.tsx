@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { useGetOrdersQuery } from '@/services/sellerService';
+import { useCurrentSellerQuery, useGetOrdersQuery } from '@/services/sellerService';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Package, Clock, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import MobileNav from '@/components/ui/mobile-nav';
+import AccountNotActivated from '@/components/seller/AccountNotActivated';
+import SidebarLeft from '@/components/ui/SidebarLeft';
 
 const formatPrice = (price: string | number) => {
     const numPrice = typeof price === 'string' ? parseFloat(price) : price;
@@ -88,6 +91,16 @@ const OrdersPage = () => {
     const { data: ordersData, isLoading } = useGetOrdersQuery('seller');
     const navigate = useNavigate();
 
+    const { data: { data: sellerData } = {} } = useCurrentSellerQuery('seller');
+
+    if (sellerData?.isSeller === 0) {
+        return <>
+            <SidebarLeft />
+
+            <MobileNav />
+            <AccountNotActivated />
+        </>;
+    }
     const getOrderStatus = (status: string) => {
         switch (status) {
             case "0":
