@@ -284,6 +284,10 @@ const CreateProductPage: React.FC = () => {
             }
         }
 
+        // --- NOUVEAU BLOC DE VALIDATION DU STOCK ---
+
+        // --- FIN DU NOUVEAU BLOC DE VALIDATION DU STOCK ---
+
         // Validation pour les produits simples
         if (productType === 'simple') {
             if (!name.trim()) {
@@ -296,14 +300,6 @@ const CreateProductPage: React.FC = () => {
 
             if (!(isWholesale && isOnlyWhole) && (!price || Number(price) <= 0)) {
                 toast.error('Le prix du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (!stock || Number(stock) <= 0) {
-                toast.error('La quantité du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
                     duration: 4000, // ms
                 });
@@ -360,7 +356,7 @@ const CreateProductPage: React.FC = () => {
             }
 
             // Validation spécifique pour la vente en gros
-            if (isWholesale) {
+            if ((productType === 'simple' || (productType === 'variable' && selectedAttributeType === 'colorOnly')) && isWholesale) {
                 if (wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
                     toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
                         description: "Veuillez remplir tous les champs obligatoires",
@@ -446,15 +442,7 @@ const CreateProductPage: React.FC = () => {
             }
 
             // Validation spécifique pour la vente en gros
-            if (isWholesale) {
-                if (wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
-                    toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
-                        description: "Veuillez remplir tous les champs obligatoires",
-                        duration: 4000,
-                    });
-                    return;
-                }
-            }
+
 
             // Validation des variations
             if (variationFrames.length === 0) {
@@ -1092,19 +1080,22 @@ const CreateProductPage: React.FC = () => {
 
                                 {productType === 'simple' && (
                                     <div className="grid grid-cols-2 gap-4">
-                                        {(!isWholesale || (isWholesale && isOnlyWhole === false)) && (
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
-                                                <input
-                                                    type="number"
-                                                    value={price}
-                                                    onChange={(e) => setPrice(e.target.value)}
-                                                    className="w-full max-sm:placeholder:text-md px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                                                    placeholder="Prix (Fcfa)"
 
-                                                />
-                                            </div>
-                                        )}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
+                                            <input
+                                                type="number"
+                                                value={price}
+                                                onChange={(e) => setPrice(e.target.value)}
+                                                className="w-full max-sm:placeholder:text-md px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                                placeholder={
+                                                    isWholesale && isOnlyWhole
+                                                        ? "Prix d'un article"
+                                                        : "Prix de détail (Fcfa)"
+                                                }
+                                            />
+                                        </div>
+
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
                                             <input
@@ -1119,6 +1110,10 @@ const CreateProductPage: React.FC = () => {
                                     </div>
                                 )}
 
+
+
+
+
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                                     <textarea
@@ -1132,7 +1127,7 @@ const CreateProductPage: React.FC = () => {
                             </div>
 
                             {/* Section Vente en Gros - Visible uniquement si isWholesale est true */}
-                            {isWholesale && (
+                            {isWholesale && productType === "simple" && (
                                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
@@ -1141,6 +1136,79 @@ const CreateProductPage: React.FC = () => {
                                         <div>
                                             <h2 className="text-xl font-bold text-gray-900">Prix de Gros</h2>
                                             <p className="text-purple-600 text-sm font-medium">Configurez vos tarifs pour les revendeurs</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Prix de gros */}
+                                    <div className="space-y-4">
+                                        {wholesalePrices.map((price, index) => (
+                                            <div key={index} className="bg-white rounded-xl p-4 border border-purple-200">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <span className="text-sm font-medium text-purple-600">Prix #{index + 1}</span>
+                                                    {wholesalePrices.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeWholesalePrice(index)}
+                                                            className="p-1 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Quantité minimale</label>
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            value={price.min_quantity}
+                                                            onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
+                                                                i === index ? { ...p, min_quantity: Number(e.target.value) } : p
+                                                            ))}
+                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                            placeholder="Ex: 10"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            value={price.wholesale_price}
+                                                            onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
+                                                                i === index ? { ...p, wholesale_price: Number(e.target.value) } : p
+                                                            ))}
+                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                            placeholder="Ex: 5000"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Bouton ajouter un nouveau prix */}
+                                    <div className="mt-4 flex justify-center">
+                                        <button
+                                            type="button"
+                                            onClick={addWholesalePrice}
+                                            className="px-4 py-2 bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+                                        >
+                                            + Ajouter un prix
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {isWholesale && productType === "variable" && selectedAttributeType === "colorOnly" && (
+                                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
+                                            <span className="text-2xl">📦</span>
+                                        </div>
+                                        <div>
+                                            <h2 className="text-xl font-bold text-gray-900">Prix de Gros pour Variations (Couleur uniquement)</h2>
+                                            <p className="text-purple-600 text-sm font-medium">Configurez vos tarifs pour les revendeurs par couleur</p>
                                         </div>
                                     </div>
 

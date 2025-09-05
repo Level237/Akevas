@@ -66,7 +66,6 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
 
     if (currentUser.role_id === 2) { // Vendeur
       return [
-        { icon: Store, text: "Tableau de bord", href: `/seller/dashboard`, disabled: currentUser.isSeller === 0 },
         { icon: Package, text: "Mes produits", href: "/seller/products", disabled: currentUser.isSeller === 1 },
         { icon: Package, text: "Mes commandes", href: "/orders", disabled: currentUser.isSeller === 1 },
       ]
@@ -169,6 +168,16 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                   <div className="px-4 py-2 text-xs font-medium text-gray-500">
                     Navigation
                   </div>
+
+                  <AsyncLink to='/seller/dashboard' >
+                    <div className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                      <div className="flex items-center gap-3">
+                        <Store className="h-4 w-4 text-gray-500" />
+                        Dashboard
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </AsyncLink>
                   {menuItems.map((item, index) => (
                     <motion.div
                       key={index}
@@ -176,6 +185,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
                     >
+
                       <AsyncLink to={item.href} className={!item.disabled ? 'hidden' : ''}>
                         <div className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
                           <div className="flex items-center gap-3">
