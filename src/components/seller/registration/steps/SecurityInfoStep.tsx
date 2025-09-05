@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Lock, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Eye, EyeOff, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface SecurityInfoStepProps {

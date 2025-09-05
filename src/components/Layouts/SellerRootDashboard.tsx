@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import Sidebar from '@/components/seller/Sidebar';
 import Header from '@/components/dashboard/seller/layouts/header';
 import { useCurrentSellerQuery } from '@/services/sellerService';
-import AccountNotActivated from '@/components/seller/AccountNotActivated';
 import MobileNav from '../ui/mobile-nav';
 import SidebarLeft from '../ui/SidebarLeft';
 import CategoryModal from '../modals/CategoryModal';
