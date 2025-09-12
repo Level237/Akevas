@@ -13,12 +13,12 @@ interface RecentUsersProps {
   isLoading: boolean | null
 }
 
-export function RecentUsers({ users, title, isLoading }: RecentUsersProps) {
+export function RecentDelivery({ users, title, isLoading }: RecentUsersProps) {
   console.log(users)
   return (
     <Card>
       <CardHeader >
-        <CardTitle className="flex justify-between items-center">{title} <AsyncLink to="/admin/shops" className=" bg-transparent p-3 rounded-lg border-[1px] hover:bg-[#ed7e0f]/20 text-[#ed7e0f] border-[#ed7e0f]/90">Voir plus</AsyncLink></CardTitle>
+        <CardTitle className="flex justify-between items-center">{title} <AsyncLink to="/admin/delivery" className=" bg-transparent p-3 rounded-lg border-[1px] hover:bg-[#ed7e0f]/20 text-[#ed7e0f] border-[#ed7e0f]/90">Voir plus</AsyncLink></CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -30,8 +30,8 @@ export function RecentUsers({ users, title, isLoading }: RecentUsersProps) {
               </div>
             </div>}
           {!isLoading && users?.map((user) => (
-            <a href={`/admin/shops/${user.shop.shop_id}`}>
-              <div key={user.id} className="flex hover:bg-gray-100 hover:rounded-lg p-4 border-b cursor-pointer items-center space-x-4 max-sm:space-x-2">
+                <a href={`/admin/delivery/${user.id}`}>
+                         <div key={user.id} className="flex hover:bg-gray-100 hover:rounded-lg p-4 border-b cursor-pointer items-center space-x-4 max-sm:space-x-2">
               <Avatar>
                 {user.role_id == 2 && <AvatarImage src={user.shop?.shop_profile || ""} />}
 
@@ -44,11 +44,13 @@ export function RecentUsers({ users, title, isLoading }: RecentUsersProps) {
               </div>
               <div className="text-sm max-sm:text-xs max-sm:text-center text-muted-foreground">{formatDate(user.created_at)}</div>
             </div>
-            </a>
+                </a>
+             
+            
             
           ))}
           {!users && !isLoading && <div className="flex items-center justify-center">Aucun livreur ajouté</div>}
-          {users && users?.length === 0 && <div className="flex items-center justify-center">Aucune boutique ajoutée</div>}
+          {users && users?.length === 0 && <div className="flex items-center justify-center">Aucune livreur ajoutée</div>}
         </div>
       </CardContent>
     </Card>

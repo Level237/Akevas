@@ -1,4 +1,5 @@
 
+import { RecentDelivery } from '../recent-delivery'
 import { RecentUsers } from '../recent-users'
 import { useRecentDeliveryQuery, useRecentSellerQuery } from '@/services/adminService'
 
@@ -9,7 +10,7 @@ export default function RecentGridUser() {
   console.log(recentDelivery)
   return (
    <div className="grid gap-4 md:grid-cols-2">
-        <RecentUsers users={recentDelivery} isLoading={isLoadingDelivery} title="Livreurs Récents" />
+        <RecentDelivery users={recentDelivery} isLoading={isLoadingDelivery} title="Livreurs Récents" />
         <RecentUsers users={recentSellers} isLoading={isLoading} title="Boutiques Récentes" />
       </div>
   )
