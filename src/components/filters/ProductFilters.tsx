@@ -46,7 +46,7 @@ const ProductFilters = ({
   onCloseMobile
 }: ProductFiltersProps) => {
   const [expandedSections, setExpandedSections] = useState<string[]>([
-    'categories', 'price', 'size', 'color', 'shoe', 'length', 'attributes'
+    'categories', 'price', 'color', 'attributes'
   ]);
 
   // Local-only UI state for demo/visual wiring
@@ -71,21 +71,27 @@ const ProductFilters = ({
       setMinPrice(newMax);
     }
   };
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [selectedShoeSizes, setSelectedShoeSizes] = useState<number[]>([]);
-  const [selectedLengths, setSelectedLengths] = useState<number[]>([]);
+  
+  // Attributes state
+  const [selectedAttributeType, setSelectedAttributeType] = useState<string>('');
+  const [selectedAttributeValues, setSelectedAttributeValues] = useState<(string | number)[]>([]);
+  
+  // Attribute types and their values
+  const ATTRIBUTE_TYPES = {
+    'taille': { label: 'Taille', values: CLOTHING_SIZES },
+    'pointure': { label: 'Pointure', values: SHOE_SIZES },
+    'meches': { label: 'Longueur (mèches)', values: HAIR_LENGTHS }
+  };
 
   const totalSelectedCount = useMemo(() => {
     return (
       selectedCategories.length +
-      selectedSizes.length +
       selectedColors.length +
-      selectedShoeSizes.length +
-      selectedLengths.length +
+      selectedAttributeValues.length +
       ((minPrice ?? 0) > 0 || (maxPrice ?? 0) > 0 ? 1 : 0)
     );
-  }, [selectedCategories.length, selectedSizes.length, selectedColors.length, selectedShoeSizes.length, selectedLengths.length, minPrice, maxPrice]);
+  }, [selectedCategories.length, selectedColors.length, selectedAttributeValues.length, minPrice, maxPrice]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]);
@@ -94,17 +100,26 @@ const ProductFilters = ({
   const toggleString = (value: string, setState: (v: string[]) => void, state: string[]) => {
     setState(state.includes(value) ? state.filter(v => v !== value) : [...state, value]);
   };
-  const toggleNumber = (value: number, setState: (v: number[]) => void, state: number[]) => {
-    setState(state.includes(value) ? state.filter(v => v !== value) : [...state, value]);
+  
+  const toggleAttributeValue = (value: string | number) => {
+    setSelectedAttributeValues(prev => 
+      prev.includes(value) 
+        ? prev.filter(v => v !== value) 
+        : [...prev, value]
+    );
+  };
+  
+  const handleAttributeTypeChange = (type: string) => {
+    setSelectedAttributeType(type);
+    setSelectedAttributeValues([]); // Clear values when changing type
   };
 
   const clearLocal = () => {
     setMinPrice(0);
-    setMaxPrice(500000);
-    setSelectedSizes([]);
+    setMaxPrice(PRICE_MAX);
     setSelectedColors([]);
-    setSelectedShoeSizes([]);
-    setSelectedLengths([]);
+    setSelectedAttributeType('');
+    setSelectedAttributeValues([]);
   };
 
   const handleClearAll = () => {
@@ -337,22 +352,6 @@ const ProductFilters = ({
     </div>
   );
 
-  const Sizes = (
-    <div className="space-y-4">
-      <SectionHeader id="size" title="Taille" />
-      <AnimatePresence>
-        {expandedSections.includes('size') && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={sectionTransition} className="overflow-hidden">
-            <div className="flex flex-wrap gap-2">
-              {CLOTHING_SIZES.map(size => (
-                <button key={size} onClick={() => toggleString(size, setSelectedSizes, selectedSizes)} className={`px-3 py-1.5 rounded-lg border text-sm ${selectedSizes.includes(size) ? 'border-[#ed7e0f] bg-[#ed7e0f]/10 text-[#ed7e0f]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}>{size}</button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
 
   const Colors = (
     <div className="space-y-4">
@@ -373,39 +372,7 @@ const ProductFilters = ({
     </div>
   );
 
-  const ShoeSizes = (
-    <div className="space-y-4">
-      <SectionHeader id="shoe" title="Pointure" />
-      <AnimatePresence>
-        {expandedSections.includes('shoe') && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={sectionTransition} className="overflow-hidden">
-            <div className="flex flex-wrap gap-2">
-              {SHOE_SIZES.map(size => (
-                <button key={size} onClick={() => toggleNumber(size, setSelectedShoeSizes, selectedShoeSizes)} className={`px-3 py-1.5 rounded-lg border text-sm ${selectedShoeSizes.includes(size) ? 'border-[#ed7e0f] bg-[#ed7e0f]/10 text-[#ed7e0f]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}>{size}</button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
 
-  const Lengths = (
-    <div className="space-y-4">
-      <SectionHeader id="length" title="Longueur (mèches)" />
-      <AnimatePresence>
-        {expandedSections.includes('length') && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={sectionTransition} className="overflow-hidden">
-            <div className="flex flex-wrap gap-2">
-              {HAIR_LENGTHS.map(length => (
-                <button key={length} onClick={() => toggleNumber(length, setSelectedLengths, selectedLengths)} className={`px-3 py-1.5 rounded-lg border text-sm ${selectedLengths.includes(length) ? 'border-[#ed7e0f] bg-[#ed7e0f]/10 text-[#ed7e0f]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}>{length}"</button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
 
   const Attributes = (
     <div className="space-y-4">
@@ -413,7 +380,76 @@ const ProductFilters = ({
       <AnimatePresence>
         {expandedSections.includes('attributes') && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={sectionTransition} className="overflow-hidden">
-            <div className="text-sm text-gray-500">Personnalisez ici selon votre modèle d'attributs.</div>
+            <div className="space-y-4">
+              {/* Attribute Type Selection */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Type d'attribut</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {Object.entries(ATTRIBUTE_TYPES).map(([key, config]) => (
+                    <button
+                      key={key}
+                      onClick={() => handleAttributeTypeChange(key)}
+                      className={`p-1  text-xs rounded-lg border text-center transition-colors ${
+                        selectedAttributeType === key
+                          ? 'border-orange-400  bg-orange-50 text-orange-700'
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="font-medium">{config.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Attribute Values Selection */}
+              {selectedAttributeType && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-3"
+                >
+                  <label className="text-sm font-medium text-gray-700">
+                    Valeurs {ATTRIBUTE_TYPES[selectedAttributeType as keyof typeof ATTRIBUTE_TYPES]?.label}
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {ATTRIBUTE_TYPES[selectedAttributeType as keyof typeof ATTRIBUTE_TYPES]?.values.map((value) => (
+                      <button
+                        key={value}
+                        onClick={() => toggleAttributeValue(value)}
+                        className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
+                          selectedAttributeValues.includes(value)
+                            ? 'border-orange-400 bg-orange-50 text-orange-700'
+                            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {typeof value === 'number' ? `${value}"` : value}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Selected values summary */}
+                  {selectedAttributeValues.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="p-3 bg-orange-50 rounded-lg border border-orange-200"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-orange-700">
+                          {selectedAttributeValues.length} valeur{selectedAttributeValues.length > 1 ? 's' : ''} sélectionnée{selectedAttributeValues.length > 1 ? 's' : ''}
+                        </span>
+                        <button
+                          onClick={() => setSelectedAttributeValues([])}
+                          className="text-xs text-orange-600 hover:text-orange-800 font-medium transition-colors"
+                        >
+                          Effacer
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -424,10 +460,7 @@ const ProductFilters = ({
     <div className="space-y-6">
       {Price}
       {Categories}
-      {Sizes}
       {Colors}
-      {ShoeSizes}
-      {Lengths}
       {Attributes}
     </div>
   );
