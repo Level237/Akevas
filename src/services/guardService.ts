@@ -200,7 +200,8 @@ export const guardService = createApi({
                 url: "/api/all/genders",
                 method: "GET"
             })
-        })
+        }),
+        
 
 
     }),

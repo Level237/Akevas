@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useGetAttributeValuesQuery } from '@/services/guardService';
 
 type Nullable<T> = T | null;
 
@@ -54,6 +55,8 @@ const ProductFilters = ({
   const [minPrice, setMinPrice] = useState<Nullable<number>>(0);
   const [maxPrice, setMaxPrice] = useState<Nullable<number>>(PRICE_MAX);
 
+  const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
+  
   const setClampedMinPrice = (value: number) => {
     const safeMax = maxPrice ?? PRICE_MAX;
     const newMin = Math.max(0, Math.min(value, safeMax));
@@ -360,11 +363,28 @@ const ProductFilters = ({
         {expandedSections.includes('color') && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={sectionTransition} className="overflow-hidden">
             <div className="flex mt-4 ml-4 mb-4 flex-wrap gap-3">
-              {COLORS.map(hex => (
-                <button key={hex} onClick={() => toggleString(hex, setSelectedColors, selectedColors)} className={`relative h-7 w-7  rounded-full border ${selectedColors.includes(hex) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} style={{ backgroundColor: hex }}>
-                  {hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
-                </button>
-              ))}
+              {getAttributes && getAttributes.length > 0 ? (
+                getAttributes
+                  .find((attr:any)=> attr.name === 'Couleur')
+                  ?.values.map((color:any) => (
+                    <button 
+                      key={color.id} 
+                      onClick={() => toggleString(color.hex_color, setSelectedColors, selectedColors)} 
+                      className={`relative h-7 w-7 rounded-full border ${selectedColors.includes(color.hex_color) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} 
+                      style={{ backgroundColor: color.hex_color }}
+                      title={color.value}
+                    >
+                      {color.hex_color === '#FFFFFF' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
+                    </button>
+                  ))
+              ) : (
+                // Fallback to static colors if API data is not available
+                COLORS.map(hex => (
+                  <button key={hex} onClick={() => toggleString(hex, setSelectedColors, selectedColors)} className={`relative h-7 w-7  rounded-full border ${selectedColors.includes(hex) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} style={{ backgroundColor: hex }}>
+                    {hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
+                  </button>
+                ))
+              )}
             </div>
           </motion.div>
         )}
