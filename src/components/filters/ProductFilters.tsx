@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useQueryState } from 'nuqs';
 import { useGetAttributeByCategoryQuery, useGetAttributeValuesQuery } from '@/services/guardService';
 
-type Nullable<T> = T | null;
 
 interface Category {
   id: number;
@@ -26,6 +26,9 @@ interface ProductFiltersProps {
   // Mobile
   isMobile?: boolean;
   onCloseMobile?: () => void;
+  
+  // Filtering state
+  isFiltering?: boolean;
 }
 
 const sectionTransition = { duration: 0.2 };
@@ -41,34 +44,43 @@ const ProductFilters = ({
   onCategoryToggle,
   onClearAll,
   isMobile = false,
-  onCloseMobile
+  onCloseMobile,
+  isFiltering = false
 }: ProductFiltersProps) => {
   const [expandedSections, setExpandedSections] = useState<string[]>([
     'categories', 'price', 'color', 'attributes'
   ]);
 
-  // Local-only UI state for demo/visual wiring
+  // Price filtering with URL state
   const PRICE_MAX = 500000;
-  const [minPrice, setMinPrice] = useState<Nullable<number>>(0);
-  const [maxPrice, setMaxPrice] = useState<Nullable<number>>(PRICE_MAX);
+  const [minPrice, setMinPrice] = useQueryState('min_price', {
+    defaultValue: 0,
+    parse: (value) => parseInt(value, 10) || 0,
+    serialize: (value) => value.toString()
+  });
+  const [maxPrice, setMaxPrice] = useQueryState('max_price', {
+    defaultValue: PRICE_MAX,
+    parse: (value) => parseInt(value, 10) || PRICE_MAX,
+    serialize: (value) => value.toString()
+  });
 
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
   const { data: availableAttributes } = useGetAttributeByCategoryQuery('guard');
   console.log(availableAttributes)
   const setClampedMinPrice = (value: number) => {
-    const safeMax = maxPrice ?? PRICE_MAX;
+    const safeMax = maxPrice;
     const newMin = Math.max(0, Math.min(value, safeMax));
     setMinPrice(newMin);
-    if ((maxPrice ?? PRICE_MAX) < newMin) {
+    if (maxPrice < newMin) {
       setMaxPrice(newMin);
     }
   };
 
   const setClampedMaxPrice = (value: number) => {
-    const safeMin = minPrice ?? 0;
+    const safeMin = minPrice;
     const newMax = Math.min(PRICE_MAX, Math.max(value, safeMin));
     setMaxPrice(newMax);
-    if ((minPrice ?? 0) > newMax) {
+    if (minPrice > newMax) {
       setMinPrice(newMax);
     }
   };
@@ -92,7 +104,7 @@ const ProductFilters = ({
       selectedCategories.length +
       selectedColors.length +
       selectedAttributeValues.length +
-      ((minPrice ?? 0) > 0 || (maxPrice ?? 0) > 0 ? 1 : 0)
+      (minPrice > 0 || maxPrice < PRICE_MAX ? 1 : 0)
     );
   }, [selectedCategories.length, selectedColors.length, selectedAttributeValues.length, minPrice, maxPrice]);
 
@@ -157,7 +169,7 @@ const ProductFilters = ({
           >
             <div className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
               <div className="space-y-1">
-                {!isLoadingCategories && categories.map(category => (
+              {!isLoadingCategories && categories.map(category => (
                   <motion.div 
                     key={category.id} 
                     whileHover={{ x: 2 }} 
@@ -187,11 +199,11 @@ const ProductFilters = ({
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors">
                             {category.products_count}
                           </span>
-                        </div>
                       </div>
-                    </label>
-                  </motion.div>
-                ))}
+                    </div>
+                  </label>
+                </motion.div>
+              ))}
               </div>
             </div>
             {selectedCategories.length > 0 && (
@@ -239,8 +251,8 @@ const ProductFilters = ({
                   <div 
                     className="absolute h-2 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full"
                     style={{
-                      left: `${((minPrice || 0) / PRICE_MAX) * 100}%`,
-                      width: `${((maxPrice || PRICE_MAX) - (minPrice || 0)) / PRICE_MAX * 100}%`
+                      left: `${(minPrice / PRICE_MAX) * 100}%`,
+                      width: `${(maxPrice - minPrice) / PRICE_MAX * 100}%`
                     }}
                   />
                   
@@ -250,7 +262,7 @@ const ProductFilters = ({
                     min="0"
                     max={PRICE_MAX}
                     step="1000"
-                    value={minPrice || 0}
+                    value={minPrice}
                     onChange={(e) => setClampedMinPrice(Number(e.target.value))}
                     className="absolute top-0 w-full h-2 opacity-0 cursor-pointer"
                   />
@@ -261,7 +273,7 @@ const ProductFilters = ({
                     min="0"
                     max={PRICE_MAX}
                     step="1000"
-                    value={maxPrice || PRICE_MAX}
+                    value={maxPrice}
                     onChange={(e) => setClampedMaxPrice(Number(e.target.value))}
                     className="absolute top-0 w-full h-2 opacity-0 cursor-pointer"
                   />
@@ -269,10 +281,10 @@ const ProductFilters = ({
                 
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   <div className="px-2 py-1 rounded-md bg-white border border-orange-300 text-orange-700 shadow-sm text-center text-sm">
-                    {minPrice ? minPrice.toLocaleString() : '0'} CFA
+                    {minPrice.toLocaleString()} CFA
                   </div>
                   <div className="px-2 py-1 rounded-md bg-white border border-orange-300 text-orange-700 shadow-sm text-center text-sm">
-                    {maxPrice ? maxPrice.toLocaleString() : PRICE_MAX.toLocaleString()} CFA
+                    {maxPrice.toLocaleString()} CFA
                   </div>
                 </div>
                 {/* Value Display with +/- buttons */}
@@ -281,7 +293,7 @@ const ProductFilters = ({
                     <span className="text-xs text-gray-500">Min:</span>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => setClampedMinPrice(Math.max(0, (minPrice || 0) - 1000))}
+                        onClick={() => setClampedMinPrice(Math.max(0, minPrice - 1000))}
                         className="w-7 h-7 rounded-md border border-gray-300 bg-white hover:bg-gray-50 flex items-center justify-center text-sm font-medium shadow-sm"
                         aria-label="Diminuer le prix minimum"
                       >
@@ -290,7 +302,7 @@ const ProductFilters = ({
                     
                       
                       <button
-                        onClick={() => setClampedMinPrice(Math.min(PRICE_MAX, (minPrice || 0) + 1000))}
+                        onClick={() => setClampedMinPrice(Math.min(PRICE_MAX, minPrice + 1000))}
                         className="w-7 h-7 rounded-md border border-gray-300 bg-white hover:bg-gray-50 flex items-center justify-center text-sm font-medium shadow-sm"
                         aria-label="Augmenter le prix minimum"
                       >
@@ -302,7 +314,7 @@ const ProductFilters = ({
                     <span className="text-xs text-gray-500">Max:</span>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => setClampedMaxPrice(Math.max(0, (maxPrice || PRICE_MAX) - 1000))}
+                        onClick={() => setClampedMaxPrice(Math.max(0, maxPrice - 1000))}
                         className="w-7 h-7 rounded-md border border-gray-300 bg-white hover:bg-gray-50 flex items-center justify-center text-sm font-medium shadow-sm"
                         aria-label="Diminuer le prix maximum"
                       >
@@ -310,7 +322,7 @@ const ProductFilters = ({
                       </button>
                      
                       <button
-                        onClick={() => setClampedMaxPrice(Math.min(PRICE_MAX, (maxPrice || PRICE_MAX) + 1000))}
+                        onClick={() => setClampedMaxPrice(Math.min(PRICE_MAX, maxPrice + 1000))}
                         className="w-7 h-7 rounded-md border border-gray-300 bg-white hover:bg-gray-50 flex items-center justify-center text-sm font-medium shadow-sm"
                         aria-label="Augmenter le prix maximum"
                       >
@@ -381,8 +393,8 @@ const ProductFilters = ({
                 // Fallback to static colors if API data is not available
                 COLORS.map(hex => (
                   <button key={hex} onClick={() => toggleString(hex, setSelectedColors, selectedColors)} className={`relative h-7 w-7  rounded-full border ${selectedColors.includes(hex) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} style={{ backgroundColor: hex }}>
-                    {hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
-                  </button>
+                  {hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
+                </button>
                 ))
               )}
             </div>
@@ -502,7 +514,15 @@ const ProductFilters = ({
     return (
       <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'tween' }} className="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl z-50">
         <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center gap-2">
           <h2 className="text-lg font-medium text-gray-900">Filtres</h2>
+            {isFiltering && (
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                <span className="text-xs text-orange-600">Filtrage...</span>
+              </div>
+            )}
+          </div>
           {totalSelectedCount > 0 && (
             <button onClick={handleClearAll} className="text-sm text-blue-600 hover:text-blue-700">Réinitialiser</button>
           )}
@@ -520,7 +540,15 @@ const ProductFilters = ({
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6">
       <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
         <h2 className="text-lg font-medium text-gray-900">Filtres</h2>
+          {isFiltering && (
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+              <span className="text-xs text-orange-600">Filtrage...</span>
+            </div>
+          )}
+        </div>
         {totalSelectedCount > 0 && (
           <button onClick={handleClearAll} className="text-sm text-blue-600 hover:text-blue-700">Réinitialiser</button>
         )}

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { ScrollRestoration, useSearchParams } from 'react-router-dom';
+import { useQueryState } from 'nuqs';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
 import { Product } from '@/types/products';
@@ -46,10 +47,43 @@ const ProductListPage: React.FC = () => {
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const [totalPages, setTotalPages] = useState(0);
 
+  // Price filters from URL with debouncing
+  const [minPrice] = useQueryState('min_price', {
+    defaultValue: 0,
+    parse: (value) => parseInt(value, 10) || 0,
+    serialize: (value) => value.toString()
+  });
+  const [maxPrice] = useQueryState('max_price', {
+    defaultValue: 500000,
+    parse: (value) => parseInt(value, 10) || 500000,
+    serialize: (value) => value.toString()
+  });
+
+  // Debounced price filters for API calls
+  const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
+  const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
+  const [isFiltering, setIsFiltering] = useState(false);
+
   const [sortBy, setSortBy] = useState('popular');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery(currentPage);
+  // Debouncing effect for price filters
+  useEffect(() => {
+    setIsFiltering(true);
+    const timeoutId = setTimeout(() => {
+      setDebouncedMinPrice(minPrice);
+      setDebouncedMaxPrice(maxPrice);
+      setIsFiltering(false);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timeoutId);
+  }, [minPrice, maxPrice]);
+
+  const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery({
+    page: currentPage,
+    min_price: debouncedMinPrice,
+    max_price: debouncedMaxPrice
+  });
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
@@ -118,6 +152,13 @@ const ProductListPage: React.FC = () => {
   const getPageUrl = (pageNumber: number) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', pageNumber.toString());
+    // Preserve price filters (use current URL values, not debounced)
+    if (minPrice > 0) {
+      params.set('min_price', minPrice.toString());
+    }
+    if (maxPrice < 500000) {
+      params.set('max_price', maxPrice.toString());
+    }
     return `?${params.toString()}`;
   };
 
@@ -206,13 +247,14 @@ const ProductListPage: React.FC = () => {
               onClearAll={() => setSelectedFilters({ categories: [] })}
               isMobile={false}
               onCloseMobile={() => setShowMobileFilters(false)}
+              isFiltering={isFiltering}
             />
           </div>
 
           {/* Liste des produits */}
           <div className="lg:col-span-3">
             <div className={viewMode === 'grid' ? 'grid grid-cols-2   max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
-              {isLoading ? (
+              {isLoading || isFiltering ? (
                 // Skeleton loader
                 Array.from({ length: 6 }).map((_, index) => (
                   <div key={index} className={viewMode === 'grid' ? 'animate-pulse' : 'animate-pulse'}>
@@ -233,65 +275,87 @@ const ProductListPage: React.FC = () => {
                     </div>
                   </div>
                 ))
-              ) : (
-                normalizedProducts && normalizedProducts.map((product: Product) => (
+              ) : normalizedProducts && normalizedProducts.length > 0 ? (
+                normalizedProducts.map((product: Product) => (
                   <ProductCard key={product.id} product={product} viewMode={viewMode} />
                 ))
+              ) : (
+                // Empty state
+                <div className="col-span-full flex flex-col items-center justify-center py-16 px-4">
+                  <div className="w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-gray-100">
+                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun produit trouvé</h3>
+                  <p className="text-gray-500 text-center max-w-sm">
+                    Aucun produit ne correspond à vos critères de recherche. Essayez de modifier vos filtres.
+                  </p>
+                  <a 
+                   href='/products'
+                  
+                    className="mt-4 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/90 transition-colors"
+                  >
+                    Réinitialiser les filtres
+                  </a>
+                </div>
               )}
             </div>
             
-            {/* Pagination */}
-            <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 mx-96 max-sm:mx-12 mt-8">
-              {currentPage > 1 && (
+            {/* Pagination - only show if there are products */}
+            {normalizedProducts && normalizedProducts.length > 0 && (
+              <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 mx-96 max-sm:mx-12 mt-8">
+                  {currentPage > 1 && (
                 <a
                   href={getPageUrl(currentPage - 1)}
                   className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block"
-                >
-                  Précédent
+                    >
+                      Précédent
                 </a>
-              )}
+                  )}
 
-              <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, index) => {
-                  const pageNumber = index + 1;
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, index) => {
+                      const pageNumber = index + 1;
 
-                  // Afficher seulement les pages proches de la page courante
-                  if (
-                    pageNumber === 1 ||
-                    pageNumber === totalPages ||
-                    (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
-                  ) {
-                    return (
+                      // Afficher seulement les pages proches de la page courante
+                      if (
+                        pageNumber === 1 ||
+                        pageNumber === totalPages ||
+                        (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
+                      ) {
+                        return (
                       <a
-                        key={pageNumber}
+                            key={pageNumber}
                         href={getPageUrl(pageNumber)}
                         className={`w-10 h-10 rounded-lg flex items-center justify-center ${currentPage === pageNumber
-                            ? 'bg-[#ed7e0f] text-white'
-                            : 'bg-white hover:bg-gray-50'
-                          }`}
-                      >
-                        {pageNumber}
+                                ? 'bg-[#ed7e0f] text-white'
+                                : 'bg-white hover:bg-gray-50'
+                              }`}
+                          >
+                            {pageNumber}
                       </a>
-                    );
-                  } else if (
-                    pageNumber === currentPage - 3 ||
-                    pageNumber === currentPage + 3
-                  ) {
-                    return <span key={pageNumber}>...</span>;
-                  }
-                  return null;
-                })}
-              </div>
+                        );
+                      } else if (
+                        pageNumber === currentPage - 3 ||
+                        pageNumber === currentPage + 3
+                      ) {
+                        return <span key={pageNumber}>...</span>;
+                      }
+                      return null;
+                    })}
+                  </div>
 
-              {currentPage < totalPages && (
+                  {currentPage < totalPages && (
                 <a
                   href={getPageUrl(currentPage + 1)}
                   className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block"
-                >
-                  Suivant
+                    >
+                      Suivant
                 </a>
-              )}
-            </div>
+                  )}
+              </div>
+            )}
           </div>
         </div>
       </main>

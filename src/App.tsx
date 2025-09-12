@@ -7,7 +7,7 @@ import { Provider } from 'react-redux'
 import { store } from './store'
 import ErrorBoundary, { NetworkBoundary } from './components/errors/error-boundary'
 import { Toaster } from 'sonner'
-
+import { NuqsAdapter } from 'nuqs/adapters/react'
 
 function App() {
 
@@ -15,6 +15,7 @@ function App() {
   return (
     <>
      
+     <NuqsAdapter>
      <ErrorBoundary>
         <NetworkBoundary>
       <LoaderProvider>
@@ -26,7 +27,7 @@ function App() {
     </LoaderProvider>
     </NetworkBoundary>
     </ErrorBoundary>
-    
+    </NuqsAdapter>
     </>
     
   )

@@ -127,10 +127,20 @@ export const guardService = createApi({
             providesTags: ['guard'],
         }),
         getAllProducts: builder.query({
-            query: (page) => ({
-                url: `/api/all/products?page=${page}`,
-                method: "GET",
-            }),
+            query: ({ page, min_price, max_price }) => {
+                const params = new URLSearchParams();
+                params.append('page', page.toString());
+                if (min_price && min_price > 0) {
+                    params.append('min_price', min_price.toString());
+                }
+                if (max_price && max_price < 500000) {
+                    params.append('max_price', max_price.toString());
+                }
+                return {
+                    url: `/api/all/products?${params.toString()}`,
+                    method: "GET",
+                };
+            },
             transformResponse: (response: { data: Product[], meta: { last_page: number, current_page: number, total: number } }) => ({
                 productList: response.data,
                 totalPagesResponse: response.meta.last_page,
