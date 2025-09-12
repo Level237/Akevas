@@ -428,6 +428,52 @@ const ProductDetailPage: React.FC = () => {
     return null;
   };
 
+  // Récupérer la source des paliers de gros en fonction du type de produit
+  const getWholesaleSource = () => {
+    if (product?.productWholeSales && product.productWholeSales.length > 0) {
+      return Array.from(product.productWholeSales as any[]);
+    }
+    const attr = getSelectedAttribute();
+    if (attr?.wholesale_prices && attr.wholesale_prices.length > 0) {
+      return Array.from(attr.wholesale_prices as any[]);
+    }
+    return [] as any[];
+  };
+
+  // Quantité minimale requise pour un achat en gros
+  const getMinWholesaleQty = () => {
+    const source = getWholesaleSource();
+    if (!source || source.length === 0) return null;
+    return source
+      .map((w: any) => Number(w.min_quantity))
+      .reduce((min: number, q: number) => (min === 0 ? q : Math.min(min, q)), 0);
+  };
+
+  // Quantité minimale autorisée selon le mode wholesale-only
+  const getMinAllowedQty = () => {
+    if (product?.is_only_wholesale) {
+      return Number(getMinWholesaleQty() || 1);
+    }
+    return 1;
+  };
+
+  // Déterminer si l'achat doit être bloqué (wholesale-only mais quantité insuffisante ou pas de palier)
+  const isWholesaleBlocked = () => {
+    if (!product?.is_only_wholesale) return false;
+    const minQty = getMinWholesaleQty();
+    if (!minQty) return true; // wholesale uniquement mais pas de prix de gros disponible
+    return quantity < Number(minQty);
+  };
+
+  // Si wholesale-only, initialiser automatiquement une quantité valide sur changement de produit/variation/attribut
+  useEffect(() => {
+    if (!product?.is_only_wholesale) return;
+    const minQty = getMinWholesaleQty();
+    if (minQty && quantity < Number(minQty)) {
+      setQuantity(Number(minQty));
+    }
+  }, [product, selectedVariant, selectedAttribute]);
+
   // Fonction pour gérer la navigation des images
   const navigateImage = (direction: 'next' | 'prev') => {
     const allImages = getAllImages();
@@ -760,7 +806,7 @@ const ProductDetailPage: React.FC = () => {
                   )}
 
                   {/* Section Vente en Gros */}
-{(product.productWholeSales) ||
+                  {(product?.productWholeSales && product.productWholeSales.length > 0) ||
                     (getSelectedAttribute()?.wholesale_prices && getSelectedAttribute()?.wholesale_prices.length > 0) ? (
                     <div className="mt-6 p-3 bg-white border border-gray-100 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
@@ -911,7 +957,7 @@ const ProductDetailPage: React.FC = () => {
                       <span className="text-sm font-medium text-gray-700">Quantité</span>
                       <div className="flex items-center border rounded-lg">
                         <button
-                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          onClick={() => setQuantity(Math.max(getMinAllowedQty(), quantity - 1))}
                           className="p-2 text-gray-600 hover:text-gray-900"
                         >
                           -
@@ -920,11 +966,12 @@ const ProductDetailPage: React.FC = () => {
                           type="number"
                           value={quantity}
                           onChange={(e) => {
-                            const val = Math.max(1, Math.min(getProductQuantity(), parseInt(e.target.value) || 1));
+                            const minAllowed = getMinAllowedQty();
+                            const val = Math.max(minAllowed, Math.min(getProductQuantity(), parseInt(e.target.value) || minAllowed));
                             setQuantity(val);
                           }}
                           max={getProductQuantity()}
-                          min={1}
+                          min={getMinAllowedQty()}
                           className="w-16  text-center border-x"
                         />
                         <button
@@ -1041,19 +1088,23 @@ const ProductDetailPage: React.FC = () => {
                     {/* CTA Buttons */}
 
                     <div className="space-y-3 mt-6">
-                      {getProductQuantity() > 0 &&
+                      {getProductQuantity() > 0 && (
                         <button
                           onClick={() => setIsDrawerOpen(true)}
-                          disabled={getProductQuantity() == 0}
-                          className={`w-full px-6 py-3.5 rounded-xl font-medium transition-colors ${getProductQuantity() === 0
+                          disabled={getProductQuantity() == 0 || isWholesaleBlocked()}
+                          className={`w-full px-6 py-3.5 rounded-xl font-medium transition-colors ${getProductQuantity() === 0 || isWholesaleBlocked()
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                             : 'bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90'
                             }`}
                         >
 
-                          {getProductQuantity() == 0 ? 'Rupture de stock' : 'Acheter maintenant'}
+                          {getProductQuantity() == 0
+                            ? 'Rupture de stock'
+                            : isWholesaleBlocked()
+                              ? 'Sélectionnez un prix de gros'
+                              : 'Acheter maintenant'}
                         </button>
-                      }
+                      )}
 
                       {getProductQuantity() == 0 &&
                         <div className='px-3 py-4 text-sm text-center font-medium bg-red-100 text-red-800 rounded-full'>
@@ -1064,8 +1115,8 @@ const ProductDetailPage: React.FC = () => {
                       {!showCartButton ? (
                         <button
                           onClick={handleAddToCart}
-                          disabled={isLoadingCart || getProductQuantity() == 0}
-                          className={`w-full px-6 py-3.5 flex items-center justify-center gap-2 rounded-xl font-medium transition-colors ${getProductQuantity() == 0
+                          disabled={isLoadingCart || getProductQuantity() == 0 || isWholesaleBlocked()}
+                          className={`w-full px-6 py-3.5 flex items-center justify-center gap-2 rounded-xl font-medium transition-colors ${getProductQuantity() == 0 || isWholesaleBlocked()
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}>
@@ -1076,7 +1127,11 @@ const ProductDetailPage: React.FC = () => {
                           ) : (
                             <>
                               <ShoppingCart className="w-5 h-5" />
-                              {getProductQuantity() == 0 ? 'Rupture de stock' : 'Ajouter au panier'}
+                              {getProductQuantity() == 0
+                                ? 'Rupture de stock'
+                                : isWholesaleBlocked()
+                                  ? 'Sélectionnez un prix de gros'
+                                  : 'Ajouter au panier'}
                             </>
                           )}
                         </button>
