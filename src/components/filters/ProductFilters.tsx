@@ -23,6 +23,10 @@ interface ProductFiltersProps {
   onCategoryToggle: (categoryId: number) => void;
   onClearAll?: () => void;
 
+  // Color interop with page
+  selectedColors?: string[];
+  onColorToggle?: (color: string) => void;
+
   // Mobile
   isMobile?: boolean;
   onCloseMobile?: () => void;
@@ -34,7 +38,14 @@ interface ProductFiltersProps {
 const sectionTransition = { duration: 0.2 };
 
 const COLORS = [
-  '#000000', '#ffffff', '#ff0000', '#00a2ff', '#00c853', '#ff9800', '#9c27b0', '#795548'
+  { name: 'Noir', hex: '#000000' },
+  { name: 'Blanc', hex: '#ffffff' },
+  { name: 'Rouge', hex: '#ff0000' },
+  { name: 'Bleu', hex: '#00a2ff' },
+  { name: 'Vert', hex: '#00c853' },
+  { name: 'Orange', hex: '#ff9800' },
+  { name: 'Violet', hex: '#9c27b0' },
+  { name: 'Marron', hex: '#795548' }
 ];
 
 const ProductFilters = ({
@@ -43,6 +54,8 @@ const ProductFilters = ({
   selectedCategories,
   onCategoryToggle,
   onClearAll,
+  selectedColors = [],
+  onColorToggle,
   isMobile = false,
   onCloseMobile,
   isFiltering = false
@@ -84,7 +97,7 @@ const ProductFilters = ({
       setMinPrice(newMax);
     }
   };
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  // Colors are now managed by parent component via props
   
   // Attributes state
   const [selectedAttributeType, setSelectedAttributeType] = useState<string>('');
@@ -112,9 +125,7 @@ const ProductFilters = ({
     setExpandedSections(prev => prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]);
   };
 
-  const toggleString = (value: string, setState: (v: string[]) => void, state: string[]) => {
-    setState(state.includes(value) ? state.filter(v => v !== value) : [...state, value]);
-  };
+  // Removed toggleString - colors are now managed by parent component
   
   const toggleAttributeValue = (value: string | number) => {
     setSelectedAttributeValues(prev => 
@@ -132,9 +143,9 @@ const ProductFilters = ({
   const clearLocal = () => {
     setMinPrice(0);
     setMaxPrice(PRICE_MAX);
-    setSelectedColors([]);
     setSelectedAttributeType('');
     setSelectedAttributeValues([]);
+    // Colors are cleared by parent component via onClearAll
   };
 
   const handleClearAll = () => {
@@ -381,8 +392,8 @@ const ProductFilters = ({
                   ?.values.map((color:any) => (
                     <button 
                       key={color.id} 
-                      onClick={() => toggleString(color.hex_color, setSelectedColors, selectedColors)} 
-                      className={`relative h-7 w-7 rounded-full border ${selectedColors.includes(color.hex_color) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} 
+                      onClick={() => onColorToggle?.(color.value)} 
+                      className={`relative h-7 w-7 rounded-full border ${selectedColors.includes(color.value) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} 
                       style={{ backgroundColor: color.hex_color }}
                       title={color.value}
                     >
@@ -391,10 +402,16 @@ const ProductFilters = ({
                   ))
               ) : (
                 // Fallback to static colors if API data is not available
-                COLORS.map(hex => (
-                  <button key={hex} onClick={() => toggleString(hex, setSelectedColors, selectedColors)} className={`relative h-7 w-7  rounded-full border ${selectedColors.includes(hex) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} style={{ backgroundColor: hex }}>
-                  {hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
-                </button>
+                COLORS.map(color => (
+                  <button 
+                    key={color.name} 
+                    onClick={() => onColorToggle?.(color.name)} 
+                    className={`relative h-7 w-7 rounded-full border ${selectedColors.includes(color.name) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} 
+                    style={{ backgroundColor: color.hex }}
+                    title={color.name}
+                  >
+                    {color.hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
+                  </button>
                 ))
               )}
             </div>

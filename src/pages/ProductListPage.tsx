@@ -64,10 +64,18 @@ const ProductListPage: React.FC = () => {
     serialize: (value) => value.length > 0 ? value.join(',') : ''
   });
 
+  // Color filters from URL
+  const [selectedColors, setSelectedColors] = useQueryState('colors', {
+    defaultValue: [],
+    parse: (value) => value ? value.split(',') : [],
+    serialize: (value) => value.length > 0 ? value.join(',') : ''
+  });
+
   // Debounced filters for API calls
   const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
   const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
   const [debouncedCategories, setDebouncedCategories] = useState(selectedCategories);
+  const [debouncedColors, setDebouncedColors] = useState(selectedColors);
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Initialize debounced values on first render to avoid initial skeleton
@@ -75,6 +83,7 @@ const ProductListPage: React.FC = () => {
     setDebouncedMinPrice(minPrice);
     setDebouncedMaxPrice(maxPrice);
     setDebouncedCategories(selectedCategories);
+    setDebouncedColors(selectedColors);
   }, []); // Only run once on mount
 
   const [sortBy, setSortBy] = useState('popular');
@@ -85,25 +94,28 @@ const ProductListPage: React.FC = () => {
     // Check if values have actually changed to avoid unnecessary debouncing
     const hasPriceChanged = debouncedMinPrice !== minPrice || debouncedMaxPrice !== maxPrice;
     const hasCategoriesChanged = JSON.stringify(debouncedCategories) !== JSON.stringify(selectedCategories);
+    const hasColorsChanged = JSON.stringify(debouncedColors) !== JSON.stringify(selectedColors);
     
-    if (hasPriceChanged || hasCategoriesChanged) {
+    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged) {
       setIsFiltering(true);
       const timeoutId = setTimeout(() => {
         setDebouncedMinPrice(minPrice);
         setDebouncedMaxPrice(maxPrice);
         setDebouncedCategories(selectedCategories);
+        setDebouncedColors(selectedColors);
         setIsFiltering(false);
       }, 500); // 500ms delay
 
       return () => clearTimeout(timeoutId);
     }
-  }, [minPrice, maxPrice, selectedCategories, debouncedMinPrice, debouncedMaxPrice, debouncedCategories]);
+  }, [minPrice, maxPrice, selectedCategories, selectedColors, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors]);
 
   const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery({
     page: currentPage,
     min_price: debouncedMinPrice,
     max_price: debouncedMaxPrice,
-    categories: debouncedCategories
+    categories: debouncedCategories,
+    colors: debouncedColors
   });
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
@@ -131,6 +143,7 @@ const ProductListPage: React.FC = () => {
 
   const clearAllFilters = useCallback(() => {
     setSelectedCategories([]);
+    setSelectedColors([]);
   }, []);
 
   // Removed clearCategoryFilters and isCategorySelected - now using URL state
@@ -164,6 +177,10 @@ const ProductListPage: React.FC = () => {
     // Preserve category filters
     if (selectedCategories.length > 0) {
       params.set('categories', selectedCategories.join(','));
+    }
+    // Preserve color filters
+    if (selectedColors.length > 0) {
+      params.set('colors', selectedColors.join(','));
     }
     return `?${params.toString()}`;
   };
@@ -248,6 +265,14 @@ const ProductListPage: React.FC = () => {
               isMobile={false}
               onCloseMobile={() => setShowMobileFilters(false)}
               isFiltering={isFiltering}
+              selectedColors={selectedColors}
+              onColorToggle={(color) => {
+                setSelectedColors(prev => 
+                  prev.includes(color)
+                    ? prev.filter(c => c !== color)
+                    : [...prev, color]
+                );
+              }}
             />
           </div>
 
