@@ -9,22 +9,22 @@ interface CheckoutDrawerProps {
     quantity: number;
     setQuantity: (quantity: number) => void;
     currentInfo: {
-        price: number;
-        attributeVariationId: number;
-        productVariationId: number;
-        mainImage?: string;
+        price: any;
+        attributeVariationId: number | null;
+        productVariationId: number | null;
+        mainImage?: string | null;
         color?: {
             id: number;
             name: string;
             hex: string;
-        };
-        attribute?: string;
-        label?: string;
-        variantName?: string;
+        } | null;
+        attribute?: string | null;
+        label?: string | null;
+        variantName?: string | null;
         quantity: number;
-        group?: string;
+        group?: string | null;
     };
-    getAllImages: () => Array<{ path: string }>;
+    getAllImages: () => Array<{ path: string | undefined }>;
 }
 
 const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
