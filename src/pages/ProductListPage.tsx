@@ -14,17 +14,14 @@ import { useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@
 import { Product } from '@/types/products';
 import { normalizeProduct } from '@/lib/normalizeProduct';
 import ProductCard from '@/components/products/ProductCard';
-import { toast } from "sonner";
+// Removed toast import - not used anymore
 import OptimizedImage from '@/components/OptimizedImage';
 import ProductFilters from '@/components/filters/ProductFilters';
 
 
 
 
-interface CategoryFilter {
-  categories: number[];
-  // Ajoutez d'autres types de filtres si nécessaire
-}
+// Removed CategoryFilter interface - now using URL state
 
 
 
@@ -38,9 +35,7 @@ const sortOptions = [
 
 const ProductListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedFilters, setSelectedFilters] = useState<CategoryFilter>({
-    categories: []
-  });
+  // Removed local selectedFilters state - now using URL state with nuqs
   const [expandedSections, setExpandedSections] = useState<string[]>(['categories']);
 
   // Get current page from URL, default to 1
@@ -59,30 +54,56 @@ const ProductListPage: React.FC = () => {
     serialize: (value) => value.toString()
   });
 
-  // Debounced price filters for API calls
+  // Category filters from URL
+  const [selectedCategories, setSelectedCategories] = useQueryState('categories', {
+    defaultValue: [],
+    parse: (value) => {
+      if (!value) return [];
+      return value.split(',').map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+    },
+    serialize: (value) => value.length > 0 ? value.join(',') : ''
+  });
+
+  // Debounced filters for API calls
   const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
   const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
+  const [debouncedCategories, setDebouncedCategories] = useState(selectedCategories);
   const [isFiltering, setIsFiltering] = useState(false);
+
+  // Initialize debounced values on first render to avoid initial skeleton
+  useEffect(() => {
+    setDebouncedMinPrice(minPrice);
+    setDebouncedMaxPrice(maxPrice);
+    setDebouncedCategories(selectedCategories);
+  }, []); // Only run once on mount
 
   const [sortBy, setSortBy] = useState('popular');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  // Debouncing effect for price filters
+  // Debouncing effect for filters
   useEffect(() => {
-    setIsFiltering(true);
-    const timeoutId = setTimeout(() => {
-      setDebouncedMinPrice(minPrice);
-      setDebouncedMaxPrice(maxPrice);
-      setIsFiltering(false);
-    }, 500); // 500ms delay
+    // Check if values have actually changed to avoid unnecessary debouncing
+    const hasPriceChanged = debouncedMinPrice !== minPrice || debouncedMaxPrice !== maxPrice;
+    const hasCategoriesChanged = JSON.stringify(debouncedCategories) !== JSON.stringify(selectedCategories);
+    
+    if (hasPriceChanged || hasCategoriesChanged) {
+      setIsFiltering(true);
+      const timeoutId = setTimeout(() => {
+        setDebouncedMinPrice(minPrice);
+        setDebouncedMaxPrice(maxPrice);
+        setDebouncedCategories(selectedCategories);
+        setIsFiltering(false);
+      }, 500); // 500ms delay
 
-    return () => clearTimeout(timeoutId);
-  }, [minPrice, maxPrice]);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [minPrice, maxPrice, selectedCategories, debouncedMinPrice, debouncedMaxPrice, debouncedCategories]);
 
   const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery({
     page: currentPage,
     min_price: debouncedMinPrice,
-    max_price: debouncedMaxPrice
+    max_price: debouncedMaxPrice,
+    categories: debouncedCategories
   });
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
@@ -100,38 +121,19 @@ const ProductListPage: React.FC = () => {
     );
   }, []);
 
-  const toggleFilter = useCallback((type: keyof CategoryFilter, id: number) => {
-    setSelectedFilters(prev => {
-      const currentFilters = prev[type] || [];
-      return {
-        ...prev,
-        [type]: currentFilters.includes(id)
-          ? currentFilters.filter(filterId => filterId !== id)
-          : [...currentFilters, id]
-      };
-    });
+  const toggleCategory = useCallback((categoryId: number) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
   }, []);
 
-  const clearCategoryFilters = useCallback(() => {
-    setSelectedFilters(prev => ({
-      ...prev,
-      categories: []
-    }));
-
-    // Si vous avez une fonction de recherche/filtrage qui dépend des filtres
-    // vous pouvez l'appeler ici
-    // handleSearch();
-
-    // Optionnel : Afficher une notification de confirmation
-    toast.success("Filtres réinitialisés", {
-      duration: 2000,
-      position: "top-center",
-    });
+  const clearAllFilters = useCallback(() => {
+    setSelectedCategories([]);
   }, []);
 
-  const isCategorySelected = useCallback((categoryId: number) => {
-    return selectedFilters.categories.includes(categoryId);
-  }, [selectedFilters.categories]);
+  // Removed clearCategoryFilters and isCategorySelected - now using URL state
 
   useEffect(() => {
     if (totalPagesResponse) {
@@ -159,6 +161,10 @@ const ProductListPage: React.FC = () => {
     if (maxPrice < 500000) {
       params.set('max_price', maxPrice.toString());
     }
+    // Preserve category filters
+    if (selectedCategories.length > 0) {
+      params.set('categories', selectedCategories.join(','));
+    }
     return `?${params.toString()}`;
   };
 
@@ -180,15 +186,9 @@ const ProductListPage: React.FC = () => {
           >
             <Filter className="w-5 h-5" />
             <span>Filtres</span>
-            {Object.values(selectedFilters).reduce(
-              (acc, curr) => acc + curr.length,
-              0
-            ) > 0 && (
+            {selectedCategories.length > 0 && (
                 <span className="ml-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">
-                  {Object.values(selectedFilters).reduce(
-                    (acc, curr) => acc + curr.length,
-                    0
-                  )}
+                  {selectedCategories.length}
                 </span>
               )}
           </button>
@@ -242,9 +242,9 @@ const ProductListPage: React.FC = () => {
             <ProductFilters
               categories={categories}
               isLoadingCategories={categoriesLoading}
-              selectedCategories={selectedFilters.categories}
-              onCategoryToggle={(categoryId: number) => toggleFilter('categories', categoryId)}
-              onClearAll={() => setSelectedFilters({ categories: [] })}
+              selectedCategories={selectedCategories}
+              onCategoryToggle={toggleCategory}
+              onClearAll={clearAllFilters}
               isMobile={false}
               onCloseMobile={() => setShowMobileFilters(false)}
               isFiltering={isFiltering}
@@ -420,14 +420,14 @@ const ProductListPage: React.FC = () => {
                               <motion.div
                                 key={category.id}
                                 whileHover={{ x: 4 }}
-                                className={`group ${isCategorySelected(category.id) ? 'bg-orange-50' : ''}`}
+                                className={`group ${selectedCategories.includes(category.id) ? 'bg-orange-50' : ''}`}
                               >
                                 <label className="flex items-center p-2 rounded-xl hover:bg-gray-50 transition-all cursor-pointer">
                                   <div className="flex items-center flex-1">
                                     <input
                                       type="checkbox"
-                                      checked={isCategorySelected(category.id)}
-                                      onChange={() => toggleFilter('categories', category.id)}
+                                      checked={selectedCategories.includes(category.id)}
+                                      onChange={() => toggleCategory(category.id)}
                                       className="w-4 h-4 text-orange-500 border-gray-300 rounded-lg focus:ring-orange-500/20"
                                     />
                                     <div className="flex items-center ml-3 gap-3">
@@ -464,7 +464,7 @@ const ProductListPage: React.FC = () => {
                           </div>
 
                           {/* Résumé des catégories sélectionnées */}
-                          {selectedFilters.categories.length > 0 && (
+                          {selectedCategories.length > 0 && (
                             <motion.div
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
@@ -472,10 +472,10 @@ const ProductListPage: React.FC = () => {
                             >
                               <div className="flex items-center justify-between">
                                 <span className="text-sm text-orange-700">
-                                  {selectedFilters.categories.length} catégorie(s) sélectionnée(s)
+                                  {selectedCategories.length} catégorie(s) sélectionnée(s)
                                 </span>
                                 <button
-                                  onClick={clearCategoryFilters}
+                                  onClick={clearAllFilters}
                                   className="text-xs text-orange-600 hover:text-orange-700 font-medium transition-colors"
                                 >
                                   Réinitialiser
