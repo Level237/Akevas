@@ -269,11 +269,19 @@ const ProductDetailPage: React.FC = () => {
         let wholesaleInfo = null;
 
         if (product.productWholeSales && product.productWholeSales.length > 0) {
-          // Trier par quantité minimum décroissante pour trouver le bon niveau
+          // Prix de gros au niveau produit (pour produits simples ou variations couleur uniquement)
           const sortedWholesale = Array.from(product.productWholeSales).sort((a: any, b: any) => Number(b.min_quantity) - Number(a.min_quantity));
-
-          // Trouver le niveau de gros applicable pour cette quantité
           for (const wholesale of sortedWholesale as any[]) {
+            if (quantity >= Number(wholesale.min_quantity)) {
+              finalPrice = Number(wholesale.wholesale_price);
+              wholesaleInfo = wholesale;
+              break;
+            }
+          }
+        } else if (selectedAttr.wholesale_prices && selectedAttr.wholesale_prices.length > 0) {
+          // Prix de gros au niveau attribut (pour produits variés couleur + attribut)
+          const sortedAttrWholesale = Array.from(selectedAttr.wholesale_prices).sort((a: any, b: any) => Number(b.min_quantity) - Number(a.min_quantity));
+          for (const wholesale of sortedAttrWholesale as any[]) {
             if (quantity >= Number(wholesale.min_quantity)) {
               finalPrice = Number(wholesale.wholesale_price);
               wholesaleInfo = wholesale;
@@ -304,8 +312,8 @@ const ProductDetailPage: React.FC = () => {
       let wholesaleInfo = null;
 
       if (product.productWholeSales && product.productWholeSales.length > 0) {
+        // Prix de gros au niveau produit pour variations couleur uniquement
         const sortedWholesale = Array.from(product.productWholeSales).sort((a: any, b: any) => Number(b.min_quantity) - Number(a.min_quantity));
-
         for (const wholesale of sortedWholesale as any[]) {
           if (quantity >= Number(wholesale.min_quantity)) {
             finalPrice = Number(wholesale.wholesale_price);
@@ -406,6 +414,18 @@ const ProductDetailPage: React.FC = () => {
       setSelectedVariant(null); // Désélectionner la variante
       setSelectedImage(0); // Revenir à la première image du produit
     }
+  };
+
+  // Récupérer l'attribut actuellement sélectionné (pour les produits variés couleur + attribut)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getSelectedAttribute = () => {
+    if (selectedVariant?.attributes && selectedVariant.attributes.length > 0) {
+      return (
+        selectedVariant.attributes.find((attr: any) => attr.value === selectedAttribute?.value) ||
+        selectedVariant.attributes[0]
+      );
+    }
+    return null;
   };
 
   // Fonction pour gérer la navigation des images
@@ -709,6 +729,121 @@ const ProductDetailPage: React.FC = () => {
                         </div>
                       </div>
 
+{/* Section Vente en Gros */}
+{(product?.productWholeSales && product.productWholeSales.length > 0) ||
+                    (getSelectedAttribute()?.wholesale_prices && getSelectedAttribute()?.wholesale_prices.length > 0) ? (
+                    <div className="mt-6 p-3 bg-white border border-gray-100 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg">🏪</span>
+                        <span className="text-sm font-semibold text-gray-700">Prix en gros</span>
+                      </div>
+                      <div className="overflow-hidden rounded-xl border border-gray-200">
+                        <table className="w-full text-sm">
+                          <thead className="bg-gray-50 text-gray-600">
+                            <tr>
+                              <th className="px-3 py-2 text-left font-medium">Niveau</th>
+                              <th className="px-3 py-2 text-left font-medium">Qté min.</th>
+                              <th className="px-3 py-2 text-left font-medium">Prix/unité</th>
+                              <th className="px-3 py-2 text-left font-medium">Économie</th>
+                              <th className="px-3 py-2 text-right font-medium">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {(product.productWholeSales && product.productWholeSales.length > 0
+                              ? Array.from(product.productWholeSales)
+                              : Array.from(getSelectedAttribute()?.wholesale_prices || [])
+                            )
+                              .sort((a: any, b: any) => Number(a.min_quantity) - Number(b.min_quantity))
+                              .map((wholesale: any, idx: number, arr: any[]) => {
+                                const minQty = Number(wholesale.min_quantity);
+                                const unitPrice = Number(wholesale.wholesale_price);
+                                const isStockInsufficient = minQty > getProductQuantity();
+                                const isSelected = quantity === minQty && !isStockInsufficient;
+                                const baseline = Number(currentInfo.originalPrice) || Number(product.product_price) || unitPrice;
+                                const saving = Math.max(0, baseline - unitPrice);
+                                const savingPct = baseline > 0 ? Math.round((saving / baseline) * 100) : 0;
+                                // Compute best value by min price
+                                const bestValue = arr
+                                  .map((w: any) => Number(w.wholesale_price))
+                                  .reduce((a: number, b: number) => Math.min(a, b), Number.POSITIVE_INFINITY);
+                                const isBest = unitPrice === bestValue;
+
+                                return (
+                                  <tr key={wholesale.id || idx} className={isSelected ? 'bg-[#ed7e0f]/5' : ''}>
+                                    <td className="px-3 py-3">
+                                      <div className="flex items-center gap-2">
+                                        {isBest && (
+                                          <span className="inline-flex items-center rounded-full bg-green-100 text-green-700 text-[10px] px-2 py-0.5 font-semibold">
+                                            Meilleure offre
+                                          </span>
+                                        )}
+                                        {isSelected && (
+                                          <span className="inline-flex items-center rounded-full bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 font-semibold">
+                                            Actuel
+                                          </span>
+                                        )}
+                                      </div>
+                                    </td>
+                                    <td className="px-3 py-3 font-medium text-gray-900">{minQty}+</td>
+                                    <td className="px-3 py-3 font-semibold text-gray-900">{unitPrice.toLocaleString()} FCFA</td>
+                                    <td className="px-3 py-3">
+                                      {saving > 0 ? (
+                                        <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 text-[11px] px-2 py-0.5 font-medium">
+                                          -{saving.toLocaleString()} FCFA ({savingPct}%)
+                                        </span>
+                                      ) : (
+                                        <span className="text-[11px] text-gray-500">—</span>
+                                      )}
+                                    </td>
+                                    <td className="px-3 py-3 text-right">
+                                      <button
+                                        onClick={() => {
+                                          if (isStockInsufficient) {
+                                            toast.error(
+                                              `Stock insuffisant ! Le stock actuel (${getProductQuantity()} unités) ne permet pas d'atteindre le seuil de ${minQty} unités pour ce tarif.`,
+                                              { duration: 4000, position: 'top-center' }
+                                            );
+                                          } else {
+                                            setQuantity(minQty);
+                                          }
+                                        }}
+                                        disabled={isStockInsufficient}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                                          isSelected
+                                            ? 'bg-[#ed7e0f] text-white border-[#ed7e0f]'
+                                            : isStockInsufficient
+                                              ? 'bg-gray-100 text-gray-400 border-gray-100 cursor-not-allowed'
+                                              : 'bg-white text-gray-700 border-gray-200 hover:border-[#ed7e0f]'
+                                        }`}
+                                      >
+                                        {isStockInsufficient ? 'Indisponible' : isSelected ? 'Sélectionné' : 'Choisir'}
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                          </tbody>
+                        </table>
+                      </div>
+                      {(() => {
+                        const source = (product.productWholeSales && product.productWholeSales.length > 0)
+                          ? Array.from(product.productWholeSales)
+                          : Array.from(getSelectedAttribute()?.wholesale_prices || []);
+                        const insufficientWholesales = source.filter((w: any) => Number(w.min_quantity) > getProductQuantity());
+                        if (insufficientWholesales.length > 0) {
+                          return (
+                            <div className="mt-2 flex items-center gap-2 text-xs text-yellow-700">
+                              <span className="text-yellow-600">⚠️</span>
+                              <span>
+                                Certains tarifs nécessitent plus d'unités que le stock disponible ({getProductQuantity()} unités)
+                              </span>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </div>
+                  ) : null}
                       {/* Informations de la variation sélectionnée */}
                       {currentInfo.variantName && (
                         <div className="bg-gray-50 rounded-lg p-4">
@@ -738,80 +873,7 @@ const ProductDetailPage: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Section Vente en Gros */}
-                  {product?.productWholeSales && product.productWholeSales.length > 0 && (
-                    <div className="mt-6 p-3 bg-white border border-gray-100 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg">🏪</span>
-                        <span className="text-sm font-semibold text-gray-700">Prix en gros</span>
-                      </div>
-                      <table className="w-full text-xs text-gray-700">
-                        <thead>
-                          <tr>
-                            <th className="text-left font-medium pb-1">Qté min.</th>
-                            <th className="text-left font-medium pb-1">Prix/unité</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Array.from(product.productWholeSales)
-                            .sort((a: any, b: any) => Number(a.min_quantity) - Number(b.min_quantity))
-                            .map((wholesale: any) => {
-                              const isStockInsufficient = Number(wholesale.min_quantity) > getProductQuantity();
-                              const isSelected = quantity === Number(wholesale.min_quantity) && !isStockInsufficient;
-                              return (
-                                <tr key={wholesale.id} className={isSelected ? "bg-[#ed7e0f]/10" : ""}>
-                                  <td className="py-1">{wholesale.min_quantity}+</td>
-                                  <td className="py-1 font-semibold">{Number(wholesale.wholesale_price).toLocaleString()} FCFA</td>
-                                  <td>
-                                    <button
-                                      onClick={() => {
-                                        if (isStockInsufficient) {
-                                          toast.error(
-                                            `Stock insuffisant ! Le stock actuel (${getProductQuantity()} unités) ne permet pas d'atteindre le seuil de ${wholesale.min_quantity} unités pour ce tarif.`,
-                                            {
-                                              duration: 4000,
-                                              position: "top-center",
-                                            }
-                                          );
-                                        } else {
-                                          setQuantity(Number(wholesale.min_quantity));
-                                        }
-                                      }}
-                                      disabled={isStockInsufficient}
-                                      className={`px-2 py-1 rounded text-xs font-medium border transition-all
-                                        ${isSelected
-                                          ? 'bg-[#ed7e0f] text-white border-[#ed7e0f]'
-                                          : isStockInsufficient
-                                            ? 'bg-gray-100 text-gray-400 border-gray-100 cursor-not-allowed'
-                                            : 'bg-white text-gray-700 border-gray-200 hover:border-[#ed7e0f]'
-                                        }`}
-                                    >
-                                      {isStockInsufficient ? "Indisponible" : "Choisir"}
-                                    </button>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                        </tbody>
-                      </table>
-                      {(() => {
-                        const insufficientWholesales = Array.from(product.productWholeSales)
-                          .filter((w: any) => Number(w.min_quantity) > getProductQuantity());
-                        if (insufficientWholesales.length > 0) {
-                          return (
-                            <div className="mt-2 flex items-center gap-2 text-xs text-yellow-700">
-                              <span className="text-yellow-600">⚠️</span>
-                              <span>
-                                Certains tarifs nécessitent plus d'unités que le stock disponible ({getProductQuantity()} unités)
-                              </span>
-                            </div>
-                          );
-                        }
-                        return null;
-                      })()}
-                    </div>
-                  )}
+                  
 
                   {/* Prix et réduction avec design modernisé */}
                   <div className=" p-4 rounded-xl">
@@ -903,7 +965,10 @@ const ProductDetailPage: React.FC = () => {
 
                         {/* Prochain seuil */}
                         {(() => {
-                          const nextWholesale = Array.from(product.productWholeSales)
+                          const source = (product.productWholeSales && product.productWholeSales.length > 0)
+                            ? Array.from(product.productWholeSales)
+                            : Array.from(getSelectedAttribute()?.wholesale_prices || []);
+                          const nextWholesale = source
                             .sort((a: any, b: any) => Number(a.min_quantity) - Number(b.min_quantity))
                             .find((w: any) => Number(w.min_quantity) > quantity);
 
