@@ -119,6 +119,14 @@ export const guardService = createApi({
             }),
             providesTags: ['guard'],
         }),
+        // Liste des types d'attributs (ex: taille, pointure, mèches, etc.)
+        getAttributes: builder.query({
+            query: () => ({
+                url: `/api/attributes`,
+                method: 'GET'
+            }),
+            providesTags: ['guard'],
+        }),
         getProductByUrl: builder.query({
             query: (url) => ({
                 url: `/api/product/detail/${url}`,
@@ -220,6 +228,7 @@ export const {
     useGetAllShopsQuery,
     useGetCurrentHomeByGenderQuery,
     useGetHomeProductsQuery,
+    useGetAttributesQuery,
     useGetProductByUrlQuery,
     useGetAllProductsQuery,
     useCreateDeliveryMutation,
