@@ -7,7 +7,7 @@ import {
   X,
 } from 'lucide-react';
 import Header from '@/components/ui/header';
-import { ScrollRestoration } from 'react-router-dom';
+import { ScrollRestoration, useSearchParams } from 'react-router-dom';
 import MobileNav from '@/components/ui/mobile-nav';
 import { useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
 import { Product } from '@/types/products';
@@ -36,12 +36,14 @@ const sortOptions = [
 ];
 
 const ProductListPage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedFilters, setSelectedFilters] = useState<CategoryFilter>({
     categories: []
   });
   const [expandedSections, setExpandedSections] = useState<string[]>(['categories']);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // Get current page from URL, default to 1
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const [totalPages, setTotalPages] = useState(0);
 
   const [sortBy, setSortBy] = useState('popular');
@@ -104,13 +106,19 @@ const ProductListPage: React.FC = () => {
     }
   }, [totalPagesResponse]);
 
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    // Faire défiler vers le haut de la page
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+  // Handle invalid page numbers
+  useEffect(() => {
+    if (totalPages > 0 && (currentPage < 1 || currentPage > totalPages)) {
+      // Redirect to page 1 if page is invalid
+      setSearchParams({ page: '1' });
+    }
+  }, [currentPage, totalPages, setSearchParams]);
+
+  // Generate URL for a specific page
+  const getPageUrl = (pageNumber: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', pageNumber.toString());
+    return `?${params.toString()}`;
   };
 
 
@@ -208,14 +216,14 @@ const ProductListPage: React.FC = () => {
                 <ProductCard product={product} viewMode={viewMode} />
               ))}
               <div>
-                <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 max-sm:mx-12 mt-8">
+                <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 mx-96 max-sm:mx-12 mt-8">
                   {currentPage > 1 && (
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                    <a
+                      href={getPageUrl(currentPage - 1)}
+                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block"
                     >
                       Précédent
-                    </button>
+                    </a>
                   )}
 
                   <div className="flex items-center gap-1">
@@ -229,16 +237,16 @@ const ProductListPage: React.FC = () => {
                         (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
                       ) {
                         return (
-                          <button
+                          <a
                             key={pageNumber}
-                            onClick={() => handlePageChange(pageNumber)}
-                            className={`w-10 h-10 rounded-lg ${currentPage === pageNumber
+                            href={getPageUrl(pageNumber)}
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center ${currentPage === pageNumber
                                 ? 'bg-[#ed7e0f] text-white'
                                 : 'bg-white hover:bg-gray-50'
                               }`}
                           >
                             {pageNumber}
-                          </button>
+                          </a>
                         );
                       } else if (
                         pageNumber === currentPage - 3 ||
@@ -251,12 +259,12 @@ const ProductListPage: React.FC = () => {
                   </div>
 
                   {currentPage < totalPages && (
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50"
+                    <a
+                      href={getPageUrl(currentPage + 1)}
+                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block"
                     >
                       Suivant
-                    </button>
+                    </a>
                   )}
                 </div>
               </div>
