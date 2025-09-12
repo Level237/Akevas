@@ -9,7 +9,8 @@ import {
 import Header from '@/components/ui/header';
 import { ScrollRestoration } from 'react-router-dom';
 import MobileNav from '@/components/ui/mobile-nav';
-import { useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
+import { useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery, useGetAttributesQuery, useGetAttributeValuesQuery } from '@/services/guardService';
+import { skipToken } from '@reduxjs/toolkit/query';
 import { Product } from '@/types/products';
 import { normalizeProduct } from '@/lib/normalizeProduct';
 import ProductCard from '@/components/products/ProductCard';
@@ -21,7 +22,8 @@ import OptimizedImage from '@/components/OptimizedImage';
 
 interface CategoryFilter {
   categories: number[];
-  // Ajoutez d'autres types de filtres si nécessaire
+  attributes: number[];
+  attributeValues: number[];
 }
 
 
@@ -36,7 +38,9 @@ const sortOptions = [
 
 const ProductListPage: React.FC = () => {
   const [selectedFilters, setSelectedFilters] = useState<CategoryFilter>({
-    categories: []
+    categories: [],
+    attributes: [],
+    attributeValues: []
   });
   const [expandedSections, setExpandedSections] = useState<string[]>(['categories']);
 
@@ -51,6 +55,11 @@ const ProductListPage: React.FC = () => {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   })
+  const { data: attributesResp, isLoading: attributesLoading } = useGetAttributesQuery();
+  const attributesList: any[] = (attributesResp as any)?.data ?? (attributesResp as any) ?? [];
+  const selectedAttributeId = selectedFilters.attributes[0];
+  const { data: attributeValuesResp, isLoading: attributeValuesLoading } = useGetAttributeValuesQuery(selectedAttributeId ?? (skipToken as any));
+  const attributeValues: any[] = (attributeValuesResp as any)?.data ?? (attributeValuesResp as any) ?? [];
 
 
   const safeProducts = productList || [];
@@ -63,17 +72,7 @@ const ProductListPage: React.FC = () => {
     );
   }, []);
 
-  const toggleFilter = useCallback((type: keyof CategoryFilter, id: number) => {
-    setSelectedFilters(prev => {
-      const currentFilters = prev[type] || [];
-      return {
-        ...prev,
-        [type]: currentFilters.includes(id)
-          ? currentFilters.filter(filterId => filterId !== id)
-          : [...currentFilters, id]
-      };
-    });
-  }, []);
+  // toggleFilter non utilisé après passage en select unique pour catégories
 
   const clearCategoryFilters = useCallback(() => {
     setSelectedFilters(prev => ({
@@ -90,6 +89,14 @@ const ProductListPage: React.FC = () => {
       duration: 2000,
       position: "top-center",
     });
+  }, []);
+
+  const clearAttributeFilters = useCallback(() => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      attributes: [],
+      attributeValues: []
+    }));
   }, []);
 
   const isCategorySelected = useCallback((categoryId: number) => {
@@ -199,7 +206,9 @@ const ProductListPage: React.FC = () => {
                     <button
                       onClick={() => {
                         setSelectedFilters({
-                          categories: []
+                          categories: [],
+                          attributes: [],
+                          attributeValues: []
                         });
                       }}
                       className="text-sm text-blue-600 hover:text-blue-700"
@@ -236,51 +245,24 @@ const ProductListPage: React.FC = () => {
                         className="overflow-hidden"
                       >
                         <div className="space-y-2">
-                          {!categoriesLoading && categories.map((category: any) => (
-                            <motion.div
-                              key={category.id}
-                              whileHover={{ x: 4 }}
-                              className={`group ${isCategorySelected(category.id) ? 'bg-orange-50' : ''}`}
-                            >
-                              <label className="flex items-center p-2 rounded-xl hover:bg-gray-50 transition-all cursor-pointer">
-                                <div className="flex items-center flex-1">
-                                  <input
-                                    type="checkbox"
-                                    checked={isCategorySelected(category.id)}
-                                    onChange={() => toggleFilter('categories', category.id)}
-                                    className="w-4 h-4 text-orange-500 border-gray-300 rounded-lg focus:ring-orange-500/20"
-                                  />
-                                  <div className="flex items-center ml-3 gap-3">
-                                    <div className="w-8 h-8 rounded-lg overflow-hidden">
-                                      <OptimizedImage
-                                        src={category.category_profile}
-                                        alt={category.category_name}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    </div>
-                                    <div>
-                                      <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                                        {category.category_name}
-                                      </span>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-500">
-                                          {category.products_count} produits
-                                        </span>
-                                        {category.products_count > 0 && (
-                                          <span className="flex h-1.5 w-1.5 rounded-full bg-orange-500"></span>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="ml-auto">
-                                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors">
-                                      {category.products_count}
-                                    </span>
-                                  </div>
-                                </div>
-                              </label>
-                            </motion.div>
-                          ))}
+                          <select
+                            className="w-full px-3 py-2 border rounded-lg"
+                            value={selectedFilters.categories[0] ?? ''}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setSelectedFilters(prev => ({
+                                ...prev,
+                                categories: value ? [Number(value)] : []
+                              }));
+                            }}
+                          >
+                            <option value="">Toutes les catégories</option>
+                            {!categoriesLoading && categories && categories.map((category: any) => (
+                              <option key={category.id} value={category.id}>
+                                {category.category_name}
+                              </option>
+                            ))}
+                          </select>
                         </div>
 
                         {/* Résumé des catégories sélectionnées */}
@@ -291,9 +273,7 @@ const ProductListPage: React.FC = () => {
                             className="mt-4 p-3 bg-orange-50 rounded-xl"
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-sm text-orange-700">
-                                {selectedFilters.categories.length} catégorie(s) sélectionnée(s)
-                              </span>
+                              <span className="text-sm text-orange-700">1 catégorie sélectionnée</span>
                               <button
                                 onClick={clearCategoryFilters}
                                 className="text-xs text-orange-600 hover:text-orange-700 font-medium transition-colors"
@@ -308,6 +288,95 @@ const ProductListPage: React.FC = () => {
                   </AnimatePresence>
                 </div>
 
+                {/* Section des attributs (hors Couleur) */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-medium text-gray-900">Attributs</h3>
+                    <button
+                      onClick={() => toggleSection('attributes')}
+                      className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      {expandedSections.includes('attributes') ? (
+                        <ChevronUp className="w-5 h-5 text-gray-500" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                      )}
+                    </button>
+                  </div>
+
+                  <AnimatePresence>
+                    {expandedSections.includes('attributes') && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="space-y-3">
+                          <select
+                            className="w-full px-3 py-2 border rounded-lg"
+                            value={selectedFilters.attributes[0] ?? ''}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setSelectedFilters(prev => ({
+                                ...prev,
+                                attributes: value ? [Number(value)] : [],
+                                attributeValues: []
+                              }));
+                            }}
+                          >
+                            <option value="">Choisir un attribut</option>
+                            {!attributesLoading && attributesList
+                              .filter((a: any) => String(a.name || a.attribute_name || '').toLowerCase() !== 'couleur' && String(a.name || a.attribute_name || '').toLowerCase() !== 'color')
+                              .map((attr: any) => (
+                                <option key={attr.id} value={attr.id}>
+                                  {attr.name || attr.attribute_name}
+                                </option>
+                              ))}
+                          </select>
+
+                          {selectedFilters.attributes.length > 0 && (
+                            <select
+                              className="w-full px-3 py-2 border rounded-lg"
+                              value={selectedFilters.attributeValues[0] ?? ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setSelectedFilters(prev => ({
+                                  ...prev,
+                                  attributeValues: value ? [Number(value)] : []
+                                }));
+                              }}
+                            >
+                              <option value="">Choisir la valeur</option>
+                              {!attributeValuesLoading && attributeValues && attributeValues.map((val: any) => (
+                                <option key={val.id} value={val.id}>
+                                  {val.value} {val.label}
+                                </option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+
+                        {(selectedFilters.attributes.length > 0 || selectedFilters.attributeValues.length > 0) && (
+                          <div className="mt-4 p-3 bg-orange-50 rounded-xl">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-orange-700">
+                                {selectedFilters.attributeValues.length > 0 ? '1 valeur sélectionnée' : '1 attribut sélectionné'}
+                              </span>
+                              <button
+                                onClick={clearAttributeFilters}
+                                className="text-xs text-orange-600 hover:text-orange-700 font-medium transition-colors"
+                              >
+                                Réinitialiser
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
               </div>
             </div>
@@ -433,51 +502,24 @@ const ProductListPage: React.FC = () => {
                           className="overflow-hidden"
                         >
                           <div className="space-y-2">
-                            {!categoriesLoading && categories.map((category: any) => (
-                              <motion.div
-                                key={category.id}
-                                whileHover={{ x: 4 }}
-                                className={`group ${isCategorySelected(category.id) ? 'bg-orange-50' : ''}`}
-                              >
-                                <label className="flex items-center p-2 rounded-xl hover:bg-gray-50 transition-all cursor-pointer">
-                                  <div className="flex items-center flex-1">
-                                    <input
-                                      type="checkbox"
-                                      checked={isCategorySelected(category.id)}
-                                      onChange={() => toggleFilter('categories', category.id)}
-                                      className="w-4 h-4 text-orange-500 border-gray-300 rounded-lg focus:ring-orange-500/20"
-                                    />
-                                    <div className="flex items-center ml-3 gap-3">
-                                      <div className="w-8 h-8 rounded-lg overflow-hidden">
-                                        <OptimizedImage
-                                          src={category.category_profile}
-                                          alt={category.category_name}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      </div>
-                                      <div>
-                                        <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                                          {category.category_name}
-                                        </span>
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-xs text-gray-500">
-                                            {category.products_count} produits
-                                          </span>
-                                          {category.products_count > 0 && (
-                                            <span className="flex h-1.5 w-1.5 rounded-full bg-orange-500"></span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="ml-auto">
-                                      <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors">
-                                        {category.products_count}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </label>
-                              </motion.div>
-                            ))}
+                            <select
+                              className="w-full px-3 py-2 border rounded-lg"
+                              value={selectedFilters.categories[0] ?? ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setSelectedFilters(prev => ({
+                                  ...prev,
+                                  categories: value ? [Number(value)] : []
+                                }));
+                              }}
+                            >
+                              <option value="">Toutes les catégories</option>
+                              {!categoriesLoading && categories && categories.map((category: any) => (
+                                <option key={category.id} value={category.id}>
+                                  {category.category_name}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           {/* Résumé des catégories sélectionnées */}
@@ -488,9 +530,7 @@ const ProductListPage: React.FC = () => {
                               className="mt-4 p-3 bg-orange-50 rounded-xl"
                             >
                               <div className="flex items-center justify-between">
-                                <span className="text-sm text-orange-700">
-                                  {selectedFilters.categories.length} catégorie(s) sélectionnée(s)
-                                </span>
+                                <span className="text-sm text-orange-700">1 catégorie sélectionnée</span>
                                 <button
                                   onClick={clearCategoryFilters}
                                   className="text-xs text-orange-600 hover:text-orange-700 font-medium transition-colors"
@@ -499,6 +539,96 @@ const ProductListPage: React.FC = () => {
                                 </button>
                               </div>
                             </motion.div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Section des attributs (hors Couleur) */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-medium text-gray-900">Attributs</h3>
+                      <button
+                        onClick={() => toggleSection('attributes')}
+                        className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                      >
+                        {expandedSections.includes('attributes') ? (
+                          <ChevronUp className="w-5 h-5 text-gray-500" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-gray-500" />
+                        )}
+                      </button>
+                    </div>
+
+                    <AnimatePresence>
+                      {expandedSections.includes('attributes') && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="space-y-3">
+                            <select
+                              className="w-full px-3 py-2 border rounded-lg"
+                              value={selectedFilters.attributes[0] ?? ''}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setSelectedFilters(prev => ({
+                                  ...prev,
+                                  attributes: value ? [Number(value)] : [],
+                                  attributeValues: []
+                                }));
+                              }}
+                            >
+                              <option value="">Choisir un attribut</option>
+                              {!attributesLoading && attributesList
+                                .filter((a: any) => String(a.name || a.attribute_name || '').toLowerCase() !== 'couleur' && String(a.name || a.attribute_name || '').toLowerCase() !== 'color')
+                                .map((attr: any) => (
+                                  <option key={attr.id} value={attr.id}>
+                                    {attr.name || attr.attribute_name}
+                                  </option>
+                                ))}
+                            </select>
+
+                            {selectedFilters.attributes.length > 0 && (
+                              <select
+                                className="w-full px-3 py-2 border rounded-lg"
+                                value={selectedFilters.attributeValues[0] ?? ''}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  setSelectedFilters(prev => ({
+                                    ...prev,
+                                    attributeValues: value ? [Number(value)] : []
+                                  }));
+                                }}
+                              >
+                                <option value="">Choisir la valeur</option>
+                                {!attributeValuesLoading && attributeValues && attributeValues.map((val: any) => (
+                                  <option key={val.id} value={val.id}>
+                                    {val.value} {val.label}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+                          </div>
+
+                          {(selectedFilters.attributes.length > 0 || selectedFilters.attributeValues.length > 0) && (
+                            <div className="mt-4 p-3 bg-orange-50 rounded-xl">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-orange-700">
+                                  {selectedFilters.attributeValues.length > 0 ? '1 valeur sélectionnée' : '1 attribut sélectionné'}
+                                </span>
+                                <button
+                                  onClick={clearAttributeFilters}
+                                  className="text-xs text-orange-600 hover:text-orange-700 font-medium transition-colors"
+                                >
+                                  Réinitialiser
+                                </button>
+                              </div>
+                            </div>
                           )}
                         </motion.div>
                       )}
