@@ -201,7 +201,13 @@ export const guardService = createApi({
                 method: "GET"
             })
         }),
-        
+        getAttributeByCategory: builder.query({
+            query: () => ({
+                url: "/api/categories/attributes",
+                method: "GET"
+            }),
+            providesTags: ['guard']
+        }),
 
 
     }),
@@ -232,5 +238,6 @@ export const {
     useGetProfileShopQuery,
     useGetModalShopQuery,
     useGetCatalogSellerQuery,
-    useFilterProductsQuery
+    useFilterProductsQuery,
+    useGetAttributeByCategoryQuery
 } = guardService

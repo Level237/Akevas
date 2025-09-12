@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useGetAttributeValuesQuery } from '@/services/guardService';
+import { useGetAttributeByCategoryQuery, useGetAttributeValuesQuery } from '@/services/guardService';
 
 type Nullable<T> = T | null;
 
@@ -30,9 +30,6 @@ interface ProductFiltersProps {
 
 const sectionTransition = { duration: 0.2 };
 
-const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-const SHOE_SIZES = [36, 37, 38, 39, 40, 41, 42, 43, 44];
-const HAIR_LENGTHS = [10, 12, 14, 16, 18, 20, 22, 24];
 const COLORS = [
   '#000000', '#ffffff', '#ff0000', '#00a2ff', '#00c853', '#ff9800', '#9c27b0', '#795548'
 ];
@@ -56,7 +53,8 @@ const ProductFilters = ({
   const [maxPrice, setMaxPrice] = useState<Nullable<number>>(PRICE_MAX);
 
   const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
-  
+  const { data: availableAttributes } = useGetAttributeByCategoryQuery('guard');
+  console.log(availableAttributes)
   const setClampedMinPrice = (value: number) => {
     const safeMax = maxPrice ?? PRICE_MAX;
     const newMin = Math.max(0, Math.min(value, safeMax));
@@ -80,11 +78,13 @@ const ProductFilters = ({
   const [selectedAttributeType, setSelectedAttributeType] = useState<string>('');
   const [selectedAttributeValues, setSelectedAttributeValues] = useState<(string | number)[]>([]);
   
-  // Attribute types and their values
-  const ATTRIBUTE_TYPES = {
-    'taille': { label: 'Taille', values: CLOTHING_SIZES },
-    'pointure': { label: 'Pointure', values: SHOE_SIZES },
-    'meches': { label: 'Longueur (mèches)', values: HAIR_LENGTHS }
+  // Get available attributes based on selected categories
+  const getAvailableAttributes = () => {
+    if (!availableAttributes || selectedCategories.length === 0) return [];
+    
+    return availableAttributes.filter((attr: any) => 
+      selectedCategories.includes(attr.category_id)
+    );
   };
 
   const totalSelectedCount = useMemo(() => {
@@ -404,21 +404,27 @@ const ProductFilters = ({
               {/* Attribute Type Selection */}
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Type d'attribut</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {Object.entries(ATTRIBUTE_TYPES).map(([key, config]) => (
-                    <button
-                      key={key}
-                      onClick={() => handleAttributeTypeChange(key)}
-                      className={`p-1  text-xs rounded-lg border text-center transition-colors ${
-                        selectedAttributeType === key
-                          ? 'border-orange-400  bg-orange-50 text-orange-700'
-                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="font-medium">{config.label}</span>
-                    </button>
-                  ))}
-                </div>
+                {selectedCategories.length === 0 ? (
+                  <div className="text-sm text-gray-500 p-3 bg-gray-50 rounded-lg">
+                    Veuillez d'abord sélectionner une catégorie pour voir les attributs disponibles.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    {getAvailableAttributes().map((attr: any) => (
+                      <button
+                        key={attr.attribute_id}
+                        onClick={() => handleAttributeTypeChange(attr.attribute_id.toString())}
+                        className={`p-1 text-xs rounded-lg border text-center transition-colors ${
+                          selectedAttributeType === attr.attribute_id.toString()
+                            ? 'border-orange-400 bg-orange-50 text-orange-700'
+                            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span className="font-medium">{attr.attribute_name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Attribute Values Selection */}
@@ -429,22 +435,28 @@ const ProductFilters = ({
                   className="space-y-3"
                 >
                   <label className="text-sm font-medium text-gray-700">
-                    Valeurs {ATTRIBUTE_TYPES[selectedAttributeType as keyof typeof ATTRIBUTE_TYPES]?.label}
+                    Valeurs {getAvailableAttributes().find((attr: any) => attr.attribute_id.toString() === selectedAttributeType)?.attribute_name}
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {ATTRIBUTE_TYPES[selectedAttributeType as keyof typeof ATTRIBUTE_TYPES]?.values.map((value) => (
-                      <button
-                        key={value}
-                        onClick={() => toggleAttributeValue(value)}
-                        className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
-                          selectedAttributeValues.includes(value)
-                            ? 'border-orange-400 bg-orange-50 text-orange-700'
-                            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        {typeof value === 'number' ? `${value}"` : value}
-                      </button>
-                    ))}
+                    {getAttributes && getAttributes.length > 0 ? (
+                      getAttributes
+                        .find((attr: any) => attr.id.toString() === selectedAttributeType)
+                        ?.values.map((value: any) => (
+                          <button
+                            key={value.id}
+                            onClick={() => toggleAttributeValue(value.value)}
+                            className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
+                              selectedAttributeValues.includes(value.value)
+                                ? 'border-orange-400 bg-orange-50 text-orange-700'
+                                : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            {value.value}{value.label ? ` ${value.label}` : ''}
+                          </button>
+                        ))
+                    ) : (
+                      <div className="text-sm text-gray-500">Chargement des valeurs...</div>
+                    )}
                   </div>
                   
                   {/* Selected values summary */}
