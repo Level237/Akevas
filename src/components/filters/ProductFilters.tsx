@@ -492,8 +492,9 @@ const ProductFilters = ({
     <div className="space-y-6">
       {Price}
       {Categories}
-      {Colors}
       {Attributes}
+      {Colors}
+      
     </div>
   );
 
