@@ -729,8 +729,38 @@ const ProductDetailPage: React.FC = () => {
                         </div>
                       </div>
 
-{/* Section Vente en Gros */}
-{(product?.productWholeSales && product.productWholeSales.length > 0) ||
+
+                      {/* Informations de la variation sélectionnée */}
+                      {currentInfo.variantName && (
+                        <div className="bg-gray-50 rounded-lg p-4">
+                          <div className="flex items-center gap-3 mb-3">
+                            {currentInfo.color && (
+                              <div
+                                className="w-6 h-6 rounded-full border"
+                                style={{ backgroundColor: currentInfo.color.hex }}
+                              />
+                            )}
+                            <h4 className="font-medium text-gray-900">
+                              {currentInfo.variantName}
+                              {currentInfo.attribute && ` - Taille ${currentInfo.attribute}`}
+                              {currentInfo.group && ` (${currentInfo.group})`}
+                            </h4>
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Prix et stock</span>
+                            <div className="flex items-center gap-4">
+                              <span className="font-medium">{currentInfo.quantity} en stock</span>
+                              <span className="font-bold text-[#ed7e0f]">{currentInfo.price} FCFA</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Section Vente en Gros */}
+{(product.productWholeSales) ||
                     (getSelectedAttribute()?.wholesale_prices && getSelectedAttribute()?.wholesale_prices.length > 0) ? (
                     <div className="mt-6 p-3 bg-white border border-gray-100 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
@@ -844,36 +874,6 @@ const ProductDetailPage: React.FC = () => {
                       })()}
                     </div>
                   ) : null}
-                      {/* Informations de la variation sélectionnée */}
-                      {currentInfo.variantName && (
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <div className="flex items-center gap-3 mb-3">
-                            {currentInfo.color && (
-                              <div
-                                className="w-6 h-6 rounded-full border"
-                                style={{ backgroundColor: currentInfo.color.hex }}
-                              />
-                            )}
-                            <h4 className="font-medium text-gray-900">
-                              {currentInfo.variantName}
-                              {currentInfo.attribute && ` - Taille ${currentInfo.attribute}`}
-                              {currentInfo.group && ` (${currentInfo.group})`}
-                            </h4>
-                          </div>
-
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">Prix et stock</span>
-                            <div className="flex items-center gap-4">
-                              <span className="font-medium">{currentInfo.quantity} en stock</span>
-                              <span className="font-bold text-[#ed7e0f]">{currentInfo.price} FCFA</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  
 
                   {/* Prix et réduction avec design modernisé */}
                   <div className=" p-4 rounded-xl">
