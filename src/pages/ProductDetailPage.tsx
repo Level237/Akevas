@@ -460,8 +460,9 @@ const ProductDetailPage: React.FC = () => {
   // Déterminer si l'achat doit être bloqué (wholesale-only mais quantité insuffisante ou pas de palier)
   const isWholesaleBlocked = () => {
     if (!product?.is_only_wholesale) return false;
+    // Ne bloquer que s'il existe des paliers de gros
     const minQty = getMinWholesaleQty();
-    if (!minQty) return true; // wholesale uniquement mais pas de prix de gros disponible
+    if (!minQty) return false;
     return quantity < Number(minQty);
   };
 
