@@ -212,62 +212,85 @@ const ProductListPage: React.FC = () => {
           {/* Liste des produits */}
           <div className="lg:col-span-3">
             <div className={viewMode === 'grid' ? 'grid grid-cols-2   max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
-              {!isLoading && normalizedProducts && normalizedProducts.map((product: Product) => (
-                <ProductCard product={product} viewMode={viewMode} />
-              ))}
-              <div>
-                <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 mx-96 max-sm:mx-12 mt-8">
-                  {currentPage > 1 && (
-                    <a
-                      href={getPageUrl(currentPage - 1)}
-                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block"
-                    >
-                      Précédent
-                    </a>
-                  )}
-
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: totalPages }, (_, index) => {
-                      const pageNumber = index + 1;
-
-                      // Afficher seulement les pages proches de la page courante
-                      if (
-                        pageNumber === 1 ||
-                        pageNumber === totalPages ||
-                        (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
-                      ) {
-                        return (
-                          <a
-                            key={pageNumber}
-                            href={getPageUrl(pageNumber)}
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center ${currentPage === pageNumber
-                                ? 'bg-[#ed7e0f] text-white'
-                                : 'bg-white hover:bg-gray-50'
-                              }`}
-                          >
-                            {pageNumber}
-                          </a>
-                        );
-                      } else if (
-                        pageNumber === currentPage - 3 ||
-                        pageNumber === currentPage + 3
-                      ) {
-                        return <span key={pageNumber}>...</span>;
-                      }
-                      return null;
-                    })}
+              {isLoading ? (
+                // Skeleton loader
+                Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className={viewMode === 'grid' ? 'animate-pulse' : 'animate-pulse'}>
+                    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                      {/* Image skeleton */}
+                      <div className="aspect-square bg-gray-200 w-full"></div>
+                      
+                      {/* Content skeleton */}
+                      <div className="p-4 space-y-3">
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                        <div className="flex items-center justify-between mt-4">
+                          <div className="h-6 bg-gray-200 rounded w-16"></div>
+                          <div className="h-8 bg-gray-200 rounded w-20"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                ))
+              ) : (
+                normalizedProducts && normalizedProducts.map((product: Product) => (
+                  <ProductCard key={product.id} product={product} viewMode={viewMode} />
+                ))
+              )}
+            </div>
+            
+            {/* Pagination */}
+            <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 mx-96 max-sm:mx-12 mt-8">
+              {currentPage > 1 && (
+                <a
+                  href={getPageUrl(currentPage - 1)}
+                  className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block"
+                >
+                  Précédent
+                </a>
+              )}
 
-                  {currentPage < totalPages && (
-                    <a
-                      href={getPageUrl(currentPage + 1)}
-                      className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block"
-                    >
-                      Suivant
-                    </a>
-                  )}
-                </div>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, index) => {
+                  const pageNumber = index + 1;
+
+                  // Afficher seulement les pages proches de la page courante
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
+                  ) {
+                    return (
+                      <a
+                        key={pageNumber}
+                        href={getPageUrl(pageNumber)}
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${currentPage === pageNumber
+                            ? 'bg-[#ed7e0f] text-white'
+                            : 'bg-white hover:bg-gray-50'
+                          }`}
+                      >
+                        {pageNumber}
+                      </a>
+                    );
+                  } else if (
+                    pageNumber === currentPage - 3 ||
+                    pageNumber === currentPage + 3
+                  ) {
+                    return <span key={pageNumber}>...</span>;
+                  }
+                  return null;
+                })}
               </div>
+
+              {currentPage < totalPages && (
+                <a
+                  href={getPageUrl(currentPage + 1)}
+                  className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block"
+                >
+                  Suivant
+                </a>
+              )}
             </div>
           </div>
         </div>
