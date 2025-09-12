@@ -15,6 +15,7 @@ import { normalizeProduct } from '@/lib/normalizeProduct';
 import ProductCard from '@/components/products/ProductCard';
 import { toast } from "sonner";
 import OptimizedImage from '@/components/OptimizedImage';
+import ProductFilters from '@/components/filters/ProductFilters';
 
 
 
@@ -189,128 +190,15 @@ const ProductListPage: React.FC = () => {
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Filtres desktop */}
           <div className="hidden lg:block">
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-medium text-gray-900">Filtres</h2>
-                {Object.values(selectedFilters).reduce(
-                  (acc, curr) => acc + curr.length,
-                  0
-                ) > 0 && (
-                    <button
-                      onClick={() => {
-                        setSelectedFilters({
-                          categories: []
-                        });
-                      }}
-                      className="text-sm text-blue-600 hover:text-blue-700"
-                    >
-                      Réinitialiser
-                    </button>
-                  )}
-              </div>
-
-              <div className="space-y-6">
-                {/* Section des catégories */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-900">Catégories</h3>
-                    <button
-                      onClick={() => toggleSection('categories')}
-                      className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                      {expandedSections.includes('categories') ? (
-                        <ChevronUp className="w-5 h-5 text-gray-500" />
-                      ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-500" />
-                      )}
-                    </button>
-                  </div>
-
-                  <AnimatePresence>
-                    {expandedSections.includes('categories') && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="space-y-2">
-                          {!categoriesLoading && categories.map((category: any) => (
-                            <motion.div
-                              key={category.id}
-                              whileHover={{ x: 4 }}
-                              className={`group ${isCategorySelected(category.id) ? 'bg-orange-50' : ''}`}
-                            >
-                              <label className="flex items-center p-2 rounded-xl hover:bg-gray-50 transition-all cursor-pointer">
-                                <div className="flex items-center flex-1">
-                                  <input
-                                    type="checkbox"
-                                    checked={isCategorySelected(category.id)}
-                                    onChange={() => toggleFilter('categories', category.id)}
-                                    className="w-4 h-4 text-orange-500 border-gray-300 rounded-lg focus:ring-orange-500/20"
-                                  />
-                                  <div className="flex items-center ml-3 gap-3">
-                                    <div className="w-8 h-8 rounded-lg overflow-hidden">
-                                      <OptimizedImage
-                                        src={category.category_profile}
-                                        alt={category.category_name}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    </div>
-                                    <div>
-                                      <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                                        {category.category_name}
-                                      </span>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-500">
-                                          {category.products_count} produits
-                                        </span>
-                                        {category.products_count > 0 && (
-                                          <span className="flex h-1.5 w-1.5 rounded-full bg-orange-500"></span>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="ml-auto">
-                                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors">
-                                      {category.products_count}
-                                    </span>
-                                  </div>
-                                </div>
-                              </label>
-                            </motion.div>
-                          ))}
-                        </div>
-
-                        {/* Résumé des catégories sélectionnées */}
-                        {selectedFilters.categories.length > 0 && (
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="mt-4 p-3 bg-orange-50 rounded-xl"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm text-orange-700">
-                                {selectedFilters.categories.length} catégorie(s) sélectionnée(s)
-                              </span>
-                              <button
-                                onClick={clearCategoryFilters}
-                                className="text-xs text-orange-600 hover:text-orange-700 font-medium transition-colors"
-                              >
-                                Réinitialiser
-                              </button>
-                            </div>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-
-              </div>
-            </div>
+            <ProductFilters
+              categories={categories}
+              isLoadingCategories={categoriesLoading}
+              selectedCategories={selectedFilters.categories}
+              onCategoryToggle={(categoryId: number) => toggleFilter('categories', categoryId)}
+              onClearAll={() => setSelectedFilters({ categories: [] })}
+              isMobile={false}
+              onCloseMobile={() => setShowMobileFilters(false)}
+            />
           </div>
 
           {/* Liste des produits */}
