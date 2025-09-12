@@ -359,9 +359,9 @@ const ProductFilters = ({
       <AnimatePresence>
         {expandedSections.includes('color') && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={sectionTransition} className="overflow-hidden">
-            <div className="flex flex-wrap gap-3">
+            <div className="flex mt-4 ml-4 mb-4 flex-wrap gap-3">
               {COLORS.map(hex => (
-                <button key={hex} onClick={() => toggleString(hex, setSelectedColors, selectedColors)} className={`relative h-8 w-8 rounded-full border ${selectedColors.includes(hex) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} style={{ backgroundColor: hex }}>
+                <button key={hex} onClick={() => toggleString(hex, setSelectedColors, selectedColors)} className={`relative h-7 w-7  rounded-full border ${selectedColors.includes(hex) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} style={{ backgroundColor: hex }}>
                   {hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
                 </button>
               ))}
