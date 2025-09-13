@@ -142,6 +142,7 @@ const ProductListPage: React.FC = () => {
     const hasSellerModeChanged = debouncedSellerMode !== isSellerMode;
     const hasBulkPriceRangeChanged = debouncedBulkPriceRange !== selectedBulkPriceRange;
     
+    
     if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged || hasGendersChanged || hasSellerModeChanged || hasBulkPriceRangeChanged) {
       setIsFiltering(true);
       const timeoutId = setTimeout(() => {
@@ -167,7 +168,8 @@ const ProductListPage: React.FC = () => {
     categories: debouncedCategories,
     colors: debouncedColors,
     attribut: debouncedAttributes,
-    gender: debouncedGenders
+    gender: debouncedGenders,
+    seller_mode:debouncedSellerMode
   });
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
