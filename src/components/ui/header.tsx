@@ -334,41 +334,24 @@ console.log(userData)
             </div>
           </div>
         </div>
-        <div className="max-sm:hidden block mx-16 px-4 py-3">
+        {/* Version Mobile */}
+        <div className="max-sm:hidden md:hidden block px-4 py-3">
           {/* Top bar avec logo, recherche et actions */}
           <div className="flex items-center justify-between gap-4">
             <AsyncLink to="/" className="flex-shrink-0">
               <img
                 src={logo}
                 alt="AKEVAS"
-                className="h-28 w-auto"
+                className="h-20 w-auto"
               />
             </AsyncLink>
 
-            <div className="flex flex-1 items-center justify-end gap-8">
-              {/* Barre de recherche redimensionnable */}
-              <SearchBar className="hidden md:block" />
-
-              {/* Navigation par genre */}
-              <nav className="flex items-center gap-6">
-               
-                {Array.isArray(genders) && genders.map((gender) => (
-                  <AsyncLink
-                    key={gender.id}
-                    to={`/home?g=${gender.url}`}
-                    className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors whitespace-nowrap"
-                  >
-                    {gender.label}
-                  </AsyncLink>
-                ))}
-              </nav>
-
+            <div className="flex items-center gap-4">
               {/* Actions (compte, panier, etc.) */}
-              <div className="flex  items-center gap-4">
+              <div className="flex items-center gap-3">
                 <DropdownAccount currentUser={userData}>
                   {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
-                    <User className="h-7 w-7" />
-
+                    <User className="h-6 w-6" />
                   </div>}
 
                   {userData && (userData.role_id === 1 || userData.role_id === 3 || userData.role_id === 4) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
@@ -381,11 +364,7 @@ console.log(userData)
                   </div>}
                 </DropdownAccount>
                 {!userData && <AsyncLink to="/cart">
-
-                  <div
-
-                    className="relative text-gray-700 hover:text-[#ed7e0f]"
-                  >
+                  <div className="relative text-gray-700 hover:text-[#ed7e0f]">
                     <ShoppingCart className="w-6 h-6" />
                     <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {totalQuantity}
@@ -394,11 +373,171 @@ console.log(userData)
                 </AsyncLink>}
 
                 {userData && (userData.role_id === 1 || userData.role_id === 3) && <AsyncLink to="/cart">
+                  <div className="relative text-gray-700 hover:text-[#ed7e0f]">
+                    <ShoppingCart className="w-6 h-6" />
+                    <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {totalQuantity}
+                    </span>
+                  </div>
+                </AsyncLink>}
+              </div>
+            </div>
+          </div>
 
-                  <div
+          {/* Barre de recherche mobile */}
+          <div className="mt-3">
+            <SearchBar />
+          </div>
 
-                    className="relative text-gray-700 hover:text-[#ed7e0f]"
+          {/* Navigation par genre mobile */}
+          <nav className="flex items-center justify-center gap-4 mt-3 overflow-x-auto">
+            {Array.isArray(genders) && genders.map((gender) => (
+              <AsyncLink
+                key={gender.id}
+                to={`/home?g=${gender.url}`}
+                className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors whitespace-nowrap px-3 py-2 rounded-lg hover:bg-orange-50"
+              >
+                {gender.label}
+              </AsyncLink>
+            ))}
+          </nav>
+        </div>
+
+        {/* Version Tablette */}
+        <div className="hidden  md:block lg:hidden mx-8 px-4 py-4">
+          {/* Top bar avec logo, recherche et actions */}
+          <div className="flex items-center justify-between gap-6">
+            <AsyncLink to="/" className="flex-shrink-0">
+              <img
+                src={logo}
+                alt="AKEVAS"
+                className="h-24 w-auto"
+              />
+            </AsyncLink>
+
+            <div className="flex flex-1 items-center justify-center gap-6">
+              {/* Barre de recherche centrée */}
+              <div className="flex-1 max-w-md">
+                <SearchBar />
+              </div>
+            </div>
+
+            {/* Actions (compte, panier, etc.) */}
+            <div className="flex items-center gap-4">
+              <DropdownAccount currentUser={userData}>
+                {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                  <User className="h-6 w-6" />
+                </div>}
+
+                {userData && (userData.role_id === 1 || userData.role_id === 3 || userData.role_id === 4) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                  <Avatar>
+                    <AvatarImage src={userData.profile} />
+                    <AvatarFallback>
+                      {userData.role_id === 4 ? userData?.firstName.charAt(0) : userData?.userName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>}
+              </DropdownAccount>
+              {!userData && <AsyncLink to="/cart">
+                <div className="relative text-gray-700 hover:text-[#ed7e0f]">
+                  <ShoppingCart className="w-6 h-6" />
+                  <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {totalQuantity}
+                  </span>
+                </div>
+              </AsyncLink>}
+
+              {userData && (userData.role_id === 1 || userData.role_id === 3) && <AsyncLink to="/cart">
+                <div className="relative text-gray-700 hover:text-[#ed7e0f]">
+                  <ShoppingCart className="w-6 h-6" />
+                  <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {totalQuantity}
+                  </span>
+                </div>
+              </AsyncLink>}
+            </div>
+          </div>
+
+          {/* Navigation par genre tablette */}
+          <nav className="flex items-center justify-center gap-6 mt-4">
+            {Array.isArray(genders) && genders.map((gender) => (
+              <AsyncLink
+                key={gender.id}
+                to={`/home?g=${gender.url}`}
+                className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors whitespace-nowrap px-4 py-2 rounded-lg hover:bg-orange-50"
+              >
+                {gender.label}
+              </AsyncLink>
+            ))}
+          </nav>
+
+          {/* Navigation avec menus déroulants tablette */}
+          <div className="flex justify-center md:hidden md:gap-1 gap-8 items-center w-full mt-4">
+            <div className='w-10 md:hidden'>
+              <MegaMenu />
+            </div>
+            <div className='flex-1'>
+              <CategoryNavigation />
+            </div>
+          </div>
+        </div>
+
+        {/* Version Desktop */}
+        <div className="hidden lg:block mx-16 px-4 py-3">
+          {/* Top bar avec logo, recherche et actions */}
+          <div className="flex items-center justify-between gap-4">
+            <AsyncLink to="/" className="flex-shrink-0">
+              <img
+                src={logo}
+                alt="AKEVAS"
+                className="h-28 w-auto"
+              />
+            </AsyncLink>
+
+            <div className="flex flex-1 items-center justify-end gap-8">
+              {/* Barre de recherche redimensionnable */}
+              <SearchBar />
+
+              {/* Navigation par genre */}
+              <nav className="flex items-center gap-6">
+                {Array.isArray(genders) && genders.map((gender) => (
+                  <AsyncLink
+                    key={gender.id}
+                    to={`/home?g=${gender.url}`}
+                    className="text-sm font-medium text-gray-700 hover:text-[#ed7e0f] transition-colors whitespace-nowrap"
                   >
+                    {gender.label}
+                  </AsyncLink>
+                ))}
+              </nav>
+
+              {/* Actions (compte, panier, etc.) */}
+              <div className="flex items-center gap-4">
+                <DropdownAccount currentUser={userData}>
+                  {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                    <User className="h-7 w-7" />
+                  </div>}
+
+                  {userData && (userData.role_id === 1 || userData.role_id === 3 || userData.role_id === 4) && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                    <Avatar>
+                      <AvatarImage src={userData.profile} />
+                      <AvatarFallback>
+                        {userData.role_id === 4 ? userData?.firstName.charAt(0) : userData?.userName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>}
+                </DropdownAccount>
+                {!userData && <AsyncLink to="/cart">
+                  <div className="relative text-gray-700 hover:text-[#ed7e0f]">
+                    <ShoppingCart className="w-6 h-6" />
+                    <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {totalQuantity}
+                    </span>
+                  </div>
+                </AsyncLink>}
+
+                {userData && (userData.role_id === 1 || userData.role_id === 3) && <AsyncLink to="/cart">
+                  <div className="relative text-gray-700 hover:text-[#ed7e0f]">
                     <ShoppingCart className="w-6 h-6" />
                     <span className="absolute -top-2 -right-2 bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {totalQuantity}
@@ -412,12 +551,11 @@ console.log(userData)
           {/* Navigation avec menus déroulants */}
           <div className="flex justify-center gap-12 items-center w-full">
             <div className='w-12'>
-            <MegaMenu />
+              <MegaMenu />
             </div>
             <div className='flex-1'>
-            <CategoryNavigation />
+              <CategoryNavigation />
             </div>
-            
           </div>
         </div>
       </header>

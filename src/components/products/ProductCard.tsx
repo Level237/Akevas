@@ -101,7 +101,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
           className={viewMode === 'grid' ? '' : 'flex gap-6 bg-white rounded-2xl shadow-sm p-4 '}
         >
           {viewMode === 'grid' ? (
-            <div className="group max-sm:px-1 bg-white   max-sm:w-[11rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div className="group max-sm:px-1 bg-white  rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
               
               <AsyncLink to={`/produit/${product.product_url}`}>
               <div className="relative aspect-[4/3] max-sm:aspect-[4/3] ">

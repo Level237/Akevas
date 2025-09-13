@@ -137,7 +137,7 @@ export default function StoreHero() {
                     <OptimizedImage
                       src={img.profile}
                       alt={`Shop ${index + 1}`}
-                      className="w-full cursor-pointer h-full object-cover"
+                      className="w-full md:w-24  cursor-pointer h-full object-cover"
                      
                     />
                   </Link>
