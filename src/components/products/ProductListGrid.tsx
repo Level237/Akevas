@@ -24,7 +24,7 @@ const ProductCard = memo(({
   getColorSwatches: (product: any) => any[]
 }) => {
 
-  console.log(getColorSwatches)
+  
   return (
     <motion.div
       className="m-3 w-[290px] cursor-pointer max-sm:max-w-56 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"

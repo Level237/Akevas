@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import VariationModal from "../ui/VariationModal";
 import { useDispatch } from "react-redux";
 import { Product } from "@/types/products";
@@ -16,6 +16,23 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
     const [showVariationModal, setShowVariationModal] = useState(false);
     const dispatch = useDispatch();
     // Récupérer jusqu'à 4 couleurs uniques des variations
+
+    const getColorSwatches = useCallback((product: any) => {
+      if (!product.variations?.length) return [];
+      const seen = new Set();
+      const colors = [];
+      for (const variation of product.variations) {
+        if (variation.color?.hex && !seen.has(variation.color.hex)) {
+          colors.push({
+            name: variation.color.name,
+            hex: variation.color.hex,
+          });
+          seen.add(variation.color.hex);
+        }
+        if (colors.length === 4) break;
+      }
+      return colors;
+    }, []);
     const colorSwatches = React.useMemo(() => {
       if (!product.variations || product.variations.length === 0) return [];
       const seen = new Set();
@@ -84,14 +101,14 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
           className={viewMode === 'grid' ? '' : 'flex gap-6 bg-white rounded-2xl shadow-sm p-4 '}
         >
           {viewMode === 'grid' ? (
-            <div className="group max-sm:px-1 bg-white  max-sm:w-[11rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div className="group max-sm:px-1 bg-white   max-sm:w-[11rem] rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
               
               <AsyncLink to={`/produit/${product.product_url}`}>
-              <div className="relative aspect-square ">
+              <div className="relative aspect-[4/3] max-sm:aspect-[4/3] ">
                 <OptimizedImage
                   src={product.product_profile}
                   alt={product.product_name}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover transform  transition-transform duration-300"
                 />
                 <div className="absolute bottom-0">
                 {colorSwatches.length > 0 && (
@@ -123,8 +140,29 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                   </div>
                 </div>
                 {/* Affichage des couleurs si variations */}
-                
+                {product.variations && product.variations.length > 0 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center max-sm:px-2 max-sm:py-1 gap-2 bg-white/90 px-3 py-2 rounded-full">
+                {getColorSwatches(product).map((color) => (
+                  <div
+                    key={color.hex}
+                    title={color.name}
+                    className="w-4 h-4 max-sm:w-3 max-sm:h-3 rounded-full border border-gray-200"
+                    style={{
+                      backgroundColor: color.hex,
+                      boxShadow: "0 0 0 1px #ccc"
+                    }}
+                  />
+                ))}
+                {product.variations.length > 4 && (
+                  <span className="text-xs text-gray-500">
+                    +{product.variations.length - 4}
+                  </span>
+                )}
               </div>
+            )}
+              </div>
+
+           
               </AsyncLink>
               <div className="p-4">
                 <h3 className="font-medium  text-gray-900 mb-1 truncate">
