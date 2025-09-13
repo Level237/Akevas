@@ -428,7 +428,7 @@ const ProductFilters = ({
             className="overflow-hidden"
           >
             <div className="space-y-3">
-              {/* Gender Options - Simple Button List */}
+              {/* Gender Options - Radio Button Style */}
               <div className="grid grid-cols-4 gap-2">
                 {[
                   { id: 1, name: 'Homme', icon: '👨' },
@@ -439,41 +439,21 @@ const ProductFilters = ({
                   <button
                     key={gender.id}
                     onClick={() => onGenderToggle?.(gender.id)}
-                    className={`w-full flex items-center justify-between p-1 rounded-lg border transition-all duration-200 ${
+                    className={`w-full flex items-center justify-center p-1 rounded-lg border-2 transition-all duration-200 ${
                       selectedGenders.includes(gender.id)
-                        ? 'bg-orange-50 border-orange-200 text-orange-700'
+                        ? 'bg-orange-50 border-orange-300 text-orange-700 ring-2 ring-orange-200'
                         : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
                     }`}
                   >
-                    <div className="flex items-center">
+                    <div className="flex flex-col items-center space-y-1">
                       
                       <span className="text-xs font-medium">{gender.name}</span>
                     </div>
-                    
-                   
                   </button>
                 ))}
               </div>
               
-              {/* Selected genders summary */}
-              {selectedGenders.length > 0 && (
-                <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-orange-700">
-                      {selectedGenders.length} genre{selectedGenders.length > 1 ? 's' : ''} sélectionné{selectedGenders.length > 1 ? 's' : ''}
-                    </span>
-                    <button
-                      onClick={() => {
-                        // Clear all selected genders
-                        selectedGenders.forEach(genderId => onGenderToggle?.(genderId));
-                      }}
-                      className="text-xs text-orange-600 hover:text-orange-800 font-medium transition-colors"
-                    >
-                      Effacer
-                    </button>
-                  </div>
-                </div>
-              )}
+             
             </div>
           </motion.div>
         )}

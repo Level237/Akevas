@@ -174,8 +174,8 @@ const ProductListPage: React.FC = () => {
   const toggleGender = useCallback((genderId: number) => {
     setSelectedGenders(prev => 
       prev.includes(genderId)
-        ? prev.filter(id => id !== genderId)
-        : [...prev, genderId]
+        ? [] // Si le genre est déjà sélectionné, on le désélectionne (retour à aucun genre)
+        : [genderId] // Sinon, on sélectionne uniquement ce genre (remplace toute sélection précédente)
     );
   }, []);
 
