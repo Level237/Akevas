@@ -91,6 +91,13 @@ const ProductListPage: React.FC = () => {
     serialize: (value) => value.length > 0 ? value.join(',') : ''
   });
 
+  // Seller mode from URL
+  const [isSellerMode, setIsSellerMode] = useQueryState('seller_mode', {
+    defaultValue: false,
+    parse: (value) => value === 'true',
+    serialize: (value) => value ? 'true' : ''
+  });
+
   // Debounced filters for API calls
   const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
   const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
@@ -98,6 +105,7 @@ const ProductListPage: React.FC = () => {
   const [debouncedColors, setDebouncedColors] = useState(selectedColors);
   const [debouncedAttributes, setDebouncedAttributes] = useState(selectedAttributes);
   const [debouncedGenders, setDebouncedGenders] = useState(selectedGenders);
+  const [debouncedSellerMode, setDebouncedSellerMode] = useState(isSellerMode);
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Initialize debounced values on first render to avoid initial skeleton
@@ -108,6 +116,7 @@ const ProductListPage: React.FC = () => {
     setDebouncedColors(selectedColors);
     setDebouncedAttributes(selectedAttributes);
     setDebouncedGenders(selectedGenders);
+    setDebouncedSellerMode(isSellerMode);
   }, []); // Only run once on mount
 
   const [sortBy, setSortBy] = useState('popular');
@@ -121,8 +130,9 @@ const ProductListPage: React.FC = () => {
     const hasColorsChanged = JSON.stringify(debouncedColors) !== JSON.stringify(selectedColors);
     const hasAttributesChanged = JSON.stringify(debouncedAttributes) !== JSON.stringify(selectedAttributes);
     const hasGendersChanged = JSON.stringify(debouncedGenders) !== JSON.stringify(selectedGenders);
+    const hasSellerModeChanged = debouncedSellerMode !== isSellerMode;
     
-    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged || hasGendersChanged) {
+    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged || hasGendersChanged || hasSellerModeChanged) {
       setIsFiltering(true);
       const timeoutId = setTimeout(() => {
         setDebouncedMinPrice(minPrice);
@@ -131,12 +141,13 @@ const ProductListPage: React.FC = () => {
         setDebouncedColors(selectedColors);
         setDebouncedAttributes(selectedAttributes);
         setDebouncedGenders(selectedGenders);
+        setDebouncedSellerMode(isSellerMode);
         setIsFiltering(false);
       }, 500); // 500ms delay
 
       return () => clearTimeout(timeoutId);
     }
-  }, [minPrice, maxPrice, selectedCategories, selectedColors, selectedAttributes, selectedGenders, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors, debouncedAttributes, debouncedGenders]);
+  }, [minPrice, maxPrice, selectedCategories, selectedColors, selectedAttributes, selectedGenders, isSellerMode, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors, debouncedAttributes, debouncedGenders, debouncedSellerMode]);
 
   const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery({
     page: currentPage,
@@ -179,11 +190,16 @@ const ProductListPage: React.FC = () => {
     );
   }, []);
 
+  const toggleSellerMode = useCallback((isSeller: boolean) => {
+    setIsSellerMode(isSeller);
+  }, []);
+
   const clearAllFilters = useCallback(() => {
     setSelectedCategories([]);
     setSelectedColors([]);
     setSelectedAttributes([]);
     setSelectedGenders([]);
+    setIsSellerMode(false);
   }, []);
 
   // Removed clearCategoryFilters and isCategorySelected - now using URL state
@@ -251,9 +267,9 @@ const ProductListPage: React.FC = () => {
           >
             <Filter className="w-5 h-5" />
             <span>Filtres</span>
-            {(selectedCategories.length > 0 || selectedGenders.length > 0) && (
+            {(selectedCategories.length > 0 || selectedGenders.length > 0 || isSellerMode) && (
                 <span className="ml-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">
-                  {selectedCategories.length + selectedGenders.length}
+                  {selectedCategories.length + selectedGenders.length + (isSellerMode ? 1 : 0)}
                 </span>
               )}
           </button>
@@ -331,6 +347,8 @@ const ProductListPage: React.FC = () => {
               }}
               selectedGenders={selectedGenders}
               onGenderToggle={toggleGender}
+              isSellerMode={isSellerMode}
+              onSellerToggle={toggleSellerMode}
             />
           </div>
 

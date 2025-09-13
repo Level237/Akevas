@@ -35,6 +35,10 @@ interface ProductFiltersProps {
   selectedGenders?: number[];
   onGenderToggle?: (genderId: number) => void;
 
+  // Seller interop with page
+  isSellerMode?: boolean;
+  onSellerToggle?: (isSeller: boolean) => void;
+
   // Mobile
   isMobile?: boolean;
   onCloseMobile?: () => void;
@@ -59,12 +63,14 @@ const ProductFilters = ({
   onAttributeToggle,
   selectedGenders = [],
   onGenderToggle,
+  isSellerMode = false,
+  onSellerToggle,
   isMobile = false,
   onCloseMobile,
   isFiltering = false
 }: ProductFiltersProps) => {
   const [expandedSections, setExpandedSections] = useState<string[]>([
-    'categories', 'price', 'color', 'gender', 'attributes'
+    'seller', 'categories', 'price', 'color', 'gender', 'attributes'
   ]);
 
   // Price filtering with URL state
@@ -120,9 +126,10 @@ const ProductFilters = ({
       selectedColors.length +
       selectedAttributes.length +
       selectedGenders.length +
+      (isSellerMode ? 1 : 0) +
       (minPrice > 0 || maxPrice < PRICE_MAX ? 1 : 0)
     );
-  }, [selectedCategories.length, selectedColors.length, selectedAttributes.length, selectedGenders.length, minPrice, maxPrice]);
+  }, [selectedCategories.length, selectedColors.length, selectedAttributes.length, selectedGenders.length, isSellerMode, minPrice, maxPrice]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]);
@@ -165,6 +172,51 @@ const ProductFilters = ({
           <ChevronDown className="w-5 h-5 text-gray-500" />
         )}
       </button>
+    </div>
+  );
+
+  const Seller = (
+    <div className="space-y-4">
+      <SectionHeader id="seller" title="Mode de vente" />
+      <AnimatePresence>
+        {expandedSections.includes('seller') && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }} 
+            animate={{ height: 'auto', opacity: 1 }} 
+            exit={{ height: 0, opacity: 0 }} 
+            transition={sectionTransition} 
+            className="overflow-hidden"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { value: false, label: 'Prix normal' },
+                { value: true, label: 'Prix de gros' }
+              ].map((option) => (
+                <label
+                  key={option.value.toString()}
+                  className={`flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition-all duration-150
+                    ${isSellerMode === option.value
+                      ? 'border-orange-400 bg-orange-50'
+                      : 'border-gray-200 bg-white hover:bg-gray-50'
+                    }`}
+                >
+                  <input
+                    type="radio"
+                    name="priceType"
+                    checked={isSellerMode === option.value}
+                    onChange={() => onSellerToggle?.(option.value)}
+                    className="sr-only"
+                  />
+                  <span className={`text-xs font-medium transition-colors
+                    ${isSellerMode === option.value ? 'text-orange-700' : 'text-gray-900 group-hover:text-orange-700'}`}>
+                    {option.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 
@@ -562,8 +614,9 @@ const ProductFilters = ({
 
   const content = (
     <div className="space-y-6">
+      {Seller}
       {Gender}
-      {Price}
+      {!isSellerMode && Price}
       {Categories}
       {Colors}
       {Attributes}
