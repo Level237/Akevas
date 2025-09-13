@@ -149,7 +149,7 @@ export const guardService = createApi({
                     params.append('gender', gender.join(','));
                 }
 
-                if (seller_mode !== undefined) {
+                if (seller_mode !== false) {
                     params.append('seller_mode', seller_mode.toString());
                 }
                 if (bulk_price_range) {

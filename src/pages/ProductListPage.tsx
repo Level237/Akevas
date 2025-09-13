@@ -98,6 +98,7 @@ const ProductListPage: React.FC = () => {
     serialize: (value) => value ? 'true' : ''
   });
 
+  
   // Bulk price range from URL
   const [selectedBulkPriceRange, setSelectedBulkPriceRange] = useQueryState('bulk_price_range', {
     defaultValue: '',
@@ -169,7 +170,8 @@ const ProductListPage: React.FC = () => {
     colors: debouncedColors,
     attribut: debouncedAttributes,
     gender: debouncedGenders,
-    seller_mode:debouncedSellerMode
+    seller_mode: debouncedSellerMode,
+    bulk_price_range: debouncedBulkPriceRange
   });
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
