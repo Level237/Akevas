@@ -27,6 +27,10 @@ interface ProductFiltersProps {
   selectedColors?: string[];
   onColorToggle?: (color: string) => void;
 
+  // Attribute interop with page
+  selectedAttributes?: number[];
+  onAttributeToggle?: (attributeId: number) => void;
+
   // Mobile
   isMobile?: boolean;
   onCloseMobile?: () => void;
@@ -56,6 +60,8 @@ const ProductFilters = ({
   onClearAll,
   selectedColors = [],
   onColorToggle,
+  selectedAttributes = [],
+  onAttributeToggle,
   isMobile = false,
   onCloseMobile,
   isFiltering = false
@@ -99,9 +105,8 @@ const ProductFilters = ({
   };
   // Colors are now managed by parent component via props
   
-  // Attributes state
+  // Attributes state - now managed by parent component via props
   const [selectedAttributeType, setSelectedAttributeType] = useState<string>('');
-  const [selectedAttributeValues, setSelectedAttributeValues] = useState<(string | number)[]>([]);
   
   // Get available attributes based on selected categories
   const getAvailableAttributes = () => {
@@ -116,10 +121,10 @@ const ProductFilters = ({
     return (
       selectedCategories.length +
       selectedColors.length +
-      selectedAttributeValues.length +
+      selectedAttributes.length +
       (minPrice > 0 || maxPrice < PRICE_MAX ? 1 : 0)
     );
-  }, [selectedCategories.length, selectedColors.length, selectedAttributeValues.length, minPrice, maxPrice]);
+  }, [selectedCategories.length, selectedColors.length, selectedAttributes.length, minPrice, maxPrice]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]);
@@ -128,24 +133,23 @@ const ProductFilters = ({
   // Removed toggleString - colors are now managed by parent component
   
   const toggleAttributeValue = (value: string | number) => {
-    setSelectedAttributeValues(prev => 
-      prev.includes(value) 
-        ? prev.filter(v => v !== value) 
-        : [...prev, value]
-    );
+    // Convert value to number if it's a string that represents a number
+    const attributeId = typeof value === 'string' ? parseInt(value, 10) : value;
+    if (!isNaN(attributeId)) {
+      onAttributeToggle?.(attributeId);
+    }
   };
   
   const handleAttributeTypeChange = (type: string) => {
     setSelectedAttributeType(type);
-    setSelectedAttributeValues([]); // Clear values when changing type
+    // Clear selected attributes when changing type - this will be handled by parent component
   };
 
   const clearLocal = () => {
     setMinPrice(0);
     setMaxPrice(PRICE_MAX);
     setSelectedAttributeType('');
-    setSelectedAttributeValues([]);
-    // Colors are cleared by parent component via onClearAll
+    // Colors and attributes are cleared by parent component via onClearAll
   };
 
   const handleClearAll = () => {
@@ -411,7 +415,7 @@ const ProductFilters = ({
                     title={color.name}
                   >
                     {color.hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
-                  </button>
+                </button>
                 ))
               )}
             </div>
@@ -473,9 +477,9 @@ const ProductFilters = ({
                         ?.values.map((value: any) => (
                           <button
                             key={value.id}
-                            onClick={() => toggleAttributeValue(value.value)}
+                            onClick={() => toggleAttributeValue(value.id)}
                             className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
-                              selectedAttributeValues.includes(value.value)
+                              selectedAttributes.includes(value.id)
                                 ? 'border-orange-400 bg-orange-50 text-orange-700'
                                 : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                             }`}
@@ -489,7 +493,7 @@ const ProductFilters = ({
                   </div>
                   
                   {/* Selected values summary */}
-                  {selectedAttributeValues.length > 0 && (
+                  {selectedAttributes.length > 0 && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -497,10 +501,13 @@ const ProductFilters = ({
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-orange-700">
-                          {selectedAttributeValues.length} valeur{selectedAttributeValues.length > 1 ? 's' : ''} sélectionnée{selectedAttributeValues.length > 1 ? 's' : ''}
+                          {selectedAttributes.length} valeur{selectedAttributes.length > 1 ? 's' : ''} sélectionnée{selectedAttributes.length > 1 ? 's' : ''}
                         </span>
                         <button
-                          onClick={() => setSelectedAttributeValues([])}
+                          onClick={() => {
+                            // Clear all selected attributes
+                            selectedAttributes.forEach(attrId => onAttributeToggle?.(attrId));
+                          }}
                           className="text-xs text-orange-600 hover:text-orange-800 font-medium transition-colors"
                         >
                           Effacer

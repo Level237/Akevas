@@ -71,11 +71,22 @@ const ProductListPage: React.FC = () => {
     serialize: (value) => value.length > 0 ? value.join(',') : ''
   });
 
+  // Attribute filters from URL
+  const [selectedAttributes, setSelectedAttributes] = useQueryState('attribut', {
+    defaultValue: [],
+    parse: (value) => {
+      if (!value) return [];
+      return value.split(',').map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+    },
+    serialize: (value) => value.length > 0 ? value.join(',') : ''
+  });
+
   // Debounced filters for API calls
   const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
   const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
   const [debouncedCategories, setDebouncedCategories] = useState(selectedCategories);
   const [debouncedColors, setDebouncedColors] = useState(selectedColors);
+  const [debouncedAttributes, setDebouncedAttributes] = useState(selectedAttributes);
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Initialize debounced values on first render to avoid initial skeleton
@@ -84,6 +95,7 @@ const ProductListPage: React.FC = () => {
     setDebouncedMaxPrice(maxPrice);
     setDebouncedCategories(selectedCategories);
     setDebouncedColors(selectedColors);
+    setDebouncedAttributes(selectedAttributes);
   }, []); // Only run once on mount
 
   const [sortBy, setSortBy] = useState('popular');
@@ -95,27 +107,30 @@ const ProductListPage: React.FC = () => {
     const hasPriceChanged = debouncedMinPrice !== minPrice || debouncedMaxPrice !== maxPrice;
     const hasCategoriesChanged = JSON.stringify(debouncedCategories) !== JSON.stringify(selectedCategories);
     const hasColorsChanged = JSON.stringify(debouncedColors) !== JSON.stringify(selectedColors);
+    const hasAttributesChanged = JSON.stringify(debouncedAttributes) !== JSON.stringify(selectedAttributes);
     
-    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged) {
+    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged) {
       setIsFiltering(true);
       const timeoutId = setTimeout(() => {
         setDebouncedMinPrice(minPrice);
         setDebouncedMaxPrice(maxPrice);
         setDebouncedCategories(selectedCategories);
         setDebouncedColors(selectedColors);
+        setDebouncedAttributes(selectedAttributes);
         setIsFiltering(false);
       }, 500); // 500ms delay
 
       return () => clearTimeout(timeoutId);
     }
-  }, [minPrice, maxPrice, selectedCategories, selectedColors, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors]);
+  }, [minPrice, maxPrice, selectedCategories, selectedColors, selectedAttributes, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors, debouncedAttributes]);
 
   const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery({
     page: currentPage,
     min_price: debouncedMinPrice,
     max_price: debouncedMaxPrice,
     categories: debouncedCategories,
-    colors: debouncedColors
+    colors: debouncedColors,
+    attribut: debouncedAttributes
   });
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
@@ -144,6 +159,7 @@ const ProductListPage: React.FC = () => {
   const clearAllFilters = useCallback(() => {
     setSelectedCategories([]);
     setSelectedColors([]);
+    setSelectedAttributes([]);
   }, []);
 
   // Removed clearCategoryFilters and isCategorySelected - now using URL state
@@ -181,6 +197,10 @@ const ProductListPage: React.FC = () => {
     // Preserve color filters
     if (selectedColors.length > 0) {
       params.set('colors', selectedColors.join(','));
+    }
+    // Preserve attribute filters
+    if (selectedAttributes.length > 0) {
+      params.set('attribut', selectedAttributes.join(','));
     }
     return `?${params.toString()}`;
   };
@@ -271,6 +291,14 @@ const ProductListPage: React.FC = () => {
                   prev.includes(color)
                     ? prev.filter(c => c !== color)
                     : [...prev, color]
+                );
+              }}
+              selectedAttributes={selectedAttributes}
+              onAttributeToggle={(attributeId) => {
+                setSelectedAttributes(prev => 
+                  prev.includes(attributeId)
+                    ? prev.filter(id => id !== attributeId)
+                    : [...prev, attributeId]
                 );
               }}
             />

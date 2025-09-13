@@ -127,7 +127,7 @@ export const guardService = createApi({
             providesTags: ['guard'],
         }),
         getAllProducts: builder.query({
-            query: ({ page, min_price, max_price, categories, colors }) => {
+            query: ({ page, min_price, max_price, categories, colors, attribut }) => {
                 const params = new URLSearchParams();
                 params.append('page', page.toString());
                 if (min_price && min_price > 0) {
@@ -141,6 +141,9 @@ export const guardService = createApi({
                 }
                 if (colors && colors.length > 0) {
                     params.append('colors', colors.join(','));
+                }
+                if (attribut && attribut.length > 0) {
+                    params.append('attribut', attribut.join(','));
                 }
                 return {
                     url: `/api/all/products?${params.toString()}`,
