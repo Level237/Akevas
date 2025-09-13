@@ -112,7 +112,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                 />
                 <div className="absolute bottom-0">
                 {colorSwatches.length > 0 && (
-                  <div className="max-sm:flex items-center right-[50%] left-[50%] hidden gap-2 px-4 mt-2 mb-1">
+                  <div className="max-sm:flex items-center max-sm:hidden right-[50%] left-[50%] hidden gap-2 px-4 mt-2 mb-1">
                     {colorSwatches.map((color:any) => (
                       <div
                         key={color.hex}
@@ -165,23 +165,23 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
            
               </AsyncLink>
               <div className="p-4">
-                <h3 className="font-medium  text-gray-900 mb-1 truncate">
+                <h3 className="font-medium max-sm:text-sm  text-gray-900 mb-1 truncate">
                   {product.product_name}
                 </h3>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm max-sm:text-xs text-gray-500">
                     Stock: {product.product_quantity} disponibles
                   </span>
                 </div>
-                <div className="flex items-center max-sm:gap-5 max-sm:flex-col justify-between">
-                  <span className="text-lg max-sm:text-md font-bold text-gray-900">
+                <div className="flex items-center max-sm:items-start max-sm:gap-5 max-sm:flex-col justify-between">
+                  <span className="text-lg max-sm:text-sm font-bold text-gray-900">
                     {product.product_price} Fcfa
                   </span>
                   {!showCartButton ? (
                     <button 
                       onClick={handleAddToCartClick}
                       disabled={isLoading}
-                      className="px-3 py-2 rounded-lg bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90 transition-colors text-sm"
+                      className="px-3 py-2 max-sm:text-xs max-sm:px-2 rounded-lg bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90 transition-colors text-sm"
                     >
                       {isLoading ? (
                         <div className="animate-spin inline-block size-5 border-[2px] border-current border-t-transparent text-white rounded-full">

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { ChevronUp, ChevronDown, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQueryState } from 'nuqs';
 import { useGetAttributeByCategoryQuery, useGetAttributeValuesQuery } from '@/services/guardService';
@@ -726,28 +726,98 @@ const ProductFilters = ({
 
   if (isMobile) {
     return (
-      <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'tween' }} className="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl z-50">
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-2">
-          <h2 className="text-lg font-medium text-gray-900">Filtres</h2>
-            {isFiltering && (
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-orange-600">Filtrage...</span>
+      <>
+        {/* Backdrop */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onCloseMobile}
+          className="fixed inset-0 bg-black/50 z-40"
+        />
+        
+        {/* Mobile Filter Panel */}
+        <motion.div 
+          initial={{ x: '100%' }} 
+          animate={{ x: 0 }} 
+          exit={{ x: '100%' }} 
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl z-50 flex flex-col"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-orange-50 to-orange-100">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center">
+                <Filter className="w-4 h-4 text-white" />
               </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Filtres</h2>
+                {isFiltering && (
+                  <div className="flex items-center gap-1 mt-1">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-orange-600">Filtrage...</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {totalSelectedCount > 0 && (
+                <button 
+                  onClick={handleClearAll} 
+                  className="text-xs text-orange-600 hover:text-orange-800 font-medium px-2 py-1 rounded-md hover:bg-orange-100 transition-colors"
+                >
+                  Réinitialiser
+                </button>
+              )}
+              <button
+                onClick={onCloseMobile}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              >
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Filter Count Badge */}
+          {totalSelectedCount > 0 && (
+            <div className="px-4 py-2 bg-blue-50 border-b">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-sm text-blue-700 font-medium">
+                  {totalSelectedCount} filtre{totalSelectedCount > 1 ? 's' : ''} actif{totalSelectedCount > 1 ? 's' : ''}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-4 space-y-6">
+              {content}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="border-t bg-white p-4 space-y-3">
+            <Button 
+              onClick={onCloseMobile} 
+              className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white py-3 text-base font-medium shadow-lg"
+            >
+              Voir les résultats
+            </Button>
+            {totalSelectedCount > 0 && (
+              <button 
+                onClick={handleClearAll}
+                className="w-full text-gray-600 hover:text-gray-800 py-2 text-sm font-medium transition-colors"
+              >
+                Effacer tous les filtres
+              </button>
             )}
           </div>
-          {totalSelectedCount > 0 && (
-            <button onClick={handleClearAll} className="text-sm text-blue-600 hover:text-blue-700">Réinitialiser</button>
-          )}
-        </div>
-        <div className="p-4 overflow-y-auto h-[calc(100%-5rem)]">
-          {content}
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
-          <Button onClick={onCloseMobile} className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white">Voir les résultats</Button>
-        </div>
-      </motion.div>
+        </motion.div>
+      </>
     );
   }
 

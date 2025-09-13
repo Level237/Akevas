@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Filter,
   ChevronDown,
-  ChevronUp,
-  X,
 } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { ScrollRestoration, useSearchParams } from 'react-router-dom';
@@ -15,7 +13,6 @@ import { Product } from '@/types/products';
 import { normalizeProduct } from '@/lib/normalizeProduct';
 import ProductCard from '@/components/products/ProductCard';
 // Removed toast import - not used anymore
-import OptimizedImage from '@/components/OptimizedImage';
 import ProductFilters from '@/components/filters/ProductFilters';
 
 
@@ -36,7 +33,6 @@ const sortOptions = [
 const ProductListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   // Removed local selectedFilters state - now using URL state with nuqs
-  const [expandedSections, setExpandedSections] = useState<string[]>(['categories']);
 
   // Get current page from URL, default to 1
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
@@ -181,19 +177,28 @@ const ProductListPage: React.FC = () => {
 
   const safeProducts = productList || [];
   const normalizedProducts = safeProducts.map(normalizeProduct);
-  const toggleSection = useCallback((sectionId: string) => {
-    setExpandedSections(prev =>
-      prev.includes(sectionId)
-        ? prev.filter(id => id !== sectionId)
-        : [...prev, sectionId]
-    );
-  }, []);
 
   const toggleCategory = useCallback((categoryId: number) => {
     setSelectedCategories(prev => 
       prev.includes(categoryId)
         ? prev.filter(id => id !== categoryId)
         : [...prev, categoryId]
+    );
+  }, []);
+
+  const toggleColor = useCallback((color: string) => {
+    setSelectedColors(prev => 
+      prev.includes(color)
+        ? prev.filter(c => c !== color)
+        : [...prev, color]
+    );
+  }, []);
+
+  const toggleAttribute = useCallback((attributeId: number) => {
+    setSelectedAttributes(prev => 
+      prev.includes(attributeId)
+        ? prev.filter(id => id !== attributeId)
+        : [...prev, attributeId]
     );
   }, []);
 
@@ -290,7 +295,7 @@ const ProductListPage: React.FC = () => {
             className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm"
           >
             <Filter className="w-5 h-5" />
-            <span>Filtres</span>
+            <span className="max-sm:text-sm">Filtres</span>
             {(selectedCategories.length > 0 || selectedGenders.length > 0 || isSellerMode || selectedBulkPriceRange) && (
                 <span className="ml-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">
                   {selectedCategories.length + selectedGenders.length + (isSellerMode ? 1 : 0) + (selectedBulkPriceRange ? 1 : 0)}
@@ -303,7 +308,7 @@ const ProductListPage: React.FC = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-white px-4 py-2 pr-8 rounded-lg shadow-sm cursor-pointer"
+                className="appearance-none max-sm:text-sm bg-white px-4 py-2 pr-8 rounded-lg shadow-sm cursor-pointer"
               >
                 {sortOptions.map(option => (
                   <option key={option.id} value={option.id}>
@@ -431,7 +436,7 @@ const ProductListPage: React.FC = () => {
             
             {/* Pagination - only show if there are products */}
             {normalizedProducts && normalizedProducts.length > 0 && (
-              <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mb-24 mx-96 max-sm:mx-12 mt-8">
+              <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mt-12  max-sm:mb-24 mx-96 max-sm:mx-1 mt-8">
                   {currentPage > 1 && (
                 <a
                   href={getPageUrl(currentPage - 1)}
@@ -455,7 +460,7 @@ const ProductListPage: React.FC = () => {
                       <a
                             key={pageNumber}
                         href={getPageUrl(pageNumber)}
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${currentPage === pageNumber
+                        className={`w-10 h-10 max-sm:text-xs rounded-lg flex items-center justify-center ${currentPage === pageNumber
                                 ? 'bg-[#ed7e0f] text-white'
                                 : 'bg-white hover:bg-gray-50'
                               }`}
@@ -490,144 +495,26 @@ const ProductListPage: React.FC = () => {
       {/* Modal filtres mobile */}
       <AnimatePresence>
         {showMobileFilters && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 lg:hidden"
-          >
-            <div className="absolute inset-0 bg-black bg-opacity-25" />
-
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'tween' }}
-              className="absolute inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl"
-            >
-              <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="text-lg font-medium text-gray-900">Filtres</h2>
-                <button
-                  onClick={() => setShowMobileFilters(false)}
-                  className="p-2 -mr-2 text-gray-400 hover:text-gray-500"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="p-4">
-                <div className="space-y-6">
-                  {/* Section des catégories */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-medium text-gray-900">Catégories</h3>
-                      <button
-                        onClick={() => toggleSection('categories')}
-                        className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-                      >
-                        {expandedSections.includes('categories') ? (
-                          <ChevronUp className="w-5 h-5 text-gray-500" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-gray-500" />
-                        )}
-                      </button>
-                    </div>
-
-                    <AnimatePresence>
-                      {expandedSections.includes('categories') && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="space-y-2">
-                            {!categoriesLoading && categories.map((category: any) => (
-                              <motion.div
-                                key={category.id}
-                                whileHover={{ x: 4 }}
-                                className={`group ${selectedCategories.includes(category.id) ? 'bg-orange-50' : ''}`}
-                              >
-                                <label className="flex items-center p-2 rounded-xl hover:bg-gray-50 transition-all cursor-pointer">
-                                  <div className="flex items-center flex-1">
-                                    <input
-                                      type="checkbox"
-                                      checked={selectedCategories.includes(category.id)}
-                                      onChange={() => toggleCategory(category.id)}
-                                      className="w-4 h-4 text-orange-500 border-gray-300 rounded-lg focus:ring-orange-500/20"
-                                    />
-                                    <div className="flex items-center ml-3 gap-3">
-                                      <div className="w-8 h-8 rounded-lg overflow-hidden">
-                                        <OptimizedImage
-                                          src={category.category_profile}
-                                          alt={category.category_name}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      </div>
-                                      <div>
-                                        <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                                          {category.category_name}
-                                        </span>
-                                        <div className="flex items-center gap-2">
-                                          <span className="text-xs text-gray-500">
-                                            {category.products_count} produits
-                                          </span>
-                                          {category.products_count > 0 && (
-                                            <span className="flex h-1.5 w-1.5 rounded-full bg-orange-500"></span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className="ml-auto">
-                                      <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors">
-                                        {category.products_count}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </label>
-                              </motion.div>
-                            ))}
-                          </div>
-
-                          {/* Résumé des catégories sélectionnées */}
-                          {selectedCategories.length > 0 && (
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              className="mt-4 p-3 bg-orange-50 rounded-xl"
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-orange-700">
-                                  {selectedCategories.length} catégorie(s) sélectionnée(s)
-                                </span>
-                                <button
-                                  onClick={clearAllFilters}
-                                  className="text-xs text-orange-600 hover:text-orange-700 font-medium transition-colors"
-                                >
-                                  Réinitialiser
-                                </button>
-                              </div>
-                            </motion.div>
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                </div>
-              </div>
-
-              <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
-                <button
-                  onClick={() => setShowMobileFilters(false)}
-                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-                >
-                  Voir les résultats
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
+          <ProductFilters
+            isMobile={true}
+            onCloseMobile={() => setShowMobileFilters(false)}
+            categories={categories || []}
+            isLoadingCategories={categoriesLoading}
+            selectedCategories={selectedCategories}
+            onCategoryToggle={toggleCategory}
+            selectedColors={selectedColors}
+            onColorToggle={toggleColor}
+            selectedAttributes={selectedAttributes}
+            onAttributeToggle={toggleAttribute}
+            selectedGenders={selectedGenders}
+            onGenderToggle={toggleGender}
+            isSellerMode={isSellerMode}
+            onSellerToggle={toggleSellerMode}
+            selectedBulkPriceRange={selectedBulkPriceRange}
+            onBulkPriceRangeChange={handleBulkPriceRangeChange}
+            onClearAll={clearAllFilters}
+            isFiltering={isFiltering}
+          />
         )}
       </AnimatePresence>
       <MobileNav />
