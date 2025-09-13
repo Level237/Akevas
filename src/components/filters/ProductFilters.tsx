@@ -31,6 +31,10 @@ interface ProductFiltersProps {
   selectedAttributes?: number[];
   onAttributeToggle?: (attributeId: number) => void;
 
+  // Gender interop with page
+  selectedGenders?: number[];
+  onGenderToggle?: (genderId: number) => void;
+
   // Mobile
   isMobile?: boolean;
   onCloseMobile?: () => void;
@@ -53,12 +57,14 @@ const ProductFilters = ({
   onColorToggle,
   selectedAttributes = [],
   onAttributeToggle,
+  selectedGenders = [],
+  onGenderToggle,
   isMobile = false,
   onCloseMobile,
   isFiltering = false
 }: ProductFiltersProps) => {
   const [expandedSections, setExpandedSections] = useState<string[]>([
-    'categories', 'price', 'color', 'attributes'
+    'categories', 'price', 'color', 'gender', 'attributes'
   ]);
 
   // Price filtering with URL state
@@ -113,9 +119,10 @@ const ProductFilters = ({
       selectedCategories.length +
       selectedColors.length +
       selectedAttributes.length +
+      selectedGenders.length +
       (minPrice > 0 || maxPrice < PRICE_MAX ? 1 : 0)
     );
-  }, [selectedCategories.length, selectedColors.length, selectedAttributes.length, minPrice, maxPrice]);
+  }, [selectedCategories.length, selectedColors.length, selectedAttributes.length, selectedGenders.length, minPrice, maxPrice]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]);
@@ -408,6 +415,72 @@ const ProductFilters = ({
     </div>
   );
 
+  const Gender = (
+    <div className="space-y-4">
+      <SectionHeader id="gender" title="Genre" />
+      <AnimatePresence>
+        {expandedSections.includes('gender') && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }} 
+            animate={{ height: 'auto', opacity: 1 }} 
+            exit={{ height: 0, opacity: 0 }} 
+            transition={sectionTransition} 
+            className="overflow-hidden"
+          >
+            <div className="space-y-3">
+              {/* Gender Options - Simple Button List */}
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { id: 1, name: 'Homme', icon: '👨' },
+                  { id: 2, name: 'Femme', icon: '👩' },
+                  { id: 3, name: 'Enfant', icon: '👶' },
+                  { id: 4, name: 'Mixte', icon: '👥' }
+                ].map((gender) => (
+                  <button
+                    key={gender.id}
+                    onClick={() => onGenderToggle?.(gender.id)}
+                    className={`w-full flex items-center justify-between p-1 rounded-lg border transition-all duration-200 ${
+                      selectedGenders.includes(gender.id)
+                        ? 'bg-orange-50 border-orange-200 text-orange-700'
+                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      
+                      <span className="text-xs font-medium">{gender.name}</span>
+                    </div>
+                    
+                   
+                  </button>
+                ))}
+              </div>
+              
+              {/* Selected genders summary */}
+              {selectedGenders.length > 0 && (
+                <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-orange-700">
+                      {selectedGenders.length} genre{selectedGenders.length > 1 ? 's' : ''} sélectionné{selectedGenders.length > 1 ? 's' : ''}
+                    </span>
+                    <button
+                      onClick={() => {
+                        // Clear all selected genders
+                        selectedGenders.forEach(genderId => onGenderToggle?.(genderId));
+                      }}
+                      className="text-xs text-orange-600 hover:text-orange-800 font-medium transition-colors"
+                    >
+                      Effacer
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+
 
 
   const Attributes = (
@@ -509,11 +582,11 @@ const ProductFilters = ({
 
   const content = (
     <div className="space-y-6">
+      {Gender}
       {Price}
       {Categories}
-      {Attributes}
       {Colors}
-      
+      {Attributes}
     </div>
   );
 

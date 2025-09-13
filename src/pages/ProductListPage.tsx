@@ -81,12 +81,23 @@ const ProductListPage: React.FC = () => {
     serialize: (value) => value.length > 0 ? value.join(',') : ''
   });
 
+  // Gender filters from URL
+  const [selectedGenders, setSelectedGenders] = useQueryState('gender', {
+    defaultValue: [],
+    parse: (value) => {
+      if (!value) return [];
+      return value.split(',').map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+    },
+    serialize: (value) => value.length > 0 ? value.join(',') : ''
+  });
+
   // Debounced filters for API calls
   const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
   const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
   const [debouncedCategories, setDebouncedCategories] = useState(selectedCategories);
   const [debouncedColors, setDebouncedColors] = useState(selectedColors);
   const [debouncedAttributes, setDebouncedAttributes] = useState(selectedAttributes);
+  const [debouncedGenders, setDebouncedGenders] = useState(selectedGenders);
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Initialize debounced values on first render to avoid initial skeleton
@@ -96,6 +107,7 @@ const ProductListPage: React.FC = () => {
     setDebouncedCategories(selectedCategories);
     setDebouncedColors(selectedColors);
     setDebouncedAttributes(selectedAttributes);
+    setDebouncedGenders(selectedGenders);
   }, []); // Only run once on mount
 
   const [sortBy, setSortBy] = useState('popular');
@@ -108,8 +120,9 @@ const ProductListPage: React.FC = () => {
     const hasCategoriesChanged = JSON.stringify(debouncedCategories) !== JSON.stringify(selectedCategories);
     const hasColorsChanged = JSON.stringify(debouncedColors) !== JSON.stringify(selectedColors);
     const hasAttributesChanged = JSON.stringify(debouncedAttributes) !== JSON.stringify(selectedAttributes);
+    const hasGendersChanged = JSON.stringify(debouncedGenders) !== JSON.stringify(selectedGenders);
     
-    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged) {
+    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged || hasGendersChanged) {
       setIsFiltering(true);
       const timeoutId = setTimeout(() => {
         setDebouncedMinPrice(minPrice);
@@ -117,12 +130,13 @@ const ProductListPage: React.FC = () => {
         setDebouncedCategories(selectedCategories);
         setDebouncedColors(selectedColors);
         setDebouncedAttributes(selectedAttributes);
+        setDebouncedGenders(selectedGenders);
         setIsFiltering(false);
       }, 500); // 500ms delay
 
       return () => clearTimeout(timeoutId);
     }
-  }, [minPrice, maxPrice, selectedCategories, selectedColors, selectedAttributes, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors, debouncedAttributes]);
+  }, [minPrice, maxPrice, selectedCategories, selectedColors, selectedAttributes, selectedGenders, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors, debouncedAttributes, debouncedGenders]);
 
   const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery({
     page: currentPage,
@@ -130,7 +144,8 @@ const ProductListPage: React.FC = () => {
     max_price: debouncedMaxPrice,
     categories: debouncedCategories,
     colors: debouncedColors,
-    attribut: debouncedAttributes
+    attribut: debouncedAttributes,
+    gender: debouncedGenders
   });
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard", {
     refetchOnFocus: true,
@@ -156,10 +171,19 @@ const ProductListPage: React.FC = () => {
     );
   }, []);
 
+  const toggleGender = useCallback((genderId: number) => {
+    setSelectedGenders(prev => 
+      prev.includes(genderId)
+        ? prev.filter(id => id !== genderId)
+        : [...prev, genderId]
+    );
+  }, []);
+
   const clearAllFilters = useCallback(() => {
     setSelectedCategories([]);
     setSelectedColors([]);
     setSelectedAttributes([]);
+    setSelectedGenders([]);
   }, []);
 
   // Removed clearCategoryFilters and isCategorySelected - now using URL state
@@ -202,6 +226,10 @@ const ProductListPage: React.FC = () => {
     if (selectedAttributes.length > 0) {
       params.set('attribut', selectedAttributes.join(','));
     }
+    // Preserve gender filters
+    if (selectedGenders.length > 0) {
+      params.set('gender', selectedGenders.join(','));
+    }
     return `?${params.toString()}`;
   };
 
@@ -223,9 +251,9 @@ const ProductListPage: React.FC = () => {
           >
             <Filter className="w-5 h-5" />
             <span>Filtres</span>
-            {selectedCategories.length > 0 && (
+            {(selectedCategories.length > 0 || selectedGenders.length > 0) && (
                 <span className="ml-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">
-                  {selectedCategories.length}
+                  {selectedCategories.length + selectedGenders.length}
                 </span>
               )}
           </button>
@@ -301,6 +329,8 @@ const ProductListPage: React.FC = () => {
                     : [...prev, attributeId]
                 );
               }}
+              selectedGenders={selectedGenders}
+              onGenderToggle={toggleGender}
             />
           </div>
 
