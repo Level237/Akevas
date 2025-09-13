@@ -41,16 +41,7 @@ interface ProductFiltersProps {
 
 const sectionTransition = { duration: 0.2 };
 
-const COLORS = [
-  { name: 'Noir', hex: '#000000' },
-  { name: 'Blanc', hex: '#ffffff' },
-  { name: 'Rouge', hex: '#ff0000' },
-  { name: 'Bleu', hex: '#00a2ff' },
-  { name: 'Vert', hex: '#00c853' },
-  { name: 'Orange', hex: '#ff9800' },
-  { name: 'Violet', hex: '#9c27b0' },
-  { name: 'Marron', hex: '#795548' }
-];
+
 
 const ProductFilters = ({
   categories,
@@ -402,21 +393,13 @@ const ProductFilters = ({
                       title={color.value}
                     >
                       {color.hex_color === '#FFFFFF' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
-                    </button>
+                </button>
                   ))
               ) : (
                 // Fallback to static colors if API data is not available
-                COLORS.map(color => (
-                  <button 
-                    key={color.name} 
-                    onClick={() => onColorToggle?.(color.name)} 
-                    className={`relative h-7 w-7 rounded-full border ${selectedColors.includes(color.name) ? 'ring-2 ring-offset-2 ring-[#ed7e0f]' : 'border-gray-300'}`} 
-                    style={{ backgroundColor: color.hex }}
-                    title={color.name}
-                  >
-                    {color.hex === '#ffffff' && <span className="absolute inset-0 rounded-full border border-gray-300" />}
-                </button>
-                ))
+               <div className="text-sm text-gray-500 p-3 bg-gray-50 rounded-lg">
+                    Veuillez d'abord sélectionner une catégorie pour voir les attributs disponibles.
+            </div>
               )}
             </div>
           </motion.div>
