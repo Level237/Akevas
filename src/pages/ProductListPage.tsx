@@ -98,6 +98,13 @@ const ProductListPage: React.FC = () => {
     serialize: (value) => value ? 'true' : ''
   });
 
+  // Bulk price range from URL
+  const [selectedBulkPriceRange, setSelectedBulkPriceRange] = useQueryState('bulk_price_range', {
+    defaultValue: '',
+    parse: (value) => value || '',
+    serialize: (value) => value || ''
+  });
+
   // Debounced filters for API calls
   const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
   const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
@@ -106,6 +113,7 @@ const ProductListPage: React.FC = () => {
   const [debouncedAttributes, setDebouncedAttributes] = useState(selectedAttributes);
   const [debouncedGenders, setDebouncedGenders] = useState(selectedGenders);
   const [debouncedSellerMode, setDebouncedSellerMode] = useState(isSellerMode);
+  const [debouncedBulkPriceRange, setDebouncedBulkPriceRange] = useState(selectedBulkPriceRange);
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Initialize debounced values on first render to avoid initial skeleton
@@ -117,6 +125,7 @@ const ProductListPage: React.FC = () => {
     setDebouncedAttributes(selectedAttributes);
     setDebouncedGenders(selectedGenders);
     setDebouncedSellerMode(isSellerMode);
+    setDebouncedBulkPriceRange(selectedBulkPriceRange);
   }, []); // Only run once on mount
 
   const [sortBy, setSortBy] = useState('popular');
@@ -131,8 +140,9 @@ const ProductListPage: React.FC = () => {
     const hasAttributesChanged = JSON.stringify(debouncedAttributes) !== JSON.stringify(selectedAttributes);
     const hasGendersChanged = JSON.stringify(debouncedGenders) !== JSON.stringify(selectedGenders);
     const hasSellerModeChanged = debouncedSellerMode !== isSellerMode;
+    const hasBulkPriceRangeChanged = debouncedBulkPriceRange !== selectedBulkPriceRange;
     
-    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged || hasGendersChanged || hasSellerModeChanged) {
+    if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged || hasGendersChanged || hasSellerModeChanged || hasBulkPriceRangeChanged) {
       setIsFiltering(true);
       const timeoutId = setTimeout(() => {
         setDebouncedMinPrice(minPrice);
@@ -142,12 +152,13 @@ const ProductListPage: React.FC = () => {
         setDebouncedAttributes(selectedAttributes);
         setDebouncedGenders(selectedGenders);
         setDebouncedSellerMode(isSellerMode);
+        setDebouncedBulkPriceRange(selectedBulkPriceRange);
         setIsFiltering(false);
       }, 500); // 500ms delay
 
       return () => clearTimeout(timeoutId);
     }
-  }, [minPrice, maxPrice, selectedCategories, selectedColors, selectedAttributes, selectedGenders, isSellerMode, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors, debouncedAttributes, debouncedGenders, debouncedSellerMode]);
+  }, [minPrice, maxPrice, selectedCategories, selectedColors, selectedAttributes, selectedGenders, isSellerMode, selectedBulkPriceRange, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors, debouncedAttributes, debouncedGenders, debouncedSellerMode, debouncedBulkPriceRange]);
 
   const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery({
     page: currentPage,
@@ -192,6 +203,14 @@ const ProductListPage: React.FC = () => {
 
   const toggleSellerMode = useCallback((isSeller: boolean) => {
     setIsSellerMode(isSeller);
+    // Clear bulk price range when disabling seller mode
+    if (!isSeller) {
+      setSelectedBulkPriceRange('');
+    }
+  }, []);
+
+  const handleBulkPriceRangeChange = useCallback((range: string) => {
+    setSelectedBulkPriceRange(range);
   }, []);
 
   const clearAllFilters = useCallback(() => {
@@ -200,6 +219,7 @@ const ProductListPage: React.FC = () => {
     setSelectedAttributes([]);
     setSelectedGenders([]);
     setIsSellerMode(false);
+    setSelectedBulkPriceRange('');
   }, []);
 
   // Removed clearCategoryFilters and isCategorySelected - now using URL state
@@ -267,9 +287,9 @@ const ProductListPage: React.FC = () => {
           >
             <Filter className="w-5 h-5" />
             <span>Filtres</span>
-            {(selectedCategories.length > 0 || selectedGenders.length > 0 || isSellerMode) && (
+            {(selectedCategories.length > 0 || selectedGenders.length > 0 || isSellerMode || selectedBulkPriceRange) && (
                 <span className="ml-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">
-                  {selectedCategories.length + selectedGenders.length + (isSellerMode ? 1 : 0)}
+                  {selectedCategories.length + selectedGenders.length + (isSellerMode ? 1 : 0) + (selectedBulkPriceRange ? 1 : 0)}
                 </span>
               )}
           </button>
@@ -349,6 +369,8 @@ const ProductListPage: React.FC = () => {
               onGenderToggle={toggleGender}
               isSellerMode={isSellerMode}
               onSellerToggle={toggleSellerMode}
+              selectedBulkPriceRange={selectedBulkPriceRange}
+              onBulkPriceRangeChange={handleBulkPriceRangeChange}
             />
           </div>
 

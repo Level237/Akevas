@@ -38,6 +38,8 @@ interface ProductFiltersProps {
   // Seller interop with page
   isSellerMode?: boolean;
   onSellerToggle?: (isSeller: boolean) => void;
+  selectedBulkPriceRange?: string;
+  onBulkPriceRangeChange?: (range: string) => void;
 
   // Mobile
   isMobile?: boolean;
@@ -65,12 +67,14 @@ const ProductFilters = ({
   onGenderToggle,
   isSellerMode = false,
   onSellerToggle,
+  selectedBulkPriceRange = '',
+  onBulkPriceRangeChange,
   isMobile = false,
   onCloseMobile,
   isFiltering = false
 }: ProductFiltersProps) => {
   const [expandedSections, setExpandedSections] = useState<string[]>([
-    'seller', 'categories', 'price', 'color', 'gender', 'attributes'
+    'seller', 'bulk-price', 'categories', 'price', 'color', 'gender', 'attributes'
   ]);
 
   // Price filtering with URL state
@@ -127,9 +131,10 @@ const ProductFilters = ({
       selectedAttributes.length +
       selectedGenders.length +
       (isSellerMode ? 1 : 0) +
+      (selectedBulkPriceRange ? 1 : 0) +
       (minPrice > 0 || maxPrice < PRICE_MAX ? 1 : 0)
     );
-  }, [selectedCategories.length, selectedColors.length, selectedAttributes.length, selectedGenders.length, isSellerMode, minPrice, maxPrice]);
+  }, [selectedCategories.length, selectedColors.length, selectedAttributes.length, selectedGenders.length, isSellerMode, selectedBulkPriceRange, minPrice, maxPrice]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]);
@@ -164,7 +169,7 @@ const ProductFilters = ({
 
   const SectionHeader = ({ id, title }: { id: string; title: string }) => (
     <div className="flex items-center justify-between">
-      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+      <h3 className="text-md font-medium text-gray-900">{title}</h3>
       <button onClick={() => toggleSection(id)} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
         {expandedSections.includes(id) ? (
           <ChevronUp className="w-5 h-5 text-gray-500" />
@@ -213,6 +218,101 @@ const ProductFilters = ({
                   </span>
                 </label>
               ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+
+  const BulkPrice = (
+    <div className="space-y-4">
+      <SectionHeader id="bulk-price" title="Paliers de prix de gros" />
+      <AnimatePresence>
+        {expandedSections.includes('bulk-price') && isSellerMode && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }} 
+            animate={{ height: 'auto', opacity: 1 }} 
+            exit={{ height: 0, opacity: 0 }} 
+            transition={sectionTransition} 
+            className="overflow-hidden"
+          >
+            <div className="space-y-4">
+              {/* Price Range Cards */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { value: '500-1000', label: '500 - 1 000', min: 500, max: 1000, color: 'from-blue-500 to-blue-600' },
+                  { value: '1000-5000', label: '1 000 - 5 000', min: 1000, max: 5000, color: 'from-green-500 to-green-600' },
+                  { value: '5000-10000', label: '5 000 - 10 000', min: 5000, max: 10000, color: 'from-purple-500 to-purple-600' },
+                  { value: '10000-25000', label: '10 000 - 25 000', min: 10000, max: 25000, color: 'from-orange-500 to-orange-600' },
+                  { value: '25000-50000', label: '25 000 - 50 000', min: 25000, max: 50000, color: 'from-red-500 to-red-600' },
+                  { value: '50000+', label: '50 000+', min: 50000, max: 500000, color: 'from-gray-600 to-gray-700' }
+                ].map((range) => (
+                  <button
+                    key={range.value}
+                    onClick={() => onBulkPriceRangeChange?.(range.value)}
+                    className={`group relative p-1 rounded-xl border-2 transition-all duration-200 hover:shadow-md ${
+                      selectedBulkPriceRange === range.value
+                        ? 'border-orange-300 bg-orange-50 ring-2 ring-orange-200'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-2">
+                      {/* Gradient Circle */}
+                     
+                      
+                      {/* Range Label */}
+                      <div className="text-center">
+                        <span className={`text-xs font-semibold transition-colors ${
+                          selectedBulkPriceRange === range.value ? 'text-orange-700' : 'text-gray-900'
+                        }`}>
+                          {range.label}
+                        </span>
+                        <p className={`text-xs transition-colors ${
+                          selectedBulkPriceRange === range.value ? 'text-orange-600' : 'text-gray-500'
+                        }`}>
+                          XAF
+                        </p>
+                      </div>
+                      
+                      
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Selected Range Summary */}
+              {selectedBulkPriceRange && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl border border-orange-200"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      
+                      <div>
+                        <span className="text-xs font-medium text-orange-800">
+                          Paliers sélectionné : {[
+                            { value: '500-1000', label: '500 - 1 000 CFA' },
+                            { value: '1000-5000', label: '1 000 - 5 000 CFA' },
+                            { value: '5000-10000', label: '5 000 - 10 000 CFA' },
+                            { value: '10000-25000', label: '10 000 - 25 000 CFA' },
+                            { value: '25000-50000', label: '25 000 - 50 000 CFA' },
+                            { value: '50000+', label: '50 000+ CFA' }
+                          ].find(r => r.value === selectedBulkPriceRange)?.label}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => onBulkPriceRangeChange?.('')}
+                      className="text-xs text-orange-600 hover:text-orange-800 font-medium transition-colors px-2 py-1 rounded hover:bg-orange-200"
+                    >
+                      Effacer
+                    </button>
+                  </div>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         )}
@@ -615,6 +715,7 @@ const ProductFilters = ({
   const content = (
     <div className="space-y-6">
       {Seller}
+      {isSellerMode && BulkPrice}
       {Gender}
       {!isSellerMode && Price}
       {Categories}
