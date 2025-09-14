@@ -139,7 +139,7 @@ const MobileMenuOverlay = React.memo(({
           initial="hidden"
           animate="visible"
           exit="hidden"
-          className="fixed inset-0 z-[9999] bg-black/50  lg:hidden"
+          className="fixed inset-0 z-[9999999] bg-black/50  lg:hidden"
           onClick={onClose}
         >
           <motion.div
@@ -148,7 +148,7 @@ const MobileMenuOverlay = React.memo(({
             animate="visible"
             exit="hidden"
             onAnimationComplete={handleAnimationComplete}
-            className="absolute  top-0 left-0 bottom-0 md:w-[100vw] sm:w-full  bg-white"
+            className="absolute  top-0 left-0 bottom-0 md:w-[100vw]  sm:w-full  bg-white"
             onClick={e => e.stopPropagation()}
           >
             {/* Menu Header */}
@@ -244,7 +244,7 @@ console.log(userData)
       </button>
       <DropdownAccount currentUser={userData}>
 
-        <div className='z-[99999]'>
+        <div className='z-[9999]'>
         {!userData && (
           <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
             <User className="h-6 w-6 max-sm:w-5 max-sm:h-5" />
@@ -431,7 +431,7 @@ console.log(userData)
             {/* Actions (compte, panier, etc.) */}
             <div className="flex items-center gap-4">
               <DropdownAccount currentUser={userData}>
-                {!userData && !isLoading && <div className="flex items-center gap-2 hover:text-orange-600 cursor-pointer">
+                {!userData && !isLoading && <div className="flex  items-center gap-2 hover:text-orange-600 cursor-pointer">
                   <User className="h-6 w-6" />
                 </div>}
 

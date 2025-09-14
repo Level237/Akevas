@@ -13,7 +13,7 @@ import OptimizedImage from "../OptimizedImage";
 
 // Déplacer le composant de catégories dans un composant séparé
 const CategoryGrid = React.memo(({ categories }: { categories: Category[] }) => (
-    <div className="grid sm:grid-cols-2 md:mt-12 md:grid-cols-3 gap-4">
+    <div className="grid max-sm:grid-cols-2 md:mt-12 md:grid-cols-3 gap-4">
         {categories.map((category: Category) => (
             <AsyncLink
                 key={category.id}

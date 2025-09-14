@@ -50,7 +50,19 @@ const PremiumProducts: React.FC = () => {
           products={memoizedProducts}
           isLoading={isLoading}
         />
+<div className='lg:hidden md:hidden sm:flex  items-center w-full sm:justify-center'>
+      <AsyncLink
+      to="/products/"
+      className=" flex items-center justify-center text-black text-sm hover:underline"
+    >
+      Voir toutes les produits
+      <ChevronRight className="h-4 w-4" />
+    </AsyncLink>
       </div>
+        
+      </div>
+      
+     
     </section>
   );
 };
