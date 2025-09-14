@@ -148,7 +148,7 @@ const MobileMenuOverlay = React.memo(({
             animate="visible"
             exit="hidden"
             onAnimationComplete={handleAnimationComplete}
-            className="absolute  top-0 left-0 bottom-0 w-full max-w-sm bg-white"
+            className="absolute  top-0 left-0 bottom-0 md:w-[100vw] sm:w-full  bg-white"
             onClick={e => e.stopPropagation()}
           >
             {/* Menu Header */}
@@ -407,6 +407,12 @@ console.log(userData)
         <div className="hidden  md:block lg:hidden mx-8 px-4 py-4">
           {/* Top bar avec logo, recherche et actions */}
           <div className="flex items-center justify-between gap-6">
+          <button
+              onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: true }))}
+              className="lg:hidden p-2 -ml-2"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
             <AsyncLink to="/" className="flex-shrink-0">
               <img
                 src={logo}
