@@ -175,8 +175,8 @@ export default function StoreHero() {
         </AnimatePresence>
       </motion.section>
 
-      <section className="flex max-sm:flex-col max-sm:hidden items-start max-sm:mx-2 max-sm:mt-6 gap-4 mx-16 md:mx-0 h-[30rem]">
-        <motion.section className="w-[75%] md:w-[100%] max-sm:hidden md:rounded-none rounded-3xl relative h-96 overflow-hidden">
+      <section className="flex max-sm:flex-col max-sm:hidden items-start max-sm:mx-2 max-sm:mt-6 gap-4 lg:mx-16 md:mx-0 h-[30rem]">
+        <motion.section className="lg:w-[75%] md:w-[100%] max-sm:hidden md:rounded-none lg:rounded-3xl relative h-96 overflow-hidden">
           <motion.div
             className={`absolute inset-0 ${slides[currentSlide].bgColor}`}
             initial={false}
@@ -243,7 +243,7 @@ export default function StoreHero() {
           <SlideControls slides={slides} currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} />
         </motion.section>
 
-        <motion.section className="w-full max-sm:hidden hidden max-sm:block rounded-3xl relative h-96 bg-orange-800 overflow-hidden">
+        <motion.section className="w-full max-sm:hidden hidden max-sm:block lg:rounded-3xl relative h-96 bg-orange-800 overflow-hidden">
           <div className="flex w-full h-full">
             <div className="w-full p-10 flex flex-col items-center justify-center">
               <motion.h1 className="text-4xl max-sm:text-xl flex-1 font-bold text-white mb-4">
@@ -259,7 +259,7 @@ export default function StoreHero() {
           </div>
         </motion.section>
 
-        <section className="flex max-sm:hidden md:hidden flex-col w-[25%] max-sm:w-full h-96 gap-4">
+        <section className="flex max-sm:hidden md:hidden lg:block flex-col w-[25%] max-sm:w-full h-96 gap-4">
           <motion.section className="w-full bg-black rounded-3xl h-full relative group overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#ed7e0f]/30 to-[#ed7e0f] z-0"/>
             
