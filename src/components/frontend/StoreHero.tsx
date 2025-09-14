@@ -175,8 +175,8 @@ export default function StoreHero() {
         </AnimatePresence>
       </motion.section>
 
-      <section className="flex max-sm:flex-col max-sm:hidden items-start max-sm:mx-2 max-sm:mt-6 gap-4 mx-16 h-[30rem]">
-        <motion.section className="w-[75%] max-sm:hidden rounded-3xl relative h-96 overflow-hidden">
+      <section className="flex max-sm:flex-col max-sm:hidden items-start max-sm:mx-2 max-sm:mt-6 gap-4 mx-16 md:mx-0 h-[30rem]">
+        <motion.section className="w-[75%] md:w-[100%] max-sm:hidden md:rounded-none rounded-3xl relative h-96 overflow-hidden">
           <motion.div
             className={`absolute inset-0 ${slides[currentSlide].bgColor}`}
             initial={false}
@@ -259,7 +259,7 @@ export default function StoreHero() {
           </div>
         </motion.section>
 
-        <section className="flex max-sm:hidden flex-col w-[25%] max-sm:w-full h-96 gap-4">
+        <section className="flex max-sm:hidden md:hidden flex-col w-[25%] max-sm:w-full h-96 gap-4">
           <motion.section className="w-full bg-black rounded-3xl h-full relative group overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#ed7e0f]/30 to-[#ed7e0f] z-0"/>
             
