@@ -11,7 +11,7 @@ export const SectionHeader = React.memo(({title,description}: {title: string,des
       <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-black">
         {title}
       </h2>
-      <p className="text-xl md:text-2xl max-sm:text-sm text-gray-600">
+      <p className="text-xl md:text-xl max-sm:text-sm text-gray-600">
         {description}
       </p>
     </div>
@@ -43,8 +43,8 @@ const PremiumProducts: React.FC = () => {
   const memoizedProducts = useMemo(() => products, [products]);
 
   return (
-    <section className="pt-24 max-sm:pt-12  bg-gray-200">
-      <div className="max-w-8xl ml-12 max-sm:ml-2 mx-auto px-4 max-sm:pr-0 sm:px-6 lg:px-8">
+    <section className="pt-24 max-sm:pt-12 pb-24  bg-gray-200">
+      <div className="max-w-8xl md:ml-2 lg:ml-12 max-sm:ml-2 mx-auto px-4 max-sm:pr-0 sm:px-6 lg:px-8">
         <SectionHeader title='Produits Premium' description='Découvrez notre sélection de produits premium'/>
         <ProductListGrid
           products={memoizedProducts}

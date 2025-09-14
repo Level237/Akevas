@@ -56,7 +56,7 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
             onFocus={() => setIsSearchOpen(true)}
             placeholder="Rechercher des boutiques ou produits..."
             className={`
-              w-[35rem] md:w-[28rem] pl-12 pr-12 py-3.5 
+              w-[35rem] md:w-[24rem] pl-12 pr-12 py-3.5 
               rounded-2xl border 
               text-sm transition-all duration-200
               ${variant === 'standalone' 

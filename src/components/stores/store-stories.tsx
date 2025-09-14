@@ -17,7 +17,7 @@ const StoreStories = React.memo(({ title, description, shops, isLoading }: { tit
             </div>
             <AsyncLink
               to="/shops"
-              className="hidden mx-12 md:flex text-white items-center  text-sm hover:underline"
+              className="hidden lg:mx-12 md:mx-7 md:flex text-white items-center  text-sm hover:underline"
             >
               Voir toutes les boutiques
               <ChevronRight className="ml-1 h-4 w-4" />

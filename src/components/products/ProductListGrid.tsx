@@ -230,7 +230,7 @@ const ProductListGrid = ({ products = [], isLoading, gridColumn, type }: { produ
   }, []);
 
   return (
-    <section className="min-h-screen max-sm:min-h-[100%] max-sm:m-1 w-full relative">
+    <section className="lg:min-h-screen max-sm:min-h-[100%] max-sm:m-1 w-full relative">
       <div className='flex justify-between mb-4 items-center'>
         <div className='flex items-start flex-col'>
           <h2 className='text-2xl max-sm:text-xl  hidden max-sm:block font-bold text-gray-900'>

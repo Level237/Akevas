@@ -48,7 +48,7 @@ export default function CategoryShowcase({categories, isLoading, title, titleCat
   }
 
   return (
-    <section className="py-20 max-sm:py-12 bg-[#6e0a13]   -mt-28 max-sm:-mt-1 from-black to-[#6e0a13] text-white">
+    <section className="py-20 max-sm:py-12 bg-[#6e0a13] md:mt-0   lg:-mt-28 max-sm:-mt-1 from-black to-[#6e0a13] text-white">
       <div className=" ml-12 max-sm:ml-2 px-4">
         {/* Header with Navigation Controls */}
         <div className="flex items-center  justify-between mb-16">
