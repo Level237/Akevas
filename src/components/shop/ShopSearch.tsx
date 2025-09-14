@@ -58,10 +58,10 @@ const ShopSearchResults = ({ shops, isLoading }: { shops: any[]; isLoading: bool
               />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-white group-hover:text-orange-400 transition-colors">
+              <h3 className="font-semibold max-sm:text-sm text-white group-hover:text-orange-400 transition-colors">
                 {shop.shop_key}
               </h3>
-              <p className="text-sm text-gray-400 line-clamp-2">
+              <p className="text-sm max-sm:text-xs max-sm:mt-1 text-gray-400 line-clamp-2">
                 {shop.shop_description}
               </p>
               <div className="flex items-center gap-2 mt-2">
@@ -118,10 +118,10 @@ export default function ShopSearch({ isOpen, onClose }: ShopSearchProps) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Rechercher une boutique..."
-                  className="w-full pl-12 pr-4 py-3 bg-white/10 rounded-2xl border border-white/20 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-white/10 rounded-2xl border border-white/20 text-white placeholder:text-gray-400 placeholder:text-xs focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
                   autoFocus
                 />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 max-sm:left-5 top-1/2 max-sm:w-4 max-sm:h-4 -translate-y-1/2 w-5 h-5 text-gray-400" />
               </div>
             </div>
 
@@ -134,11 +134,11 @@ export default function ShopSearch({ isOpen, onClose }: ShopSearchProps) {
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-center p-4">
-                  <Store className="w-16 h-16 text-gray-500 mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">
+                  <Store className="w-16 max-sm:w-12 max-sm:h-12 h-16 text-gray-500 mb-4" />
+                  <h3 className="text-xl max-sm:text-lg font-semibold text-white mb-2">
                     Recherchez parmi nos boutiques
                   </h3>
-                  <p className="text-gray-400 max-w-md">
+                  <p className="text-gray-400 max-sm:text-sm max-w-md">
                     Trouvez les meilleures boutiques et découvrez des produits uniques
                   </p>
                 </div>

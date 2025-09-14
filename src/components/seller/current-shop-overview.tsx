@@ -155,7 +155,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 </div>
                 <div className="flex items-center">
                   <MapPin className="w-5 h-5 mr-1" />
-                  <span>{shop.shop.town}-{shop.shop.quarter}</span>
+                  <span className='md:w-24 md-text-sm'>{shop.shop.town}-{shop.shop.quarter}</span>
                 </div>
                 <div className="flex items-center">
                   <Clock className="w-5 h-5 mr-1" />
@@ -216,7 +216,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
           </div>
         </div>
       </div>
-      <div className="sticky hidden max-sm:block mt-12 top-0 bg-white border-b z-40 lg:relative lg:top-auto">
+      <div className="sticky hidden max-sm:block md:block mt-12 top-0 bg-white border-b z-40 lg:relative lg:top-auto">
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto hide-scrollbar">
             <button 
@@ -248,7 +248,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
       </div>
 
       {/* Content */}
-      <div className="container hidden max-sm:block mx-auto px-4 py-6">
+      <div className="container hidden max-sm:block md:block mx-auto px-4 py-6">
         {activeTab === 'products' && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {normalizedProducts?.map((product) => (
@@ -302,7 +302,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
             <ShopReviews shopId={shop?.shop?.shop_id}/>
         )}
       </div>
-         <main className="max-w-7xl  max-sm:hidden mx-auto px-4 py-8">
+         <main className="max-w-7xl  max-sm:hidden md:hidden mx-auto px-4 py-8">
         <div className="grid max-sm:grid-cols-1 max-sm:gap-2 grid-cols-12 gap-8">
           {/* Sidebar */}
           <div className="col-span-3 max-sm::col-span-0">
