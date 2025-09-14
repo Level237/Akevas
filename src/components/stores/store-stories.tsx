@@ -8,16 +8,16 @@ const StoreStories = React.memo(({ title, description, shops, isLoading }: { tit
 
   return (
     <>
-      <section className="w-full max-sm:p-2 max-sm:py-12  overflow-x-hidden md:mt-[-6rem]  lg:mt-[-1rem] md:py-16   bg-[#6e0a13] py-12">
+      <section className="w-full max-sm:p-2 max-sm:py-12  overflow-x-hidden md:mt-[-6rem]  lg:mt-[-1rem] md:pt-24  bg-[#6e0a13] py-12">
         <div className="overflow-x-hidden  max-sm:py-5  ">
           <div className="flex  justify-between items-baseline mb-6">
-            <div className="mx-12 max-sm:mx-0">
+            <div className="mx-12 max-sm:mx-0 md:mx-12">
               <h2 className="text-2xl md:text-3xl max-sm:text-xl font-bold mb-2 text-white">{title}</h2>
-              <p className="text-xl md:text-2xl max-sm:text-sm  text-gray-200">{description}</p>
+              <p className="text-xl md:text-lg max-sm:text-sm  text-gray-200">{description}</p>
             </div>
             <AsyncLink
               to="/shops"
-              className="hidden lg:mx-12 md:mx-7 md:flex text-white items-center  text-sm hover:underline"
+              className="hidden lg:mx-12 md:mx-12 md:flex text-white items-center  text-sm hover:underline"
             >
               Voir toutes les boutiques
               <ChevronRight className="ml-1 h-4 w-4" />
