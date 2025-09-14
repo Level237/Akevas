@@ -39,7 +39,7 @@ export default function Header({ userData }: { userData: User | null | undefined
           </div>
 
           {/* Menu de navigation desktop */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden lg:flex  items-center gap-6">
             {menuItems.map((item) => (
               <AsyncLink
                 key={item.href}
@@ -62,7 +62,7 @@ export default function Header({ userData }: { userData: User | null | undefined
 
           {/* Menu burger mobile */}
           <Sheet>
-            <SheetTrigger asChild className="md:hidden">
+            <SheetTrigger asChild className="lg:hidden">
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
               </Button>
