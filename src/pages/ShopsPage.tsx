@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, memo, useCallback, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Star, MapPin, Package, Clock, Shield, Search, Heart, Users, ShoppingBag, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, MapPin, Package, Clock, Shield, Search, Heart, Users, ShoppingBag, TrendingUp, Filter } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import AsyncLink from '@/components/ui/AsyncLink';
@@ -241,6 +241,7 @@ const ShopsPage = () => {
   const currentPage = params.get("page") || "1";
   const [totalPages, setTotalPages] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   const { data: { shopList, totalPagesResponse } = {}, isLoading, isError } = useGetAllShopsQuery(currentPage);
   const { data: { data: apiCategories } = {} } = useGetCategoriesWithParentIdNullQuery('guard');
@@ -405,6 +406,21 @@ const ShopsPage = () => {
       />
 
       <main className="max-w-7xl mx-auto py-8">
+        {/* Mobile filters trigger */}
+        <div className="flex items-center justify-between mb-6 px-4 lg:px-0">
+          <button
+            onClick={() => setShowMobileFilters(true)}
+            className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm border border-gray-200"
+          >
+            <Filter className="w-5 h-5" />
+            <span className="text-sm">Filtres</span>
+            {(selectedShopCategoryIds.length > 0 || selectedFilter === 'premium' || (searchQuery && searchQuery.length > 0)) && (
+              <span className="ml-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">
+                {selectedShopCategoryIds.length + (selectedFilter === 'premium' ? 1 : 0) + (searchQuery ? 1 : 0)}
+              </span>
+            )}
+          </button>
+        </div>
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Left sidebar filters */}
           <div className="hidden lg:block">
@@ -521,6 +537,94 @@ const ShopsPage = () => {
             )}
           </div>
         </div>
+
+        {/* Mobile Filters Slide-over */}
+        <AnimatePresence>
+          {showMobileFilters && (
+            <>
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                onClick={() => setShowMobileFilters(false)}
+                className="fixed inset-0 bg-black/50 z-40"
+              />
+              <motion.div 
+                initial={{ x: '100%' }} 
+                animate={{ x: 0 }} 
+                exit={{ x: '100%' }} 
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl z-[9999] flex flex-col"
+              >
+                <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-orange-50 to-orange-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center">
+                      <Filter className="w-4 h-4 text-white" />
+                    </div>
+                    <h2 className="text-lg font-semibold text-gray-900">Filtres</h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedShopCategoryIds([]);
+                        setSelectedFilter('all');
+                        setSortBy('allShops');
+                      }}
+                      className="text-xs text-orange-600 hover:text-orange-800 font-medium px-2 py-1 rounded-md hover:bg-orange-100"
+                    >
+                      Réinitialiser
+                    </button>
+                    <button
+                      onClick={() => setShowMobileFilters(false)}
+                      className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
+                    >
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4">
+                  <ShopFilters
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                    availableCategories={availableCategories}
+                    selectedCategoryIds={selectedShopCategoryIds}
+                    onToggleCategory={(id) => {
+                      setSelectedShopCategoryIds(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
+                    }}
+                    onSelectCategory={(id) => {
+                      if (id === null) {
+                        setSelectedShopCategoryIds([]);
+                      } else {
+                        setSelectedShopCategoryIds([id]);
+                      }
+                    }}
+                    onClearAll={() => {
+                      setSearchQuery('');
+                      setSelectedShopCategoryIds([]);
+                      setSelectedFilter('all');
+                      setSortBy('allShops');
+                    }}
+                    isPremiumOnly={selectedFilter === 'premium'}
+                    onTogglePremium={(val) => setSelectedFilter(val ? 'premium' : 'all')}
+                    sortBy={sortBy as ShopSortOption}
+                    onChangeSort={(val) => setSortBy(val)}
+                  />
+                </div>
+                <div className="border-t bg-white p-4">
+                  <Button 
+                    onClick={() => setShowMobileFilters(false)} 
+                    className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white py-3 text-base font-medium"
+                  >
+                    Voir les résultats
+                  </Button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
       </main>
       <Footer />
