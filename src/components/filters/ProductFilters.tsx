@@ -17,6 +17,7 @@ interface ProductFiltersProps {
   // Data sources
   categories: Category[];
   isLoadingCategories?: boolean;
+  showCategories?: boolean;
 
   // Category interop with page
   selectedCategories: number[];
@@ -56,6 +57,7 @@ const sectionTransition = { duration: 0.2 };
 const ProductFilters = ({
   categories,
   isLoadingCategories = false,
+  showCategories = true,
   selectedCategories,
   onCategoryToggle,
   onClearAll,
@@ -718,7 +720,7 @@ const ProductFilters = ({
       {isSellerMode && BulkPrice}
       {Gender}
       {!isSellerMode && Price}
-      {Categories}
+      {showCategories && Categories}
       {Colors}
       {Attributes}
     </div>

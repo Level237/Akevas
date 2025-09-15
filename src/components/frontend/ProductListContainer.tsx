@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import Header from '@/components/ui/header';
-import MobileNav from '@/components/ui/mobile-nav';
 import { AnimatePresence } from 'framer-motion';
 import { Filter, ChevronDown } from 'lucide-react';
 import { useGetAllProductsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
@@ -18,6 +16,7 @@ type ProductListContainerProps = {
   totalPagesOverride?: number;
   currentPageOverride?: number;
   getPageUrlOverride?: (pageNumber: number) => string;
+  showCategories?: boolean;
 };
 
 const sortOptions = [
@@ -28,7 +27,7 @@ const sortOptions = [
   { id: 'rating', label: 'Meilleures notes' }
 ];
 
-const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCategoryIds = [], hero, products: productsProp, isLoadingOverride, totalPagesOverride, currentPageOverride, getPageUrlOverride }) => {
+const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCategoryIds = [], hero, products: productsProp, isLoadingOverride, totalPagesOverride, currentPageOverride, getPageUrlOverride, showCategories = true }) => {
   const [searchParams] = useQueryState('page', {
     defaultValue: '1',
     parse: (v) => v || '1',
@@ -237,7 +236,7 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       {hero}
-      <Header />
+    
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <button onClick={() => setShowMobileFilters(true)} className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm">
@@ -280,6 +279,7 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
             <ProductFilters
               categories={categories || []}
               isLoadingCategories={categoriesLoading}
+              showCategories={showCategories}
               selectedCategories={effectiveCategories}
               onCategoryToggle={toggleCategory}
               onClearAll={clearAllFilters}
@@ -372,6 +372,7 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
             onCloseMobile={() => setShowMobileFilters(false)}
             categories={categories || []}
             isLoadingCategories={categoriesLoading}
+            showCategories={showCategories}
             selectedCategories={effectiveCategories}
             onCategoryToggle={toggleCategory}
             selectedColors={selectedColors}
@@ -389,7 +390,7 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
           />
         )}
       </AnimatePresence>
-      <MobileNav />
+      
     </div>
   );
 };

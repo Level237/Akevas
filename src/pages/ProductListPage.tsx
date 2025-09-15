@@ -3,6 +3,8 @@ import ProductListContainer from '@/components/frontend/ProductListContainer';
 import { useQueryState } from 'nuqs';
 import { useGetAllProductsQuery } from '@/services/guardService';
 import { Product } from '@/types/products';
+import Header from '@/components/ui/header';
+import MobileNav from '@/components/ui/mobile-nav';
 
 const ProductListPage: React.FC = () => {
   const [pageParam] = useQueryState('page', {
@@ -82,6 +84,9 @@ const ProductListPage: React.FC = () => {
   };
 
   return (
+    <>
+    <Header />
+    <MobileNav />
     <ProductListContainer
       products={products}
       isLoadingOverride={isLoading}
@@ -89,6 +94,8 @@ const ProductListPage: React.FC = () => {
       currentPageOverride={currentPage}
       getPageUrlOverride={getPageUrl}
     />
+    </>
+    
   );
 };
 

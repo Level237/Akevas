@@ -3,35 +3,18 @@ import { ChevronRight, PackageX} from 'lucide-react';
 import TopBar from '@/components/ui/topBar';
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
-import ProductListGrid from '@/components/products/ProductListGrid';
-import { useGetCategoryProductsByUrlQuery, useGetCategoryByUrlQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
+import { useGetCategoryProductsByUrlQuery, useGetCategoryByUrlQuery } from '@/services/guardService';
 import AsyncLink from '@/components/ui/AsyncLink';
 import defaultHeroImage from "@/assets/dress.jpg"
 import Footer from '@/components/ui/footer';
-import CategoryFilters from '@/components/filters/CategoryFilters';
-import { useState } from 'react';
+import ProductListContainer from '@/components/frontend/ProductListContainer';
 
 const CategoryProductsPage = () => {
     const { url } = useParams<{ url: string }>();
     const { data: categoryData, isLoading } = useGetCategoryProductsByUrlQuery(url);
+    console.log(categoryData)
     const { data: category } = useGetCategoryByUrlQuery(url);
-    const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery("guard");
-    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-    
-
-    const hasProducts = !isLoading && categoryData && categoryData.length > 0;
-
-    const handleCategoryToggle = (categoryId: number) => {
-        setSelectedCategories(prev =>
-            prev.includes(categoryId)
-                ? prev.filter(id => id !== categoryId)
-                : [...prev, categoryId]
-        );
-    };
-
-    const clearFilters = () => {
-        setSelectedCategories([]);
-    };
+    const hasProducts = !isLoading && categoryData.data && categoryData.data.length > 0;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -77,27 +60,36 @@ const CategoryProductsPage = () => {
 
             <div className="container mx-auto px-4 py-8">
                 {hasProducts ? (
-                    <div className="flex flex-col lg:flex-row gap-8">
-                        {/* Filtres Desktop */}
-                        <div className="hidden lg:block lg:w-1/4">
-                            <CategoryFilters
-                                categories={categories || []}
-                                isLoading={categoriesLoading}
-                                selectedCategories={selectedCategories}
-                                onCategoryToggle={handleCategoryToggle}
-                                onClearFilters={clearFilters}
-                            />
-                        </div>
-
-                        {/* Contenu principal */}
-                        <div className="lg:w-3/4">
-                            <ProductListGrid
-                                products={categoryData}
-                                isLoading={isLoading}
-                                gridColumn={3}
-                            />
-                        </div>
-                    </div>
+                    <ProductListContainer
+                        products={categoryData.data}
+                        isLoadingOverride={isLoading}
+                        presetCategoryIds={category?.id ? [category.id] : []}
+                        showCategories={false}
+                        hero={null}
+                        getPageUrlOverride={(pageNumber) => {
+                            const params = new URLSearchParams(window.location.search);
+                            params.set('page', pageNumber.toString());
+                            // Pour la page catégorie, on n’ajoute pas le paramètre categories
+                            // On garde les autres filtres pertinents
+                            const min = params.get('min_price');
+                            const max = params.get('max_price');
+                            const colors = params.get('colors');
+                            const attribut = params.get('attribut');
+                            const gender = params.get('gender');
+                            const seller = params.get('seller_mode');
+                            const bulk = params.get('bulk_price_range');
+                            const clean = new URLSearchParams();
+                            clean.set('page', pageNumber.toString());
+                            if (min) clean.set('min_price', min);
+                            if (max) clean.set('max_price', max);
+                            if (colors) clean.set('colors', colors);
+                            if (attribut) clean.set('attribut', attribut);
+                            if (gender) clean.set('gender', gender);
+                            if (seller === 'true') clean.set('seller_mode', 'true');
+                            if (bulk) clean.set('bulk_price_range', bulk);
+                            return `?${clean.toString()}`;
+                        }}
+                    />
                 ) : (
                     <div className="flex flex-col items-center justify-center py-12">
                         <PackageX className="w-16 h-16 text-gray-400 mb-4" />
