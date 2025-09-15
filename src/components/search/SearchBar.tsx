@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Search,Store, Package2, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchByQueryQuery } from '@/services/guardService';
@@ -39,6 +39,95 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
     { query: debouncedQuery, userId: 0 },
     { skip: !debouncedQuery || debouncedQuery.length < 2 }
   );
+
+  // Récupérer jusqu'à 4 couleurs uniques des variations (modèle ProductCard)
+  const getColorSwatches = useCallback((product: any) => {
+    if (!product?.variations?.length) return [] as Array<{ name: string; hex: string }>;
+    const seen = new Set<string>();
+    const colors: Array<{ name: string; hex: string }> = [];
+    for (const variation of product.variations) {
+      if (variation?.color?.hex && !seen.has(variation.color.hex)) {
+        colors.push({
+          name: variation.color.name,
+          hex: variation.color.hex,
+        });
+        seen.add(variation.color.hex);
+      }
+      if (colors.length === 4) break;
+    }
+    return colors;
+  }, []);
+
+  // Récupérer l'image d'aperçu du produit pour les produits variés
+  const getProductThumbnail = useCallback((product: any): string => {
+    try {
+      const variations: any[] | undefined = product?.variations;
+      if (Array.isArray(variations) && variations.length > 0) {
+        // Trouver la première variation qui a au moins une image
+        for (const variation of variations) {
+          const images: string[] | undefined = variation?.images;
+          if (Array.isArray(images) && images.length > 0 && typeof images[0] === 'string') {
+            return images[0];
+          }
+        }
+      }
+    } catch (_) {
+      // ignore and fallback
+    }
+    return product?.product_profile as string;
+  }, []);
+
+  // Prix affiché: min prix parmi attributs/variations sinon prix du produit
+  const getDisplayPrice = useCallback((product: any): number => {
+    const toNumber = (val: unknown): number => {
+      if (typeof val === 'number') return val;
+      if (typeof val === 'string') {
+        const cleaned = val.replace(/[^0-9.,-]/g, '').replace(',', '.');
+        const num = parseFloat(cleaned);
+        return Number.isNaN(num) ? NaN : num;
+      }
+      return NaN;
+    };
+
+    try {
+      const candidates: number[] = [];
+
+      const variations: any[] | undefined = product?.variations;
+      if (Array.isArray(variations) && variations.length > 0) {
+        for (const variation of variations) {
+          // prix au niveau de la variation
+          const vPrice = toNumber(variation?.price);
+          if (Number.isFinite(vPrice)) candidates.push(vPrice);
+
+          // prix au niveau des attributs
+          const attributes: any[] | undefined = variation?.attributes;
+          if (Array.isArray(attributes)) {
+            for (const attr of attributes) {
+              const p = toNumber(attr?.price);
+              if (Number.isFinite(p)) candidates.push(p);
+            }
+          }
+        }
+      }
+
+      // fallback aux champs prix du produit potentiels
+      const baseCandidates = [
+        toNumber(product?.product_price),
+        toNumber(product?.min_price),
+        toNumber(product?.minimum_price),
+      ].filter((n) => Number.isFinite(n)) as number[];
+
+      candidates.push(...baseCandidates);
+
+      if (candidates.length > 0) {
+        return Math.min(...candidates);
+      }
+    } catch (_) {
+      // ignore and fallback
+    }
+
+    return 0;
+  }, []);
 
   return (
     <div ref={searchBarRef} className={`relative ${className}`}>
@@ -160,7 +249,7 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
                       <Package2 className="w-4 h-4 text-orange-500" />
                       Produits ({data.products.length})
                     </h3>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                       {data.products.map((product: any) => (
                         <Link
                           key={product.id}
@@ -170,10 +259,29 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
                         >
                           <div className="relative aspect-square overflow-hidden">
                             <OptimizedImage
-                              src={product.product_profile}
+                              src={getProductThumbnail(product)}
                               alt={product.product_name}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                             />
+                            {/* Affichage des couleurs si variations */}
+                            {product?.variations?.length > 0 && (
+                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 px-2 py-1 rounded-full shadow-sm">
+                                {getColorSwatches(product).map((color: any) => (
+                                  <div
+                                    key={color.hex}
+                                    title={color.name}
+                                    className="w-3.5 h-3.5 rounded-full border border-gray-200"
+                                    style={{
+                                      backgroundColor: color.hex,
+                                      boxShadow: '0 0 0 1px #ccc',
+                                    }}
+                                  />
+                                ))}
+                                {product.variations.length > 4 && (
+                                  <span className="text-[10px] text-gray-600">+{product.variations.length - 4}</span>
+                                )}
+                              </div>
+                            )}
                           </div>
                           <div className="p-3 bg-white">
                             <h4 className="font-medium text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
@@ -183,7 +291,7 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
                               {new Intl.NumberFormat('fr-FR', {
                                 style: 'currency',
                                 currency: 'XAF'
-                              }).format(parseInt(product.product_price))}
+                              }).format(getDisplayPrice(product))}
                             </p>
                           </div>
                         </Link>
