@@ -2,7 +2,7 @@ import OptimizedImage from "@/components/OptimizedImage";
 import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
 import { Clock, Search, TrendingUp, X } from "lucide-react"
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import { Link} from "react-router-dom";
 
 // Composant pour les résultats de recherche
@@ -10,8 +10,92 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
   if (isLoading) {
     return <SearchSkeleton />;
   }
+  const getProductThumbnail = useCallback((product: any): string => {
+    try {
+      const variations: any[] | undefined = product?.variations;
+      if (Array.isArray(variations) && variations.length > 0) {
+        // Trouver la première variation qui a au moins une image
+        for (const variation of variations) {
+          const images: string[] | undefined = variation?.images;
+          if (Array.isArray(images) && images.length > 0 && typeof images[0] === 'string') {
+            return images[0];
+          }
+        }
+      }
+    } catch (_) {
+      // ignore and fallback
+    }
+    return product?.product_profile as string;
+  }, []);
 
-  
+  // Prix affiché: min prix parmi attributs/variations sinon prix du produit
+  const getDisplayPrice = useCallback((product: any): number => {
+    const toNumber = (val: unknown): number => {
+      if (typeof val === 'number') return val;
+      if (typeof val === 'string') {
+        const cleaned = val.replace(/[^0-9.,-]/g, '').replace(',', '.');
+        const num = parseFloat(cleaned);
+        return Number.isNaN(num) ? NaN : num;
+      }
+      return NaN;
+    };
+
+    try {
+      const candidates: number[] = [];
+
+      const variations: any[] | undefined = product?.variations;
+      if (Array.isArray(variations) && variations.length > 0) {
+        for (const variation of variations) {
+          // prix au niveau de la variation
+          const vPrice = toNumber(variation?.price);
+          if (Number.isFinite(vPrice)) candidates.push(vPrice);
+
+          // prix au niveau des attributs
+          const attributes: any[] | undefined = variation?.attributes;
+          if (Array.isArray(attributes)) {
+            for (const attr of attributes) {
+              const p = toNumber(attr?.price);
+              if (Number.isFinite(p)) candidates.push(p);
+            }
+          }
+        }
+      }
+
+      // fallback aux champs prix du produit potentiels
+      const baseCandidates = [
+        toNumber(product?.product_price),
+        toNumber(product?.min_price),
+        toNumber(product?.minimum_price),
+      ].filter((n) => Number.isFinite(n)) as number[];
+
+      candidates.push(...baseCandidates);
+
+      if (candidates.length > 0) {
+        return Math.min(...candidates);
+      }
+    } catch (_) {
+      // ignore and fallback
+    }
+
+    return 0;
+  }, []);
+
+  const getColorSwatches = useCallback((product: any) => {
+    if (!product?.variations?.length) return [] as Array<{ name: string; hex: string }>;
+    const seen = new Set<string>();
+    const colors: Array<{ name: string; hex: string }> = [];
+    for (const variation of product.variations) {
+      if (variation?.color?.hex && !seen.has(variation.color.hex)) {
+        colors.push({
+          name: variation.color.name,
+          hex: variation.color.hex,
+        });
+        seen.add(variation.color.hex);
+      }
+      if (colors.length === 4) break;
+    }
+    return colors;
+  }, []);
   return (
     <div className="space-y-8">
       {/* Boutiques */}
@@ -24,11 +108,11 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
                 <OptimizedImage
                   src={`${shop.shop_profile}`}
                   alt={shop.shop_name}
-                  className="w-16 h-16 object-cover rounded-lg"
+                  className="w-16 h-16 flex-shrink-0 object-cover rounded-lg"
                 />
                 <div>
                   <h4 className="font-medium">{shop.shop_name}</h4>
-                  <p className="text-sm text-gray-500">{shop.shop_description}</p>
+                  <p className="text-sm text-gray-500 line-clamp-2">{shop.shop_description}</p>
                 </div>
               </Link>
             ))}
@@ -40,25 +124,53 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
       {data?.products && data.products.length > 0 && (
         <div>
           <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {data.products.map((product: any) => (
-              <Link key={product.id} to={`/produit/${product.product_url}`} className="bg-gray-50 rounded-lg overflow-hidden">
-                <OptimizedImage
-                  src={`${product.product_profile}`}
-                  alt={product.product_name}
-                  className="w-full h-32 object-cover"
-                />
-                <div className="p-4">
-                  <h4 className="font-medium">{product.product_name}</h4>
-                  <p className="text-sm text-gray-500">
-                    {new Intl.NumberFormat('fr-FR', {
-                      style: 'currency',
-                      currency: 'XAF'
-                    }).format(parseInt(product.product_price))}
-                  </p>
-                </div>
-              </Link>
-            ))}
+          <div className="grid grid-cols-3 mb-12 gap-4">
+          {data.products.map((product: any) => (
+                        <Link
+                          key={product.id}
+                          to={`/produit/${product.product_url}`}
+                          className="group rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200"
+                          
+                        >
+                          <div className="relative aspect-square overflow-hidden">
+                            <OptimizedImage
+                              src={getProductThumbnail(product)}
+                              alt={product.product_name}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            />
+                            {/* Affichage des couleurs si variations */}
+                            {product?.variations?.length > 0 && (
+                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 px-2 py-1 rounded-full shadow-sm">
+                                {getColorSwatches(product).map((color: any) => (
+                                  <div
+                                    key={color.hex}
+                                    title={color.name}
+                                    className="w-3.5 h-3.5 rounded-full border border-gray-200"
+                                    style={{
+                                      backgroundColor: color.hex,
+                                      boxShadow: '0 0 0 1px #ccc',
+                                    }}
+                                  />
+                                ))}
+                                {product.variations.length > 4 && (
+                                  <span className="text-[10px] text-gray-600">+{product.variations.length - 4}</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-3 bg-white">
+                            <h4 className="font-medium text-xs text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
+                              {product.product_name}
+                            </h4>
+                            <p className="text-sm font-semibold text-orange-500 mt-1 text-sm">
+                              {new Intl.NumberFormat('fr-FR', {
+                                style: 'currency',
+                                currency: 'XAF'
+                              }).format(getDisplayPrice(product))}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
           </div>
         </div>
       )}
