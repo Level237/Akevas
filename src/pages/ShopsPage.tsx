@@ -7,16 +7,17 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import { ScrollRestoration } from 'react-router-dom';
 import img from "../assets/dress.jpg"
 import MobileNav from '@/components/ui/mobile-nav';
-import { useGetAllShopsQuery } from '@/services/guardService';
+import { useGetAllShopsQuery, useGetCategoriesWithParentIdNullQuery } from '@/services/guardService';
 import { Category } from '@/types/products';
 import { Shop } from '@/types/shop';
 import OptimizedImage from '@/components/OptimizedImage';
 import ShopSearch from '@/components/shop/ShopSearch';
 import Footer from '@/components/ui/footer';
+import ShopFilters, { ShopSortOption } from '@/components/filters/ShopFilters';
 
 
 type SortOption = 'rating' | 'allShops' | 'followers' | 'newest';
-type CategoryFilter = 'all' | 'mode' | 'accessoires' | 'beaute';
+// Removed legacy CategoryFilter in favor of sidebar category selection
 
 // Memoize skeleton component
 const ShopCardSkeleton = memo(() => (
@@ -229,110 +230,41 @@ const ShopCard = memo(({ shop }: { shop: Shop }) => {
 });
 ShopCard.displayName = 'ShopCard';
 
-// Memoize filters component
-const Filters = memo(({ 
-  sortBy, 
-  setSortBy, 
-  categoryFilter, 
-  setCategoryFilter, 
-  selectedFilter, 
-  setSelectedFilter 
-}: any) => (
-  <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-    <div className="flex items-center justify-between flex-wrap gap-4">
-      <div className="flex items-center gap-3 flex-wrap">
-
-      <Button
-          variant="outline" 
-          className={`flex items-center gap-2 transition-all ${
-            sortBy === 'allShops' ? 'bg-orange-50 text-[#ed7e0f] border-[#ed7e0f]' : ''
-          }`}
-          onClick={() => setSortBy('allShops')}
-        >
-          <Package className="w-4 h-4" />
-          Toutes les boutiques
-        </Button>
-        <Button
-          variant="outline"
-          className={`flex items-center gap-2 transition-all ${
-            sortBy === 'rating' ? 'bg-orange-50 text-[#ed7e0f] border-[#ed7e0f]' : ''
-          }`}
-          onClick={() => setSortBy('rating')}
-        >
-          <Star className="w-4 h-4" />
-          Mieux notés
-        </Button>
-
-     
-
-        <Button
-          variant="outline"
-          className={`flex items-center gap-2 transition-all ${
-            sortBy === 'followers' ? 'bg-orange-50 text-[#ed7e0f] border-[#ed7e0f]' : ''
-          }`}
-          onClick={() => setSortBy('followers')}
-        >
-          <Users className="w-4 h-4" />
-          Plus suivis
-        </Button>
-
-        <Button
-          variant="outline"
-          className={`flex items-center gap-2 transition-all ${
-            sortBy === 'newest' ? 'bg-orange-50 text-[#ed7e0f] border-[#ed7e0f]' : ''
-          }`}
-          onClick={() => setSortBy('newest')}
-        >
-          <TrendingUp className="w-4 h-4" />
-          Plus récents
-        </Button>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <select
-          className="px-4 py-2 border rounded-lg bg-white hover:border-[#ed7e0f] transition-colors"
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value as CategoryFilter)}
-        >
-          <option value="all">Toutes catégories</option>
-          <option value="mode">Mode</option>
-          <option value="accessoires">Accessoires</option>
-          <option value="beaute">Beauté</option>
-        </select>
-
-        <Button
-          variant={selectedFilter === 'premium' ? 'default' : 'outline'}
-          onClick={() => setSelectedFilter(selectedFilter === 'premium' ? 'all' : 'premium')}
-          className={`flex items-center gap-2 transition-all ${
-            selectedFilter === 'premium' ? 'bg-[#ed7e0f] hover:bg-[#ed7e0f]/90' : ''
-          }`}
-        >
-          <Shield className="w-4 h-4" />
-          Premium
-        </Button>
-      </div>
-    </div>
-  </div>
-));
-Filters.displayName = 'Filters';
+// Removed legacy inline Filters component
 
 const ShopsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'premium'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('allShops');
-  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  const [selectedShopCategoryIds, setSelectedShopCategoryIds] = useState<number[]>([]);
   const params = new URLSearchParams(window.location.search);
   const currentPage = params.get("page") || "1";
   const [totalPages, setTotalPages] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const { data: { shopList, totalPagesResponse } = {}, isLoading, isError } = useGetAllShopsQuery(currentPage);
+  const { data: { data: apiCategories } = {} } = useGetCategoriesWithParentIdNullQuery('guard');
 
   useEffect(() => {
     if (totalPagesResponse) {
       setTotalPages(totalPagesResponse);
     }
   }, [totalPagesResponse]);
+
+  // Use API categories for filter display
+  const availableCategories = useMemo(() => apiCategories || [], [apiCategories]);
+
+  // Map selected category ids -> lowercased names for matching with shop categories
+  const selectedCategoryNames = useMemo(() => {
+    if (!availableCategories || selectedShopCategoryIds.length === 0) return new Set<string>();
+    const idToName = new Map<number, string>();
+    availableCategories.forEach((c: any) => idToName.set(c.id, (c.category_name || '').toLowerCase()));
+    return new Set(
+      selectedShopCategoryIds
+        .map((id) => idToName.get(id) || '')
+        .filter((n) => n)
+    );
+  }, [availableCategories, selectedShopCategoryIds]);
 
   // Memoize filtered and sorted shops
   const filteredShops = useMemo(() => {
@@ -341,10 +273,11 @@ const ShopsPage = () => {
     return shopList.filter(shop => {
       const matchesSearch = shop.shop_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           shop.shop_key.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || 
-                            shop.categories.some(cat => cat.category_name.toLowerCase() === categoryFilter);
-      const matchesFilter = selectedFilter === 'all' || 
-                          (selectedFilter === 'premium' && "");
+      const matchesCategoryNew = selectedCategoryNames.size === 0 ||
+                            shop.categories.some(cat => selectedCategoryNames.has(cat.category_name.toLowerCase()));
+      const matchesCategory = matchesCategoryNew;
+      // Premium flag unknown in type; keep all when premium filter toggled for now
+      const matchesFilter = selectedFilter === 'all' ? true : true;
       
       return matchesSearch && matchesCategory && matchesFilter;
     }).sort(() => {
@@ -353,7 +286,7 @@ const ShopsPage = () => {
         default: return 0;
       }
     });
-  }, [shopList, searchQuery, categoryFilter, selectedFilter, sortBy]);
+  }, [shopList, searchQuery, selectedCategoryNames, selectedFilter, sortBy]);
 
   // Memoize pagination handler
   const handlePageChange = useCallback((pageNumber: number) => {
@@ -472,110 +405,123 @@ const ShopsPage = () => {
       />
 
       <main className="max-w-7xl mx-auto py-8">
-        {/* Hero Section */}
-       
-        
+        <div className="lg:grid lg:grid-cols-4 lg:gap-8">
+          {/* Left sidebar filters */}
+          <div className="hidden lg:block">
+            <ShopFilters
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              availableCategories={availableCategories}
+              selectedCategoryIds={selectedShopCategoryIds}
+              onToggleCategory={(id) => {
+                setSelectedShopCategoryIds(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
+              }}
+              onSelectCategory={(id) => {
+                if (id === null) {
+                  setSelectedShopCategoryIds([]);
+                } else {
+                  setSelectedShopCategoryIds([id]);
+                }
+              }}
+              onClearAll={() => {
+                setSearchQuery('');
+                setSelectedShopCategoryIds([]);
+                setSelectedFilter('all');
+                setSortBy('allShops');
+              }}
+              isPremiumOnly={selectedFilter === 'premium'}
+              onTogglePremium={(val) => setSelectedFilter(val ? 'premium' : 'all')}
+              sortBy={sortBy as ShopSortOption}
+              onChangeSort={(val) => setSortBy(val)}
+            />
+          </div>
 
-        {/* Filters */}
-        <Filters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          categoryFilter={categoryFilter}
-          setCategoryFilter={setCategoryFilter}
-          selectedFilter={selectedFilter}
-          setSelectedFilter={setSelectedFilter}
-        />
-
-        {/* Shops Grid - Correction de la hauteur */}
-        <div className="mb-8"> {/* Remplacer la hauteur fixe par une marge en bas */}
-          {isLoading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array(6).fill(null).map((_, index) => (
-                <ShopCardSkeleton key={`skeleton-${index}`} />
-              ))}
+          {/* Shops Grid */}
+          <div className="lg:col-span-3">
+            <div className="mb-8">
+              {isLoading && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Array(6).fill(null).map((_, index) => (
+                    <ShopCardSkeleton key={`skeleton-${index}`} />
+                  ))}
+                </div>
+              )}
+              {isError && <ErrorMessage />}
+              {!isLoading && !isError && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredShops.map((shop) => (
+                    <motion.div
+                      key={shop.shop_id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ShopCard shop={shop} />
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-          
-          {isError && <ErrorMessage />}
 
-          {!isLoading && !isError && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredShops.map((shop) => (
-                <motion.div
-                  key={shop.shop_id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ShopCard shop={shop} />
-                </motion.div>
-              ))}
-            </div>
-          )}
+            {/* Pagination */}
+            {!isLoading && !isError && (
+              <div className="py-8 border-t">
+                <div className="flex items-center justify-center gap-2">
+                  {parseInt(currentPage) > 1 && (
+                    <Button
+                      variant="outline"
+                      onClick={() => handlePageChange(parseInt(currentPage) - 1)}
+                      className="hidden sm:flex"
+                    >
+                      Précédent
+                    </Button>
+                  )}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, index) => {
+                      const pageNumber = index + 1;
+                      if (
+                        pageNumber === 1 ||
+                        pageNumber === totalPages ||
+                        (pageNumber >= parseInt(currentPage) - 2 && pageNumber <= parseInt(currentPage) + 2)
+                      ) {
+                        return (
+                          <Button
+                            key={pageNumber}
+                            variant={parseInt(currentPage) === pageNumber ? "default" : "outline"}
+                            onClick={() => handlePageChange(pageNumber)}
+                            className={`w-10 h-10 ${
+                              parseInt(currentPage) === pageNumber
+                                ? 'bg-[#ed7e0f] text-white'
+                                : ''
+                            }`}
+                          >
+                            {pageNumber}
+                          </Button>
+                        );
+                      } else if (
+                        pageNumber === parseInt(currentPage) - 3 ||
+                        pageNumber === parseInt(currentPage) + 3
+                      ) {
+                        return <span key={pageNumber} className="px-2">...</span>;
+                      }
+                      return null;
+                    })}
+                  </div>
+                  {parseInt(currentPage) < totalPages && (
+                    <Button
+                      variant="outline"
+                      onClick={() => handlePageChange(parseInt(currentPage) + 1)}
+                      className="hidden sm:flex"
+                    >
+                      Suivant
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Pagination - Maintenant correctement positionnée */}
-        {!isLoading && !isError && (
-          <div className="py-8 border-t">
-            <div className="flex items-center justify-center gap-2">
-              {parseInt(currentPage) > 1 && (
-                <Button
-                  variant="outline"
-                  onClick={() => handlePageChange(parseInt(currentPage) - 1)}
-                  className="hidden sm:flex"
-                >
-                  Précédent
-                </Button>
-              )}
-              
-              <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, index) => {
-                  const pageNumber = index + 1;
-                  
-                  if (
-                    pageNumber === 1 ||
-                    pageNumber === totalPages ||
-                    (pageNumber >= parseInt(currentPage) - 2 && pageNumber <= parseInt(currentPage) + 2)
-                  ) {
-                    return (
-                      <Button
-                        key={pageNumber}
-                        variant={parseInt(currentPage) === pageNumber ? "default" : "outline"}
-                        onClick={() => handlePageChange(pageNumber)}
-                        className={`w-10 h-10 ${
-                          parseInt(currentPage) === pageNumber
-                            ? 'bg-[#ed7e0f] text-white'
-                            : ''
-                        }`}
-                      >
-                        {pageNumber}
-                      </Button>
-                    );
-                  } else if (
-                    pageNumber === parseInt(currentPage) - 3 ||
-                    pageNumber === parseInt(currentPage) + 3
-                  ) {
-                    return <span key={pageNumber} className="px-2">...</span>;
-                  }
-                  return null;
-                })}
-              </div>
-
-              {parseInt(currentPage) < totalPages && (
-                <Button
-                  variant="outline"
-                  onClick={() => handlePageChange(parseInt(currentPage) + 1)}
-                  className="hidden sm:flex"
-                >
-                  Suivant
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
-        
       </main>
       <Footer />
     </div>
