@@ -426,7 +426,7 @@ const ShopsPage = () => {
           <div className="hidden lg:block">
             <ShopFilters
               searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
+             
               availableCategories={availableCategories}
               selectedCategoryIds={selectedShopCategoryIds}
               onToggleCategory={(id) => {
@@ -588,7 +588,7 @@ const ShopsPage = () => {
                 <div className="flex-1 overflow-y-auto p-4">
                   <ShopFilters
                     searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
+                   
                     availableCategories={availableCategories}
                     selectedCategoryIds={selectedShopCategoryIds}
                     onToggleCategory={(id) => {

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Star, Users, TrendingUp, Filter, ChevronDown, ChevronUp, Shield } from 'lucide-react';
+import {Star, Users, TrendingUp, Filter, ChevronDown, ChevronUp, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export type ShopSortOption = 'allShops' | 'rating' | 'followers' | 'newest';
@@ -16,7 +16,6 @@ export interface ApiCategory {
 
 interface ShopFiltersProps {
   searchQuery: string;
-  onSearchChange: (value: string) => void;
 
   availableCategories: ApiCategory[];
   selectedCategoryIds: number[];
@@ -35,7 +34,7 @@ const sectionTransition = { duration: 0.2 };
 
 const ShopFilters = ({
   searchQuery,
-  onSearchChange,
+  
   availableCategories,
   selectedCategoryIds,
   onToggleCategory,
