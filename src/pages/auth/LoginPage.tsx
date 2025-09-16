@@ -30,7 +30,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right Column */}
-        <Card className="relative border-none rounded-none hidden w-full block overflow-hidden md:hidden">
+        <Card className="relative lg:block border-none rounded-none hidden w-full block overflow-hidden md:hidden">
           <div className="absolute rounded-none    inset-0">
             <div className="absolute rotate-45 p-12 top-0   rounded-3xl z-50">
 
