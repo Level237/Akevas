@@ -20,7 +20,7 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mb-8"
           >
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
 
               {/* Section Aperçu Boutique */}
               <Card className="p-6   to-white border border-[#ed7e0f]/10 shadow-lg hover:shadow-xl transition-all duration-300">
