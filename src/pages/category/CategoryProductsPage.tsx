@@ -8,13 +8,34 @@ import AsyncLink from '@/components/ui/AsyncLink';
 import defaultHeroImage from "@/assets/dress.jpg"
 import Footer from '@/components/ui/footer';
 import ProductListContainer from '@/components/frontend/ProductListContainer';
+import { useQueryState } from 'nuqs';
 
 const CategoryProductsPage = () => {
     const { url } = useParams<{ url: string }>();
-    const { data: categoryData, isLoading } = useGetCategoryProductsByUrlQuery(url);
-    console.log(categoryData)
     const { data: category } = useGetCategoryByUrlQuery(url);
-    const hasProducts = !isLoading && categoryData.data && categoryData.data.length > 0;
+    // URL filters (no categories here)
+    const [pageParam] = useQueryState('page', { defaultValue: '1', parse: (v) => v || '1', serialize: (v) => v });
+    const currentPage = parseInt(pageParam || '1', 10);
+    const [minPrice] = useQueryState('min_price', { defaultValue: 0, parse: (v) => parseInt(v, 10) || 0, serialize: (v) => v.toString() });
+    const [maxPrice] = useQueryState('max_price', { defaultValue: 500000, parse: (v) => parseInt(v, 10) || 500000, serialize: (v) => v.toString() });
+    const [selectedColors] = useQueryState('colors', { defaultValue: [], parse: (v) => v ? v.split(',') : [], serialize: (a) => a.length ? a.join(',') : '' });
+    const [selectedAttributes] = useQueryState('attribut', { defaultValue: [], parse: (v) => v ? v.split(',').map((x)=>parseInt(x,10)).filter(n=>!isNaN(n)) : [], serialize: (a) => a.length ? a.join(',') : '' });
+    const [selectedGenders] = useQueryState('gender', { defaultValue: [], parse: (v) => v ? v.split(',').map((x)=>parseInt(x,10)).filter(n=>!isNaN(n)) : [], serialize: (a) => a.length ? a.join(',') : '' });
+    const [isSellerMode] = useQueryState('seller_mode', { defaultValue: false, parse: (v) => v === 'true', serialize: (v) => v ? 'true' : '' });
+    const [selectedBulkPriceRange] = useQueryState('bulk_price_range', { defaultValue: '', parse: (v) => v || '', serialize: (v) => v || '' });
+
+    const { data: categoryData, isLoading } = useGetCategoryProductsByUrlQuery({
+        url: url as string,
+        page: currentPage,
+        min_price: minPrice,
+        max_price: maxPrice,
+        colors: selectedColors,
+        attribut: selectedAttributes,
+        gender: selectedGenders,
+        seller_mode: isSellerMode,
+        bulk_price_range: selectedBulkPriceRange
+    });
+    const hasProducts = !isLoading && categoryData && categoryData.productList && categoryData.productList.length > 0;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -61,16 +82,18 @@ const CategoryProductsPage = () => {
             <div className="container mx-auto px-4 py-8">
                 {hasProducts ? (
                     <ProductListContainer
-                        products={categoryData.data}
+                        products={categoryData.productList}
                         isLoadingOverride={isLoading}
-                        presetCategoryIds={category?.id ? [category.id] : []}
+                        totalPagesOverride={categoryData.totalPagesResponse}
+                        currentPageOverride={currentPage}
+                        presetCategoryIds={category?.data?.id ? [category.data.id] : []}
                         showCategories={false}
                         hero={null}
                         getPageUrlOverride={(pageNumber) => {
                             const params = new URLSearchParams(window.location.search);
-                            params.set('page', pageNumber.toString());
-                            // Pour la page catégorie, on n’ajoute pas le paramètre categories
-                            // On garde les autres filtres pertinents
+                            // Reconstruire sans le paramètre categories
+                            const clean = new URLSearchParams();
+                            clean.set('page', pageNumber.toString());
                             const min = params.get('min_price');
                             const max = params.get('max_price');
                             const colors = params.get('colors');
@@ -78,8 +101,6 @@ const CategoryProductsPage = () => {
                             const gender = params.get('gender');
                             const seller = params.get('seller_mode');
                             const bulk = params.get('bulk_price_range');
-                            const clean = new URLSearchParams();
-                            clean.set('page', pageNumber.toString());
                             if (min) clean.set('min_price', min);
                             if (max) clean.set('max_price', max);
                             if (colors) clean.set('colors', colors);

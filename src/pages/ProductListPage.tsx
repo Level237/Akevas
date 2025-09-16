@@ -85,7 +85,7 @@ const ProductListPage: React.FC = () => {
 
   return (
     <>
-    <Header />
+      <Header />
     <MobileNav />
     <ProductListContainer
       products={products}

@@ -189,10 +189,27 @@ export const guardService = createApi({
             })
         }),
         getCategoryProductsByUrl: builder.query({
-            query: (url) => ({
-                url: `/api/product/by-category/${url}`,
-                method: 'GET'
-            })
+            query: ({ url, page, min_price, max_price, colors, attribut, gender, seller_mode, bulk_price_range }: { url: string, page?: number, min_price?: number, max_price?: number, colors?: string[], attribut?: number[], gender?: number[], seller_mode?: boolean, bulk_price_range?: string }) => {
+                const params = new URLSearchParams();
+                if (page) params.append('page', page.toString());
+                if (min_price && min_price > 0) params.append('min_price', min_price.toString());
+                if (max_price && max_price < 500000) params.append('max_price', max_price.toString());
+                if (colors && colors.length > 0) params.append('colors', colors.join(','));
+                if (attribut && attribut.length > 0) params.append('attribut', attribut.join(','));
+                if (gender && gender.length > 0) params.append('gender', gender.join(','));
+                if (seller_mode !== undefined && seller_mode !== false) params.append('seller_mode', seller_mode.toString());
+                if (bulk_price_range) params.append('bulk_price_range', bulk_price_range);
+                return {
+                    url: `/api/product/by-category/${url}${params.toString() ? `?${params.toString()}` : ''}`,
+                    method: 'GET'
+                };
+            },
+            transformResponse: (response: { data: Product[], meta?: { last_page: number, current_page: number, total: number } }) => ({
+                productList: response.data,
+                totalPagesResponse: response.meta?.last_page ?? 1,
+                currentPageResponse: response.meta?.current_page ?? 1,
+                totalProductsResponse: response.meta?.total ?? response.data?.length ?? 0,
+            }),
         }),
         getCategoryByUrl: builder.query({
             query: (url) => ({
