@@ -125,7 +125,14 @@ export const authService = createApi({
                 body: formData
             }),
             invalidatesTags: ['Auth']
-        })
+        }),
+        verifyPayin:builder.mutation({
+            query:(formData)=>({
+                url:`/api/status/payin/coins`,
+                method:'POST',
+                body:formData
+            })
+        }),
        
     })
 })
@@ -135,6 +142,7 @@ export const {
     useValidatePaymentCoinMutation,
     useGetUserQuery,
     useLogoutMutation,
+    useVerifyPayinMutation,
     useNewStoreMutation,
     useControlPaymentMutation,
     useRegisterMutation,

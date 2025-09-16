@@ -5,11 +5,11 @@ import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useInitCoinPaymentMutation, useVerifyCoinPaymentMutation} from '@/services/sellerService';
-import { useControlPaymentMutation, useValidatePaymentCoinMutation } from '@/services/auth';
+import { useControlPaymentMutation, useVerifyPayinMutation} from '@/services/auth';
 
 export default function MobileMoneyPaymentPage() {
   const navigate = useNavigate();
-  const [paymentStatus, setPaymentStatus] = useState<'initializing' | 'waiting' | 'failed' | 'success'|'loading'>('initializing');
+  const [paymentStatus, setPaymentStatus] = useState<'initializing' | 'waiting' | 'failed' | 'success' | 'loading' | 'low'>('initializing');
   const [message, setMessage] = useState("Patientez, votre paiement est en cours d'initialisation...");
   const [paymentRef, setPaymentRef] = useState<string | null>(null);
   const [isControlPayment,setIsControlPayment,]=useState(false)
@@ -29,9 +29,8 @@ export default function MobileMoneyPaymentPage() {
   console.log(paymentMethod)
   // RTK Query hooks
   const [initPayment] = useInitCoinPaymentMutation();
-  const [verificationData] = useVerifyCoinPaymentMutation();
+  const [verifyPayin] = useVerifyPayinMutation();
  
-  const [validatePaymentCoin] = useValidatePaymentCoinMutation();
   // Timer refs for cleanup
   const timersRef = useRef<number[]>([]);
   
@@ -43,15 +42,15 @@ export default function MobileMoneyPaymentPage() {
       return;
     }
     else{
-      const responseData = await verificationData({reference:paymentRef});
+      const responseData = await verifyPayin({transaction_ref:paymentRef});
     
     
     if (!responseData) return;
    console.log(responseData)
-    if (responseData && responseData.data.status === 'complete') {
+   if (responseData && responseData.data.status === 'SUCCESS') {
       isActive=false;
 
-      await validatePaymentCoin({reference:paymentRef,amount:amount})
+      
       setIsGeneratingTicket(true);
       setPaymentStatus('loading');
       setTimeout(() => {
@@ -62,7 +61,7 @@ export default function MobileMoneyPaymentPage() {
       // Redirect after success
       
       
-    } else if (responseData.data.status === 'failed') {
+    } else if (responseData.data.status === 'FAILED' || responseData.data.status==="CANCELED") {
       setPaymentStatus('failed');
       isActive=false;
       setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
@@ -136,8 +135,8 @@ export default function MobileMoneyPaymentPage() {
   const initializePayment = async () => {
     try {
       const formData = {
-        phone,
-        amount,
+        paymentPhone:phone,
+        payinAmount:10,
         coins,
         paymentMethod
       }
@@ -145,7 +144,7 @@ export default function MobileMoneyPaymentPage() {
     setPaymentStatus('initializing');
       const response = await initPayment(formData);
       console.log(response)
-      if (response.data.statusCharge === "Accepted") {
+      if (response.data.status === "success" ) {
         setPaymentRef(response.data.reference);
         setPaymentStatus('waiting');
         if(paymentMethod==="cm.orange"){
@@ -153,6 +152,10 @@ export default function MobileMoneyPaymentPage() {
         }else{
           setMessage("Confirmez votre transaction en composant *126#");
         }
+      } else if(response.data.status==="low"){
+        setPaymentStatus('low');
+     
+      setMessage("Votre compte est insuffisant");
       } else {
         setPaymentStatus('failed');
         setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");
@@ -177,6 +180,9 @@ export default function MobileMoneyPaymentPage() {
   
   const handleRetry = () => {
     if (paymentStatus === 'failed') {
+      window.location.reload();
+    }
+    if (paymentStatus === 'low') {
       window.location.reload();
     }
   };
@@ -316,7 +322,27 @@ export default function MobileMoneyPaymentPage() {
                   </Button>
                 </motion.div>
               )}
-              
+              {paymentStatus === 'low' && (
+                <motion.div
+                  key="low"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center"
+                >
+                  <div className="w-16 h-16 mb-5 text-yellow-500">
+                    <AlertCircle size={64} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-yellow-600">Solde insuffisant</h3>
+                  <p className="text-gray-600 mb-6">{message}</p>
+                  <Button 
+                    onClick={handleRetry}
+                    className={` ${paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#e56800]" : "bg-blue-800 hover:bg-blue-800/80"} text-white `}
+                  >
+                    Réessayer
+                  </Button>
+                </motion.div>
+              )}
               {isGeneratingTicket && !isControlPayment && paymentStatus==="loading" && (
                     <div className="flex flex-col items-center mt-8 gap-4">
                       <motion.div
