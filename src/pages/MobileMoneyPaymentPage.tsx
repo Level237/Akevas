@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, AlertCircle, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import { useInitCoinPaymentMutation, useVerifyCoinPaymentMutation} from '@/services/sellerService';
+import { useInitCoinPaymentMutation} from '@/services/sellerService';
 import { useControlPaymentMutation, useVerifyPayinMutation} from '@/services/auth';
 
 export default function MobileMoneyPaymentPage() {
