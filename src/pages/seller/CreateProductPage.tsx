@@ -1065,7 +1065,7 @@ const CreateProductPage: React.FC = () => {
                 </header>
 
                 <main className="max-w-7xl pl-24 max-sm:px-4  px-4 py-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Colonne principale */}
                         <div className="md:col-span-2 space-y-6">
                             {/* Informations de base */}
@@ -1207,8 +1207,8 @@ const CreateProductPage: React.FC = () => {
                                             <span className="text-2xl">📦</span>
                                         </div>
                                         <div>
-                                            <h2 className="text-xl font-bold text-gray-900">Prix de Gros pour Variations (Couleur uniquement)</h2>
-                                            <p className="text-purple-600 text-sm font-medium">Configurez vos tarifs pour les revendeurs par couleur</p>
+                                            <h2 className="text-xl max-sm:text-md font-bold text-gray-900">Prix de Gros pour Variations (Couleur uniquement)</h2>
+                                            <p className="text-purple-600 text-xs font-medium">Configurez vos tarifs pour les revendeurs par couleur</p>
                                         </div>
                                     </div>
 
@@ -1230,7 +1230,7 @@ const CreateProductPage: React.FC = () => {
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Quantité minimale</label>
+                                                        <label className="block text-sm max-sm:text-xs font-semibold text-gray-700 mb-2">Quantité minimale</label>
                                                         <input
                                                             type="number"
                                                             min="1"
@@ -1243,7 +1243,7 @@ const CreateProductPage: React.FC = () => {
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
+                                                        <label className="block text-sm max-sm:text-xs font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
                                                         <input
                                                             type="number"
                                                             min="0"
@@ -1265,7 +1265,7 @@ const CreateProductPage: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={addWholesalePrice}
-                                            className="px-4 py-2 bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+                                            className="px-4 py-2 max-sm:text-xs bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
                                         >
                                             + Ajouter un prix
                                         </button>
