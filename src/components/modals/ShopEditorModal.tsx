@@ -83,6 +83,7 @@ interface Shop {
   level: string;
   cover: string;
   images: ProductImage[];
+  product_type?: string | number;
 }
 
 interface SellerData {
@@ -348,6 +349,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                 {[
                   { value: 'general', label: 'Général', icon: FileText },
                   { value: 'personal', label: 'Personnel', icon: User },
+                  { value: 'seller-info', label: 'Infos vendeur', icon: User },
                   { value: 'identity', label: 'Identité', icon: IdCard },
                   { value: 'location', label: 'Localisation', icon: MapPin },
                   { value: 'media', label: 'Médias', icon: Camera }
@@ -393,6 +395,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                     {[
                       { value: 'general', label: 'Général', icon: FileText },
                       { value: 'personal', label: 'Personnel', icon: User },
+                      { value: 'seller-info', label: 'Infos vendeur', icon: User },
                       { value: 'identity', label: 'Identité', icon: IdCard },
                       { value: 'location', label: 'Localisation', icon: MapPin },
                       { value: 'media', label: 'Médias', icon: Camera }
@@ -420,6 +423,44 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
               </div>
 
               <Tabs value={tab} className="h-full flex flex-col">
+                {/* Infos vendeur */}
+                <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="seller-info">
+                  <div className="space-y-6 p-2 sm:p-4 lg:p-8">
+                    <div>
+                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quel type de vendeur êtes-vous ?</label>
+                      <UISelect
+                        value={(formData.isWholesaler ?? '1').toString()}
+                        onValueChange={(val) => handleSellerChange({ isWholesaler: val })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez un type de vendeur" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Grossiste</SelectItem>
+                          <SelectItem value="1">Détaillant</SelectItem>
+                          <SelectItem value="2">Les deux</SelectItem>
+                        </SelectContent>
+                      </UISelect>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Types de produits</label>
+                      <UISelect
+                        value={(formData.shop?.product_type ?? '0').toString()}
+                        onValueChange={(val) => handleShopChange({ product_type: val })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez un type de produits" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Boutique</SelectItem>
+                          <SelectItem value="1">Friperie</SelectItem>
+                          <SelectItem value="2">Les deux</SelectItem>
+                        </SelectContent>
+                      </UISelect>
+                    </div>
+                  </div>
+                </TabsContent>
                 {/* Général */}
                 <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="general">
                   <div className="flex flex-col gap-6 sm:gap-4 p-2 sm:p-4 lg:p-3">
