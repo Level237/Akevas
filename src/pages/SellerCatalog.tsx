@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Share2, Plus, ShoppingBag, Search, Grid, List, Copy, Check, Facebook, MessageCircle, Twitter, Send } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+// import { AnimatePresence } from 'framer-motion';
 import { Product } from '@/types/products';
 import AsyncLink from '@/components/ui/AsyncLink';
 import MobileNav from '@/components/ui/mobile-nav';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import ProductListOverview from '@/components/seller/products/ProductListOverview';
 
 const SellerCatalog: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -227,121 +228,13 @@ const SellerCatalog: React.FC = () => {
                     </div>
             </div>
 
-                {/* Products Display */}
-                <AnimatePresence>
-                    {viewMode === 'grid' ? (
-                        <div 
-                            className="grid mb-12  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                            
-                        >
-                            {filteredProducts?.map((product: Product) => (
-                                <div
-                                    key={product.id}
-                                   
-                                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group"
-                                >
-                                    <div className="relative h-48 overflow-hidden">
-                                        <img
-                                            src={product.product_profile}
-                                            alt={product.product_name}
-                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </div>
-                                    <div className="p-5">
-                                        <div className="flex flex-col gap-2 max-sm:items-center max-sm:gap-3 justify-between items-start mb-3">
-                                            <h3 className="font-semibold text-gray-800 group-hover:text-[#ed7e0f] transition-colors">
-                                                {product.product_name}
-                                            </h3>
-                                            <div className='max-sm:flex grid grid-cols-2 gap-3 max-sm:gap-3'>
-                                                {product.product_categories.map((category: any) => (
-                                                    <span key={category.id} className="px-3 text-xs truncate px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
-                                                        {category.category_name}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                           
-                                        </div>
-                                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                                            {product.product_description}
-                                        </p>
-                                        <div className="flex items-center justify-between mb-4">
-                                            <span className="text-[#ed7e0f] text-xl font-bold">
-                                                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF' }).format(Number(product.product_price))}
-                                            </span>
-                                        </div>
-                                        <div className="flex gap-3">
-                                            <AsyncLink
-                                               to={`/seller/product/edit/${product.product_url}`}
-                                                className="flex-1 text-center py-2.5 max-sm:text-xs text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                                            >
-                                                Modifier
-                                            </AsyncLink>
-                                            <a
-                                                href={`https:/akevas.com/produit/${product.product_url}`}
-                                                target='_blank'
-                                                className="flex-1 text-center py-2.5 max-sm:text-xs text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
-                                            >
-                                                Voir
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div 
-                            className="flex flex-col gap-4"
-                        >
-                            {filteredProducts?.map((product: Product) => (
-                    <div
-                        key={product.id}
-                                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex"
-                        >
-                                    <div className="w-48 h-48 flex-shrink-0">
-                            <img
-                                src={product.product_profile}
-                                alt={product.product_name}
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                                    <div className="flex-1 p-6 flex flex-col">
-                                        <div className="flex justify-between items-start mb-3">
-                                            <h3 className="text-xl font-semibold text-gray-800">
-                                                {product.product_name}
-                                            </h3>
-                                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
-                                                {product.product_categories[0]?.category_name}
-                                            </span>
-                                        </div>
-                                        <p className="text-gray-600 flex-1 mb-4">
-                                {product.product_description}
-                            </p>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[#ed7e0f] text-2xl font-bold">
-                                                {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF' }).format(Number(product.product_price))}
-                                </span>
-                                            <div className="flex gap-3">
-                                <AsyncLink
-                                    to={`/seller/product/edit/${product.product_url}`}
-                                                    className="px-6 py-2.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                                >
-                                    Modifier
-                                </AsyncLink>
-                                <AsyncLink
-                                    to={`/produit/${product.product_url}`}
-                                                    className="px-6 py-2.5 text-sm bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ff8f1f] transition-colors"
-                                >
-                                    Voir
-                                </AsyncLink>
-                                            </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-                        </div>
-                    )}
-                </AnimatePresence>
+                {/* Products Display via reusable overview */}
+                <ProductListOverview
+                    products={filteredProducts as Product[]}
+                    isLoading={sellerLoading}
+                    isTrashView={false}
+                    searchQuery={searchQuery}
+                />
             </div>
             <MobileNav />
         </div>
