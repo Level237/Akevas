@@ -357,7 +357,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                     key={value}
                     value={value}
                     className={`
-                      w-full text-white flex items-center gap-3 p-4 rounded-lg
+                      w-full text-white flex items-start justify-start gap-3 p-4 rounded-lg
                       transition-all duration-300 ease-in-out
                       hover:bg-[#ed7e0f]/30 hover:shadow-sm
                       data-[state=active]:bg-[#ed7e0f]/30
@@ -495,7 +495,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                         }}
                       />
                     </div>
-                     <div className="space-y-6 p-2 sm:p-4 lg:p-8">
+                     <div className="space-y-6">
                     <div>
                       <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quel type de vendeur êtes-vous ?</label>
                       <UISelect
