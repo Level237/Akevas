@@ -32,14 +32,7 @@ export const guardService = createApi({
             query: (id) => `/api/shop/${id}`,
             providesTags: ['guard'],
         }),
-        updateShop: builder.mutation({
-            query: (formData) => ({
-                url: '/api/shop/update',
-                method: 'POST',
-                body: formData,
-            }),
-            invalidatesTags: ['guard'],
-        }),
+        
         checkIfEmailExists: builder.mutation({
             query: (formData) => ({
                 url: `/api/check/email-and-phone-number`,
@@ -200,5 +193,4 @@ export const {
     useGetAttributeValuesQuery,
     useGetSimilarProductsQuery,
     useGetSubscriptionQuery,
-    useUpdateShopMutation
 } = guardService

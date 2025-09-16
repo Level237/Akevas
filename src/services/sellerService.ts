@@ -35,6 +35,14 @@ export const sellerService = createApi({
                 body: formData
             })
         }),
+        updateShop: builder.mutation({
+            query: (formData) => ({
+                url: '/api/v1/update/seller',
+                method: 'POST',
+                body: formData,
+            }),
+            invalidatesTags: ['seller'],
+        }),
 
         updateCategories: builder.mutation({
             query: (formData) => ({
@@ -134,5 +142,6 @@ export const {
     useRecentNotificationsQuery,
     useGetNotificationQuery,
     useAllNotificationQuery,
-    useRestoreProductMutation
+    useRestoreProductMutation,
+    useUpdateShopMutation
 } = sellerService

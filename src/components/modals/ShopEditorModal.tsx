@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Select from 'react-select';
 import { Select as UISelect, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { useGetTownsQuery, useGetQuartersQuery, useUpdateShopMutation, useGetCategoryByGenderQuery } from '@/services/guardService';
+import { useGetTownsQuery, useGetQuartersQuery, useGetCategoryByGenderQuery } from '@/services/guardService';
+import { useUpdateShopMutation } from '@/services/sellerService';
+import { toast } from 'sonner';
 
 // Types pour la structure de données
 interface ProductImage {
@@ -59,7 +61,7 @@ interface Shop {
   shop_id: string;
   shop_name: string;
   shop_description: string;
-  shop_profile: string;
+  shop_profile: string | File;
   shop_key: string;
   review_average: number;
   reviewCount: number;
@@ -82,7 +84,7 @@ interface Shop {
   gender: string;
   level: string;
   cover: string;
-  images: ProductImage[];
+  images: ProductImage[] | File[];
   product_type?: string | number;
 }
 
@@ -96,9 +98,9 @@ interface SellerData {
   role_id: number;
   phone_number: string;
   isWholesaler: string;
-  identity_card_in_front: string;
-  identity_card_in_back: string;
-  identity_card_with_the_person: string;
+  identity_card_in_front: string | File;
+  identity_card_in_back: string | File;
+  identity_card_with_the_person: string | File;
   isSeller: number;
   feedbacks: any[];
   shop: Shop;
@@ -107,77 +109,94 @@ interface SellerData {
 
 interface ImageUploadProps {
   label: string;
-  value: string | undefined;
-  onChange: (val: string) => void;
+  value?: File | string | null;
+  onChange: (val: File | null) => void;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ label, value, onChange }) => (
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-    <input
-      type="file"
-      accept="image/*"
-      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#ed7e0f]/10 file:text-[#ed7e0f] hover:file:bg-[#ed7e0f]/20"
-      onChange={e => {
-        const file = e.target.files?.[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (ev) => onChange(ev.target?.result as string);
-          reader.readAsDataURL(file);
-        }
-      }}
-    />
-    {value && (
-      <div className="mt-2 flex items-center gap-4">
-        <img src={value} alt="preview" className="rounded-lg w-24 h-24 object-cover border" />
-        <Button type="button" variant="destructive" size="icon" onClick={() => onChange('')}>
-          <Trash2 className="w-4 h-4" />
-        </Button>
-      </div>
-    )}
-  </div>
-);
+const ImageUpload: React.FC<ImageUploadProps> = ({ label, value, onChange }) => {
+  const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!value) { setPreview(null); return; }
+    if (value instanceof File) {
+      const url = URL.createObjectURL(value);
+      setPreview(url);
+      return () => URL.revokeObjectURL(url);
+    } else if (typeof value === 'string') {
+      setPreview(value);
+    }
+  }, [value]);
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+      <input
+        type="file"
+        accept="image/*"
+        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#ed7e0f]/10 file:text-[#ed7e0f] hover:file:bg-[#ed7e0f]/20"
+        onChange={e => onChange(e.target.files?.[0] || null)}
+      />
+      {preview && (
+        <div className="mt-2 flex items-center gap-4">
+          <img src={preview} alt="preview" className="rounded-lg w-24 h-24 object-cover border" />
+          <Button type="button" variant="destructive" size="icon" onClick={() => onChange(null)}>
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface GalleryUploadProps {
-  images: ProductImage[];
-  onChange: (images: ProductImage[]) => void;
+  images: (File | { id?: number; path: string })[];
+  onChange: (images: File[]) => void;
 }
 
 const GalleryUpload: React.FC<GalleryUploadProps> = ({ images, onChange }) => {
+  const [previews, setPreviews] = useState<string[]>([]);
+
+  useEffect(() => {
+    const urls: string[] = [];
+    const revokers: string[] = [];
+    images.forEach((item) => {
+      if (item instanceof File) {
+        const u = URL.createObjectURL(item);
+        urls.push(u);
+        revokers.push(u);
+      } else if (item && typeof item === 'object' && 'path' in item) {
+        urls.push(item.path);
+      }
+    });
+    setPreviews(urls);
+    return () => revokers.forEach(u => URL.revokeObjectURL(u));
+  }, [images]);
+
   const handleAdd = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const newImages: ProductImage[] = [];
-    
-    files.forEach((file, idx) => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        newImages.push({ 
-          id: Date.now() + idx, 
-          path: ev.target?.result as string 
-        });
-        if (newImages.length === files.length) {
-          onChange([...images, ...newImages].slice(0, 6));
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    // keep only Files in state for upload
+    const currentFiles = images.filter((it): it is File => it instanceof File);
+    onChange([...currentFiles, ...files].slice(0, 6));
   };
 
-  const handleRemove = (id: number) => {
-    onChange(images.filter(img => img.id !== id));
+  const handleRemove = (idx: number) => {
+    const currentFiles = images.filter((it): it is File => it instanceof File);
+    const next = currentFiles.slice();
+    next.splice(idx, 1);
+    onChange(next);
   };
 
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">Galerie d'images</label>
       <div className="flex gap-3 flex-wrap">
-        {images.map(img => (
-          <div key={img.id} className="relative group w-24 h-24 rounded-lg overflow-hidden border">
-            <img src={img.path} alt="gallery" className="w-full h-full object-cover" />
+        {previews.map((src, idx) => (
+          <div key={idx} className="relative group w-24 h-24 rounded-lg overflow-hidden border">
+            <img src={src} alt="gallery" className="w-full h-full object-cover" />
             <button 
               type="button" 
               className="absolute top-1 right-1 bg-white/80 rounded-full p-1 shadow hover:bg-white" 
-              onClick={() => handleRemove(img.id)}
+              onClick={() => handleRemove(idx)}
             >
               <Trash2 className="w-4 h-4 text-red-500" />
             </button>
@@ -260,52 +279,101 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
     handleShopChange({ categories: selectedCategories });
   };
 
-  const handleGalleryChange = (images: ProductImage[]) => {
-    handleShopChange({ images });
+  const handleGalleryChange = (images: File[]) => {
+    handleShopChange({ images: images as unknown as any });
   };
 
-  // Enregistrement avec validation
+  const initialRef = React.useRef<SellerData | null>(null);
+  useEffect(() => {
+    initialRef.current = initialData; // snapshot pour comparaison
+  }, [initialData]);
+
+  const isChanged = (curr: any, prev: any) => {
+    // comparaison simple (scalaires/strings); adapter si besoin
+    return curr !== prev;
+  };
+  const fileChanged = (curr: unknown) => curr instanceof File;
+  const arrayIds = (arr: any[]) => (arr || []).map((c: any) => c.id).sort();
+
+  // Remplacez buildUpdateFormData par ceci:
+  const buildUpdateFormData = (): FormData => {
+    const fd = new FormData();
+    const prev = initialRef.current as SellerData;
+
+    // Vendeur
+    if (isChanged(formData.firstName, prev?.firstName)) fd.append('firstName', formData.firstName || '');
+    if (isChanged(formData.lastName, prev?.lastName)) fd.append('lastName', formData.lastName || '');
+    if (isChanged(formData.email, prev?.email)) fd.append('email', formData.email || '');
+    if (isChanged(formData.phone_number, prev?.phone_number)) fd.append('phone_number', formData.phone_number || '');
+    if (isChanged(formData.birthDate, prev?.birthDate)) fd.append('birthDate', formData.birthDate || '');
+    if (isChanged(formData.nationality, prev?.nationality)) fd.append('nationality', formData.nationality || '');
+    if (isChanged(formData.isWholesaler, prev?.isWholesaler)) fd.append('isWholesaler', String(formData.isWholesaler));
+
+    if (fileChanged(formData.identity_card_in_front)) fd.append('identity_card_in_front', formData.identity_card_in_front as unknown as File);
+    if (fileChanged(formData.identity_card_in_back)) fd.append('identity_card_in_back', formData.identity_card_in_back as unknown as File);
+    if (fileChanged(formData.identity_card_with_the_person)) fd.append('identity_card_with_the_person', formData.identity_card_with_the_person as unknown as File);
+
+    // Boutique (aplatie)
+    if (isChanged(formData.shop?.shop_name, prev?.shop?.shop_name)) fd.append('shop_name', formData.shop?.shop_name || '');
+    if (isChanged(formData.shop?.shop_description, prev?.shop?.shop_description)) fd.append('shop_description', formData.shop?.shop_description || '');
+    if (isChanged(formData.shop?.product_type, prev?.shop?.product_type)) fd.append('product_type', String(formData.shop?.product_type));
+    if (isChanged(formData.shop?.gender, prev?.shop?.gender)) fd.append('shop_gender', String(formData.shop?.gender || ''));
+
+    // Localisation (noms)
+    if (isChanged(formData.shop?.town, prev?.shop?.town)) fd.append('town', formData.shop?.town || '');
+    if (isChanged(formData.shop?.quarter, prev?.shop?.quarter)) fd.append('quarter', formData.shop?.quarter || '');
+
+    // Photo profil: seulement si nouveau File
+    if (fileChanged(formData.shop?.shop_profile)) {
+      fd.append('shop_profile', formData.shop?.shop_profile as unknown as File);
+    }
+
+    // Catégories: synchroniser seulement si différent
+    const currCat = arrayIds(formData.shop?.categories || []);
+    const prevCat = arrayIds(prev?.shop?.categories || []);
+    if (JSON.stringify(currCat) !== JSON.stringify(prevCat)) {
+      currCat.forEach(id => fd.append('categories[]', String(id)));
+    }
+
+    // Galerie: n’envoyer que les nouveaux Files
+    const images = (formData.shop?.images as unknown as (File | { path: string })[]) || [];
+    const newFiles = images.filter((i): i is File => i instanceof File);
+    if (newFiles.length > 0) {
+      newFiles.forEach(f => fd.append('images[]', f));
+    }
+    return fd;
+  };
+
   const handleSave = async () => {
     try {
-      // Validation des données requises
       if (!formData.shop.shop_name?.trim()) {
         alert('Le nom de la boutique est requis');
         return;
       }
-
       if (!formData.firstName?.trim() || !formData.lastName?.trim()) {
         alert('Le prénom et le nom sont requis');
         return;
       }
-
       if (!formData.email?.trim()) {
         alert('L\'email est requis');
         return;
       }
+      const fd = buildUpdateFormData();
 
-      // Préparation des données pour l'API
-      const updateData = {
-        ...formData,
-        shop: {
-          ...formData.shop,
-          // S'assurer que les catégories sont au bon format
-          categories: formData.shop.categories?.map(cat => ({
-            id: cat.id,
-            category_name: cat.category_name,
-            products_count: cat.products_count,
-            category_profile: cat.category_profile,
-            category_url: cat.category_url,
-            parent: cat.parent
-          })) || []
-        }
-      };
+      const response=await updateShop(fd as any);
+      toast.success('Boutique mise à jour avec succès');
+      console.log(response)
+     
 
-      await updateShop(updateData);
-      onClose();
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
       alert('Une erreur est survenue lors de la mise à jour');
     }
+  };
+
+  const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await handleSave();
   };
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -386,7 +454,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
               </DialogClose>
             </div>
 
-            <div className="flex-1 sm:p-6 w-full lg:p-8">
+            <form className="flex-1 sm:p-6 w-full lg:p-8" encType="multipart/form-data" onSubmit={submitForm}>
               {/* MOBILE: Tabs horizontaux scrollables */}
               <div className="block md:hidden sticky top-0 bg-white z-20 border-b">
                 <div className="overflow-x-auto no-scrollbar">
@@ -608,18 +676,18 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                   <div className="space-y-6 flex items-center max-sm:flex-col gap-4 p-2 sm:p-4 lg:p-8">
                     <ImageUpload
                       label="CNI Recto"
-                      value={formData.identity_card_in_front}
-                      onChange={val => handleSellerChange({ identity_card_in_front: val })}
+                      value={formData.identity_card_in_front as unknown as File | null}
+                      onChange={val => handleSellerChange({ identity_card_in_front: val as unknown as any })}
                     />
                     <ImageUpload
                       label="CNI Verso"
-                      value={formData.identity_card_in_back}
-                      onChange={val => handleSellerChange({ identity_card_in_back: val })}
+                      value={formData.identity_card_in_back as unknown as File | null}
+                      onChange={val => handleSellerChange({ identity_card_in_back: val as unknown as any })}
                     />
                     <ImageUpload
                       label="Photo avec CNI"
-                      value={formData.identity_card_with_the_person}
-                      onChange={val => handleSellerChange({ identity_card_with_the_person: val })}
+                      value={formData.identity_card_with_the_person as unknown as File | null}
+                      onChange={val => handleSellerChange({ identity_card_with_the_person: val as unknown as any })}
                     />
                   </div>
                 </TabsContent>
@@ -667,30 +735,31 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                   <div className="flex max-sm:flex-col items-center gap-6 sm:gap-8 p-2 sm:p-4 lg:p-8">
                     <ImageUpload
                       label="Photo de profil"
-                      value={formData.shop?.shop_profile}
-                      onChange={val => handleShopChange({ shop_profile: val })}
+                      value={formData.shop?.shop_profile as unknown as File | null}
+                      onChange={val => handleShopChange({ shop_profile: val as unknown as any })}
                     />
                     <GalleryUpload
-                      images={formData.shop?.images || []}
+                      images={(formData.shop?.images as unknown as (File | { id?: number; path: string })[]) || []}
                       onChange={handleGalleryChange}
                     />
                   </div>
                 </TabsContent>
               </Tabs>
-            </div>
-
-            <div className="p-4 sticky bottom-0  sm:p-6 border-t border-gray-200 bg-gray-50">
+              <div className="p-4 sticky bottom-0  sm:p-6 border-t border-gray-200 bg-gray-50">
               <div className="flex justify-end gap-3">
                 <Button variant="outline" onClick={onClose}>Annuler</Button>
                 <Button 
                   className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white" 
-                  onClick={handleSave} 
+                  type="submit"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Enregistrement...' : 'Enregistrer'}
                 </Button>
               </div>
             </div>
+            </form>
+
+            
           </div>
         </div>
       </DialogContent>
