@@ -141,7 +141,7 @@ const OrdersPage = () => {
     };
 
     return (
-        <div className=" overflow-hidden max-sm:mx-0 mx-24 px-4 py-8">
+        <div className=" max-sm:mx-0 ml-24 py-8">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900">Commandes</h1>
                 <p className="text-gray-500 mt-2">Gérez vos commandes et suivez leur statut</p>
@@ -149,7 +149,7 @@ const OrdersPage = () => {
 
             <IsLoadingComponents isLoading={isLoading} />
 
-            <div className="grid grid-cols-3 max-sm:grid-cols-1 max-sm:mb-12 max-sm:gap-x-0 max-sm:gap-y-6 items-center  gap-x-44">
+            <div className="grid grid-cols-3  max-sm:grid-cols-1 max-sm:mb-12 max-sm:gap-x-0  items-center ">
                 {ordersData?.map((order: any) => {
                     const status = getOrderStatus(order.status);
                     const allOrderItems = getOrderItems(order);
@@ -159,9 +159,9 @@ const OrdersPage = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
-                            className="w-[26rem]"
+                            className="w-[26rem] mt-5"
                         >
-                            <Card className="p-6 max-sm:max-w-[94vw] flex flex-col h-full">
+                            <Card className="p-6 w-[24rem] max-sm:max-w-[94vw] flex flex-col h-full">
                                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 pb-4 border-b">
                                     <div className="flex items-center gap-4">
                                         <div className={`p-3 rounded-lg ${status?.bgColor}`}>
@@ -190,7 +190,7 @@ const OrdersPage = () => {
                                     <h4 className="text-sm font-medium text-gray-900 mb-2">Détails de livraison</h4>
                                     <div className="text-sm text-gray-500 space-y-1 bg-gray-50 p-3 rounded-md mb-6">
                                         <p><strong>Quartier:</strong> {order.quarter_delivery || 'Non spécifié'}</p>
-                                        <p><strong>Frais:</strong> {formatPrice(order.fee_of_shipping)}</p>
+                                        
                                         <p><strong>Estimé:</strong> {order.duration_of_delivery || 'Non spécifiée'}</p>
                                     </div>
 
@@ -199,7 +199,7 @@ const OrdersPage = () => {
                                         {allOrderItems.slice(0, 3).map((item: any) => (
                                             <div key={item.id} className="flex items-center gap-2 text-sm text-gray-700">
                                                 <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-md" onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/40x40?text=Img'; }} />
-                                                <span className="flex-1 font-medium">{item.name}</span>
+                                                <span className="flex-1 truncate w-32 font-medium" title={item.name}>{item.name}</span>
                                                 <span className="text-gray-600">x{item.quantity}</span>
                                                 {item.color && <span className="text-gray-500">({item.color})</span>}
                                                 {item.size && <span className="text-gray-500">T:{item.size}</span>}
