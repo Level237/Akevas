@@ -164,7 +164,7 @@ const RecentOrders = () => {
                                     <div className="text-xs text-gray-600">
                                         {orderItems.slice(0, 2).map((item: any, index: number) => (
                                             <div key={index} className="flex items-center gap-2">
-                                                <span className='truncate'>• {item.name}</span>
+                                                <span className='truncate w-64'>• {item.name}s</span>
 
 
                                                 <span>x{item.quantity}</span>

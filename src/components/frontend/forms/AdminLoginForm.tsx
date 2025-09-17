@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/services/auth";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
 export default function AdminLoginForm() {
@@ -16,6 +17,7 @@ export default function AdminLoginForm() {
     const s = params.get('s');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [login, { isLoading, isError, error }] = useLoginMutation()
     if (error) {
@@ -76,32 +78,58 @@ export default function AdminLoginForm() {
                     </div>}
 
                     <div className="space-y-2 mt-3">
-                        <label htmlFor="email">Numéro de Téléphone</label>
-                        <Input
-                            id="phone"
-                            placeholder="Enter your phone"
-                            required
-                            type="phone"
-                            autoComplete='billing home email webauthn'
-                            className="py-6 rounded-xl bg-white"
-                            name="phone"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                        />
+                        <label htmlFor="phone">Numéro de Téléphone</label>
+                        <div className="flex items-center bg-white/80 rounded-xl shadow-sm border border-gray-200 focus-within:border-blue-500 transition-all">
+                            <button
+                                type="button"
+                                className="flex items-center justify-center w-10 h-10 rounded-l-xl border-none focus:outline-none cursor-default"
+                                tabIndex={-1}
+                                disabled
+                            >
+                                <span role="img" aria-label="Cameroun" className="text-white text-sm">🇨🇲</span>
+                            </button>
+                            <span className="px-3 text-gray-700 font-semibold select-none text-sm bg-gray-50">+237</span>
+                            <Input
+                                id="phone"
+                                name="phone"
+                                placeholder="6XX XXX XXX"
+                                required
+                                type="tel"
+                                autoComplete="tel"
+                                className="flex-1 h-12 border-none bg-transparent focus:ring-0 focus:outline-none placeholder:text-gray-400 rounded-r-xl"
+                                value={phone}
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(/^\+?237\s?/, '');
+                                    setPhone(value);
+                                }}
+                                style={{ boxShadow: 'none' }}
+                            />
+                        </div>
                     </div>
 
                     <div className="space-y-2">
                         <label htmlFor="password">Password</label>
-                        <Input
-                            id="password"
-                            placeholder="Enter your password"
-                            required
-                            type="password"
-                            className="py-6 rounded-xl bg-white"
-                            name="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                placeholder="Enter your password"
+                                required
+                                type={showPassword ? "text" : "password"}
+                                className="py-6 rounded-xl bg-white pr-12"
+                                name="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                tabIndex={-1}
+                                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                            >
+                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="space-y-12 ">

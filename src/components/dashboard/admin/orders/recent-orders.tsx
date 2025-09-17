@@ -118,7 +118,7 @@ export default function RecentOrdersAdmin() {
         <h2 className="text-xl font-semibold max-sm:text-md mb-6">Dernières commandes</h2>
 
         <Button className='bg-[#ed7e0f] hover:bg-[#ed7e0f]' size="sm" asChild>
-          <AsyncLink to="/user/orders">Voir plus <ArrowRight /></AsyncLink>
+          <AsyncLink to="/admin/orders">Voir plus <ArrowRight /></AsyncLink>
         </Button>
       </div>
 
@@ -164,7 +164,7 @@ export default function RecentOrdersAdmin() {
                 <div className="text-xs text-gray-600">
                   {orderItems.slice(0, 2).map((item: any, index: number) => (
                     <div key={index} className="flex items-center gap-2">
-                      <span>• {item.name}</span>
+                      <span className="truncate w-64">• {item.name}</span>
                       {item.color && (
                         <span className="text-purple-600">({item.color})</span>
                       )}
