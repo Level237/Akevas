@@ -32,13 +32,13 @@ import UpdateShopPage from "@/pages/seller/UpdateShopPage";
 import CheckoutBoostPage from "@/pages/seller/CheckoutBoostPage";
 import RechargePage from "@/pages/seller/RechargePage";
 import CheckoutRechargePage from "@/pages/seller/CheckoutPage";
-import ConfirmationPage from "@/pages/seller/ConfirmationPage";
 import MobileMoneyPaymentPage from "@/pages/MobileMoneyPaymentPage";
 import StoreCustomizationPage from "@/pages/StoreCustomizationPage";
 import HelpCenterPage from "@/pages/HelpCenterPage";
 import ReviewsPage from "@/pages/seller/ReviewsPage";
 import EditProductPage from "@/pages/seller/EditProductPage";
 import NotificationsPage from "@/pages/dashboard/seller/notifications";
+import ConfirmationPage from "@/pages/seller/ConfirmationPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -54,6 +54,10 @@ export const routes = createBrowserRouter([
   },
   {
     path: '/coins/confirmation',
+    element: <ConfirmationPage />
+  },
+  {
+    path: '/coins/ticket/:ref',
     element: <ConfirmationPage />
   },
   {
@@ -157,6 +161,7 @@ export const routes = createBrowserRouter([
         path: '/shop/customize',
         element: <StoreCustomizationPage />
       },
+      
       {
         path: 'seller/notifications',
         element: <NotificationsPage />

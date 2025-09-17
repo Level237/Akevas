@@ -121,6 +121,13 @@ export const sellerService = createApi({
                 method: 'GET'
             }),
             providesTags: ['seller']
+        }),
+        getTicketCoin: builder.query({
+            query: (ref) => ({
+                url: `/api/v1/show/payment/coins/${ref}`,
+                method: 'GET'
+            }),
+            providesTags: ['seller']
         })
     }),
 
@@ -133,6 +140,7 @@ export const {
     useUpdateDocsMutation,
     usePutInTrashMutation,
     useInitCoinPaymentMutation,
+    useGetTicketCoinQuery,
     useVerifyCoinPaymentMutation,
     useBoostShopMutation,
     useUpdateCategoriesMutation,

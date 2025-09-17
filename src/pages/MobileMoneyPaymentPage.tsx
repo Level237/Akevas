@@ -96,7 +96,7 @@ export default function MobileMoneyPaymentPage() {
         console.log(response)
         if (!isUnmounted && response && response.data) {
           if (response.data.status === 200) {
-            console.log('good')
+            window.location.href = `/coins/ticket/${paymentRef}`;
             setPaymentStatus('success')
             setIsControlPayment(true);
             setIsGeneratingTicket(false);
@@ -396,7 +396,7 @@ export default function MobileMoneyPaymentPage() {
                 </div>
                 <Link
                   
-                  to={`/user/payment/${paymentRef}`}
+                  to={`/coins/ticket/${paymentRef}`}
                   className={`${paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#ff7900]/80" : "bg-blue-600 hover:bg-blue-700"} text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300`}
                 >
                   Voir le ticket

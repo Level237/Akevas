@@ -4,42 +4,32 @@ import {
   Check, 
   Coins, 
   Calendar, 
-  Clock, 
-  Share2, 
+  Clock,
   ArrowLeft,
   QrCode
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useRef } from 'react';
+import { useGetTicketCoinQuery } from '@/services/sellerService';
 import confetti from 'canvas-confetti'; // n'oubliez pas d'installer: npm install canvas-confetti
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
-interface TransactionDetails {
-  transactionId: string;
-  amount: number;
-  coins: number;
-  date: string;
-  time: string;
-  paymentMethod: string;
+type TicketCoin = {
+  id: number | string;
+  price: number | string;
+  user: string;
+  transaction_ref: string;
+  payment_of: string;
 }
 
 export default function ConfirmationPage() {
   const navigate = useNavigate();
+  const { ref } = useParams();
   const [isDownloading, setIsDownloading] = useState(false);
   const ticketRef = useRef<HTMLDivElement>(null);
-  const [transactionId] = useState(() => "TRX" + Math.random().toString(36).substr(2, 9).toUpperCase());
-
-  // Simuler les détails de la transaction (à remplacer par vos données réelles)
-  const transaction: TransactionDetails = {
-    transactionId,
-    amount: 5000,
-    coins: 250,
-    date: new Date().toLocaleDateString(),
-    time: new Date().toLocaleTimeString(),
-    paymentMethod: "NotchPay"
-  };
+  const { data, isLoading, isError, refetch } = useGetTicketCoinQuery(ref as string, { skip: !ref });
 
   // Effet confetti lors du chargement de la page
   useState(() => {
@@ -72,7 +62,7 @@ export default function ConfirmationPage() {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      pdf.save(`recu-${transaction.transactionId}.pdf`);
+      pdf.save(`recu-${ref}.pdf`);
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
     } finally {
@@ -80,20 +70,60 @@ export default function ConfirmationPage() {
     }
   };
 
+  if (!ref) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-2xl font-bold">Référence manquante</h1>
+          <p className="text-gray-600 mt-2">Aucune référence de transaction fournie.</p>
+          <Button onClick={() => navigate(-1)} className="mt-6">Retour</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-2xl font-bold">Chargement du ticket…</h1>
+          <p className="text-gray-600 mt-2">Veuillez patienter.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-2xl font-bold">Erreur</h1>
+          <p className="text-gray-600 mt-2">Impossible de charger le ticket. Réessayez.</p>
+          <div className="mt-6 flex justify-center gap-3">
+            <Button onClick={() => refetch()}>Réessayer</Button>
+            <Button variant="outline" onClick={() => navigate('/seller/dashboard')}>Tableau de bord</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const ticket = data as TicketCoin;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-lg mx-auto">
         {/* En-tête avec animation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
-            <Check className="w-8 h-8 text-green-600" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-3">
+            <Check className="w-6 h-6 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Paiement Confirmé !</h1>
-          <p className="mt-2 text-gray-600">Votre achat de coins a été effectué avec succès.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Paiement Confirmé !</h1>
+          <p className="mt-1 text-gray-600">Votre achat de coins a été effectué avec succès.</p>
         </motion.div>
 
         {/* Ticket/Reçu */}
@@ -102,20 +132,20 @@ export default function ConfirmationPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-3xl shadow-xl overflow-hidden"
+          className="bg-white rounded-2xl shadow-lg overflow-hidden"
         >
           {/* Partie supérieure du ticket */}
-          <div className="bg-gradient-to-r from-[#ed7e0f] to-orange-600 p-6 text-white">
+          <div className="bg-gradient-to-r from-[#ed7e0f] to-orange-600 p-4 text-white">
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-white/80 text-sm">Montant payé</p>
-                <p className="text-3xl font-bold">{transaction.amount} XAF</p>
+                <p className="text-2xl font-bold">{String(ticket.price)} XAF</p>
               </div>
               <div className="text-right">
-                <p className="text-white/80 text-sm">Coins reçus</p>
+                <p className="text-white/80 text-sm">Objet</p>
                 <div className="flex items-center gap-1">
                   <Coins className="w-5 h-5" />
-                  <span className="text-2xl font-bold">{transaction.coins}</span>
+                  <span className="text-xl font-bold">{ticket.payment_of}</span>
                 </div>
               </div>
             </div>
@@ -131,13 +161,13 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Détails de la transaction */}
-          <div className="p-6 space-y-4">
+          <div className="p-4 space-y-3">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-gray-400" />
                 <span className="text-gray-600">Date</span>
               </div>
-              <span className="font-medium">{transaction.date}</span>
+              <span className="font-medium">{new Date().toLocaleDateString()}</span>
             </div>
 
             <div className="flex justify-between items-center">
@@ -145,7 +175,7 @@ export default function ConfirmationPage() {
                 <Clock className="w-5 h-5 text-gray-400" />
                 <span className="text-gray-600">Heure</span>
               </div>
-              <span className="font-medium">{transaction.time}</span>
+              <span className="font-medium">{new Date().toLocaleTimeString()}</span>
             </div>
 
             <div className="flex justify-between items-center">
@@ -153,7 +183,7 @@ export default function ConfirmationPage() {
                 <QrCode className="w-5 h-5 text-gray-400" />
                 <span className="text-gray-600">Transaction ID</span>
               </div>
-              <span className="font-medium">{transaction.transactionId}</span>
+              <span className="font-medium">{ticket.transaction_ref}</span>
             </div>
 
             <div className="flex justify-between items-center">
@@ -161,15 +191,15 @@ export default function ConfirmationPage() {
                 <Coins className="w-5 h-5 text-gray-400" />
                 <span className="text-gray-600">Méthode</span>
               </div>
-              <span className="font-medium">{transaction.paymentMethod}</span>
+              <span className="font-medium">Mobile money</span>
             </div>
 
             {/* QR Code (optionnel) */}
             <div className="flex justify-center pt-4">
               <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${transaction.transactionId}`}
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.transaction_ref}`}
                 alt="QR Code"
-                className="w-32 h-32 opacity-80"
+                className="w-24 h-24 opacity-80"
               />
             </div>
           </div>
@@ -182,10 +212,10 @@ export default function ConfirmationPage() {
           transition={{ delay: 0.4 }}
           className="mt-8 space-y-4"
         >
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <Button
               onClick={handleDownload}
-              className="flex-1 bg-[#ed7e0f] hover:bg-orange-600 text-white font-medium py-6 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg"
+              className="flex-1 bg-[#ed7e0f] hover:bg-orange-600 text-white font-medium py-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-md"
               disabled={isDownloading}
             >
               {isDownloading ? (
@@ -200,21 +230,13 @@ export default function ConfirmationPage() {
               {isDownloading ? "Téléchargement..." : "Télécharger le reçu"}
             </Button>
 
-            <Button
-              onClick={() => {
-                // Logique de partage
-              }}
-              variant="outline"
-              className="px-6 rounded-xl hover:bg-gray-50"
-            >
-              <Share2 className="w-5 h-5" />
-            </Button>
+            
           </div>
 
           <Button
             onClick={() => navigate('/seller/dashboard')}
             variant="ghost"
-            className="w-full py-6 rounded-xl flex items-center justify-center gap-2 text-gray-600 hover:bg-gray-50"
+            className="w-full py-4 rounded-lg flex items-center justify-center gap-2 text-gray-600 hover:bg-gray-50"
           >
             <ArrowLeft className="w-5 h-5" />
             Retour au tableau de bord
