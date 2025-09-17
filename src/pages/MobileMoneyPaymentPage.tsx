@@ -67,7 +67,7 @@ export default function MobileMoneyPaymentPage() {
       setMessage("Paiement échoué ou annulé. Veuillez réessayer.");
       
       
-    }else if(responseData.data.status==="processing"){
+    }else if(responseData.data.status==="PENDING"){
 
       
       
@@ -156,7 +156,15 @@ export default function MobileMoneyPaymentPage() {
         setPaymentStatus('low');
      
       setMessage("Votre compte est insuffisant");
-      } else {
+      } 
+      else if(response.data.status==="PENDING"){
+
+        timeoutRef.current = setTimeout(pollStatus, delay);
+          
+      }
+     
+      
+      else {
         setPaymentStatus('failed');
         setMessage("L'initialisation du paiement a échoué. Veuillez réessayer.");
       }
