@@ -8,25 +8,14 @@ import ModalAlert from '@/components/ui/modal-alert'
 
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
-    console.log(order)
     // Vérifier si order existe
     if (!order) {
-        console.log('Order is null or undefined');
         return allOrderItems;
     }
 
-    console.log('Processing order:', order);
-    console.log('orderVariations:', order.orderVariations);
-    console.log('order_details:', order.order_details);
-    console.log('order_details type:', typeof order.order_details);
-    console.log('order_details isArray:', Array.isArray(order.order_details));
-
     // Ajouter les produits avec variation (orderVariations)
     if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
-        console.log('Processing orderVariations...');
         order.orderVariations.forEach((item: any) => {
-            console.log('Processing variation item:', item);
-
             // Cas 1: variation_attribute existe avec product_variation
             if (item && item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
@@ -65,9 +54,7 @@ const getOrderItems = (order: any) => {
 
     // Ajouter les produits sans variation (order_details)
     if (order.order_details && order.order_details.length > 0) {
-        console.log('Processing order_details...');
         order.order_details.forEach((item: any) => {
-            console.log('Processing order_detail item:', item);
             if (item && item.product) {
                 allOrderItems.push({
                     id: item.id,
@@ -84,7 +71,6 @@ const getOrderItems = (order: any) => {
         });
     }
 
-    console.log('Final allOrderItems:', allOrderItems);
     return allOrderItems;
 };
 
@@ -184,7 +170,7 @@ const OrderDetailPage = () => {
                                 <div className="flex items-center gap-2 text-green-700">
                                     <Box size={20} />
                                     <span className="font-medium">
-                                        Gain pour cette livraison : {orderData.fee_of_shipping || 0} FCFA
+                                        Gain pour cette livraison : {orderData.order[0].fee_of_shipping || 0} FCFA
                                     </span>
                                 </div>
                             </div>
@@ -212,7 +198,7 @@ const OrderDetailPage = () => {
                                     <MapPin className="text-green-500 mt-1" size={20} />
                                     <div>
                                         <p className="font-medium">Adresse de livraison</p>
-                                        <p className="text-gray-600">{orderData.order.quarter_delivery} - {orderData.order.address}</p>
+                                        <p className="text-gray-600">{orderData.order[0].quarter_delivery} - {orderData.order[0].address}</p>
                                     </div>
                                 </div>
 
@@ -220,7 +206,7 @@ const OrderDetailPage = () => {
                                     <MapPin className="text-green-500 mt-1" size={20} />
                                     <div>
                                         <p className="font-medium">Numéro de téléphone du client</p>
-                                        <p className="text-gray-600">{orderData.order.userPhone}</p>
+                                        <p className="text-gray-600">{orderData.order[0].userPhone}</p>
                                     </div>
                                 </div>
                             </div>
@@ -229,7 +215,7 @@ const OrderDetailPage = () => {
                             <div className="border-t pt-6">
                                 <h2 className="text-lg font-semibold mb-4">Détails des produits</h2>
                                 <div className="space-y-4">
-                                    {getOrderItems(orderData?.order).map((item: any) => (
+                                    {getOrderItems(orderData?.order[0]).map((item: any) => (
                                         <div
                                             key={item.id}
                                             className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"

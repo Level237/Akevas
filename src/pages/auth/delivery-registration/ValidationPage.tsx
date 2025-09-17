@@ -61,6 +61,7 @@ const ValidationPage: React.FC = () => {
   const [error, setError] = useState('');
   const dispatch=useDispatch()
   const [isLoading,setIsLoading]=useState<boolean>(false)
+  const [agreeCGU, setAgreeCGU] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -86,6 +87,10 @@ const ValidationPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!agreeCGU) {
+      setError('Vous devez accepter les CGU pour continuer');
+      return;
+    }
     if (validatePassword()) {
       setIsLoading(true)
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -209,6 +214,20 @@ const ValidationPage: React.FC = () => {
                   </div>
                 )}
 
+                <div className="flex items-start gap-2">
+                  <input
+                    id="agree-cgu"
+                    type="checkbox"
+                    checked={agreeCGU}
+                    onChange={(e) => setAgreeCGU(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-[#ed7e0f] focus:ring-[#ed7e0f]"
+                    required
+                  />
+                  <label htmlFor="agree-cgu" className="text-sm text-gray-700">
+                    J'accepte les <a target="_blank" rel="noreferrer" href="https://akevas.com/terms-of-use" className="text-[#ed7e0f] hover:underline">Conditions Générales d'Utilisation</a>
+                  </label>
+                </div>
+
                 <div className="flex justify-between gap-3">
                   <Link
                     to="/delivery/documents"
@@ -219,7 +238,8 @@ const ValidationPage: React.FC = () => {
                   </Link>
                   <button
                     type="submit"
-                    className="px-6 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2"
+                    disabled={isLoading || !agreeCGU}
+                    className="px-6 max-sm:text-sm py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/80 transition-colors flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {isLoading ? <div className='flex items-center gap-2'><Loader2 className='w-4 h-4 animate-spin' />Chargement...</div> : 'Finaliser l\'inscription'}
                     <ChevronRight className="w-4 h-4" />

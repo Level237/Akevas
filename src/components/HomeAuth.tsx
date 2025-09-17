@@ -160,34 +160,43 @@ const HomeAuth = () => {
         </div>
 
         {/* Liste des commandes */}
-        <div className="grid gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {isLoading && <IsLoadingComponents isLoading={isLoading} />}
           {activeTab === 'all' && !isLoading && ordersCity?.map((order: any) => (
             <div
               key={order.id}
-              className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"
+              className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-all cursor-pointer group"
               onClick={() => navigate(`/order/${order.id}`)}
             >
-              <div className="flex items-center justify-between">
+              {/* Header */}
+              <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <Package className="text-[#ed7e0f]" size={24} />
+                  <div className="p-2 rounded-lg bg-[#ed7e0f]/10 text-[#ed7e0f]">
+                    <Package size={20} />
+                  </div>
                   <div>
-                    <h3 className="font-semibold">Commande #{order.id}</h3>
+                    <h3 className="font-semibold text-gray-900">Commande #{order.id}</h3>
                     <div className="flex items-center text-gray-600 text-sm">
                       <MapPin size={16} className="mr-1" />
                       {`Beedi`} - {order.quarter_delivery}
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="flex items-center text-gray-600">
-                    <Clock size={16} className="mr-1" />
-                    <span>{formatDate(order.created_at)}</span>
-                  </div>
-                  <span className="text-sm font-medium text-[#ed7e0f]">
-                    {order.isTake == "0" ? "En attente" : "En cours"}
-                  </span>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${order.isTake == "0" ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+                  {order.isTake == "0" ? "En attente" : "En cours"}
+                </span>
+              </div>
+
+              {/* Divider */}
+              <div className="my-3 h-px bg-gray-100" />
+
+              {/* Meta */}
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center">
+                  <Clock size={16} className="mr-1 text-gray-500" />
+                  <span>{formatDate(order.created_at)}</span>
                 </div>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#ed7e0f] font-medium">Voir les détails →</span>
               </div>
             </div>
           ))}
@@ -196,29 +205,38 @@ const HomeAuth = () => {
           {activeTab === 'nearby' && !isLoadingPreferences && ordersPreferences?.map((order: any) => (
             <div
               key={order.id}
-              className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"
+              className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-all cursor-pointer group"
               onClick={() => navigate(`/order/${order.id}`)}
             >
-              <div className="flex items-center justify-between">
+              {/* Header */}
+              <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <Package className="text-[#ed7e0f]" size={24} />
+                  <div className="p-2 rounded-lg bg-[#ed7e0f]/10 text-[#ed7e0f]">
+                    <Package size={20} />
+                  </div>
                   <div>
-                    <h3 className="font-semibold">Commande #{order.id}</h3>
+                    <h3 className="font-semibold text-gray-900">Commande #{order.id}</h3>
                     <div className="flex items-center text-gray-600 text-sm">
                       <MapPin size={16} className="mr-1" />
                       {`Beedi`} - {order.quarter_delivery}
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="flex items-center text-gray-600">
-                    <Clock size={16} className="mr-1" />
-                    <span>{formatDate(order.created_at)}</span>
-                  </div>
-                  <span className="text-sm font-medium text-[#ed7e0f]">
-                    {order.isTake == "0" ? "En attente" : "En cours"}
-                  </span>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${order.isTake == "0" ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+                  {order.isTake == "0" ? "En attente" : "En cours"}
+                </span>
+              </div>
+
+              {/* Divider */}
+              <div className="my-3 h-px bg-gray-100" />
+
+              {/* Meta */}
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center">
+                  <Clock size={16} className="mr-1 text-gray-500" />
+                  <span>{formatDate(order.created_at)}</span>
                 </div>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#ed7e0f] font-medium">Voir les détails →</span>
               </div>
             </div>
           ))}

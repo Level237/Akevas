@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/services/auth";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
 export default function LoginForm() {
@@ -16,6 +17,7 @@ export default function LoginForm() {
   const s = params.get('s');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading, isError }] = useLoginMutation()
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -105,16 +107,27 @@ export default function LoginForm() {
 
           <div className="space-y-2">
             <label htmlFor="password">Password</label>
-            <Input
-              id="password"
-              placeholder="Enter your password"
-              required
-              type="password"
-              className="py-6 rounded-xl bg-white"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                placeholder="Enter your password"
+                required
+                type={showPassword ? "text" : "password"}
+                className="py-6 rounded-xl bg-white pr-12"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                tabIndex={-1}
+                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           <div className="space-y-12 ">
