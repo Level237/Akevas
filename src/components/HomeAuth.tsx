@@ -132,12 +132,7 @@ const HomeAuth = () => {
                 />
               </div>
             </div>
-            <select className="border rounded-lg px-4 py-2 bg-white">
-              <option value="">Toutes les villes</option>
-              <option value="paris">Paris</option>
-              <option value="lyon">Lyon</option>
-              {/* Ajoutez d'autres villes */}
-            </select>
+            
           </div>
         </div>
 
