@@ -253,6 +253,7 @@ const OrderDetailPage = () => {
                         </div>
 
                         {/* Boutons d'action */}
+                        {orderData.order[0].isTake !== 1 && (
                         <div className="flex gap-4">
                             <button
                                 onClick={handleAccept}
@@ -265,9 +266,10 @@ const OrderDetailPage = () => {
                                 onClick={handleDecline}
                                 className="flex-1 bg-white text-gray-600 py-3 rounded-lg font-medium border hover:bg-gray-50"
                             >
-                                Refuser
-                            </button>
-                        </div>
+                                    Refuser
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
             </div>

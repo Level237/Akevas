@@ -105,7 +105,6 @@ const DeliveryCountdown = ({ orderId }: CountdownProps) => {
         await completeOrder({ orderId, actualDuration: formatDuration(report?.actualDuration || 0) })
         setDeliveryReport(report)
         setShowConfirmModal(false)
-        cancelCountdown()
         setShowReportModal(true)
 
 
