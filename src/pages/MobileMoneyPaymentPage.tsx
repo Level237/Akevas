@@ -56,10 +56,10 @@ export default function MobileMoneyPaymentPage() {
       setTimeout(() => {
         
         setIsControlPayment(true)
-      }, 10000)
+      }, 1000)
       clearTimeout(timeoutRef.current);
       // Redirect after success
-      
+     
       
     } else if (responseData.data.status === 'FAILED' || responseData.data.status==="CANCELED") {
       setPaymentStatus('failed');
