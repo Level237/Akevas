@@ -15,7 +15,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = React.memo(
     ({ isOpen, onClose }) => {
         const { data: allNotifications, isLoading } = useAllNotificationQuery("seller");
         const dropdownRef = useRef<HTMLDivElement>(null);
-
+        console.log(allNotifications)
         useEffect(() => {
             const handleClickOutside = (event: MouseEvent) => {
                 if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

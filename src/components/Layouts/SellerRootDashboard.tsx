@@ -7,6 +7,7 @@ import MobileNav from '../ui/mobile-nav';
 import SidebarLeft from '../ui/SidebarLeft';
 import CategoryModal from '../modals/CategoryModal';
 import { useGetCategoryByGenderQuery } from '@/services/guardService';
+import NotificationChatWidget from '../ui/NotificationChatWidget';
 
 interface SellerRootDashboardProps {
   children: React.ReactNode;
@@ -104,6 +105,7 @@ const SellerRootDashboard: React.FC<SellerRootDashboardProps> = ({ children }) =
           </div>
         </div>
       )}
+      <NotificationChatWidget bottomClass={categoriesIsEmpty === true ? 'bottom-24 max-sm:bottom-44' : 'bottom-4 max-sm:bottom-24'} />
     </div>
   );
 }
