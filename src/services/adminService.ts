@@ -147,12 +147,24 @@ export const adminService = createApi({
             query: () => '/api/v1/admin/all/categories',
             providesTags: ['admin']
         }),
+        getCategory: builder.query({
+            query: (id) => `/api/v1/admin/category/${id}`,
+            providesTags: ['admin']
+        }),
         addCategory: builder.mutation({
             query: (body) => ({
                 url: `/api/v1/admin/add/category`,
                 body: body,
                 method: "POST"
             })
+        }),
+        updateCategory: builder.mutation({
+            query: ({ id, body }) => ({
+                url: `/api/v1/update/category/${id}`,
+                body: body,
+                method: "POST"
+            }),
+            invalidatesTags: ['admin']
         }),
         deleteCategory: builder.mutation({
             query: (id) => ({
@@ -182,6 +194,8 @@ export const {
     useAdminListOrdersQuery,
     useAdminActiveStatsQuery,
     useAddCategoryMutation,
+    useGetCategoryQuery,
+    useUpdateCategoryMutation,
     useAdminActiveSellerStatsQuery,
     useAdminDeliveryStatsQuery,
     useAdminListReviewsQuery,

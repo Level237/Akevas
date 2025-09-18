@@ -46,6 +46,7 @@ import ProductDetailPageAdmin from "@/components/dashboard/admin/products/Produc
 import NotFoundPage from "@/pages/NotFoundPage";
 import ListCategoriesPage from "@/pages/admin/categories/ListCategoriesPage";
 import CreateCategoryPage from "@/pages/admin/categories/CreateCategoryPage";
+import EditCategoryPage from "@/pages/admin/categories/EditCategoryPage";
 import PaymentTicketPage from "@/pages/user/PaymentTicketPage";
 import AdminOrderDetailPage from "@/pages/admin/orders/OrderDetailPage";
 import ContactPage from "@/pages/ContactPage";
@@ -187,6 +188,10 @@ export const routes = createBrowserRouter([
       {
         path: "admin/category/new",
         element: <CreateCategoryPage />
+      },
+      {
+        path: "admin/categories/:id/edit",
+        element: <EditCategoryPage />
       },
       {
         path: "/admin/order/:id",

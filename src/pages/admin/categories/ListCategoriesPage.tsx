@@ -110,7 +110,7 @@ export default function ListCategoriesPage() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
-                        onClick={() => navigate(`/admin/categories/${category.category_url}`)}
+                        onClick={() => navigate(`/c/${category.category_url}`)}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
