@@ -11,6 +11,7 @@ import { NuqsAdapter } from 'nuqs/adapters/react'
 import { useCheckAuthQuery } from './services/auth'
 import { useEffect } from 'react'
 import { setAuthInitialized } from './store/authSlice'
+import PageLoader from './components/ui/PageLoader'
 
 function App() {
 
@@ -20,7 +21,7 @@ function App() {
       // Il peut être skippé si vous voulez une détection purement locale au démarrage
       // et ne valider que sur les PrivateRoutes, mais ce n'est pas ce que vous cherchez ici.
   });
-
+console.log(data)
   useEffect(() => {
     if (!isUninitialized && (isSuccess || isError || !isLoading)) { // checkAuth a terminé d'une manière ou d'une autre
         dispatch(setAuthInitialized());
@@ -31,9 +32,7 @@ function App() {
   if (!isAuthInitialized) {
     return (
       <section className="h-screen w-full flex flex-col items-center justify-center">
-      <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-[#ed7e0f] rounded-full" role="status" aria-label="loading">
-          <span className="sr-only">Loading...</span>
-      </div>
+      <PageLoader/>
   </section>
     );
   }
