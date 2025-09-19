@@ -3,18 +3,23 @@ import { Button } from '@/components/ui/button'
 import { useLogoutMutation } from '@/services/auth'
 import { User } from '@/types/user'
 import { LogOut, Menu, Home, LayoutDashboard, ShoppingBag, User as UserIcon } from 'lucide-react'
-import { logoutUser } from '@/lib/logout'
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import AsyncLink from '@/components/ui/AsyncLink'
+import { useEffect } from 'react'
 
 export default function Header({ userData }: { userData: User | null | undefined }) {
-  const [logout] = useLogoutMutation()
+  const [logout, { isSuccess }] = useLogoutMutation();
   const handleLogout = async () => {
     await logout('Auth');
-    logoutUser()
+
   }
 
+  useEffect(() => {
+    if (isSuccess) {
+        window.location.href="/login"
+    }
+}, [isSuccess]);
   const menuItems = [
     { href: '/', label: 'Accueil', icon: <Home className="w-4 h-4" /> },
     { href: '/user/dashboard', label: 'Tableau de bord', icon: <LayoutDashboard className="w-4 h-4" /> },

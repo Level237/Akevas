@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,7 +20,6 @@ import {
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
-import { logoutUser } from "@/lib/logout"
 import AsyncLink from "@/components/ui/AsyncLink"
 
 const navItems = [
@@ -53,7 +52,7 @@ const navItems = [
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const [expandedItems, setExpandedItems] = useState<string[]>([])
-  const [logout] = useLogoutMutation()
+  const [logout, { isSuccess }] = useLogoutMutation();
 
   const { pathname } = useLocation()
 
@@ -67,8 +66,13 @@ export function Sidebar() {
 
   const handleLogout = async () => {
     await logout('Auth');
-    logoutUser()
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+        window.location.href="/login"
+    }
+}, [isSuccess]);
   return (
     <>
       {/* Mobile Menu Button */}
