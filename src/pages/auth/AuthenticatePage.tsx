@@ -1,6 +1,6 @@
 import { useGetUserQuery } from "@/services/auth";
 import { AppDispatch } from "@/store";
-import { getUserRole } from "@/store/authSlice";
+import { setUserRole } from "@/store/authSlice";
 import { useEffect } from "react"
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom"
@@ -23,7 +23,7 @@ export const AuthenticatePage = () => {
                 const userRoleState = {
                     'userRole': userData?.role_id
                 }
-                dispatch(getUserRole(userRoleState))
+                dispatch(setUserRole(userRoleState))
                 switch (userData?.role_id) {
                     case 1:
                         window.location.href = '/admin/dashboard';

@@ -12,7 +12,7 @@ import categorySlice from "./features/categorySlice";
 import loadingSlice from "./features/loadingSlice";
 export const store = configureStore({
     reducer: {
-        [authSlice.name]: authSlice.reducer,
+        auth: authSlice,
         [authService.reducerPath]: authService.reducer,
         [cartSlice.name]: cartSlice.reducer,
         [checkTokenService.reducerPath]: checkTokenService.reducer,

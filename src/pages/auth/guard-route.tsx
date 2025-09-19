@@ -1,28 +1,23 @@
 import { useSelector } from 'react-redux'
-import {  useNavigate} from 'react-router-dom'
-import { RootState } from '@/store'
-import { useEffect } from 'react'
+import {  Navigate, Outlet} from 'react-router-dom'
+
 
 //import { useCheckTokenQuery } from '@/services/checkService'
-export const GuardRoute = ({children}:{children:React.ReactNode}) => {
-    const navigate = useNavigate()
-    const token = useSelector((state:RootState) => state.auth.usedToken)
-    //const {data,isLoading}=useCheckTokenQuery()
-
-    useEffect(() => {
-        if(token) {
-            //navigate(-1)
-        }
-    }, [token, navigate])
+export const GuardRoute = () => {
+    const isAuthenticatedLocally = useSelector((state:any) => state.auth.isAuthenticated);
     
-    // Ne rendre le contenu que si l'utilisateur n'a pas de token
-    if (token) {
-        return null
+    // We also use the `getUser` query in the background to ensure the local state is fresh.
+    // This is optional but good practice to catch stale local states.
+    // However, for a simple guest route, relying on `isAuthenticatedLocally` is enough for a snappy UX.
+    // If you already have `useCheckAuthQuery` running somewhere else (e.g., in your App.js),
+    // you don't need another one here.
+
+    // If the user is authenticated locally, we redirect them to the dashboard or home page.
+    // We use a safe default like '/dashboard' or whatever your main protected page is.
+    if (isAuthenticatedLocally) {
+        return <Navigate to="/" replace />;
     }
 
-    return (
-        <div>
-            {children}
-        </div>
-    )
+    // If the user is NOT authenticated, they can proceed to view the login or register page.
+    return <Outlet />;
 }

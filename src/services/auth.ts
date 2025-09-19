@@ -8,7 +8,7 @@ import { baseQueryWithReauth } from "./baseQueryWithReauth";
 export const authService = createApi({
     baseQuery: baseQueryWithReauth,
     reducerPath: "authService",
-    tagTypes: ['Auth'],
+    tagTypes: ['Auth', 'User'],
     endpoints: builder => ({
         login: builder.mutation({
             query: (credentials) => (
@@ -17,7 +17,7 @@ export const authService = createApi({
                     method: 'POST',
                     body: credentials
                 }),
-
+                invalidatesTags: ['Auth', 'User'],
             transformErrorResponse: (baseQueryResult) => {
                 // Ici, vous pouvez personnaliser la réponse d'erreur
 
@@ -39,7 +39,7 @@ export const authService = createApi({
                 url: '/api/v1/check-auth',
                 method: 'GET',
             }),
-            providesTags: ['Auth'],
+            providesTags: ['Auth', 'User'],
         }),
         register: builder.mutation({
             query: (formData) => ({
@@ -63,12 +63,12 @@ export const authService = createApi({
                 url: "/api/v1/logout",
                 method: "POST",
             }),
-            invalidatesTags: ['Auth']
+            invalidatesTags: ['Auth', 'User']
         }),
         getUser: builder.query({
 
             query: () => '/api/v1/current/user',
-            providesTags: ['Auth'],
+            providesTags: ['User'],
             transformErrorResponse: (baseQueryResult) => {
                 // Ici, vous pouvez personnaliser la réponse d'erreur
                 console.log(baseQueryResult.status)
