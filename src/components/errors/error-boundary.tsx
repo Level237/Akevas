@@ -62,7 +62,7 @@ class ErrorBoundary extends React.Component<Props, State> {
 
 const NetworkBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const dispatch = useDispatch();
+  
 
   useEffect(() => {
     const handleOnline = () => {

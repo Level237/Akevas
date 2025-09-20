@@ -1,7 +1,6 @@
 
 import { baseQuery } from "./baseQuery";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { RootState } from "../store";
 import Cookies from "universal-cookie";
 import { setUnauthenticated } from "@/store/authSlice";
 

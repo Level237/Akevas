@@ -47,6 +47,7 @@ const authSlice = createSlice({
     builder.addMatcher(
       authService.endpoints.login.matchFulfilled,
       (state, action) => {
+        console.log(action)
         state.isAuthenticated = true;
         // Supposons que le backend envoie l'accessToken et refreshToken dans des cookies HttpOnly.
         // Si le backend renvoie le role, vous pouvez le stocker ici:

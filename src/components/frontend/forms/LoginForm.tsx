@@ -6,6 +6,7 @@ import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
@@ -14,7 +15,7 @@ export default function LoginForm() {
   const price = params.get('price');
   const name = params.get('name');
   const residence = params.get('residence');
-
+  const navigate = useNavigate();
   const redirectUrl = params.get('redirect');
   const s = params.get('s');
   const [phone, setPhone] = useState('');
@@ -47,7 +48,7 @@ export default function LoginForm() {
       } else {
         setPhone('')
         setPassword('')
-        window.location.href = `/authenticate`
+        navigate('/authenticate', { replace: true });
       }
     } catch (error) {
       setErrorMessage("Vous n'avez pas accès à cette application")
