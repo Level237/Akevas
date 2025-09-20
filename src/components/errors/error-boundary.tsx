@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import ErrorMessage from '../ui/error-message';
 import Header from '../ui/header';
 import { WifiOff } from 'lucide-react';
-import { useDispatch } from 'react-redux';
 
 interface Props {
   children: React.ReactNode;

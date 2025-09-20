@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import {  Navigate, Outlet} from 'react-router-dom'
+import {  Outlet} from 'react-router-dom'
 
 
 //import { useCheckTokenQuery } from '@/services/checkService'

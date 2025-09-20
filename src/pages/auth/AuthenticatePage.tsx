@@ -1,5 +1,4 @@
 import { useGetUserQuery } from "@/services/auth";
-import { AppDispatch } from "@/store";
 import { setUserRole } from "@/store/authSlice";
 import { useEffect } from "react"
 import { useDispatch } from "react-redux";
