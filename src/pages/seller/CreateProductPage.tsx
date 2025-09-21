@@ -1110,7 +1110,18 @@ const CreateProductPage: React.FC = () => {
                                     </div>
                                 )}
 
+                                    {productType==="variable" && productType === "variable" && selectedAttributeType === "colorOnly" && <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                                            <input
+                                                type="number"
+                                                value={stock}
+                                                onChange={(e) => setStock(e.target.value)}
+                                                className="w-full max-sm:placeholder:text-sm px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                                placeholder="Quantité disponible"
 
+                                            />
+                                        </div>}
+                                        
 
 
 
@@ -1207,7 +1218,7 @@ const CreateProductPage: React.FC = () => {
                                             <span className="text-2xl">📦</span>
                                         </div>
                                         <div>
-                                            <h2 className="text-xl max-sm:text-md font-bold text-gray-900">Prix de Gros pour Variations (Couleur uniquement)</h2>
+                                            <h2 className="text-xl max-sm:text-lg font-bold text-gray-900">Prix de Gros pour Variations (Couleur uniquement)</h2>
                                             <p className="text-purple-600 text-xs font-medium">Configurez vos tarifs pour les revendeurs par couleur</p>
                                         </div>
                                     </div>
