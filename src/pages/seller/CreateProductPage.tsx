@@ -1110,7 +1110,7 @@ const CreateProductPage: React.FC = () => {
                                     </div>
                                 )}
 
-                                    {productType==="variable" && productType === "variable" && selectedAttributeType === "colorOnly" && <div>
+                                    {productType === "variable" && selectedAttributeType !== "colorAndAttribute" && <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
                                             <input
                                                 type="number"
