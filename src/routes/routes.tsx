@@ -55,22 +55,30 @@ import PaymentCancelPage from "@/pages/payment/PaymentCancelPage";
 import PaymentErrorPage from "@/pages/payment/PaymentErrorPage";
 import AdminAccountPage from "@/pages/admin/account";
 import ProfilePage from "@/pages/user/ProfilePage";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 
 
 export const routes = createBrowserRouter([
   {
     path: '/',
-    element: <Homepage />
+    element:<AppLayout/>,
+    children:[
+      {
+        path: "",
+        element: <Homepage />
+      },
+      {
+        path: "*",
+        element: <NotFoundPage />
+      }, {
+        path: 'legal-terms',
+        element: <LegalTermsPage />
+      },
+    ]
   },
-  {
-    path: "*",
-    element: <NotFoundPage />
-  },
-  {
-    path: '/legal-terms',
-    element: <LegalTermsPage />
-  },
+  
+ 
   {
     path: '/privacy-policy',
     element: <PrivacyPolicyPage />

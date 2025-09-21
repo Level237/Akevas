@@ -130,15 +130,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                   </div>
                 )}
                 </div>
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                  <span className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
-                    Premium
-                  </span>
-                  <div className="flex items-center bg-white/90 px-2 py-1 rounded-full">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                    <span className="ml-1 text-xs font-medium">{product.reviewCount}</span>
-                  </div>
-                </div>
+               
                 {/* Affichage des couleurs si variations */}
                 {product.variations && product.variations.length > 0 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center max-sm:px-2 max-sm:py-1 gap-2 bg-white/90 px-3 py-2 rounded-full">

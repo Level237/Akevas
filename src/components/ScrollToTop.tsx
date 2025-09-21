@@ -1,0 +1,20 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+export default function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Option 1: Défilement simple au sommet de la page
+    // window.scrollTo(0, 0);
+
+    // Option 2: Défilement doux (smooth scroll)
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
+}, [pathname]);
+
+  return null;
+}
