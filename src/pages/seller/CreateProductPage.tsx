@@ -1110,7 +1110,7 @@ const CreateProductPage: React.FC = () => {
                                     </div>
                                 )}
 
-                                    {productType === "variable" && selectedAttributeType !== "colorAndAttribute" && <div>
+                                    {productType === "variable" && <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
                                             <input
                                                 type="number"
@@ -1211,14 +1211,14 @@ const CreateProductPage: React.FC = () => {
                                 </div>
                             )}
 
-                            {isWholesale && productType === "variable" && selectedAttributeType === "colorOnly" && (
+                            {isWholesale && productType === "variable" && (
                                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
                                             <span className="text-2xl">📦</span>
                                         </div>
                                         <div>
-                                            <h2 className="text-xl max-sm:text-lg font-bold text-gray-900">Prix de Gros pour Variations (Couleur uniquement)</h2>
+                                            <h2 className="text-xl max-sm:text-lg font-bold text-gray-900">Prix de Gros pour Variations</h2>
                                             <p className="text-purple-600 text-xs font-medium">Configurez vos tarifs pour les revendeurs par couleur</p>
                                         </div>
                                     </div>
@@ -1717,16 +1717,26 @@ const CreateProductPage: React.FC = () => {
                                                                                     <SelectValue placeholder="Choisir une valeur d'attribut" />
                                                                                 </SelectTrigger>
                                                                                 <SelectContent>
-                                                                                    {getAttributeValueByGroup?.map((group: any) => (
-                                                                                        <SelectGroup key={group.group_id}>
-                                                                                            <SelectLabel>{group.group_label}</SelectLabel>
-                                                                                            {group.values.map((value: any) => (
-                                                                                                <SelectItem key={value.id} value={value.id.toString()}>
-                                                                                                    {value.value} {value.label}
-                                                                                                </SelectItem>
-                                                                                            ))}
-                                                                                        </SelectGroup>
-                                                                                    ))}
+                                                                                    {getAttributeValueByGroup?.map((group: any) => {
+                                                                                        // Filtrer les valeurs déjà sélectionnées
+                                                                                        const availableValues = group.values.filter((value: any) => 
+                                                                                            !frame.sizes.some((size: any) => size.id === value.id)
+                                                                                        );
+                                                                                        
+                                                                                        // Ne pas afficher le groupe s'il n'y a plus de valeurs disponibles
+                                                                                        if (availableValues.length === 0) return null;
+                                                                                        
+                                                                                        return (
+                                                                                            <SelectGroup key={group.group_id}>
+                                                                                                <SelectLabel>{group.group_label}</SelectLabel>
+                                                                                                {availableValues.map((value: any) => (
+                                                                                                    <SelectItem key={value.id} value={value.id.toString()}>
+                                                                                                        {value.value} {value.label}
+                                                                                                    </SelectItem>
+                                                                                                ))}
+                                                                                            </SelectGroup>
+                                                                                        );
+                                                                                    })}
                                                                                 </SelectContent>
                                                                             </Select>
 
