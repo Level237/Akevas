@@ -88,8 +88,6 @@ const CreateProductPage: React.FC = () => {
     const [globalColorPrice, setGlobalColorPrice] = useState<number>(0);
     const [selectedAttributeType, setSelectedAttributeType] = useState<string | null>(null);
     const [attributeValuePrices, setAttributeValuePrices] = useState<Record<number, number>>({});
-    const [attributeValueWholesalePrices, setAttributeValueWholesalePrices] = useState<Record<number, Array<{ min_quantity: number; wholesale_price: number; }>>>({});
-    const [isAttributeValueWholesale, setIsAttributeValueWholesale] = useState<Record<number, boolean>>({});
     const { data: getAttributeValueByGroup } = useGetAttributeValueByGroupQuery(selectedAttributeId ? selectedAttributeId.toString() : skipToken)
     const [isWholesale, setIsWholesale] = useState<boolean | null>(
         saleFromUrl ? (saleFromUrl === '1' ? true : false) : null
@@ -268,19 +266,7 @@ const CreateProductPage: React.FC = () => {
                     toast.error(`Veuillez remplir le prix pour l'attribut ${attributeValueId}.`);
                     return;
                 }
-                if (isWholesale && isAttributeValueWholesale[attributeValueId]) {
-                    const wholesalePrices = attributeValueWholesalePrices[attributeValueId];
-                    if (!wholesalePrices || wholesalePrices.length === 0) {
-                        toast.error(`Veuillez configurer au moins un palier de prix de gros pour l'attribut ${attributeValueId}.`);
-                        return;
-                    }
-                    for (const wp of wholesalePrices) {
-                        if (!wp.min_quantity || wp.min_quantity <= 0 || !wp.wholesale_price || wp.wholesale_price <= 0) {
-                            toast.error(`Veuillez vérifier les prix de gros et les quantités minimales pour l'attribut ${attributeValueId}.`);
-                            return;
-                        }
-                    }
-                }
+              
             }
         }
 
@@ -356,7 +342,7 @@ const CreateProductPage: React.FC = () => {
             }
 
             // Validation spécifique pour la vente en gros
-            if ((productType === 'simple' || (productType === 'variable' && selectedAttributeType === 'colorOnly')) && isWholesale) {
+            if ((productType === 'simple' || (productType === 'variable')) && isWholesale) {
                 if (wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
                     toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
                         description: "Veuillez remplir tous les champs obligatoires",
@@ -581,32 +567,26 @@ const CreateProductPage: React.FC = () => {
                         if (variation.sizes && variation.sizes.length > 0) {
                             variation.sizes.forEach(size => {
                                 const attributeValueId = size.id; // Assuming size.id is the attribute value ID
-                                const wholesaleInfo = isAttributeValueWholesale[attributeValueId] && attributeValueWholesalePrices[attributeValueId]
-                                    ? { is_wholesale: true, wholesale_prices: attributeValueWholesalePrices[attributeValueId] }
-                                    : { is_wholesale: false, wholesale_prices: [] };
+                                
 
                                 acc[colorId].sizes.push({
                                     id: size.id,
                                     name: size.name,
                                     quantity: size.quantity,
                                     price: attributeValuePrices[attributeValueId],
-                                    ...wholesaleInfo
                                 });
                             });
                         }
                         if (variation.shoeSizes && variation.shoeSizes.length > 0) {
                             variation.shoeSizes.forEach(shoeSize => {
                                 const attributeValueId = shoeSize.id; // Assuming shoeSize.id is the attribute value ID
-                                const wholesaleInfo = isAttributeValueWholesale[attributeValueId] && attributeValueWholesalePrices[attributeValueId]
-                                    ? { is_wholesale: true, wholesale_prices: attributeValueWholesalePrices[attributeValueId] }
-                                    : { is_wholesale: false, wholesale_prices: [] };
+                              
 
                                 acc[colorId].shoeSizes.push({
                                     id: shoeSize.id,
                                     name: shoeSize.name,
                                     quantity: shoeSize.quantity,
                                     price: attributeValuePrices[attributeValueId],
-                                    ...wholesaleInfo
                                 });
                             });
                         }
@@ -1859,92 +1839,9 @@ const CreateProductPage: React.FC = () => {
                                                                     className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
                                                                 />
 
-                                                                {isWholesale && (
-                                                                    <div className="flex items-center gap-2 mt-4">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            id={`wholesale-attr-${attributeValueId}`}
-                                                                            checked={isAttributeValueWholesale[attributeValueId] || false}
-                                                                            onChange={(e) => {
-                                                                                setIsAttributeValueWholesale(prev => ({ ...prev, [attributeValueId]: e.target.checked }));
-                                                                                if (!e.target.checked) {
-                                                                                    setAttributeValueWholesalePrices(prev => {
-                                                                                        const newPrices = { ...prev };
-                                                                                        delete newPrices[attributeValueId];
-                                                                                        return newPrices;
-                                                                                    });
-                                                                                } else {
-                                                                                    setAttributeValueWholesalePrices(prev => ({ ...prev, [attributeValueId]: [{ min_quantity: 10, wholesale_price: 0 }] }));
-                                                                                }
-                                                                            }}
-                                                                            className="h-4 w-4 text-[#ed7e0f] focus:ring-[#ed7e0f] border-gray-300 rounded"
-                                                                        />
-                                                                        <label htmlFor={`wholesale-attr-${attributeValueId}`} className="text-sm font-medium text-gray-700">Activer les prix de gros pour cet attribut</label>
-                                                                    </div>
-                                                                )}
+                                                             
 
-                                                                {isWholesale && isAttributeValueWholesale[attributeValueId] && (
-                                                                    <div className="space-y-3 mt-4 w-full">
-                                                                        <h5 className="text-xs font-semibold text-gray-600">Prix de gros par unité:</h5>
-                                                                        {(attributeValueWholesalePrices[attributeValueId] || []).map((wholesalePrice, wpIndex) => (
-                                                                            <div key={wpIndex} className="flex items-center gap-2 bg-white p-2 rounded-lg border border-gray-200">
-                                                                                <input
-                                                                                    type="number"
-                                                                                    value={wholesalePrice.min_quantity}
-                                                                                    onChange={(e) => {
-                                                                                        const newQuantity = Number(e.target.value);
-                                                                                        setAttributeValueWholesalePrices(prev => ({
-                                                                                            ...prev,
-                                                                                            [attributeValueId]: prev[attributeValueId]?.map((item, i) =>
-                                                                                                i === wpIndex ? { ...item, min_quantity: newQuantity } : item
-                                                                                            ) || [],
-                                                                                        }));
-                                                                                    }}
-                                                                                    placeholder="Min. quantité"
-                                                                                    className="w-1/2 px-2 py-1 border rounded-md focus:ring-1 focus:ring-purple-500"
-                                                                                />
-                                                                                <input
-                                                                                    type="number"
-                                                                                    value={wholesalePrice.wholesale_price}
-                                                                                    onChange={(e) => {
-                                                                                        const newPrice = Number(e.target.value);
-                                                                                        setAttributeValueWholesalePrices(prev => ({
-                                                                                            ...prev,
-                                                                                            [attributeValueId]: prev[attributeValueId]?.map((item, i) =>
-                                                                                                i === wpIndex ? { ...item, wholesale_price: newPrice } : item
-                                                                                            ) || [],
-                                                                                        }));
-                                                                                    }}
-                                                                                    placeholder="Prix (FCFA)"
-                                                                                    className="w-1/2 px-2 py-1 border rounded-md focus:ring-1 focus:ring-purple-500"
-                                                                                />
-                                                                                <button
-                                                                                    type="button"
-                                                                                    onClick={() => {
-                                                                                        if (attributeValueWholesalePrices[attributeValueId]?.length > 1) {
-                                                                                            setAttributeValueWholesalePrices(prev => ({
-                                                                                                ...prev,
-                                                                                                [attributeValueId]: prev[attributeValueId]?.filter((_, i) => i !== wpIndex) || [],
-                                                                                            }));
-                                                                                        }
-                                                                                    }}
-                                                                                    className="p-1 text-red-500 hover:bg-red-50 rounded-full"
-                                                                                >
-                                                                                    <X className="w-3 h-3" />
-                                                                                </button>
-                                                                            </div>
-                                                                        ))}
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => {
-                                                                                setAttributeValueWholesalePrices(prev => ({ ...prev, [attributeValueId]: [...(prev[attributeValueId] || []), { min_quantity: 1, wholesale_price: 0 }] }));
-                                                                            }}
-                                                                            className="w-full px-3 py-1.5 text-xs text-purple-600 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors"
-                                                                        >
-                                                                            + Ajouter un palier de prix
-                                                                        </button>
-                                                                    </div>
-                                                                )}
+                                                             
                                                             </div>
                                                         );
                                                     })}
