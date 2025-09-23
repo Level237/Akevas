@@ -1,4 +1,4 @@
-import React, { useState, useEffect, act } from 'react';
+import React, { useState, useEffect} from 'react';
 import {
     Upload,
     Plus,
@@ -273,9 +273,7 @@ const CreateProductPage: React.FC = () => {
             }
         }
 
-        // --- NOUVEAU BLOC DE VALIDATION DU STOCK ---
-
-        // --- FIN DU NOUVEAU BLOC DE VALIDATION DU STOCK ---
+        
 
         // Validation pour les produits simples
         if (productType === 'simple') {
@@ -381,6 +379,7 @@ const CreateProductPage: React.FC = () => {
                 });
                 return;
             }
+            
 
             if (!description.trim()) {
                 toast.error('La description du produit est obligatoire', {
@@ -389,7 +388,13 @@ const CreateProductPage: React.FC = () => {
                 });
                 return;
             }
-
+            if (isWholesale && wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
+                toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
+                    description: "Veuillez remplir tous les champs obligatoires",
+                    duration: 4000,
+                });
+                return;
+            }
             if (gender === 0) {
                 toast.error('Le genre du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
