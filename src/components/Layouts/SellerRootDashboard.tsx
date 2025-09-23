@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import Sidebar from '@/components/seller/Sidebar';
 import Header from '@/components/dashboard/seller/layouts/header';
@@ -21,6 +22,8 @@ const SellerRootDashboard: React.FC<SellerRootDashboardProps> = ({ children }) =
   const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(sellerData?.shop.gender || '', { skip: !sellerData?.shop.gender });
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [categoriesIsEmpty, setCategoriesIsEmpty] = useState<boolean | null>(null);
+  const location = useLocation();
+  const shouldShowChatWidget = location.pathname !== '/seller/create-product';
 
   useEffect(() => {
     if (sellerData?.shop?.categories && sellerData.shop.categories.length === 0) {
@@ -105,7 +108,9 @@ const SellerRootDashboard: React.FC<SellerRootDashboardProps> = ({ children }) =
           </div>
         </div>
       )}
-      <NotificationChatWidget bottomClass={categoriesIsEmpty === true ? 'bottom-24 max-sm:bottom-44' : 'bottom-4 max-sm:bottom-24'} />
+      {shouldShowChatWidget && (
+        <NotificationChatWidget bottomClass={categoriesIsEmpty === true ? 'bottom-24 max-sm:bottom-44' : 'bottom-4 max-sm:bottom-24'} />
+      )}
     </div>
   );
 }

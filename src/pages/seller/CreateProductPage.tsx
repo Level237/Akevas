@@ -977,14 +977,18 @@ const CreateProductPage: React.FC = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                                     </svg>
                                 </button>
+                                <div className='flex max-sm:flex-col'>
                                 <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
                                     {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
-                                    {isWholesale && (
-                                        <span className="ml-2 inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-full">
-                                            📦 Vente en gros
+                                    
+                                </h1>
+                                {isWholesale && (
+                                        <span className="text-center gap-1 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-full">
+                                            Vente en gros
                                         </span>
                                     )}
-                                </h1>
+                                </div>
+                                
                                 <button
                                     type="submit"
                                     className="p-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500"
