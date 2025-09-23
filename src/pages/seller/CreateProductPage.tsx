@@ -1506,7 +1506,7 @@ const CreateProductPage: React.FC = () => {
                                     <div className={`${
                                         productType === 'variable' ? 'md:block' : ''
                                     } ${
-                                        productType === 'variable' && activeMobileTab !== 'attributes' ? 'md:hidden hidden' : ''
+                                        productType === 'variable' && activeMobileTab !== 'attributes' ? 'md:hidden max-sm:hidden lg:block' : ''
                                     }`}>
                                     <div className="bg-white rounded-2xl shadow-sm p-6">
                                         <div className="flex items-center justify-between mb-6">
