@@ -284,6 +284,13 @@ const CreateProductPage: React.FC = () => {
                 });
                 return;
             }
+            if (!stock.trim()) {
+                toast.error('La quantité de stock du produit est obligatoire', {
+                    description: "Veuillez remplir tous les champs obligatoires",
+                    duration: 4000, // ms
+                });
+                return;
+            }
 
             if (!(isWholesale && isOnlyWhole) && (!price || Number(price) <= 0)) {
                 toast.error('Le prix du produit est obligatoire', {
@@ -380,7 +387,13 @@ const CreateProductPage: React.FC = () => {
                 return;
             }
             
-
+            if (!stock.trim()) {
+                toast.error('La quantité de stock du produit est obligatoire', {
+                    description: "Veuillez remplir tous les champs obligatoires",
+                    duration: 4000, // ms
+                });
+                return;
+            }
             if (!description.trim()) {
                 toast.error('La description du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
