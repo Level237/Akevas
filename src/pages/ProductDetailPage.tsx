@@ -560,9 +560,9 @@ const ProductDetailPage: React.FC = () => {
             {/* Colonne gauche - Images */}
             <div className="lg:col-span-4">
               <div className="sticky top-8">
-                <div className="bg-white flex flex-col-reverse lg:flex-row items-start gap-4 rounded-2xl shadow-sm p-4">
+                <div className="bg-white flex flex-col-reverse lg:flex-row items-start gap-1 rounded-2xl shadow-sm p-4">
                   {/* Barre d'images miniatures */}
-                  <div className="flex flex-col w-full lg:w-56 gap-4 relative">
+                  <div className="flex flex-col w-full lg:w-12 gap-4 relative">
                     {/* Navigation buttons - Masqués sur mobile */}
                     <button
                       onClick={() => {
@@ -588,7 +588,7 @@ const ProductDetailPage: React.FC = () => {
                             key={idx}
                             onClick={(e: any) => handleImageClick(e)}
                             onMouseEnter={() => setSelectedImage(idx)}
-                            className={`flex-shrink-0 h-14 w-14 rounded-lg overflow-hidden border-2 transition-all duration-200
+                            className={`flex-shrink-0 h-10 w-10 rounded-lg overflow-hidden border-2 transition-all duration-200
                               ${selectedImage === idx
                                 ? 'border-[#ed7e0f] ring-2 ring-[#ed7e0f]/20'
                                 : 'border-transparent hover:border-gray-200'
@@ -598,7 +598,7 @@ const ProductDetailPage: React.FC = () => {
                             <OptimizedImage
                               src={image.path}
                               alt={`${product.product_name} ${idx + 1}`}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
 
                             />
                           </button>
@@ -619,7 +619,7 @@ const ProductDetailPage: React.FC = () => {
 
                   {/* Image principale */}
                   <div
-                    className="relative w-full lg:w-[60rem] bg-black rounded-lg overflow-hidden mb-4 group"
+                    className="relative w-full lg:flex-1 bg-black rounded-lg overflow-hidden mb-4 group"
                     onMouseEnter={() => setIsZoomed(true)}
                     onMouseLeave={() => setIsZoomed(false)}
                     onMouseMove={handleMouseMove}
@@ -634,7 +634,7 @@ const ProductDetailPage: React.FC = () => {
                       <OptimizedImage
                         src={getAllImages()[selectedImage]?.path || product.product_profile}
                         alt={product.product_name}
-                        className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-100'}`}
+                        className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-[-12px]'}`}
 
                       />
                     </motion.div>
