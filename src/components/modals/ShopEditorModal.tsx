@@ -364,7 +364,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
       toast.success('Boutique mise à jour avec succès');
       console.log(response)
      
-
+      onClose();
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
       alert('Une erreur est survenue lors de la mise à jour');
