@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Upload,
     Plus,
@@ -89,9 +89,6 @@ const CreateProductPage: React.FC = () => {
     const [selectedAttributeType, setSelectedAttributeType] = useState<string | null>(null);
     const [attributeValuePrices, setAttributeValuePrices] = useState<Record<number, number>>({});
     const { data: getAttributeValueByGroup } = useGetAttributeValueByGroupQuery(selectedAttributeId ? selectedAttributeId.toString() : skipToken)
-    
-    // État pour gérer les tabs sur mobile
-    const [activeMobileTab, setActiveMobileTab] = useState<'info' | 'attributes'>('info');
     const [isWholesale, setIsWholesale] = useState<boolean | null>(
         saleFromUrl ? (saleFromUrl === '1' ? true : false) : null
     );
@@ -273,19 +270,14 @@ const CreateProductPage: React.FC = () => {
             }
         }
 
-        
+        // --- NOUVEAU BLOC DE VALIDATION DU STOCK ---
+
+        // --- FIN DU NOUVEAU BLOC DE VALIDATION DU STOCK ---
 
         // Validation pour les produits simples
         if (productType === 'simple') {
             if (!name.trim()) {
                 toast.error('Le nom du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-            if (!stock.trim()) {
-                toast.error('La quantité de stock du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
                     duration: 4000, // ms
                 });
@@ -386,14 +378,7 @@ const CreateProductPage: React.FC = () => {
                 });
                 return;
             }
-            
-            if (!stock.trim()) {
-                toast.error('La quantité de stock du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
+
             if (!description.trim()) {
                 toast.error('La description du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
@@ -401,13 +386,7 @@ const CreateProductPage: React.FC = () => {
                 });
                 return;
             }
-            if (isWholesale && wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
-                toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000,
-                });
-                return;
-            }
+
             if (gender === 0) {
                 toast.error('Le genre du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
@@ -1073,53 +1052,8 @@ const CreateProductPage: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Colonne principale */}
                         <div className="md:col-span-2 space-y-6">
-                            {/* Tabs pour mobile - Visible uniquement pour les produits variables */}
-                            {productType === 'variable' && (
-                                <div className="md:hidden">
-                                    <div className="bg-white rounded-2xl shadow-sm p-2 mb-6">
-                                        <div className="flex">
-                                            <button
-                                                type="button"
-                                                onClick={() => setActiveMobileTab('info')}
-                                                className={`flex-1 px-4 py-3 text-sm font-medium rounded-xl transition-all ${
-                                                    activeMobileTab === 'info'
-                                                        ? 'bg-[#ed7e0f] text-white shadow-sm'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                                                }`}
-                                            >
-                                                <div className="flex items-center justify-center gap-2">
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    Informations
-                                                </div>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setActiveMobileTab('attributes')}
-                                                className={`flex-1 px-4 py-3 text-sm font-medium rounded-xl transition-all ${
-                                                    activeMobileTab === 'attributes'
-                                                        ? 'bg-[#ed7e0f] text-white shadow-sm'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                                                }`}
-                                            >
-                                                <div className="flex items-center justify-center gap-2">
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                                                    </svg>
-                                                    Attributs
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                            {/* Conteneur pour les informations de base - Géré par les tabs sur mobile */}
-                            <div className={`bg-white rounded-2xl shadow-sm p-6 space-y-6 ${
-                                productType === 'variable' ? 'md:block' : ''
-                            } ${
-                                productType === 'variable' && activeMobileTab !== 'info' ? 'md:hidden hidden' : ''
-                            }`}>
+                            {/* Informations de base */}
+                            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                                 <input
                                     type="text"
                                     value={name}
@@ -1261,7 +1195,7 @@ const CreateProductPage: React.FC = () => {
                                 </div>
                             )}
 
-                            {isWholesale && productType === "variable" && activeMobileTab=== "info" && (
+                            {isWholesale && productType === "variable" && (
                                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
@@ -1335,66 +1269,62 @@ const CreateProductPage: React.FC = () => {
                             )}
 
                             {/* Catégories et sous-catégories */}
-                            {activeMobileTab=== "info" && (
-                                    <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
-                                    <div>
-                                        <label className="block text-lg max-sm:text-sm font-semibold mb-4">Genre produit</label>
-                                        <Select name='gender' onValueChange={handleChangeGender}>
-                                            <SelectTrigger className="bg-gray-50 border-0">
-                                                <SelectValue placeholder="Choisir un genre" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="1">Homme</SelectItem>
-                                                <SelectItem value="2">Femme</SelectItem>
-                                                <SelectItem value="3">Enfant</SelectItem>
-                                                <SelectItem value="4">Mixte</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-    
-                                    {gender !== 0 && (
-                                        <>
+                            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
+                                <div>
+                                    <label className="block text-lg max-sm:text-sm font-semibold mb-4">Genre produit</label>
+                                    <Select name='gender' onValueChange={handleChangeGender}>
+                                        <SelectTrigger className="bg-gray-50 border-0">
+                                            <SelectValue placeholder="Choisir un genre" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="1">Homme</SelectItem>
+                                            <SelectItem value="2">Femme</SelectItem>
+                                            <SelectItem value="3">Enfant</SelectItem>
+                                            <SelectItem value="4">Mixte</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                {gender !== 0 && (
+                                    <>
+                                        <div>
+                                            <label className="block max-sm:text-sm text-lg font-semibold mb-4">Catégories</label>
+                                            {isLoadingCategoriesByGender ? (
+                                                <div className="flex items-center justify-center h-20">
+                                                    <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
+                                                </div>
+                                            ) : (
+                                                <MultiSelect
+                                                    options={categoriesByGender?.categories}
+                                                    selected={selectedCategories}
+                                                    onChange={handleChangeCategories}
+                                                    placeholder="Sélectionner les catégories..."
+                                                />
+                                            )}
+                                        </div>
+
+                                        {selectedCategories.length > 0 && (
                                             <div>
-                                                <label className="block max-sm:text-sm text-lg font-semibold mb-4">Catégories</label>
-                                                {isLoadingCategoriesByGender ? (
+                                                <label className="block text-lg font-semibold mb-4">Sous catégories</label>
+                                                {isLoadingSubCategoriesByParentId ? (
                                                     <div className="flex items-center justify-center h-20">
                                                         <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
                                                     </div>
                                                 ) : (
                                                     <MultiSelect
-                                                        options={categoriesByGender?.categories}
-                                                        selected={selectedCategories}
-                                                        onChange={handleChangeCategories}
-                                                        placeholder="Sélectionner les catégories..."
+                                                        options={subCategoriesByGender?.categories}
+                                                        selected={selectedSubCategories}
+                                                        onChange={handleChangeSubCategories}
+                                                        placeholder="Sélectionner les sous-catégories..."
                                                     />
                                                 )}
                                             </div>
-    
-                                            {selectedCategories.length > 0 && (
-                                                <div>
-                                                    <label className="block text-lg font-semibold mb-4">Sous catégories</label>
-                                                    {isLoadingSubCategoriesByParentId ? (
-                                                        <div className="flex items-center justify-center h-20">
-                                                            <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
-                                                        </div>
-                                                    ) : (
-                                                        <MultiSelect
-                                                            options={subCategoriesByGender?.categories}
-                                                            selected={selectedSubCategories}
-                                                            onChange={handleChangeSubCategories}
-                                                            placeholder="Sélectionner les sous-catégories..."
-                                                        />
-                                                    )}
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                            
+                                        )}
+                                    </>
+                                )}
+                            </div>
 
                             {/* Informations de contact */}
-                            {activeMobileTab=== "info" && (
                             <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                                 <h2 className="text-lg font-semibold">Informations de contact</h2>
                                 <div className="space-y-4">
@@ -1438,7 +1368,6 @@ const CreateProductPage: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                            )}
                         </div>
 
                         {/* Colonne latérale */}
@@ -1520,12 +1449,7 @@ const CreateProductPage: React.FC = () => {
                                 </>
                             ) : (
                                 <>
-                                    {/* Section des attributs pour produit variable - Gérée par les tabs sur mobile */}
-                                    <div className={`${
-                                        productType === 'variable' ? 'md:block' : ''
-                                    } ${
-                                        productType === 'variable' && activeMobileTab !== 'attributes' ? 'md:hidden max-sm:hidden lg:block' : ''
-                                    }`}>
+                                    {/* Section des attributs pour produit variable */}
                                     <div className="bg-white rounded-2xl shadow-sm p-6">
                                         <div className="flex items-center justify-between mb-6">
                                             <div>
@@ -2030,7 +1954,6 @@ const CreateProductPage: React.FC = () => {
                                             </div>
                                         </div>
                                     )}
-                                    </div>
                                 </>
                             )}
                         </div>

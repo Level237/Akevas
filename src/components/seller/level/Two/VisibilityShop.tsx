@@ -85,11 +85,11 @@ export default function VisibilityShop(sellerData:{sellerData:Seller}) {
                     </div>
                   </div>
 
-                  <AsyncLink to={`/shop/${sellerData.sellerData.shop.shop_id}`} className="block">
+                  <a href={`https:/akevas.com/shop/${sellerData.sellerData.shop.shop_id}`} target='_blank' className="block">
                     <Button className="w-full bg-[#6e0a13] to-orange-600 hover:from-[#ed7e0f]/90 hover:to-orange-500 text-white font-semibold py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                       Voir ma boutique
                     </Button>
-                  </AsyncLink>
+                  </a>
                 </div>
               </Card>
               <Card className="p-6 bg-transparent border-2 border-[#ed7e0f]/20">
