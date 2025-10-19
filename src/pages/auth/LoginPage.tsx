@@ -22,7 +22,7 @@ export default function LoginPage() {
               <ArrowLeft className="w-6 h-6" />
             </button>
           </div>
-          <div className="flex justify-start mt-12 max-sm:mt-0">
+          <div className="flex justify-start mt-5 max-sm:mt-0">
 
           </div>
 

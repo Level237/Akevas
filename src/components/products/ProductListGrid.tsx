@@ -37,7 +37,6 @@ const ProductCard = memo(({
               src={product.product_profile}
               alt={product.product_name}
               className="w-full h-full object-cover"
-             
             />
             <div className="absolute cursor-pointer inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             
