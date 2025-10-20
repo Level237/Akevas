@@ -228,10 +228,7 @@ export const routes = createBrowserRouter([
     path: '/authenticate',
     element: <AuthenticatePage />
   },
-  {
-    path: '/auth/callback',
-    element: <AuthCallbackPage />
-  },
+  
   {
     path: '/home',
     element: <CurrentHomeByGenderPage />
@@ -276,6 +273,10 @@ export const routes = createBrowserRouter([
   {
     path: '/contact',
     element: <ContactPage />
+  },
+  {
+    path: '/auth/callback',
+    element: <AuthCallbackPage />
   },
 ],
 
