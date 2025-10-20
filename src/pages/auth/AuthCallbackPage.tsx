@@ -39,8 +39,15 @@ export const AuthCallbackPage = () => {
       // Stocke le token d'accès. Le cookie est défini UNIQUEMENT si le token est présent.
       // ⚠️ Assurez-vous d'utiliser `secure: false` si vous êtes en HTTP local
       
-      cookies.set('accessToken', token, { path: '/', secure: true });
-      cookies.set('refreshToken', token, { path: '/', secure: true }); 
+          const isLocal = window.location.protocol === "http:";
+    const cookieOptions = { 
+        path: '/', 
+        secure: !isLocal, // true si HTTPS, false si HTTP (pour localhost)
+        maxAge: 3600 * 24 * 7 // IMPORTANT : Garder le cookie pendant 7 jours
+    };
+
+    // Stocke le token d'accès.
+    cookies.set('accessToken', token, cookieOptions);
       
       isProcessed.current = true;
       // 3. Redirection vers la page d'authentification existante
