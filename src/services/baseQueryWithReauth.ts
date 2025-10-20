@@ -1,6 +1,7 @@
 
 import { baseQuery } from "./baseQuery";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import Cookies from "universal-cookie";
 import { setUnauthenticated } from "@/store/authSlice";
 
 
@@ -31,8 +32,10 @@ export const baseQueryWithReauth: BaseQueryFn<
       // Déconnecter l'utilisateur.
       api.dispatch(setUnauthenticated());
       // Nettoyage manuel des cookies si le backend ne le fait pas explicitement lors de l'échec du refresh
-      
-
+      const cookies = new Cookies();
+      cookies.remove('accessToken', { path: '/' });
+      cookies.remove('refreshToken', { path: '/' });
+      cookies.remove('userRole', { path: '/' });
     }
   }
   return result;
