@@ -58,7 +58,7 @@ export const AuthCallbackPage = () => {
       // 3. Redirection vers la page d'authentification existante
       // L'AuthenticatePage va lire le nouveau cookie 'accessToken' et déclencher useGetUserQuery.
       setStatus('Validation finale de la session...');
-      navigate('/authenticate', { replace: true });
+     
 
     } catch (error) {
       console.error("Erreur lors du stockage du token:", error);
