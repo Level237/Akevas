@@ -29,7 +29,7 @@ export const AuthCallbackPage = () => {
       const cookies = new Cookies();
       
       // Stocke le token d'accès dans les cookies pour qu'il soit lu par RTK Query ou votre logique de cookies
-      cookies.set('accessToken', token, { path: '/', secure: true }); // Ex: 7 jours
+       // Ex: 7 jours
       
       // Optionnel : stocker le rôle ou d'autres infos temporaires si nécessaire
       
@@ -41,6 +41,7 @@ export const AuthCallbackPage = () => {
                 navigate('/seller/dashboard');
                 break;
             case "3":
+                cookies.set('accessToken', token, { path: '/', secure: true });
                 navigate('/authenticate');
                 break;
             case "4":
