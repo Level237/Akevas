@@ -32,26 +32,7 @@ export const AuthCallbackPage = () => {
       cookies.set('accessToken', token, { path: '/', secure: true, maxAge: 3600 * 24 * 7 }); // Ex: 7 jours
       
       // Optionnel : stocker le rôle ou d'autres infos temporaires si nécessaire
-      if (roleId) {
-        switch (roleId) {
-            case "1":
-                navigate('/admin/dashboard');
-                break;
-            case "2":
-                navigate('/seller/dashboard');
-                break;
-            case "3":
-                navigate('/user/dashboard');
-                break;
-            case "4":
-                navigate('/delivery/dashboard');
-                break;
-            default:
-                // Cas par défaut si le rôle n'est pas reconnu
-                navigate('/');
-                break;
-        }
-      }
+      
 
       // 3. Redirection vers la page d'authentification existante
       // L'AuthenticatePage va lire le nouveau cookie 'accessToken' et déclencher useGetUserQuery.
