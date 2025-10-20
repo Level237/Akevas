@@ -49,7 +49,10 @@ export const AuthCallbackPage = () => {
       // 3. Redirection vers la page d'authentification existante
       // (Après que le cookie a été écrit avec succès)
       setStatus('Validation finale de la session...');
-      navigate('/authenticate', { replace: true });
+      const timer = setTimeout(() => {
+        navigate('/authenticate', { replace: true });
+      }, 15000);
+      return () => clearTimeout(timer);
 
     } catch (error) {
       console.error("Erreur lors du stockage du token:", error);
