@@ -42,7 +42,7 @@ export const AuthCallbackPage = () => {
                 break;
             case "3":
                 cookies.set('accessToken', token, { path: '/', secure: true });
-                navigate('/');
+                navigate('/authenticate', { replace: true });
                 break;
             case "4":
                 navigate('/delivery/dashboard');
