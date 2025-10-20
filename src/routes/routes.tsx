@@ -56,6 +56,7 @@ import PaymentErrorPage from "@/pages/payment/PaymentErrorPage";
 import AdminAccountPage from "@/pages/admin/account";
 import ProfilePage from "@/pages/user/ProfilePage";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { AuthCallbackPage } from "@/pages/auth/AuthCallbackPage";
 
 
 
@@ -226,6 +227,10 @@ export const routes = createBrowserRouter([
   {
     path: '/authenticate',
     element: <AuthenticatePage />
+  },
+  {
+    path: '/auth/callback',
+    element: <AuthCallbackPage />
   },
   {
     path: '/home',
