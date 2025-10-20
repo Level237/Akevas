@@ -48,7 +48,7 @@ export const AuthCallbackPage = () => {
                 break;
             default:
                 // Cas par défaut si le rôle n'est pas reconnu
-                navigate('/login');
+                navigate('/');
                 break;
         }
       }
