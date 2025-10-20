@@ -1,6 +1,6 @@
 // src/pages/AuthCallback.jsx
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { toast } from 'sonner';
@@ -9,11 +9,15 @@ export const AuthCallbackPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [status, setStatus] = useState('Traitement de la connexion...');
-  
+  const isProcessed = useRef(false);
   // NOTE : cookies n'a pas besoin d'être à l'extérieur
   const cookies = new Cookies(); 
 
   useEffect(() => {
+
+    if (isProcessed.current) {
+      return; 
+    }
     // 1. Déplacer la lecture des paramètres à l'intérieur du useEffect
     const params = new URLSearchParams(location.search); // Utiliser location.search pour la cohérence
     const token = params.get('token');
@@ -22,9 +26,10 @@ export const AuthCallbackPage = () => {
     if (!token) {
       toast.error("Échec de la connexion via Google. Token manquant.", { position: "bottom-center" });
       setStatus('Redirection vers la connexion...');
-      // Redirige vers la page de login en cas d'erreur
+      cookies.remove('accessToken', { path: '/' }); // S'assurer de nettoyer en cas d'échec
       const timer = setTimeout(() => navigate('/login', { replace: true }), 2000);
-      return () => clearTimeout(timer); // Nettoyage du timer
+      isProcessed.current = true; // Marquer comme traité même si en erreur
+      return () => clearTimeout(timer); 
     }
     
     // 2. Stockage du Token Passport (Maintenant, le code s'exécute une seule fois au montage)
@@ -40,6 +45,7 @@ export const AuthCallbackPage = () => {
         maxAge: 3600 * 24 * 7 // Ex: 7 jours (recommandé pour la persistance)
       }); 
       
+      isProcessed.current = true;
       // 3. Redirection vers la page d'authentification existante
       // (Après que le cookie a été écrit avec succès)
       setStatus('Validation finale de la session...');
@@ -50,6 +56,7 @@ export const AuthCallbackPage = () => {
       toast.error("Erreur critique de session.", { position: "bottom-center" });
       // Nettoyer le cookie en cas d'erreur grave
       cookies.remove('accessToken', { path: '/' }); 
+      isProcessed.current = true;
       navigate('/login', { replace: true });
     }
     
