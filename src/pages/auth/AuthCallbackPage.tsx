@@ -12,7 +12,7 @@ export const AuthCallbackPage = () => {
 
   useEffect(() => {
     // 1. Analyser les paramètres d'URL (envoyés par l'API Laravel)
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const roleId = params.get('role_id');
     
