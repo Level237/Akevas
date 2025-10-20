@@ -21,8 +21,6 @@ export const AuthCallbackPage = () => {
       toast.error("Échec de la connexion via Google.", { position: "bottom-center" });
       setStatus('Redirection vers la connexion...');
       // Redirige vers la page de login en cas d'erreur
-      const timer = setTimeout(() => navigate('/login', { replace: true }), 2000);
-      return () => clearTimeout(timer);
     }
     
     // 2. Stockage du Token Passport
