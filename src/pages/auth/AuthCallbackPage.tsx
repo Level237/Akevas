@@ -15,7 +15,7 @@ export const AuthCallbackPage = () => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const roleId = params.get('role_id');
-    
+    console.log(roleId)
     // Gérer les erreurs (ex: token non fourni)
     if (!token) {
       toast.error("Échec de la connexion via Google.", { position: "bottom-center" });
