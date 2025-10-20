@@ -61,7 +61,7 @@ export const AuthCallbackPage = () => {
     } catch (error) {
       console.error("Erreur lors du stockage du token:", error);
       toast.error("Erreur critique de session.", { position: "bottom-center" });
-      navigate('/login', { replace: true });
+      navigate('/', { replace: true });
     }
   }, [location, navigate]);
 
