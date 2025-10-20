@@ -3,12 +3,20 @@ import { setUserRole } from "@/store/authSlice";
 import { useEffect } from "react"
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom"
+import Cookies from "universal-cookie";
 
 export const AuthenticatePage = () => {
 
+     // Debug: Vérifier les cookies
+     const cookies = new Cookies();
+     console.log('Cookies dans AuthenticatePage:', {
+       accessToken: cookies.get('accessToken'),
+       refreshToken: cookies.get('refreshToken'),
+       userRole: cookies.get('userRole')
+     });
 
      // Déclenche la requête pour obtenir les données de l'utilisateur
-     const { data: userData, isLoading, isSuccess } = useGetUserQuery('Auth');
+     const { data: userData, isLoading, isSuccess, error } = useGetUserQuery('Auth');
     
      const navigate = useNavigate();
      const dispatch = useDispatch();
@@ -60,6 +68,7 @@ export const AuthenticatePage = () => {
      
      // Si la requête a échoué, on peut rediriger vers la page de connexion
      if (!isLoading && !isSuccess) {
+         console.log('Erreur dans AuthenticatePage:', error);
          navigate('/login', { replace: true });
      }
  
