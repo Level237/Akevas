@@ -15,7 +15,8 @@ export const AuthCallbackPage = () => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const roleId = params.get('role_id');
-    
+    console.log(roleId)
+    console.log(typeof roleId)
     // Gérer les erreurs (ex: token non fourni)
     if (!token) {
       toast.error("Échec de la connexion via Google.", { position: "bottom-center" });
@@ -29,29 +30,10 @@ export const AuthCallbackPage = () => {
       const cookies = new Cookies();
       
       // Stocke le token d'accès dans les cookies pour qu'il soit lu par RTK Query ou votre logique de cookies
-      cookies.set('accessToken', token, { path: '/', secure: true, maxAge: 3600 * 24 * 7 }); // Ex: 7 jours
+      cookies.set('accessToken', token, { path: '/', secure: true }); // Ex: 7 jours
       
       // Optionnel : stocker le rôle ou d'autres infos temporaires si nécessaire
-      if (roleId) {
-        switch (roleId) {
-            case "1":
-                navigate('/admin/dashboard');
-                break;
-            case "2":
-                navigate('/seller/dashboard');
-                break;
-            case "3":
-                navigate('/user/dashboard');
-                break;
-            case "4":
-                navigate('/delivery/dashboard');
-                break;
-            default:
-                // Cas par défaut si le rôle n'est pas reconnu
-                navigate('/');
-                break;
-        }
-      }
+      
 
       // 3. Redirection vers la page d'authentification existante
       // L'AuthenticatePage va lire le nouveau cookie 'accessToken' et déclencher useGetUserQuery.
