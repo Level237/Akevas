@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/services/auth";
 import { useState } from "react";
-import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
@@ -34,19 +33,7 @@ export default function LoginForm() {
     e.preventDefault()
     try {
       const userObject = { phone_number: phone, password: password, role_id: 3 }
-      const userData = await login(userObject)
-      console.log(userData)
-      const cookies = new Cookies();
-      const isLocal = window.location.protocol === "http:";
-      const cookieOptions = {
-        path: "/",
-        secure: !isLocal,      // false en HTTP local, true en prod HTTPS
-        sameSite: "lax" as const,
-        maxAge: 3600 * 24 * 7, // 7 jours (aligne-toi avec le callback)
-      };
-
-      cookies.set("accessToken", userData.data.access_token, cookieOptions);
-      cookies.set("refreshToken", userData.data.refresh_token, cookieOptions);
+      await login(userObject)
 
       if (redirectUrl) {
         if (s === '1') {
