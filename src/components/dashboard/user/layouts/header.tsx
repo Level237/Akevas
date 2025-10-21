@@ -12,7 +12,6 @@ export default function Header({ userData }: { userData: User | null | undefined
   const [logout, { isSuccess }] = useLogoutMutation();
   const handleLogout = async () => {
     await logout('Auth');
-
   }
 
   useEffect(() => {
