@@ -5,7 +5,7 @@ import { useState } from "react";
 import logo from "@/assets/favicon.png"
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
@@ -15,6 +15,7 @@ export default function LoginForm() {
   const name = params.get('name');
   const residence = params.get('residence');
   const navigate = useNavigate();
+  const code = params.get("code");
   const redirectUrl = params.get('redirect');
   const s = params.get('s');
   const [phone, setPhone] = useState('');
@@ -29,6 +30,11 @@ export default function LoginForm() {
       duration: 6000,
     })
   }
+
+
+    
+    
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
@@ -41,7 +47,9 @@ export default function LoginForm() {
         } else {
           window.location.href = redirectUrl + `?s=${s}&productId=${productId}&quantity=${quantity}&price=${price}&name=${name}&residence=${residence}`
         }
-      } else {
+      }
+      
+      else {
         setPhone('')
         setPassword('')
         navigate('/authenticate', { replace: true });
@@ -106,9 +114,15 @@ export default function LoginForm() {
           {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
             {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
               {errorMessage}
+              
             </div>}
           </div>}
-
+          {code =="401" && <div className='rounded-sm text-red-500 text-center w-[100%]'>
+            <div className='rounded-sm text-red-500 text-center w-[100%]'>
+            Cette adresse email  n'existe pas dans notre base de données. Veuillez vous enregistrer d'abord.
+              
+            </div>
+          </div>}
           <div className="space-y-2">
             <label className="text-sm" htmlFor="phone">Numéro de Téléphone</label>
             <div className="flex items-center bg-white/80 rounded-xl shadow-sm border border-gray-200 focus-within:border-blue-500 transition-all">
