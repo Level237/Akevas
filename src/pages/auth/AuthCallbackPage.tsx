@@ -64,7 +64,7 @@ export const AuthCallbackPage = () => {
       navigate('/login', { replace: true });
     }
     
-  }, [location, navigate]); // Dépendances inchangées
+  }, [location, navigate,isProcessed.current]); // Dépendances inchangées
 
   // Affiche un loader pendant le traitement du token
   return (
