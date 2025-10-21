@@ -28,14 +28,8 @@ console.log(data)
     }
   }, [isUninitialized, isSuccess, isError, isLoading, dispatch]);
 
-  const isAuthInitialized = useSelector((state:any) => state.auth.isAuthInitialized);
-  if (!isAuthInitialized) {
-    return (
-      <section className="h-screen w-full flex flex-col items-center justify-center">
-      <PageLoader/>
-  </section>
-    );
-  }
+  
+  
   return (
     <>
      

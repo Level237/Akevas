@@ -37,8 +37,16 @@ export default function LoginForm() {
       const userData = await login(userObject)
       console.log(userData)
       const cookies = new Cookies();
-      cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
-      cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
+      const isLocal = window.location.protocol === "http:";
+      const cookieOptions = {
+        path: "/",
+        secure: !isLocal,      // false en HTTP local, true en prod HTTPS
+        sameSite: "lax" as const,
+        maxAge: 3600 * 24 * 7, // 7 jours (aligne-toi avec le callback)
+      };
+
+      cookies.set("accessToken", userData.data.access_token, cookieOptions);
+      cookies.set("refreshToken", userData.data.refresh_token, cookieOptions);
 
       if (redirectUrl) {
         if (s === '1') {
