@@ -51,17 +51,35 @@ export const guardService = createApi({
             //transformResponse: (response: { data: { message: string } }) => response.data.message,
         }),
         getCategoriesWithParentIdNull: builder.query({
-            query: () => ({
-                url: `/api/categories/with-parent-id-null`,
-                method: "GET",
-            }),
+            query: (genderId) => {
+
+                let url = `/api/categories/with-parent-id-null`;
+                if (genderId != 4) {
+                    // L'argument est ici directement la valeur du genre (ex: 'homme')
+                    // Note: Nous utilisons 'g' comme nom de paramètre API pour rester cohérent avec l'URL frontend
+                    url = `${url}?gender=${genderId}`; 
+                }
+
+                return {
+                    url: url, // L'URL peut être /api/categories/with-parent-id-null?g=homme ou sans paramètre
+                    method: "GET",
+                };
+            },
             providesTags: ['guard'],
         }),
         getCategoriesWithParentId: builder.query({
-            query: (id) => ({
-                url: `/api/category/gender/${id}`,
-                method: "GET",
-            }),
+            query: ({id,genderId}) =>{
+                let url = `/api/category/gender/${id}`;
+                if (genderId != 4) {
+                    // L'argument est ici directement la valeur du genre (ex: 'homme')
+                    // Note: Nous utilisons 'g' comme nom de paramètre API pour rester cohérent avec l'URL frontend
+                    url = `${url}?gender=${genderId}`; 
+                }
+                return {
+                    url: url, // L'URL peut être /api/categories/with-parent-id-null?g=homme ou sans paramètre
+                    method: "GET",
+                };
+            },
             providesTags: ['guard'],
         }),
         getCategoryByGender: builder.query({

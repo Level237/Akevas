@@ -1,4 +1,4 @@
-import React, { useState, useMemo, Suspense } from 'react';
+import React, { useState, useMemo, Suspense, useEffect } from 'react';
 import { useGetCategoriesWithParentIdNullQuery, useGetCategoriesWithParentIdQuery } from '@/services/guardService';
 
 import { ChevronDown, Sparkle } from 'lucide-react';
@@ -143,20 +143,37 @@ CategoryDropdown.displayName = 'CategoryDropdown';
 // Séparation du contenu principal dans un composant distinct
 const CategoryNavigationContent = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(0);
+  const [currentGenderId,setCurrentGenderId]=useState<number>(0)
+  const params = new URLSearchParams(window.location.search);
+  const gender=params.get('g');
 
+  const queryArg = gender && ['homme', 'femme', 'enfant'].includes(gender.toLowerCase()) 
+                   ? gender.toLowerCase() 
+                   : 'guard';
+  useEffect(()=>{
+    if(queryArg ==="homme"){
+      setCurrentGenderId(1)
+    }else if(queryArg ==="femme"){
+      setCurrentGenderId(2)
+     }else if(queryArg ==="enfant"){
+      setCurrentGenderId(3)
+    }else{
+      setCurrentGenderId(4)
+    }
+  },[gender])
   const {
     data: { data: categoriesParent } = {},
     isLoading
-  } = useGetCategoriesWithParentIdNullQuery('guard', {
+  } = useGetCategoriesWithParentIdNullQuery(currentGenderId, {
     refetchOnMountOrArgChange: false,
     refetchOnFocus: false,
-    refetchOnReconnect: false
+    refetchOnReconnect: true
   });
 
   const {
     data: categoriesChildren,
     isLoading: isLoadingChildren
-  } = useGetCategoriesWithParentIdQuery(activeCategory, {
+  } = useGetCategoriesWithParentIdQuery({id:activeCategory,genderId:currentGenderId}, {
     skip: !activeCategory,
     refetchOnMountOrArgChange: true,
     refetchOnFocus: false,
