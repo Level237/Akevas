@@ -4,8 +4,8 @@ import { retry } from "@reduxjs/toolkit/query";
 // Fonction de retry personnalisée
 const staggeredBaseQuery = async (args: any, api: any, extraOptions: any) => {
   const baseQuery = fetchBaseQuery({
-    //baseUrl: "https://api-akevas.akevas.com",
-    baseUrl: "http://127.0.0.1:8000",
+    baseUrl: "https://api-akevas.akevas.com",
+    //baseUrl: "http://127.0.0.1:8000",
     credentials: "include",
     timeout: 10000,
 
