@@ -13,15 +13,15 @@ import { useAddCategoryMutation } from '@/services/adminService';
 export default function CreateCategoryPage() {
   const navigate = useNavigate();
   const { data: genders } = useAllGendersQuery('guardService');
-  const { data: categories, isLoading } = useGetCategoriesWithParentIdNullQuery('guardService');
+  const { data: categories, isLoading } = useGetCategoriesWithParentIdNullQuery("4");
   const [createCategory] = useAddCategoryMutation()
   const [formData, setFormData] = useState({
     category_name: '',
     category_profile: null as File | null,
-    gender_id: 0,
+    gender_id: [] as string[],
     parent_id: null as number | null // Renommé de parent_category_id à parent_id
   });
-  console.log(formData)
+  
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,22 +36,19 @@ export default function CreateCategoryPage() {
     }
   };
 
+  console.log(formData.category_name)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+   
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('category_name', formData.category_name);
-      formDataToSend.append('gender_id', String(formData.gender_id));
-      if (formData.category_profile) {
-        formDataToSend.append('category_profile', formData.category_profile);
-      }
-      if (formData.parent_id) { // Utilisé parent_id ici
-        formDataToSend.append('parent_id', String(formData.parent_id)); // Utilisé parent_id ici
-      }
 
-      await createCategory(formDataToSend);
-
+      await createCategory({
+        'category_name':formData.category_name,
+        'gender_id':formData.gender_id,
+        "category_profile":formData.category_profile,
+        "parent_id":formData.parent_id
+      });
+      
       toast.success('Catégorie créée avec succès');
       navigate('/admin/categories');
     } catch (error) {
@@ -94,20 +91,31 @@ export default function CreateCategoryPage() {
                 <Label htmlFor="gender_id">Genre</Label>
                 <select
                   id="gender_id"
+                  multiple
                   value={formData.gender_id}
-                  onChange={e => setFormData(prev => ({ ...prev, gender_id: Number(e.target.value) }))}
+                  onChange={e => {
+                    // Crée un tableau à partir des options sélectionnées (e.target.selectedOptions)
+                    const selectedValues = Array.from(e.target.selectedOptions)
+                                                .map(option => option.value);
+                    
+                    // Met à jour l'état avec le nouveau tableau d'IDs
+                    setFormData(prev => ({ 
+                        ...prev, 
+                        gender_id: selectedValues 
+                    }));
+                }}
                   className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ed7e0f] focus:border-[#ed7e0f] sm:text-sm"
                   required
                 >
                   <option value={0} disabled>
-                    Sélectionnez un genre
+                  Sélectionnez un ou plusieurs genres
                   </option>
                   {Array.isArray(genders) &&
-                    genders.map((gender: any) => (
-                      <option key={gender.id} value={gender.id}>
-                        {gender.gender_name}
-                      </option>
-                    ))}
+                      genders.map((gender: any) => (
+                          <option key={gender.id} value={gender.id}>
+                              {gender.gender_name}
+                          </option>
+                      ))}
                 </select>
               </div>
 

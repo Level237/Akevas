@@ -16,7 +16,8 @@ interface Category {
 export default function CategoryShowcase({categories, isLoading, title, titleCategory}: {categories: Category[], isLoading: boolean, title: string, titleCategory: string}) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-
+  console.log('level')
+  console.log(categories)
   // Optimized smooth scrolling with requestAnimationFrame
   const scroll = useCallback((direction: 'left' | 'right') => {
     if (!containerRef.current) return

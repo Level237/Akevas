@@ -32,9 +32,8 @@ const Homepage = () => {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   })
-  const { data: { data: categoriesData } = {}, isLoading: categoriesLoading,error:categoriesError } = useGetCategoriesWithParentIdNullQuery("guard", {
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: 30
+  const { data: { data: categoriesData } = {}, isLoading: categoriesLoading,error:categoriesError } = useGetCategoriesWithParentIdNullQuery("4", {
+    
   })
 
   

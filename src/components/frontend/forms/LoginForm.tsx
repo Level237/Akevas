@@ -179,7 +179,7 @@ export default function LoginForm() {
             </div>
           </div>
 
-          <div className="space-y-1 max-sm:space-y-5">
+          <div className="space-y-4 max-sm:space-y-5">
             <Button disabled={isLoading} type="submit" className="w-full max-sm:mt-4 mt-2 py-6 bg-[#ed7e0f] text-white hover:bg-[#ed7e0f]/90">
               {isLoading ? <div className="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
                 <span className="sr-only">Loading...</span>
