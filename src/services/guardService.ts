@@ -14,6 +14,14 @@ export const guardService = createApi({
             }),
             providesTags: ['guard'],
         }),
+
+        checkToken: builder.query({
+            query: () => ({
+                url: '/api/check/token',
+                method: 'GET',
+            }),
+            providesTags: ['guard'],
+        }),
         getTowns: builder.query({
             query: () => ({
                 url: "/api/towns",
@@ -193,4 +201,5 @@ export const {
     useGetAttributeValuesQuery,
     useGetSimilarProductsQuery,
     useGetSubscriptionQuery,
+    useCheckTokenQuery
 } = guardService
