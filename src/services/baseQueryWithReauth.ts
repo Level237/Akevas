@@ -1,39 +1,37 @@
-import { logoutUser } from "@/store/authSlice";
+
 import { baseQuery } from "./baseQuery";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { RootState } from "../store";
-import Cookies from "universal-cookie";
 
-export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
-async (args, store, extraOptions) => {
-    let result = await baseQuery(args, store, extraOptions);
 
-    const authState = (store.getState() as RootState).auth;
 
-    if (result.error && result.error.status === 401) {
-        if (!authState.token || !authState.refreshToken) return result;
+export const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => { // Renommé 'store' en 'api' pour la clarté (c'est le param par défaut)
+  let result = await baseQuery(args, api, extraOptions);
 
-        const refreshResult = await baseQuery("/api/refresh", store, extraOptions);
+  if (result.error && result.error.status === 401) {
+    // Tenter de rafraîchir le token
+    // La route /api/refresh doit être conçue pour prendre le refreshToken d'un cookie HttpOnly
+    // et retourner un nouvel accessToken (dans un cookie HttpOnly)
+    const refreshResult = await baseQuery("/api/refresh", api, extraOptions);
 
-        if (refreshResult.data) {
-            const cookies = new Cookies();
-            cookies.set('tokenSeller', (refreshResult.data as { accessToken: string }).accessToken, {
-                path: '/',
-                domain: '.akevas.com',
-                secure: true,
+    if (refreshResult.data) {
+      // Le token a été rafraîchi avec succès.
+      // Le nouveau accessToken est supposé être stocké dans un cookie HttpOnly par le backend.
+      // Nous n'avons pas besoin de le stocker manuellement ici si c'est HttpOnly.
+      // On peut dispatch setAuthenticated si nécessaire, mais si checkAuth est appelé, il le fera.
+      // api.dispatch(setAuthenticated()); 
 
-            });
-            cookies.set('refreshTokenSeller', (refreshResult.data as { refreshToken: string }).refreshToken, {
-                path: '/',
-                domain: '.akevas.com',
-                secure: true,
-            });
-
-            result = await baseQuery(args, store, extraOptions);
-        } else {
-            store.dispatch(logoutUser());
-        }
+      // Retenter la requête originale qui a échoué
+      result = await baseQuery(args, api, extraOptions);
+    } else {
+      // Le rafraîchissement a échoué (refreshToken invalide, expiré, ou erreur serveur).
+      // Déconnecter l'utilisateur.
+      
+      // Nettoyage manuel des cookies si le backend ne le fait pas explicitement lors de l'échec du refresh
     }
-
-    return result;
+  }
+  return result;
 };

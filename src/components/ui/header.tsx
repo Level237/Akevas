@@ -92,7 +92,7 @@ const Header = () => {
     refetchOnReconnect: false,
     pollingInterval: 0,
   });
-
+  console.log('ldl')
   console.log(seller)
   const { data: userDataAuth } = useGetUserQuery('Auth', {
     refetchOnFocus: false,

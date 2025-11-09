@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 function useCountUp(target: number, duration = 1200) {
   const [count, setCount] = useState(0);
   const ref = useRef<number>(0);
-
+  
   useEffect(() => {
     let start = 0;
     const end = target;

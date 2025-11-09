@@ -9,23 +9,25 @@ import { sellerService } from "@/services/sellerService";
 import cartSlice from "./cartSlice";
 import deliverySlice from "./delivery/deliverySlice";
 import categorySlice from "./features/categorySlice";
+import loadingSlice from "./loadingSlice";
 
-export const store=configureStore({
-    reducer:{
-        [authSlice.name]:authSlice.reducer,
-        [authService.reducerPath]:authService.reducer,
-        [cartSlice.name]:cartSlice.reducer,
-        [checkTokenService.reducerPath]:checkTokenService.reducer,
-        [registerSlice.name]:registerSlice.reducer,
-        [guardService.reducerPath]:guardService.reducer,
-        [adminService.reducerPath]:adminService.reducer,
-        [sellerService.reducerPath]:sellerService.reducer,
-        [deliverySlice.name]:deliverySlice.reducer,
-        [categorySlice.name]:categorySlice.reducer,
-        
+export const store = configureStore({
+    reducer: {
+        auth: authSlice,
+        [authService.reducerPath]: authService.reducer,
+        [cartSlice.name]: cartSlice.reducer,
+        [checkTokenService.reducerPath]: checkTokenService.reducer,
+        [registerSlice.name]: registerSlice.reducer,
+        [loadingSlice.name]: loadingSlice.reducer,
+        [guardService.reducerPath]: guardService.reducer,
+        [adminService.reducerPath]: adminService.reducer,
+        [sellerService.reducerPath]: sellerService.reducer,
+        [deliverySlice.name]: deliverySlice.reducer,
+        [categorySlice.name]: categorySlice.reducer,
+
     },
-    middleware:(getDefaultMiddleware)=>getDefaultMiddleware({
-        serializableCheck:false
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: false
     }).concat(
         authService.middleware,
         checkTokenService.middleware,
@@ -35,5 +37,5 @@ export const store=configureStore({
     )
 })
 
-export type RootState=ReturnType<typeof store.getState>
-export type AppDispatch=typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
