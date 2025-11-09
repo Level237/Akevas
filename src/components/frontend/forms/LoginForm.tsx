@@ -33,7 +33,7 @@ export default function LoginForm() {
     try {
       const userObject = { phone_number: phone, password: password, role_id: 2 }
       const userData = await login(userObject)
-
+      console.log(userData)
       const cookies = new Cookies();
       cookies.set('tokenSeller', userData.data.access_token, { path: '/', secure: true });
       cookies.set('refreshTokenSeller', userData.data.refresh_token, { path: '/', secure: true });
