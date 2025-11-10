@@ -4,7 +4,6 @@ import LoginPage from "@/pages/auth/LoginPage";
 import StoreGenerationPage from "@/pages/auth/seller-registration/StoreGenerationPage";
 import DashboardPage from "@/pages/seller/DashboardPage";
 import IdentityInfoPage from "@/pages/auth/seller-registration/IdentityInfoPage";
-import ProductListPage from "@/pages/ProductListPage";
 
 
 import StorePage from "@/pages/StorePage";

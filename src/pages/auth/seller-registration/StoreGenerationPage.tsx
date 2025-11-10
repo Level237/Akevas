@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from '@/store/index';
 import { useLoginMutation, useNewStoreMutation } from '@/services/auth';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
 import { removeData } from '@/store/seller/registerSlice';
-import Cookies from 'universal-cookie';
+import { useCheckShopStatusMutation } from '@/services/guardService';
 const steps = [
   "Création de votre boutique...",
   "Configuration de votre espace vendeur...",
@@ -23,6 +23,7 @@ const StoreGenerationPage = () => {
   const { firstName, lastName, gender, email, phone, birthDate, nationality, sellerType, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password, productType } = useSelector((state: RootState) => state.registerSeller);
   
   const [newStore] = useNewStoreMutation();
+  const [checkShopStatus] = useCheckShopStatusMutation();
   const [login] = useLoginMutation()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -55,7 +56,7 @@ const StoreGenerationPage = () => {
 
 
 
-      const formData = new FormData();
+       const formDataAll = new FormData();
 
       try {
         // Préparation des données pour l'API dès le début
@@ -70,19 +71,18 @@ const StoreGenerationPage = () => {
           shop_gender: gender,
         };
         Object.entries(storeObject).forEach(([key, value]) => {
-          if (value) formData.append(key, value);
+          if (value) formDataAll.append(key, value);
         });
         const categories = JSON.parse(storeCategories);
         for (let i = 0; i < categories.length; i++) {
-          formData.append('categories[]', categories[i]);
+          formDataAll.append('categories[]', categories[i]);
         }
         for (let i = 0; i < imageFiles.length; i++) {
-          formData.append('images[]', imageFiles[i]);
+          formDataAll.append('images[]', imageFiles[i]);
         }
 
         // Lancement de l'appel API immédiatement
-        await newStore(formData);
-
+        await newStore(formDataAll);
         const stepDuration = 3000;
         const handleStepProgress = (stepIndex: number) => {
           return new Promise<void>((resolve) => {
@@ -111,22 +111,29 @@ const StoreGenerationPage = () => {
 
         // Attente de la réponse de l'API
 
-        const userObject = { phone_number: phone, password: password, role_id: 2 }
-        const userData = await login(userObject)
+        const pollInterval = setInterval(async () => {
+          try {
+            const response = await checkShopStatus({ email });
+            console.log(response)
+            if (response.data.exists) {
+              clearInterval(pollInterval);
+              console.log(phone,password)
+              // Connexion automatique après création
+              await login({ phone_number: phone, password, role_id: 2 });
 
-        const cookies = new Cookies();
-        cookies.set('tokenSeller', userData.data.access_token, { path: '/', secure: true });
-        cookies.set('refreshTokenSeller', userData.data.refresh_token, { path: '/', secure: true });
+              await handleStepProgress(steps.length - 1);
+              setProgress(100);
 
-        // Dernière étape et finalisation
-        await handleStepProgress(steps.length - 1);
-        setProgress(100);
-
-        setTimeout(() => {
-          localStorage.removeItem('storeCreationStarted');
-          dispatch(removeData())
-          navigate('/seller/dashboard');
-        }, 1000);
+              setTimeout(() => {
+                localStorage.removeItem('storeCreationStarted');
+                dispatch(removeData());
+                navigate('/seller/dashboard');
+              }, 1000);
+            }
+          } catch (err) {
+            console.error('Polling error:', err);
+          }
+        }, 4000);
 
       } catch (error: any) {
         console.log(error);

@@ -49,6 +49,15 @@ export const guardService = createApi({
             }),
             invalidatesTags: ['guard'],
         }),
+        checkShopStatus: builder.mutation({
+            query: (formData) => ({
+                url: `/api/check/shop/status`,
+                method: "POST",
+                body: formData,
+            }),
+            invalidatesTags: ['guard'],
+        }),
+        
         getCategoriesWithParentIdNull: builder.query({
             query: () => ({
                 url: `/api/categories/with-parent-id-null`,
@@ -201,5 +210,6 @@ export const {
     useGetAttributeValuesQuery,
     useGetSimilarProductsQuery,
     useGetSubscriptionQuery,
-    useCheckTokenQuery
+    useCheckTokenQuery,
+    useCheckShopStatusMutation
 } = guardService
