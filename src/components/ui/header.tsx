@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, Menu, Clock, TrendingUp, Lock, CheckCircle, User } from 'lucide-react'
+import { Search, X, Menu, Clock, TrendingUp, Lock, CheckCircle, User, LayoutDashboard, Package, ShoppingCart, BarChart3, Settings, HelpCircle, Store } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -10,9 +10,9 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 import { Avatar, AvatarImage, AvatarFallback } from './avatar';
 import { Button } from './button';
 import { useGetUserQuery } from '@/services/auth';
-import { CategoryNavigation } from '../categories/CategoryNavigation';
 import MobileCategoryMenu from '../categories/MobileCategoryMenu';
 import { Badge } from './badge';
+import MenuNavigation from './menuNavigation';
 import DropdownAccount from './dropdown-account';
 // Données de démonstration pour l'historique et les suggestions
 const searchHistory = [
@@ -206,9 +206,45 @@ const Header = () => {
               <img src={logo} alt="AKEVAS" className="h-16 w-auto" />
             </AsyncLink>
 
-            <div className="flex-1 flex justify-center">
-              <CategoryNavigation />
-            </div>
+            {/* Menu Navigation - Version Sticky */}
+            <nav className="flex-1 flex justify-center">
+              <ul className="flex justify-center items-center gap-8">
+                <li>
+                  <AsyncLink to="/" className="flex text-sm items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+                    <Store className="w-4 h-4" />
+                    <span>Accueil</span>
+                  </AsyncLink>
+                </li>
+                
+                <li>
+                  <AsyncLink to="/products" className="flex text-sm items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+                    <Package className="w-4 h-4" />
+                    <span>Produits</span>
+                  </AsyncLink>
+                </li>
+                
+                <li>
+                  <AsyncLink to="/seller/dashboard" className="flex text-sm items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+                    <LayoutDashboard className="w-4 h-4" />
+                    <span>Espace Vendeur</span>
+                  </AsyncLink>
+                </li>
+                
+                <li>
+                  <AsyncLink to="/about" className="flex text-sm items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+                    <HelpCircle className="w-4 h-4" />
+                    <span>À propos</span>
+                  </AsyncLink>
+                </li>
+                
+                <li>
+                  <AsyncLink to="/contact" className="flex text-sm items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
+                    <Settings className="w-4 h-4" />
+                    <span>Contact</span>
+                  </AsyncLink>
+                </li>
+              </ul>
+            </nav>
 
             {headerActions}
           </div>
@@ -254,9 +290,8 @@ const Header = () => {
 
             <div className="flex flex-1 items-center justify-end gap-8">
 
-              <div className="flex justify-center w-full">
-                <CategoryNavigation />
-              </div>
+              {/* Menu Navigation */}
+              <MenuNavigation />
 
               {/* Actions (compte, panier, etc.) */}
               <div className="flex items-center gap-4">

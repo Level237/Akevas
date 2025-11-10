@@ -93,6 +93,13 @@ const HelpCenterPage = () => {
     )
   })).filter(category => category.questions.length > 0);
 
+
+  const openWhatsApp = () => {
+    const message = `Bonjour ! J'ai besoin d'aide`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/237674654624?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <TopBar />
@@ -243,7 +250,7 @@ const HelpCenterPage = () => {
             <p className="text-gray-400 mb-8">
               Notre équipe de support est disponible 24/7 pour vous aider
             </p>
-            <button className="bg-[#ed7e0f] text-white px-8 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
+            <button onClick={openWhatsApp} className="bg-[#ed7e0f] text-white px-8 py-4 rounded-xl font-medium hover:bg-[#ed7e0f]/90 transition-colors">
               Contacter le support
             </button>
           </div>

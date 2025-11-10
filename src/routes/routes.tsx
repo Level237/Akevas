@@ -39,11 +39,16 @@ import ReviewsPage from "@/pages/seller/ReviewsPage";
 import EditProductPage from "@/pages/seller/EditProductPage";
 import NotificationsPage from "@/pages/dashboard/seller/notifications";
 import ConfirmationPage from "@/pages/seller/ConfirmationPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
     element: <Homepage />
   },
+  {
+        path: "*",
+        element: <NotFoundPage />
+      },
   {
     path: '/payment/mobile-money',
     element: <MobileMoneyPaymentPage />
@@ -176,12 +181,6 @@ export const routes = createBrowserRouter([
     path: '/seller/guide',
     element: <SellerGuidePage />
   },
-
-  {
-    path: '/products',
-    element: <ProductListPage />
-  },
-
 
   {
     path: '/shop/:id',
