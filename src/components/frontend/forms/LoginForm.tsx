@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/services/auth";
 import { useState } from "react";
-import Cookies from "universal-cookie";
 import logo from "@/assets/favicon.png"
 import { Link } from "react-router-dom";
 import { toast } from 'sonner';
@@ -34,9 +33,6 @@ export default function LoginForm() {
       const userObject = { phone_number: phone, password: password, role_id: 2 }
       const userData = await login(userObject)
       console.log(userData)
-      const cookies = new Cookies();
-      cookies.set('accessTokenSeller', userData.data.access_token, { path: '/', secure: true });
-      cookies.set('refreshTokenSeller', userData.data.refresh_token, { path: '/', secure: true });
 
       if (redirectUrl) {
         const redirectParams = new URLSearchParams();
