@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, Menu, Clock, TrendingUp, Lock, CheckCircle, User, LayoutDashboard, Package, ShoppingCart, BarChart3, Settings, HelpCircle, Store } from 'lucide-react'
+import { Search, X, Menu, Clock, TrendingUp, Lock, CheckCircle, User, LayoutDashboard, Package,Settings, HelpCircle, Store } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
