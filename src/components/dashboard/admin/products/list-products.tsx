@@ -109,9 +109,10 @@ export default function ListProducts({ products, isLoading }: { products: Produc
                   )}
                 </TableCell>
                 <TableCell>
-                  <Badge className={product.status ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
+                  {product.isRejet==0 && <Badge className={product.status ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
                     {product.status ? "Active" : "Inactive"}
-                  </Badge>
+                  </Badge>}
+                  {product.isRejet==1 && <Badge className="bg-red-100 text-red-700 hover:bg-red-200">Rejeté</Badge>}
                 </TableCell>
                 <TableCell>
                   <span className="text-xs text-gray-500">

@@ -137,10 +137,10 @@ export const adminService = createApi({
 
         }),
         togglePublish: builder.mutation({
-            query: ({ product_id }) => ({
+            query: ({ product_id,formData }) => ({
                 url: `/api/v1/published/product/${product_id}`,
                 method: "POST",
-
+                body:formData
             })
         }),
         allCategories: builder.query({

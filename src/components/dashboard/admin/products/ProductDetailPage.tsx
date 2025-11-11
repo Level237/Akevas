@@ -5,13 +5,17 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductByUrlQuery } from "@/services/guardService";
 import { useTogglePublishMutation } from "@/services/adminService";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner";
 export default function ProductDetailPageAdmin() {
   const { url } = useParams<{ url: string }>();
   const navigate = useNavigate();
+  const [openRejectDialog, setOpenRejectDialog] = useState(false);
   const { data: { data: product } = {}, isLoading } = useGetProductByUrlQuery(url);
   const [togglePublish] = useTogglePublishMutation();
   const [isImageOpen, setIsImageOpen] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
   console.log(product)
   // Fonction pour déterminer le type de vente
   const getSaleTypeInfo = (product: any) => {
@@ -55,6 +59,18 @@ export default function ProductDetailPageAdmin() {
     );
   }
 
+  const decline=async()=>{
+    if (rejectReason.trim()) {
+      const data = {
+        user_id:product.user_id,
+        message: rejectReason
+      };
+      const res=await togglePublish({ product_id: product.id,formData:data });
+      console.log(res)
+      setOpenRejectDialog(false);
+      navigate("/admin/products")
+    }
+  }
   const handleTogglePublish = async () => {
     const res = await togglePublish({ product_id: product.id });
     console.log(res);
@@ -91,30 +107,65 @@ export default function ProductDetailPageAdmin() {
           })()}
         </div>
         <div className="flex gap-2">
-          <Button
-
-            className={product.status === 1 ? "bg-red-500" : "bg-green-500"}
-            onClick={handleTogglePublish}
-          //disabled={isToggling}
-          >
-            {product.status === 1 ? (
-              <>
-                <X className="w-4 h-4 mr-2" />
-                Dépublier le produit
-              </>
-            ) : (
-              <>
-                <Check className="w-4 h-4 mr-2" />
-                Publier le produit
-              </>
-            )}
-          </Button>
+          
+            <Button
+              variant="outline"
+              className="bg-red-500 hover:bg-red-600 text-white"
+              onClick={()=>setOpenRejectDialog(true)}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Rejeter le produit
+            </Button>
+          
+          {product.status === 0 && (
+            <Button
+              variant="outline"
+              className="bg-green-500 hover:bg-green-600 text-white"
+              onClick={handleTogglePublish}
+            >
+              <Check className="w-4 h-4 mr-2" />
+              Publier le produit
+            </Button>
+          )}
+         
           <Button variant="outline" onClick={() => navigate(-1)}>
             <X className="w-4 h-4 mr-2" /> Retour
           </Button>
         </div>
       </div>
-
+            <Dialog open={openRejectDialog} onOpenChange={setOpenRejectDialog}>
+                          <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                              <DialogTitle>Rejeter ce produit</DialogTitle>
+                              <DialogDescription>
+                                Veuillez expliquer le motif du rejet de ce produit. Cette information sera envoyée au vendeur.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                              <Textarea
+                                placeholder="Saisissez le motif du rejet..."
+                                value={rejectReason}
+                                onChange={(e) => setRejectReason(e.target.value)}
+                                className="min-h-[100px]"
+                              />
+                            </div>
+                            <DialogFooter>
+                              <Button
+                                variant="outline"
+                                onClick={() => setOpenRejectDialog(false)}
+                              >
+                                Annuler
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                onClick={() => decline()}
+                                disabled={!rejectReason.trim()}
+                              >
+                                Confirmer le rejet
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
       <Card>
         {/* Bannière type de vente pour les produits en gros */}
 
