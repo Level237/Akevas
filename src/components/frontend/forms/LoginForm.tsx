@@ -39,7 +39,8 @@ export default function LoginForm() {
     e.preventDefault()
     try {
       const userObject = { phone_number: phone, password: password, role_id: 3 }
-      await login(userObject)
+      const res=await login(userObject)
+      console.log(res)
 
       if (redirectUrl) {
         if (s === '1') {
@@ -47,6 +48,8 @@ export default function LoginForm() {
         } else {
           window.location.href = redirectUrl + `?s=${s}&productId=${productId}&quantity=${quantity}&price=${price}&name=${name}&residence=${residence}`
         }
+      }else if(res.data.error){
+         setErrorMessage("Vous n'avez pas accès à cette application")
       }
       
       else {
@@ -55,7 +58,8 @@ export default function LoginForm() {
         navigate('/authenticate', { replace: true });
       }
     } catch (error) {
-      setErrorMessage("Vous n'avez pas accès à cette application")
+      
+      
     }
   }
   const handleGoogleSignIn = () => {
