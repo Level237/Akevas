@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const FeedbackRejected = ({ feedbacks, isLoading }: { feedbacks: any, isLoading: boolean }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  
   if (!feedbacks || feedbacks.length === 0) {
     return null; // ou un message par défaut si aucun feedback
   }

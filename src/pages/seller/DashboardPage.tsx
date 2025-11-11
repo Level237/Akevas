@@ -14,7 +14,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { useCurrentSellerQuery } from '@/services/sellerService';
+import { useAllNotificationQuery, useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 import AsyncLink from '@/components/ui/AsyncLink';
@@ -27,6 +27,7 @@ import { useEffect, useState } from 'react';
 import { QuickActions } from '@/components/seller/QuickActions';
 import ShopGalleryAlertCard from '@/components/seller/ShopGalleryAlertCard';
 import { shopImagesIsEmpty } from '@/lib/shopImagesIsEmpty';
+import RejectedProductAlert from '@/components/seller/RejectedProductAlert';
 
 
 const DashboardPage = () => {
@@ -35,7 +36,9 @@ const DashboardPage = () => {
   const [imagesIsEmpty, setImagesIsEmpty] = useState<boolean | null>(null);
   const [message, setMessage] = useState(sessionStorage.getItem('message') || '');
   const storeStatus = sellerData?.shop.state;
-  console.log(sellerData)
+  
+  
+  
   useEffect(() => {
     if (Array.isArray(sellerData?.shop?.images)) {
       shopImagesIsEmpty(sellerData.shop.images).then(setImagesIsEmpty);
@@ -44,7 +47,7 @@ const DashboardPage = () => {
     }
   }, [sellerData?.shop?.images]);
 
-  console.log(sellerData)
+  
   const getStatusContent = () => {
     switch (storeStatus) {
       case "0":
@@ -210,7 +213,8 @@ const DashboardPage = () => {
               </div>
             </Card>
             }
-
+            {!isLoading && sellerData?.last_feedbacks_product_verification != 0 && <RejectedProductAlert rejectedCount={sellerData?.last_feedbacks_product_verification as number}/>
+            }
             {sellerData?.shop.state==="2" && <FeedbackRejected feedbacks={sellerData.feedbacks} isLoading={isLoading}/>}
           </motion.div>
           {imagesIsEmpty  &&  <ShopGalleryAlertCard />}

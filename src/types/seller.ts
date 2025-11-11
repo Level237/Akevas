@@ -15,6 +15,7 @@ export interface Seller {
   identity_card_with_the_person: string | null,
   notifications_is_count: number | null,
   email: string,
+  last_feedbacks_product_verification:number | null,
   isSeller: boolean | number,
   avatar: string,
   feedbacks: any[] | null,
