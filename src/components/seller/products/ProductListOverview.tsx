@@ -103,6 +103,8 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
         return "En attente";
       case 'out_of_stock':
         return 'Rupture';
+      case 'rejected':
+        return 'Rejeté';
       default:
         return status;
     }
@@ -186,8 +188,8 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
 
                   {/* Badge statut */}
                   <div className="absolute top-3 right-3">
-                    <span className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg ${getStatusColor(product.status ? 'active' : 'draft')}`}>
-                      {getStatusText(product.status ? 'active' : 'draft')}
+                    <span className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg ${product.isRejet ? 'bg-red-500 text-white' :   getStatusColor(product.status ? 'active' : 'draft')}`}>
+                      {product.isRejet ? 'Rejeté' : getStatusText(product.status ? 'active' : 'draft')}
                     </span>
                   </div>
                 </div>

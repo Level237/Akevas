@@ -11,6 +11,7 @@ export interface Product {
     shop_profile: string,
     product_url: string,
     shop_created_at: string,
+    isRejet:boolean,
     shop_id: string,
     product_images: Image[],
     product_categories: Category[],
