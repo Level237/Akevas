@@ -16,8 +16,8 @@ export default function SidebarLeft() {
   const navItems = [
     {
       icon: Home,
-      label: 'Accueil',
-      path: '/'
+      label: 'Tableau de bord',
+      path: '/seller/dashboard'
     },
     {
       icon: Store,

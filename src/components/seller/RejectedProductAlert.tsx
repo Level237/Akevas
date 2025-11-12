@@ -70,7 +70,7 @@ const RejectedProductAlert = ({
                 </button>
               )}
               <Link
-                to="/seller/products?status=rejected"
+                to="/seller/products?r=1"
                 onClick={onLearnMore}
                 className="bg-rose-600 px-4 py-2 rounded-lg hover:bg-rose-700 text-white text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2"
               >
@@ -144,7 +144,7 @@ const RejectedProductAlert = ({
                   Fermer
                 </button>
                 <Link
-                  to="/seller/products?status=rejected"
+                  to="/seller/products?r=1"
                   className="px-4 py-2 max-sm:text-xs rounded-lg bg-rose-600 hover:bg-rose-700 text-white flex items-center gap-2"
                   onClick={() => setIsModalOpen(false)}
                 >

@@ -122,6 +122,13 @@ export const sellerService = createApi({
             }),
             providesTags: ['seller']
         }),
+        getProductsOfRejected: builder.query({
+            query: () => ({
+                url: '/api/v1/reject/products',
+                method: 'GET'
+            }),
+            providesTags: ['seller']
+        }),
         getTicketCoin: builder.query({
             query: (ref) => ({
                 url: `/api/v1/show/payment/coins/${ref}`,
@@ -137,6 +144,7 @@ export const {
     useAddProductMutation,
     useGetProductsQuery,
     useGetProductsOfTrashQuery,
+    useGetProductsOfRejectedQuery,
     useUpdateDocsMutation,
     usePutInTrashMutation,
     useInitCoinPaymentMutation,

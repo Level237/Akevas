@@ -12,17 +12,18 @@ import { useCurrentSellerQuery } from '@/services/sellerService';
 import SidebarLeft from '@/components/ui/SidebarLeft';
 import MobileNav from '@/components/ui/mobile-nav';
 import AccountNotActivated from '@/components/seller/AccountNotActivated';
+import RejectedProductAlert from '@/components/seller/RejectedProductAlert';
 
 
 const DashboardProductListPage = () => {
   const [searchParams] = useSearchParams();
   const isTrashView = searchParams.get('s') === '1';
-
+  const isRejectedView = searchParams.get('r') === '1';
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
 
-  const { data: { data: sellerData } = {} } = useCurrentSellerQuery('seller');
+  const { data: { data: sellerData } = {}, isLoading } = useCurrentSellerQuery('seller');
 
   if (sellerData?.isSeller === 0) {
     return <>
@@ -35,10 +36,14 @@ const DashboardProductListPage = () => {
 
   return (
     <div className="container mx-24 w-92  max-sm:mx-auto px-4 py-8">
+      
+      <div className='mb-6 mr-24'>
+        {!isLoading && sellerData?.last_feedbacks_product_verification != 0 && !isTrashView && !isRejectedView  && <RejectedProductAlert rejectedCount={sellerData?.last_feedbacks_product_verification as number}/>}
+      </div>
       <div className="mb-6 ">
-        <h1 className="text-2xl  font-bold text-gray-900">{isTrashView ? "Corbeille des produits" : "Mes produits"}</h1>
+        <h1 className="text-2xl  font-bold text-gray-900">{isTrashView ? "Corbeille des produits" : isRejectedView ? "Produits rejetés" : "Mes produits"}</h1>
         <p className="text-gray-600 mt-1">
-          {isTrashView ? '' : "Gérez votre catalogue de produits"}
+          {isTrashView ? '' : isRejectedView ? '' : "Gérez votre catalogue de produits"}
 
         </p>
       </div>

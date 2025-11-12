@@ -14,7 +14,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { useAllNotificationQuery, useCurrentSellerQuery } from '@/services/sellerService';
+import { useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
 import AsyncLink from '@/components/ui/AsyncLink';

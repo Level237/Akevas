@@ -1,6 +1,6 @@
 import { Edit, Eye } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
-import { useGetProductsOfTrashQuery, useGetProductsQuery, usePutInTrashMutation, useRestoreProductMutation } from '@/services/sellerService'
+import { useGetProductsOfRejectedQuery, useGetProductsOfTrashQuery, useGetProductsQuery, usePutInTrashMutation, useRestoreProductMutation } from '@/services/sellerService'
 import { Package } from 'lucide-react'
 import { Product } from '@/types/products'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
@@ -12,7 +12,6 @@ import { useSearchParams } from 'react-router-dom';
 import { Upload } from 'lucide-react';
 
 export default function ProductListOverview({ products, isLoading, isTrashView, searchQuery }: { products: Product[], isLoading: boolean, isTrashView: boolean, searchQuery: string }) {
-  console.log(products)
 
   const [isOpen, setIsOpen] = useState(false);
   const [productId, setProductId] = useState("");
@@ -470,13 +469,13 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
 export function ProductListContainer({ searchQuery }: { searchQuery: string }) {
   const [searchParams] = useSearchParams();
   const isTrashView = searchParams.get('s') === '1';
-
-  const { data: { data: products } = {}, isLoading } = useGetProductsQuery('seller');
+  const isRejectedView = searchParams.get('r') === '1';
+  const { data: { data: products } = {}, isLoading} = useGetProductsQuery('seller');
   const { data: productsTrashData, isLoading: isLoadingProductsTrash } = useGetProductsOfTrashQuery('seller');
-  console.log(productsTrashData)
+  const { data: productsRejectedData, isLoading: isLoadingProductsRejected } = useGetProductsOfRejectedQuery('seller');
   // Utiliser les produits de la corbeille si ?s=1, sinon les produits normaux
-  const displayProducts = isTrashView ? (productsTrashData?.data || []) : (products || []);
-  const displayLoading = isTrashView ? isLoadingProductsTrash : isLoading;
+  const displayProducts = isTrashView ? (productsTrashData?.data || []) : (isRejectedView ? (productsRejectedData?.data || []) : (products || []));
+  const displayLoading = isTrashView ? isLoadingProductsTrash : (isRejectedView ? isLoadingProductsRejected : isLoading);
 
   return <ProductListOverview products={displayProducts} isLoading={displayLoading} isTrashView={isTrashView} searchQuery={searchQuery} />
 }
