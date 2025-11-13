@@ -1,4 +1,4 @@
-import { Edit, Eye } from 'lucide-react'
+import { Edit, Eye, AlertCircle } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
 import { useGetProductsOfRejectedQuery, useGetProductsOfTrashQuery, useGetProductsQuery, usePutInTrashMutation, useRestoreProductMutation } from '@/services/sellerService'
 import { Package } from 'lucide-react'
@@ -224,6 +224,19 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
                   </div>
                 </div>
 
+                {/* Message de feedback pour produits rejetés */}
+                {product.isRejet && product.feedbacks?.message && (
+                  <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-red-800 mb-1">Motif du rejet</p>
+                        <p className="text-sm text-red-700 leading-relaxed">{product.feedbacks.message}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Informations clés */}
                 <div className="grid grid-cols-2 gap-4 mb-5 p-4 bg-gray-50 rounded-xl">
                   <div className="text-center">
@@ -382,8 +395,8 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
 
                   {/* Badge statut */}
                   <div className="absolute top-3 right-3">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold shadow-lg ${getStatusColor(product.status ? 'active' : 'draft')}`}>
-                      {getStatusText(product.status ? 'active' : 'draft')}
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold shadow-lg ${product.isRejet ? 'bg-red-500 text-white' : getStatusColor(product.status ? 'active' : 'draft')}`}>
+                      {product.isRejet ? 'Rejeté' : getStatusText(product.status ? 'active' : 'draft')}
                     </span>
                   </div>
                 </div>
@@ -417,6 +430,19 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
                     )}
                   </div>
                 </div>
+
+                {/* Message de feedback pour produits rejetés */}
+                {product.isRejet && product.feedbacks?.message && (
+                  <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-red-800 mb-1">Motif du rejet</p>
+                        <p className="text-xs text-red-700 leading-relaxed">{product.feedbacks.message}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Informations clés */}
                 <div className="grid grid-cols-2 gap-3 mb-4 p-3 bg-gray-50 rounded-xl">
@@ -475,9 +501,9 @@ export function ProductListContainer({ searchQuery }: { searchQuery: string }) {
   const { data: { data: products } = {}, isLoading} = useGetProductsQuery('seller');
   const { data: productsTrashData, isLoading: isLoadingProductsTrash } = useGetProductsOfTrashQuery('seller');
   const { data: productsRejectedData, isLoading: isLoadingProductsRejected } = useGetProductsOfRejectedQuery('seller');
-  // Utiliser les produits de la corbeille si ?s=1, sinon les produits normaux
+  
   const displayProducts = isTrashView ? (productsTrashData?.data || []) : (isRejectedView ? (productsRejectedData?.data || []) : (products || []));
   const displayLoading = isTrashView ? isLoadingProductsTrash : (isRejectedView ? isLoadingProductsRejected : isLoading);
-
+  
   return <ProductListOverview products={displayProducts} isLoading={displayLoading} isTrashView={isTrashView} searchQuery={searchQuery} />
 }

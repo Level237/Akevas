@@ -12,6 +12,9 @@ export interface Product {
     product_url: string,
     shop_created_at: string,
     isRejet:boolean,
+    feedbacks: {
+        message: string,
+    },
     shop_id: string,
     product_images: Image[],
     product_categories: Category[],
