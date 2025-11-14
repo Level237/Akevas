@@ -16,7 +16,7 @@ export const GuardRoute = () => {
     }
   }, [loading, data, navigate]);
 
-  // 🔒 1. Si ça charge → ne retourne rien (comme Django)
+  
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ed7e0f]"></div>
