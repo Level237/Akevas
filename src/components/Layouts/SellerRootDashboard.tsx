@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
+import { Outlet } from "react-router-dom";
 import Sidebar from '@/components/seller/Sidebar';
 import Header from '@/components/dashboard/seller/layouts/header';
 import { useCurrentSellerQuery } from '@/services/sellerService';
@@ -10,11 +10,9 @@ import CategoryModal from '../modals/CategoryModal';
 import { useGetCategoryByGenderQuery } from '@/services/guardService';
 import NotificationChatWidget from '../ui/NotificationChatWidget';
 
-interface SellerRootDashboardProps {
-  children: React.ReactNode;
-}
 
-const SellerRootDashboard: React.FC<SellerRootDashboardProps> = ({ children }) => {
+
+const SellerRootDashboard= () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { data: { data: sellerData } = {}, isLoading } = useCurrentSellerQuery('seller');
@@ -65,7 +63,7 @@ const SellerRootDashboard: React.FC<SellerRootDashboardProps> = ({ children }) =
       <SidebarLeft />
       {/* En-tête avec navigation */}
       <Header sellerData={sellerData} isMobile={isMobile} setIsSidebarOpen={setIsSidebarOpen} />
-      {children}
+      <Outlet />
       <MobileNav />
       <CategoryModal
         open={showCategoryModal}

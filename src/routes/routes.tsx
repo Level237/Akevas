@@ -110,9 +110,13 @@ export const routes = createBrowserRouter([
     element: <IdentityInfoPage />
   },
   {
-    element: <SellerRootDashboard><PrivateRoute /></SellerRootDashboard>,
-    children: [
-      {
+    path:"/",
+    element: <PrivateRoute />,
+     children: [
+    {
+      element: <SellerRootDashboard />,
+      children: [
+        {
         path: '/seller/dashboard',
         element: <DashboardPage />
       },
@@ -174,6 +178,9 @@ export const routes = createBrowserRouter([
         path: 'seller/notifications/:notificationId',
         element: <NotificationsPage />
       },
+      ]
+    },
+     
     ]
   },
   {
