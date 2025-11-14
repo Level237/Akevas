@@ -96,16 +96,26 @@ export const routes = createBrowserRouter([
     element: <CatalogPage />
   },
   {
+  path: '/',
+  element: <GuardRoute />,
+  children: [
+    {
     path: '/login',
-    element: <><LoginPage /><GuardRoute/></>
+    element: <LoginPage />
   },
   {
     path: '/admin/login',
-    element: <><AdminLoginPage /><GuardRoute/></>
+    element: <AdminLoginPage />
   },
   {
     path: '/register',
-    element: <><RegisterPage /><GuardRoute/></>
+    element: <RegisterPage />
+  }
+  ]
+},
+  {
+    path: '/authenticate',
+    element: <AuthenticatePage />
   },
   {
     path: '/products',
@@ -227,10 +237,7 @@ export const routes = createBrowserRouter([
     path: 'notifications',
     element: <NotificationsPage />
   },
-  {
-    path: '/authenticate',
-    element: <AuthenticatePage />
-  },
+  
   
   {
     path: '/home',

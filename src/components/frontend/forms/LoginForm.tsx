@@ -48,7 +48,7 @@ export default function LoginForm() {
         } else {
           window.location.href = redirectUrl + `?s=${s}&productId=${productId}&quantity=${quantity}&price=${price}&name=${name}&residence=${residence}`
         }
-      }else if(res.data.error){
+      }else if(res.error){
          setErrorMessage("Vous n'avez pas accès à cette application")
       }
       
@@ -113,7 +113,12 @@ export default function LoginForm() {
           />
           <h1 className="text-3xl max-sm:text-2xl text-center font-semibold tracking-tight">Connexion</h1>
         </div>
-
+ {code =="500" && <div className='rounded-sm text-red-500 text-center w-[100%]'>
+            <div className='rounded-sm text-red-500 text-center w-[100%]'>
+           Cette adresse email n'est pas autorisée dans l'espace client
+              
+            </div>
+          </div>}
         <form onSubmit={handleSubmit} className="space-y-4">
           {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>
             {isError && <div className='rounded-sm text-red-500 text-center w-[100%]'>

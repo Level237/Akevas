@@ -25,6 +25,8 @@ export const authService = createApi({
                     return { error: "l'email et le mot de passe ne peut pas etre vide" };
                 } else if (baseQueryResult.status === 500) {
                     return { error: "l'email out le mot de passe sont incorrect" };
+                }else if(baseQueryResult.status === 401){
+                    return { error: "l'email out le mot de passe sont incorrect" };
                 }
                 else {
 
