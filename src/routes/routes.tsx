@@ -64,20 +64,18 @@ export const routes = createBrowserRouter([
     path: '/coins/ticket/:ref',
     element: <ConfirmationPage />
   },
-  {
-    path: '/login',
-    element:  <><LoginPage /><GuardRoute/></>
-  },
-
-  {
+ {
+  path: '/',
+  element: <GuardRoute />,
+  children: [
+    {
+      path: '/login',
+      element: <LoginPage />,
+    },
+    {
     path: '/seller-registration/personal-info',
     element: <PersonalInfoPage />
-  },
-  {
-    path: '/help',
-    element: <HelpCenterPage />
-  },
-  {
+  }, {
     path: '/seller-registration/security-info',
     element: <SecurityInfoPage />
   },
@@ -88,14 +86,6 @@ export const routes = createBrowserRouter([
   {
     path: '/seller-registration/seller-type',
     element: <SellerTypePage />
-  },
-  {
-    path: '/checkout/boost',
-    element: <CheckoutBoostPage />
-  },
-  {
-    path: '/checkout/recharge',
-    element: <CheckoutRechargePage />
   },
   {
     path: '/seller-registration/address-info',
@@ -109,6 +99,24 @@ export const routes = createBrowserRouter([
     path: '/seller-registration/identity-info',
     element: <IdentityInfoPage />
   },
+  ]
+},
+
+  
+  {
+    path: '/help',
+    element: <HelpCenterPage />
+  },
+ 
+  {
+    path: '/checkout/boost',
+    element: <CheckoutBoostPage />
+  },
+  {
+    path: '/checkout/recharge',
+    element: <CheckoutRechargePage />
+  },
+  
   {
     path:"/",
     element: <PrivateRoute />,
