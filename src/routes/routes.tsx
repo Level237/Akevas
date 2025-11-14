@@ -73,6 +73,10 @@ export const routes = createBrowserRouter([
       element: <LoginPage />,
     },
     {
+    path: '/authenticate',
+    element: <AuthenticatePage />
+  },
+    {
     path: '/seller-registration/personal-info',
     element: <PersonalInfoPage />
   }, {
@@ -211,10 +215,7 @@ export const routes = createBrowserRouter([
     element: <ShopsPage />
   },
 
-  {
-    path: '/authenticate',
-    element: <AuthenticatePage />
-  },
+  
 
 
 ]);
