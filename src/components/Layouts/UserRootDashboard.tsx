@@ -1,8 +1,9 @@
 import { useGetUserQuery } from '@/services/auth';
 import Header from '@/components/dashboard/user/layouts/header';
 import MobileNav from '../ui/mobile-nav';
+import { Outlet } from 'react-router-dom';
 
-const UserRootDashboard = ({ children }: { children: React.ReactNode }) => {
+const UserRootDashboard = () => {
   const { data: userData } = useGetUserQuery('Auth');
 
 
@@ -12,7 +13,7 @@ const UserRootDashboard = ({ children }: { children: React.ReactNode }) => {
 
       <Header userData={userData} />
       <main className="container mx-auto px-4 py-8">
-        {children}
+        <Outlet />
         <MobileNav />
       </main>
     </div>

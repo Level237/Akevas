@@ -141,12 +141,15 @@ export const routes = createBrowserRouter([
   },
   {
     path: "/",
-    element: <AdminRootDashboard><PrivateRoute /></AdminRootDashboard>,
+    element: <PrivateRoute /> ,
     children: [
       {
-        path: "admin/dashboard",
-        element: <DashboardAdminPage />
-      }, {
+        element: <AdminRootDashboard />,
+        children: [
+          {
+            path: "admin/dashboard",
+            element: <DashboardAdminPage />
+          }, {
         path: "admin/products",
         element: <AdminProductListPage />
       }, {
@@ -210,7 +213,8 @@ export const routes = createBrowserRouter([
       }
     ]
   },
-
+],
+},
   {
     path: '/',
     element: <Homepage />,
@@ -234,10 +238,13 @@ export const routes = createBrowserRouter([
   },
   {
     path: '/',
-    element: <UserRootDashboard><PrivateRoute /></UserRootDashboard>,
+    element: <PrivateRoute />,
 
     children: [
       {
+        element: <UserRootDashboard />,
+        children:[
+{
         path: 'user/dashboard',
         element: <UserDashboardPage />
       }, {
@@ -262,18 +269,22 @@ export const routes = createBrowserRouter([
         path: "/user/payment/:ref",
         element: <PaymentTicketPage />
       },
-
-    ]
-  },
-  {
+      {
     path: '/pay/mobile-money',
     element: <MobileMoneyPaymentPage />
   },
+        ]
+      }
+      
+
+    ]
+  },
+  
   {
     path: '/contact',
     element: <ContactPage />
   },
 
 ],
-
+  
 );
