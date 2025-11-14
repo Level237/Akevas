@@ -1191,9 +1191,9 @@ const EditProductPage: React.FC = () => {
                                     {/* Prix de gros */}
                                     <div className="space-y-4">
                                         {wholesalePrices.map((price, index) => (
-                                            <div key={index} className="bg-white rounded-xl p-4 border border-purple-200">
+                                            <div key={`${index} + ${price}`} className="bg-white rounded-xl p-4 border border-purple-200">
                                                 <div className="flex items-center justify-between mb-3">
-                                                    <span className="text-sm font-medium text-purple-600">Prix #{index + 1}</span>
+                                                    <span  className="text-sm font-medium text-purple-600">Prix #{index + 1}</span>
                                                     {wholesalePrices.length > 1 && (
                                                         <button
                                                             type="button"
@@ -1270,7 +1270,7 @@ const EditProductPage: React.FC = () => {
                                     {/* Prix de gros */}
                                     <div className="space-y-4">
                                         {wholesalePrices.map((price, index) => (
-                                            <div key={index} className="bg-white rounded-xl p-4 border border-purple-200">
+                                            <div key={`${index} + ${price}`} className="bg-white rounded-xl p-4 border border-purple-200">
                                                 <div className="flex items-center justify-between mb-3">
                                                     <span className="text-sm font-medium text-purple-600">Prix #{index + 1}</span>
                                                     {wholesalePrices.length > 1 && (
