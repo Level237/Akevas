@@ -129,6 +129,14 @@ export const sellerService = createApi({
             }),
             providesTags: ['seller']
         }),
+
+        getEditProduct:builder.query({
+            query: (url) => ({
+                url: `/api/v1/seller/edit/product/${url}`,
+                method: 'GET'
+            }),
+            providesTags: ['seller']
+        }),
         getTicketCoin: builder.query({
             query: (ref) => ({
                 url: `/api/v1/show/payment/coins/${ref}`,
@@ -136,7 +144,7 @@ export const sellerService = createApi({
             }),
             providesTags: ['seller']
         })
-    }),
+    })
 
 })
 export const {
@@ -151,6 +159,7 @@ export const {
     useGetTicketCoinQuery,
     useVerifyCoinPaymentMutation,
     useBoostShopMutation,
+    useGetEditProductQuery,
     useUpdateCategoriesMutation,
     useUpdateImagesMutation,
     useGetOrdersQuery,

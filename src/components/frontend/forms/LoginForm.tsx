@@ -9,6 +9,7 @@ export default function LoginForm() {
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('productId');
   const quantity = params.get('quantity');
+  const code = params.get("code");
   const price = params.get('price');
   const name = params.get('name');
   const residence = params.get('residence');
@@ -48,7 +49,13 @@ export default function LoginForm() {
         const finalRedirectUrl = `${redirectUrl}${redirectParams.toString() ? '?' + redirectParams.toString() : ''}`;
         
         window.location.href = finalRedirectUrl;
-      } else {
+      } else if(userData.data.error){
+        console.log('dd')
+        setErrorMessage("Vous n'avez pas accès à cette application")
+        return;
+      }
+      
+      else {
         setPhone('')
         setPassword('')
         window.location.href = `/authenticate`
@@ -113,7 +120,12 @@ export default function LoginForm() {
           </div>
         </Link>
 
-
+      {code =="500" && <div className='rounded-sm text-red-500 text-center w-[100%]'>
+            <div className='rounded-sm text-red-500 text-center w-[100%]'>
+           Cette adresse email n'est pas autorisée dans l'espace vendeur
+              
+            </div>
+          </div>}
 
 
         <form onSubmit={handleSubmit} className="space-y-2">
