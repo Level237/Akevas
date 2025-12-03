@@ -1112,19 +1112,6 @@ const CreateProductPage: React.FC = () => {
                                     </div>
                                 )}
 
-                                    {productType === "variable" && <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                                            <input
-                                                type="number"
-                                                value={stock}
-                                                onChange={(e) => setStock(e.target.value)}
-                                                className="w-full max-sm:placeholder:text-sm px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                                                placeholder="Quantité disponible"
-
-                                            />
-                                        </div>}
-                                        
-
 
 
                                 <div>
@@ -1206,79 +1193,6 @@ const CreateProductPage: React.FC = () => {
                                             type="button"
                                             onClick={addWholesalePrice}
                                             className="px-4 py-2 bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
-                                        >
-                                            + Ajouter un prix
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-                            {isWholesale && productType === "variable" && (
-                                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
-                                            <span className="text-2xl">📦</span>
-                                        </div>
-                                        <div>
-                                            <h2 className="text-xl max-sm:text-lg font-bold text-gray-900">Prix de Gros pour Variations</h2>
-                                            <p className="text-purple-600 text-xs font-medium">Configurez vos tarifs pour les revendeurs par couleur</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Prix de gros */}
-                                    <div className="space-y-4">
-                                        {wholesalePrices.map((price, index) => (
-                                            <div key={index} className="bg-white rounded-xl p-4 border border-purple-200">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <span className="text-sm font-medium text-purple-600">Prix #{index + 1}</span>
-                                                    {wholesalePrices.length > 1 && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeWholesalePrice(index)}
-                                                            className="p-1 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                                        >
-                                                            <X className="w-4 h-4" />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label className="block text-sm max-sm:text-xs font-semibold text-gray-700 mb-2">Quantité minimale</label>
-                                                        <input
-                                                            type="number"
-                                                            min="1"
-                                                            value={price.min_quantity}
-                                                            onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
-                                                                i === index ? { ...p, min_quantity: Number(e.target.value) } : p
-                                                            ))}
-                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                                            placeholder="Ex: 10"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="block text-sm max-sm:text-xs font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
-                                                        <input
-                                                            type="number"
-                                                            min="0"
-                                                            value={price.wholesale_price}
-                                                            onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
-                                                                i === index ? { ...p, wholesale_price: Number(e.target.value) } : p
-                                                            ))}
-                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                                            placeholder="Ex: 5000"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Bouton ajouter un nouveau prix */}
-                                    <div className="mt-4 flex justify-center">
-                                        <button
-                                            type="button"
-                                            onClick={addWholesalePrice}
-                                            className="px-4 py-2 max-sm:text-xs bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
                                         >
                                             + Ajouter un prix
                                         </button>
@@ -1542,71 +1456,79 @@ const CreateProductPage: React.FC = () => {
 
                                         {selectedAttributeType === 'colorAndAttribute' && (
                                             <div className="mb-8">
-                                                <label htmlFor="attribute-category" className="block text-sm font-medium text-gray-700 mb-2">Sélectionner la catégorie d'attribut</label>
-                                                <select
-                                                    id="attribute-category"
-                                                    name="attribute-category"
-                                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
-                                                    value={selectedAttributeId || ''}
-                                                    onChange={(e) => {
-                                                        const selectedCat = availableAttributes.find((attr: any) => attr.attribute_id === parseInt(e.target.value));
-                                                        if (selectedCat) {
-                                                            setSelectedAttributeId(selectedCat.attribute_id);
-                                                            setAttributes(prev => {
-                                                                const existingAttribute = prev.find(attr => attr.affectsPrice);
-                                                                if (existingAttribute) {
-                                                                    return prev.map(attr =>
-                                                                        attr.affectsPrice
-                                                                            ? { ...attr, name: selectedCat.attribute_name, id: selectedCat.attribute_id }
-                                                                            : attr
-                                                                    );
-                                                                } else {
-                                                                    return [
-                                                                        ...prev.filter(attr => !attr.affectsPrice),
-                                                                        {
-                                                                            id: selectedCat.attribute_id,
-                                                                            name: selectedCat.attribute_name,
-                                                                            affectsPrice: true,
-                                                                            values: []
+                                                <label className="block text-sm font-medium text-gray-700 mb-3">Sélectionner la catégorie d'attribut</label>
+                                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                                    {!isLoading && availableAttributes.map((attr: any) => {
+                                                        const isSelected = selectedAttributeId === attr.attribute_id;
+                                                        return (
+                                                            <button
+                                                                key={attr.attribute_id}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const selectedCat = attr;
+                                                                    if (selectedCat) {
+                                                                        setSelectedAttributeId(selectedCat.attribute_id);
+                                                                        setAttributes(prev => {
+                                                                            const existingAttribute = prev.find(a => a.affectsPrice);
+                                                                            if (existingAttribute) {
+                                                                                return prev.map(a =>
+                                                                                    a.affectsPrice
+                                                                                        ? { ...a, name: selectedCat.attribute_name, id: selectedCat.attribute_id }
+                                                                                        : a
+                                                                                );
+                                                                            } else {
+                                                                                return [
+                                                                                    ...prev.filter(a => !a.affectsPrice),
+                                                                                    {
+                                                                                        id: selectedCat.attribute_id,
+                                                                                        name: selectedCat.attribute_name,
+                                                                                        affectsPrice: true,
+                                                                                        values: []
+                                                                                    }
+                                                                                ];
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    
+                                                                    setVariants([]);
+                                                                    // Reset to a single empty frame
+                                                                    setVariationFrames([{
+                                                                        id: "",
+                                                                        sizes: [],
+                                                                        productId: "",
+                                                                        shoeSizes: [],
+                                                                        images: [],
+                                                                        quantity: 0,
+                                                                        price: 0,
+                                                                        color: {
+                                                                            id: 0,
+                                                                            name: "",
+                                                                            hex: ""
                                                                         }
-                                                                    ];
-                                                                }
-                                                            });
-                                                        } else {
-                                                            // If no category is selected, remove the price-affecting attribute
-                                                            setAttributes(prev => prev.filter(attr => !attr.affectsPrice));
-                                                            setSelectedAttributeId(null);
-                                                        }
-                                                        setVariants([]);
-                                                        setVariationFrames([]);
-                                                        addVariationFrame();
-                                                        if (variationFrames.length > 0) {
-                                                            setVariationFrames([{
-                                                                id: variationFrames[0].id,
-                                                                sizes: [],
-                                                                productId: "",
-                                                                shoeSizes: [],
-                                                                images: [],
-                                                                quantity: 0,
-                                                                price: 0,
-                                                                color: {
-                                                                    id: 0,
-                                                                    name: "",
-                                                                    hex: ""
-                                                                }
-                                                            }]);
-                                                        } else {
-                                                            addVariationFrame();
-                                                        }
-                                                    }}
-                                                >
-                                                    <option value="">Sélectionner un attribut</option>
-                                                    {!isLoading && availableAttributes.map((attr: any) => (
-                                                        <option key={attr.attribute_id} value={attr.attribute_id}>
-                                                            {attr.category_name} ({attr.attribute_name})
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                                    }]);
+                                                                }}
+                                                                className={`
+                                                                    relative flex flex-col items-start p-2 rounded-xl border-2 transition-all duration-200 text-left
+                                                                    ${isSelected 
+                                                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 shadow-sm' 
+                                                                        : 'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'
+                                                                    }
+                                                                `}
+                                                            >
+                                                                <span className={`text-xs font-semibold tracking-wider mb-1 ${isSelected ? 'text-[#ed7e0f]' : 'text-gray-500'}`}>
+                                                                    {attr.category_name}
+                                                                </span>
+                                                                <span className={`font-medium text-xs ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>
+                                                                    {attr.attribute_name}
+                                                                </span>
+                                                                
+                                                                {isSelected && (
+                                                                    <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#ed7e0f]" />
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
                                         )}
                                     </div>

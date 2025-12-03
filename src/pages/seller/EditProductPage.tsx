@@ -1,41 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Upload,
-    Plus,
-    X,
-    Save,
-    Loader2,
-    Image,
-} from 'lucide-react';
+import { Upload, Plus, X, Save, Loader2, Image } from 'lucide-react';
 
 import { useAddProductMutation, useGetEditProductQuery } from '@/services/sellerService';
 import { useGetAttributeByCategoryQuery, useGetAttributeValueByGroupQuery, useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetParentForCategoriesQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem, SelectGroup, SelectLabel } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { compressMultipleImages } from '@/lib/imageCompression';
 import { skipToken } from '@reduxjs/toolkit/query';
 
-
-
-
-// Nouvelle interface pour mieux typer les attributs
 interface ProductAttribute {
     id: number;
     name: string;
-    affectsPrice: boolean; // Nouveau champ pour différencier les types d'attributs
+    affectsPrice: boolean;
     values: Array<{
         id: number;
         value: string;
         hex?: string;
-        price?: number; // Prix spécifique pour les attributs qui affectent le prix
+        price?: number;
     }>;
 }
 
-
-
-// Nouvelle interface pour les variations structurées
 interface Variation {
     id: string;
     productId: string;
@@ -49,11 +35,11 @@ interface Variation {
         name: string;
         quantity: number;
         price: number;
-        isWholesale?: boolean; // Nouveau champ pour indiquer si cet attribut a des prix de gros
+        isWholesale?: boolean;
         wholesalePrices?: {
             min_quantity: number;
             wholesale_price: number;
-        }[]; // Nouveau champ pour les prix de gros spécifiques à l'attribut
+        }[];
     }[];
     shoeSizes: {
         id: number;
@@ -66,94 +52,91 @@ interface Variation {
             wholesale_price: number;
         }[];
     }[];
-    images: File[];
+    images: File[] | string[]; // Allow File objects or strings (URLs)
     quantity: number;
     price: number;
+    isColorOnly?: boolean;
 }
 
 const EditProductPage: React.FC = () => {
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
     const { url } = useParams<{ url: string }>();
-    const typeFromUrl = searchParams.get('type');
-    const saleFromUrl = searchParams.get('sale');
+    const [isLoadingProductInput, setIsLoadingProductInput] = useState(true);
+
+    const { data: product, isLoading: isLoadingProduct } = useGetEditProductQuery(url || skipToken);
+    
+
+    // Base product fields
     const [name, setName] = useState('');
     const [whatsappNumber, setWhatsappNumber] = useState('');
-    const [city, setCity] = useState("");
-    const [town,setTown] = useState("")
-    const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
-    const { data: availableAttributes, isLoading } = useGetAttributeByCategoryQuery('guard');
-    const { data : product,isLoading: isLoadingProduct} = useGetEditProductQuery(url)
-    const [selectedAttributeId, setSelectedAttributeId] = useState<number | null>(null);
-    const [globalColorPrice, setGlobalColorPrice] = useState<number>(0);
-    const [selectedAttributeType, setSelectedAttributeType] = useState<string | null>(null);
-    const [attributeValuePrices, setAttributeValuePrices] = useState<Record<number, number>>({});
-    const { data: getAttributeValueByGroup } = useGetAttributeValueByGroupQuery(selectedAttributeId ? selectedAttributeId.toString() : skipToken)
-    const [isWholesale, setIsWholesale] = useState<boolean | null>(
-        saleFromUrl ? (saleFromUrl === '1' ? true : false) : null
-    );
-    const [arrayWholesalePrices, setArrayWholesalePrices] = useState<Array<{
-        min_quantity: number;
-        wholesale_price: number;
-    }>>([{ min_quantity: 10, wholesale_price: 0 }]);
-    const [isOnlyWhole, setIsOnlyWhole] = useState<boolean | null>(
-        searchParams.get('isOnlyWhole') ? (searchParams.get('isOnlyWhole') === '1' ? true : false) : null
-    );
+    const [city, setCity] = useState('');
+    const [description, setDescription] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+    const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
+    const [images, setImages] = useState<File[]>([]); // For new images
+    const [featuredImage, setFeaturedImage] = useState<File | string | null>(null); // Can be File or URL
+    const [price, setPrice] = useState('');
+    const [stock, setStock] = useState('');
+    const [gender, setGender] = useState<number>(0);
+    const [productType, setProductType] = useState<'simple' | 'variable'>('simple');
+    const [isWholesale, setIsWholesale] = useState<boolean | null>(null);
+    const [isOnlyWhole, setIsOnlyWhole] = useState<boolean | null>(null);
     const [wholesalePrices, setWholesalePrices] = useState<Array<{
         min_quantity: number;
         wholesale_price: number;
     }>>([{ min_quantity: 10, wholesale_price: 0 }]);
-    const [variations, setVariations] = useState<Variation[]>([]);
 
-    const [description, setDescription] = useState('');
-    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-    const [selectedSubCategories, setSelectedSubCategories] = useState<number[]>([]);
-    const [images, setImages] = useState<File[]>([]);
-    const [featuredImage, setFeaturedImage] = useState<File | null>(null);
+    // Attributes and variations
+    const [selectedAttributeId, setSelectedAttributeId] = useState<number | null>(null);
+    const [selectedAttributeType, setSelectedAttributeType] = useState<string | null>(null);
+    const [globalColorPrice, setGlobalColorPrice] = useState<number>(0);
+    const [attributeValuePrices, setAttributeValuePrices] = useState<Record<number, number>>({});
+    const [variationFrames, setVariationFrames] = useState<Variation[]>([]);
+    const [variations, setVariations] = useState<Variation[]>([]); // This might not be used directly in the UI but for submission
     const [attributes, setAttributes] = useState<ProductAttribute[]>([]);
-    const [variants, setVariants] = useState<Variation[]>([]);
-    const [price, setPrice] = useState('');
-    const [stock, setStock] = useState('');
-    console.log(variants)
+    const [sizePrices, setSizePrices] = useState<Record<number, number>>({}); // Potentially unused
+    const [shoeSizePrices, setShoeSizePrices] = useState<Record<number, number>>({}); // Potentially unused
 
-    const [gender, setGender] = useState<number>(0)
-    const [productType, setProductType] = useState<'simple' | 'variable'>(typeFromUrl === 'variable' ? 'variable' : 'simple');
-    const [addProduct, { isLoading: isLoadingAddProduct }] = useAddProductMutation()
-    const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender)
-    const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender })
+    const [imagesToDelete, setImagesToDelete] = useState<number[]>([]);
+    const [variationImagesToDelete, setVariationImagesToDelete] = useState<Record<string, number[]>>({});
+
+    // Query hooks
+    const { data: getAttributes, isLoading: isLoadingAttributesData } = useGetAttributeValuesQuery("1"); // Assuming '1' is for colors
+    const { data: availableAttributes, isLoading: isLoadingAttributes } = useGetAttributeByCategoryQuery('guard');
+    const { data: getAttributeValueByGroup } = useGetAttributeValueByGroupQuery(selectedAttributeId ? selectedAttributeId.toString() : skipToken);
+    const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender);
+    const { data: subCategoriesByGender, isLoading: isLoadingSubCategoriesByParentId } = useGetSubCategoriesQuery({ arrayId: selectedCategories, id: gender });
     const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
-   const { data: parentForCategories} = useGetParentForCategoriesQuery({ arrayId: selectedCategories });
-   
-    // Ajout des pointures par catégorie
-    const [isLoadingProductInput, setIsLoadingProductInput] = useState(true);
-    //console.log(selectedSubCategories)
-    // Liste des catégories disponibles
+    const { data: parentForCategories } = useGetParentForCategoriesQuery({ arrayId: selectedCategories });
 
-    console.log(isLoadingProductInput)
-     useEffect(() => {
-    if (product && !isLoadingProduct) {
-      setIsLoadingProductInput(true);
-      
-      // Remplir les champs de base
-      setName(product.product_name);
-      setWhatsappNumber(product.whatsapp_number);
-      setDescription(product.product_description);
-      setPrice(product.product_price);
-      setStock(product.product_quantity);
-      setTown(product.residence);
-      setGender(product.product_gender)
-      setIsWholesale(product.isWholeSale)
-      setIsOnlyWhole(product.is_only_wholesale)
-      setArrayWholesalePrices(product.productWholeSales)
-      // Déterminer le type de produit
-      const hasVariations = product?.variations && product?.variations.length > 0;
-      setProductType(hasVariations ? 'variable' : 'simple');
-      
-      // Remplir les catégories
-      if (product?.parent_category && product?.parent_category.length > 0) {
+    useEffect(() => {
+        if (product && !isLoadingProduct) {
+            setIsLoadingProductInput(true);
+
+            // Set basic fields from ProductEditResource
+            setName(product.product_name || '');
+            setWhatsappNumber(product.whatsapp_number || '');
+            setDescription(product.product_description || '');
+            setPrice(product.product_price || '');
+            setStock(product.product_quantity || '');
+            setIsWholesale(product.isWholeSale === 1 || product.isWholeSale === true);
+            setIsOnlyWhole(product.is_only_wholesale === 1 || product.is_only_wholesale === true);
+
+            setCity(product.residence || '');
+            // Set wholesale prices if available
+            if (product.productWholeSales && product.productWholeSales.length > 0) {
+                setWholesalePrices(product.productWholeSales);
+            }
+
+            // Determine product type
+            const hasVariations = product.variations && product.variations.length > 0;
+            setProductType(hasVariations ? 'variable' : 'simple');
+
+            // Set categories
+             if (product?.parent_category && product?.parent_category.length > 0) {
         const categoryIds = product?.parent_category.map((cat:any) => cat.id);
         setSelectedCategories(categoryIds);
-        
+        console.log(product)
         // Déterminer le genre basé sur les catégories
         if (product?.parent_category.some((cat:any) => cat.category_name.toLowerCase().includes('femme'))) {
           setGender(2);
@@ -173,84 +156,396 @@ const EditProductPage: React.FC = () => {
         // Déterminer le genre basé sur les catégories
       }
       
-      // Remplir les images existantes
-      //setExistingImages(product.product_images || []);
-      //setFeaturedImagePreview(product.product_profile);
-      
-      // Remplir les variations si c'est un produit variable
-      if (hasVariations) {
-        setVariations(product?.variations);
-        // Convertir les variations en frames pour l'interface
-        const frames = product?.variations.length > 0 && product?.variations?.map((variation:any) => ({
-          id: variation?.id,
-          colorId: variation?.color?.id,
-          sizes: variation?.size ? [{
-            id: variation?.size?.id,
-            quantity: variation?.size?.quantity
-          }] : [],
-          images: [], // Les images seront gérées séparément
-          quantity: variation?.quantity
-        }));
-        setVariationFrames(frames);
-        // Remplir les prix
-      
-      }
-      
-      setIsLoadingProductInput(false);
-    }
-  }, [product, isLoadingProduct]);
 
-  console.log(city)
-    // Initialisation des attributs avec la propriété affectsPrice
-    useEffect(() => {
-        if (getAttributes) {
-            setAttributes(
-                getAttributes.map((attr: any) => ({
-                    id: attr.id,
-                    name: attr.name,
-                    affectsPrice: attr.name === 'Taille', // La taille affecte le prix, la couleur non
-                    values: []
-                }))
-            );
-        }
+            // Handle existing featured image
+            if (product.product_profile) {
+                setFeaturedImage(product.product_profile); // Store URL for display
+            }
 
-        if (!attributes.some(attr => attr.affectsPrice)) {
-            setAttributes([
-                ...attributes,
-                {
-                    id: 2,
-                    name: 'Taille',
-                    affectsPrice: true,
-                    values: []
+            // Handle existing images
+            if (product.product_images && Array.isArray(product.product_images)) {
+                // Store existing image URLs, not Files
+                const existingImageUrls = product.product_images.map((img: any) => img.path);
+                // We need a way to reference these existing images for deletion.
+                // For now, we'll just store them, and the `imagesToDelete` state will be managed separately.
+            }
+
+
+            // Handle variations for variable products
+            if (hasVariations) {
+                const firstVariation = product.variations[0];
+                const isColorOnly = firstVariation.isColorOnly === true || firstVariation.isColorOnly === 1 || firstVariation.isColorOnly === '1';
+
+                setSelectedAttributeType(isColorOnly ? 'colorOnly' : 'colorAndAttribute');
+
+                // If colorAndAttribute, we need to detect the attribute type from the attributes structure
+                // Assuming attributes[0].group tells us the attribute category (e.g., "Adulte")
+                if (!isColorOnly && firstVariation.attributes && firstVariation.attributes.length > 0) {
+                    const firstAttrGroup = firstVariation.attributes[0].group;
+                    // You might need to match this with availableAttributes to get the correct ID
+                    // For now, we'll find the attribute ID that matches this group
+                    const matchingAttribute = availableAttributes?.find((attr: any) => attr.category_name === firstAttrGroup || attr.attribute_name.includes('Taille'));
+                    if (matchingAttribute) {
+                        setSelectedAttributeId(matchingAttribute.attribute_id);
+                    }
                 }
-            ]);
-        } else {
-            // Si on a déjà un attribut qui affecte le prix, on le remplace par Taille
-            setAttributes(attributes.map(attr =>
-                attr.affectsPrice
-                    ? { ...attr, name: 'Taille', id: 2 }
-                    : attr
-            ));
+
+                // Map variations correctly: each variation object = one color variant
+                const frames = product.variations.map((variation: any) => {
+                    const color = {
+                        id: variation.color?.id || 0,
+                        name: variation.color?.name || '',
+                        hex: variation.color?.hex || ''
+                    };
+
+                    // For colorAndAttribute: attributes array contains sizes
+                    // For colorOnly: attributes array is empty or not used
+                    const sizes = (variation.attributes && Array.isArray(variation.attributes) && variation.attributes.length > 0)
+                        ? variation.attributes.map((attr: any) => ({
+                            id: attr.id,
+                            name: attr.value || attr.label || '', // "M", "S", "XL", etc.
+                            quantity: parseInt(attr.quantity) || 0,
+                            price: parseFloat(attr.price) || 0,
+                            wholesalePrices: attr.wholesale_prices && Array.isArray(attr.wholesale_prices) ? attr.wholesale_prices : []
+                        }))
+                        : [];
+
+                    // Keep image URLs as strings
+                    const images = variation.images && Array.isArray(variation.images)
+                        ? variation.images.filter((img: any) => img && typeof img === 'string')
+                        : [];
+
+                    return {
+                        id: variation.id || `frame-${Date.now()}-${Math.random()}`,
+                        productId: product.id,
+                        color: color,
+                        sizes: sizes, // Map attributes to sizes correctly
+                        shoeSizes: [],
+                        images: images,
+                        quantity: isColorOnly ? (variation.quantity || 0) : 0, // Only use quantity for colorOnly
+                        price: isColorOnly ? (variation.price || 0) : 0, // Only use price for colorOnly
+                        isColorOnly: isColorOnly
+                    };
+                });
+
+                setVariationFrames(frames);
+                setVariations(product.variations);
+
+                // If colorOnly, set the global color price from first variation
+                if (isColorOnly && frames.length > 0) {
+                    setGlobalColorPrice(frames[0].price || 0);
+                }
+
+                if (!isColorOnly) {
+                    const prices: Record<number, number> = {};
+                    product.variations.forEach((variation: any) => {
+                        if (variation.attributes && Array.isArray(variation.attributes)) {
+                            variation.attributes.forEach((attr: any) => {
+                                // Store price by attribute ID, avoiding duplicates
+                                if (attr.id && attr.price !== undefined && !prices[attr.id]) {
+                                    prices[attr.id] = parseFloat(attr.price) || 0;
+                                }
+                            });
+                        }
+                    });
+                    setAttributeValuePrices(prices);
+                }
+            }
+
+            setIsLoadingProductInput(false);
         }
-        setVariants([]);
-        
-        addVariationFrame();
+    }, [product, isLoadingProduct, availableAttributes]);
+
+    // Initialize attributes like in CreateProductPage
+    useEffect(() => {
+        const attributesArray = getAttributes?.data || [];
+
+        if (attributesArray && Array.isArray(attributesArray) && attributesArray.length > 0) {
+            // Ensure 'Color' attribute is correctly identified and potentially added if not present
+            let colorAttribute = attributesArray.find((attr: any) => attr.name === 'Couleur');
+            if (!colorAttribute) {
+                colorAttribute = { id: 1, name: 'Couleur', affectsPrice: false, values: [] }; // Default ID for color if not found
+            }
+
+            setAttributes(prevAttributes => {
+                const otherAttributes = prevAttributes.filter(attr => attr.id !== 1); // Filter out existing color attribute
+                const newColorAttribute = {
+                    ...colorAttribute,
+                    values: colorAttribute.values || (attributesArray.find((attr: any) => attr.id === 1)?.values || [])
+                };
+                return [newColorAttribute, ...otherAttributes];
+            });
+        }
+
+        // Ensure 'Taille' attribute exists for price impact
+        setAttributes(prevAttributes => {
+            const existingSizeAttribute = prevAttributes.find(attr => attr.affectsPrice && attr.name === 'Taille');
+            if (!existingSizeAttribute) {
+                return [
+                    ...prevAttributes,
+                    {
+                        id: 2, // Assuming 2 is a safe ID for Size if not already used
+                        name: 'Taille',
+                        affectsPrice: true,
+                        values: []
+                    }
+                ];
+            } else {
+                return prevAttributes.map(attr =>
+                    attr.affectsPrice && attr.name === 'Taille'
+                        ? { ...attr, name: 'Taille', id: 2 } // Ensure ID is consistent
+                        : attr
+                );
+            }
+        });
     }, [getAttributes]);
 
-    // Nouvelle fonction pour gérer la sélection/déselection des catégories
+
+    // Generate variations when frames change or attributes are selected
+    useEffect(() => {
+        // Only generate variations if productType is variable and there are frames to process
+        if (productType === 'variable' && variationFrames.length > 0) {
+            generateVariations();
+        } else if (productType === 'variable' && variationFrames.length === 0 && selectedAttributeType) {
+             // If product type is variable but no frames exist, and an attribute type is selected,
+             // it might mean we need to initialize with a frame.
+             if (variationFrames.length === 0) {
+                addVariationFrame(); // Add a default frame to start if none exists
+             }
+        }
+        // Dependencies: variationFrames, getAttributes (for color values), attributes, globalColorPrice, attributeValuePrices, selectedAttributeId, getAttributeValueByGroup
+        // Need to ensure these are stable or memoized if they cause infinite loops.
+    }, [variationFrames, getAttributes, attributes, globalColorPrice, attributeValuePrices, selectedAttributeId, getAttributeValueByGroup, productType, selectedAttributeType]);
+
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        // Validation logic (same as CreateProductPage)
+        if (!name.trim()) {
+            toast.error('Le nom du produit est obligatoire');
+            return;
+        }
+
+        if (!stock.trim() && productType === 'simple') {
+            toast.error('La quantité de stock est obligatoire pour les produits simples');
+            return;
+        }
+
+        if (!(isWholesale && isOnlyWhole) && (!price || Number(price) <= 0) && productType === 'simple') {
+            toast.error('Le prix du produit est obligatoire pour les produits simples');
+            return;
+        }
+
+        if (!description.trim()) {
+            toast.error('La description du produit est obligatoire');
+            return;
+        }
+
+        if (gender === 0) {
+            toast.error('Le genre du produit est obligatoire');
+            return;
+        }
+
+        if (selectedCategories.length === 0) {
+            toast.error('Veuillez sélectionner au moins une catégorie');
+            return;
+        }
+
+        if (selectedSubCategories.length === 0) {
+            toast.error('Veuillez sélectionner au moins une sous-catégorie');
+            return;
+        }
+
+        if (!whatsappNumber.trim()) {
+            toast.error('Le numéro WhatsApp est obligatoire');
+            return;
+        }
+
+        if (!city) {
+            toast.error('La ville est obligatoire');
+            return;
+        }
+
+        // Additional validation for variable products
+        if (productType === 'variable') {
+            if (variationFrames.length === 0) {
+                toast.error('Veuillez ajouter au moins une variation pour le produit.');
+                return;
+            }
+            if (variationFrames.some(frame => frame.color.id === 0)) {
+                toast.error('Chaque variation doit avoir une couleur assignée.');
+                return;
+            }
+            if (selectedAttributeType === 'colorAndAttribute' && selectedAttributeId && !getAttributeValueByGroup) {
+                toast.error('Veuillez sélectionner un attribut valide.');
+                return;
+            }
+            if (selectedAttributeType === 'colorAndAttribute' && variationFrames.some(frame => frame.sizes.length === 0 && (selectedAttributeId && getAttributeValueByGroup))) {
+                 toast.error('Chaque variation avec attribut doit avoir au moins une valeur d\'attribut assignée.');
+                 return;
+            }
+             if (selectedAttributeType === 'colorAndAttribute' && variationFrames.some(frame => frame.sizes.some(size => size.quantity <= 0))) {
+                 toast.error('La quantité pour chaque taille/attribut doit être supérieure à zéro.');
+                 return;
+             }
+            if (selectedAttributeType === 'colorOnly' && variationFrames.some(frame => frame.quantity <= 0)) {
+                toast.error('La quantité pour chaque couleur doit être supérieure à zéro.');
+                return;
+            }
+            if (selectedAttributeType === 'colorAndAttribute' && Object.keys(attributeValuePrices).length === 0 && variationFrames.some(frame => frame.sizes.length > 0)) {
+                toast.error('Veuillez définir les prix pour chaque attribut.');
+                return;
+            }
+            if (selectedAttributeType === 'colorOnly' && globalColorPrice <= 0) {
+                toast.error('Le prix global de la couleur est requis pour les produits variables avec seulement des couleurs.');
+                return;
+            }
+             // Check for variations with no price set when they should have one
+            if (selectedAttributeType === 'colorAndAttribute' && variationFrames.some(frame => frame.sizes.some(size => (attributeValuePrices[size.id] === undefined || attributeValuePrices[size.id] <= 0)))) {
+                toast.error('Veuillez définir un prix pour chaque attribut.');
+                return;
+            }
+            if (selectedAttributeType === 'colorOnly' && variationFrames.some(frame => (frame.price === undefined || frame.price <= 0) && globalColorPrice <= 0)) {
+                // This check might be redundant if globalColorPrice is mandatory and validated above
+                // But it ensures individual frame prices are considered if global is not used.
+                toast.error('Veuillez définir un prix pour chaque couleur ou utiliser le prix global.');
+                return;
+            }
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('product_name', name);
+            formData.append('product_description', description);
+            formData.append('product_gender', gender.toString());
+            formData.append('whatsapp_number', whatsappNumber);
+            formData.append('product_residence', city);
+            formData.append('type', productType);
+            formData.append('is_wholesale', isWholesale ? '1' : '0');
+
+            if (isOnlyWhole !== null) {
+                formData.append('is_only_wholesale', isOnlyWhole ? '1' : '0');
+            }
+
+            if (productType === 'simple') {
+                formData.append('product_price', price);
+                formData.append('product_quantity', stock);
+                if (isWholesale) {
+                    formData.append('wholesale_prices', JSON.stringify(wholesalePrices));
+                }
+            }
+
+            if (featuredImage instanceof File) {
+                formData.append('product_profile', featuredImage);
+            } else if (featuredImage === null) {
+                // If featuredImage was cleared, we might need to send a signal to delete it if it existed.
+                // This depends on your API. For now, we assume not sending means no change.
+            }
+
+
+            images.forEach(image => formData.append('images[]', image));
+            selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
+            selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
+
+            if (imagesToDelete.length > 0) {
+                formData.append('images_to_delete', JSON.stringify(imagesToDelete));
+            }
+
+            // Handle variations for variable products
+            if (productType === 'variable' && variationFrames.length > 0) {
+                // Prepare variations data for API. This structure might need adjustment based on backend expectations.
+                const variationsPayload = variationFrames.map(frame => ({
+                    id: frame.id.startsWith('frame-') ? null : frame.id, // Send null for new variations, original ID for updates
+                    productId: product?.id,
+                    color_id: frame.color.id,
+                    sizes: frame.sizes.map(size => ({
+                        id: size.id === 0 ? null : size.id, // Null for new sizes, original ID for existing
+                        quantity: size.quantity,
+                        price: attributeValuePrices[size.id] !== undefined ? attributeValuePrices[size.id] : (size.price || 0), // Use attribute price if set, fallback to size price or 0
+                        wholesalePrices: size.wholesalePrices
+                    })),
+                    shoeSizes: frame.shoeSizes.map(shoeSize => ({ // Assuming shoeSizes are handled similarly if they exist
+                        id: shoeSize.id === 0 ? null : shoeSize.id,
+                        quantity: shoeSize.quantity,
+                        price: shoeSize.price,
+                        wholesalePrices: shoeSize.wholesalePrices
+                    })),
+                    quantity: selectedAttributeType === 'colorOnly' ? frame.quantity : 0, // Quantity for colorOnly, 0 for colorAndAttribute (handled by sizes)
+                    price: selectedAttributeType === 'colorOnly' ? (globalColorPrice > 0 ? globalColorPrice : frame.price) : 0, // Price for colorOnly
+                    isColorOnly: selectedAttributeType === 'colorOnly',
+                }));
+
+                formData.append('variations', JSON.stringify(variationsPayload));
+
+                // Handle variation images
+                 variationFrames.forEach((frame, frameIndex) => {
+                     frame.images.forEach((img, imgIndex) => {
+                         if (img instanceof File) {
+                            formData.append(`variation_images[${frame.id}][${imgIndex}]`, img);
+                         }
+                         // If img is a URL, it's assumed to be an existing image and not re-uploaded.
+                         // Your API should handle existing image references.
+                     });
+                 });
+
+                if (Object.keys(variationImagesToDelete).length > 0) {
+                    formData.append('variation_images_to_delete', JSON.stringify(variationImagesToDelete));
+                }
+            } else if (productType === 'simple') {
+                // For simple products, the base price and stock are used.
+                 formData.append('product_price', price);
+                 formData.append('product_quantity', stock);
+                 if (isWholesale) {
+                     formData.append('wholesale_prices', JSON.stringify(wholesalePrices));
+                 }
+            }
+
+
+            
+            toast.success('Produit mis à jour avec succès', {
+                description: "Vos modifications ont été enregistrées",
+                duration: 4000,
+            });
+
+            navigate('/seller/products');
+        } catch (error: any) {
+            console.error('Erreur lors de la mise à jour:', error);
+            const errorMessage = error.data?.message || "Veuillez vérifier les informations fournies.";
+            toast.error('Une erreur est survenue lors de la mise à jour du produit', {
+                description: errorMessage,
+                duration: 5000,
+            });
+        }
+    };
+
+    // Handler functions (same as CreateProductPage)
+    const handleChangeGender = (value: string) => {
+        setGender(Number(value));
+        // Clear categories when gender changes to avoid invalid selections
+        setSelectedCategories([]);
+        setSelectedSubCategories([]);
+    };
+
     const handleChangeCategories = (selected: number[]) => {
         setSelectedCategories(selected);
+        // Clear subcategories if the parent category is deselected
+        setSelectedSubCategories(prev => prev.filter(subCat => selected.includes(subCat)));
     };
 
     const handleChangeSubCategories = (selected: number[]) => {
         setSelectedSubCategories(selected);
     };
 
+    const handleCityChange = (value: string) => {
+        setCity(value);
+    };
+
     const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             try {
                 const file = e.target.files[0];
-                const maxSize = 2 * 1024 * 1024; // 2 Mo en octets
+                const maxSize = 2 * 1024 * 1024; // 2MB
 
                 let processedFile = file;
 
@@ -260,7 +555,7 @@ const EditProductPage: React.FC = () => {
                         maxWidth: 1920,
                         maxHeight: 1080,
                         quality: 0.8,
-                        maxSizeMB: 2,
+                        maxSizeMB: 2, // Target size after compression
                     });
 
                     toast.success("Image compressée avec succès", {
@@ -269,13 +564,10 @@ const EditProductPage: React.FC = () => {
                     });
                 }
 
-                setFeaturedImage(processedFile);
+                setFeaturedImage(processedFile); // Store the File object
             } catch (error) {
-                console.error('Erreur lors de la compression de l\'image:', error);
-                toast.error("Erreur lors de la compression", {
-                    description: "Veuillez essayer avec une autre image",
-                    duration: 4000,
-                });
+                console.error('Erreur lors de la compression:', error);
+                toast.error("Erreur lors de la compression de l'image");
             }
         }
     };
@@ -288,14 +580,16 @@ const EditProductPage: React.FC = () => {
         if (e.target.files) {
             try {
                 const files = e.target.files;
-                const maxImages = 6; // Limite le nombre total d'images
+                const maxImages = 6;
 
-                if (images.length + files.length > maxImages) {
+                // Count existing image URLs
+                const existingImageCount = product?.product_images?.length || 0;
+
+                if (images.length + files.length + existingImageCount > maxImages) {
                     toast.error(`Vous ne pouvez sélectionner que ${maxImages} images au total.`);
                     return;
                 }
 
-                // Compression multiple des images
                 const compressedFiles = await compressMultipleImages(files, {
                     maxWidth: 1920,
                     maxHeight: 1080,
@@ -310,434 +604,30 @@ const EditProductPage: React.FC = () => {
                     duration: 3000,
                 });
             } catch (error) {
-                console.error('Erreur lors de la compression des images:', error);
-                toast.error("Erreur lors de la compression", {
-                    description: "Veuillez essayer avec une autre image",
-                    duration: 4000,
-                });
+                console.error('Erreur lors de la compression:', error);
+                toast.error("Erreur lors de la compression des images");
             }
         }
     };
 
     const removeImage = (index: number) => {
+        // If the image being removed is an existing image, mark it for deletion
+        const currentImage = product?.product_images?.[index]; // This might need adjustment if images are reordered
+        if (currentImage) {
+             // This logic is tricky because `product.product_images` might not be in the same order as `images` state if new images were added.
+             // A better approach might be to have the `images` state store objects with both File and original ID.
+             // For now, we'll use a placeholder for the logic.
+            console.warn("Attempting to remove an existing image. Robust deletion tracking needs implementation.");
+            // setImagesToDelete(prev => [...prev, currentImage.id]); // Assuming currentImage has an 'id' field
+        }
         setImages(images.filter((_, i) => i !== index));
     };
 
-
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        // Validation des prix des variations
-        if (selectedAttributeType === 'colorOnly') {
-            if (!globalColorPrice || globalColorPrice <= 0) {
-                toast.error('Veuillez remplir le prix global pour toutes les couleurs.');
-                return;
-            }
-        } else if (selectedAttributeType === 'colorAndAttribute') {
-            const uniqueAttributeValues = getUniqueAttributeValues();
-            for (const attributeValueId of uniqueAttributeValues) {
-                if (!attributeValuePrices[attributeValueId] || attributeValuePrices[attributeValueId] <= 0) {
-                    toast.error(`Veuillez remplir le prix pour l'attribut ${attributeValueId}.`);
-                    return;
-                }
-              
-            }
-        }
-
-        
-
-        // Validation pour les produits simples
-        if (productType === 'simple') {
-            if (!name.trim()) {
-                toast.error('Le nom du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-            if (!stock.trim()) {
-                toast.error('La quantité de stock du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (!(isWholesale && isOnlyWhole) && (!price || Number(price) <= 0)) {
-                toast.error('Le prix du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (!description.trim()) {
-                toast.error('La description du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-
-                return;
-            }
-
-            if (gender === 0) {
-                toast.error('Le genre du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (selectedCategories.length === 0) {
-                toast.error('La catégorie du produit est obligatoire', {
-                    description: "Veuillez sélectionner au moins une catégorie",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (selectedSubCategories.length === 0) {
-                toast.error('La sous-catégorie du produit est obligatoire', {
-                    description: "Veuillez sélectionner au moins une sous-catégorie",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (!whatsappNumber.trim()) {
-                toast.error('Le numéro de téléphone est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (!city) {
-                toast.error('La ville du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            // Validation spécifique pour la vente en gros
-            if ((productType === 'simple' || (productType === 'variable')) && isWholesale) {
-                if (wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
-                    toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
-                        description: "Veuillez remplir tous les champs obligatoires",
-                        duration: 4000,
-                    });
-                    return;
-                }
-            }
-
-            if (!featuredImage) {
-                toast.error('L\'image de profil du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (images.length === 0) {
-                toast.error('Veuillez ajouter des images', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-        }
-
-        // Validation pour les produits variables
-        if (productType === 'variable') {
-            if (!name.trim()) {
-                toast.error('Le nom du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-            
-            if (!stock.trim()) {
-                toast.error('La quantité de stock du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-            if (!description.trim()) {
-                toast.error('La description du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-            if (isWholesale && wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
-                toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000,
-                });
-                return;
-            }
-            if (gender === 0) {
-                toast.error('Le genre du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (selectedCategories.length === 0) {
-                toast.error('La catégorie du produit est obligatoire', {
-                    description: "Veuillez sélectionner au moins une catégorie",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (selectedSubCategories.length === 0) {
-                toast.error('La sous-catégorie du produit est obligatoire', {
-                    description: "Veuillez sélectionner au moins une sous-catégorie",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (!whatsappNumber.trim()) {
-                toast.error('Le numéro de téléphone est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            if (!city) {
-                toast.error('La ville du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            // Validation spécifique pour la vente en gros
-
-
-            // Validation des variations
-            if (variationFrames.length === 0) {
-                toast.error('Veuillez ajouter des variations', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            // Vérifier que chaque variation a une couleur et des images
-            const invalidVariations = variationFrames.some(frame =>
-                !frame.color.id || frame.images.length === 0
-            );
-
-            if (invalidVariations) {
-                toast.error('Veuillez remplir tous les champs obligatoires', {
-                    description: "Tous les champs marqués d'un * sont requis.",
-                    duration: 4000, // ms
-                });
-                return;
-            }
-
-            // Vérifier les quantités pour les variations
-            if (!attributes.some(attr => attr.affectsPrice)) {
-                const invalidQuantities = variationFrames.some(frame =>
-                    !frame.quantity || frame.quantity <= 0
-                );
-
-                if (invalidQuantities) {
-                    toast.error('Veuillez remplir tous les champs obligatoires', {
-                        description: "Tous les champs marqués d'un * sont requis.",
-                        duration: 4000, // ms
-                    });
-                    return;
-                }
-            } else {
-                // Vérifier les quantités pour les tailles/pointures
-                const invalidSizes = variationFrames.some(frame =>
-                    frame.sizes.some(size => !size.quantity || size.quantity <= 0) ||
-                    frame.shoeSizes.some(size => !size.quantity || size.quantity <= 0)
-                );
-
-                if (invalidSizes) {
-                    toast.error('Veuillez remplir tous les champs obligatoires', {
-                        description: "Tous les champs marqués d'un * sont requis.",
-                        duration: 4000, // ms
-                    });
-                    return;
-                }
-            }
-
-            // Vérifier les prix
-            if (!attributes.some(attr => attr.affectsPrice)) {
-                if (!globalColorPrice || globalColorPrice <= 0) {
-                    toast.error('Veuillez remplir tous les champs obligatoires', {
-                        description: "Tous les champs marqués d'un * sont requis.",
-                        duration: 4000, // ms
-                    });
-                    return;
-                }
-            } else {
-                const invalidPrices = Object.values(sizePrices).some(price => !price || price <= 0) ||
-                    Object.values(shoeSizePrices).some(price => !price || price <= 0);
-
-                if (invalidPrices) {
-                    toast.error('Veuillez remplir tous les champs obligatoires', {
-                        description: "Tous les champs marqués d'un * sont requis.",
-                        duration: 4000, // ms
-                    });
-                    return;
-                }
-            }
-        }
-
-        // Si toutes les validations sont passées, continuer avec la soumission
-        try {
-            const formData = new FormData()
-            formData.append('product_name', name);
-            formData.append('product_price', price);
-            formData.append('product_quantity', stock);
-            formData.append('product_description', description);
-            formData.append('product_gender', gender.toString());
-            formData.append('whatsapp_number', whatsappNumber);
-            formData.append('product_residence', city);
-            formData.append('type', productType);
-            formData.append('is_wholesale', isWholesale ? '1' : '0');
-            if (isOnlyWhole !== null) {
-                formData.append('is_only_wholesale', isOnlyWhole ? '1' : '0');
-            }
-
-            // Ajouter les données de vente en gros si applicable
-            if (isWholesale) {
-                if (!isOnlyWhole) { // Only append product_price if not *only* wholesale
-                    formData.append('product_price', price);
-                }
-
-                formData.append('wholesale_prices', JSON.stringify(wholesalePrices));
-            }
-            else {
-                // If not wholesale, then product_price is always required.
-                formData.append('product_price', price);
-            }
-
-            if (featuredImage) {
-                formData.append('product_profile', featuredImage);
-            }
-
-            images.forEach(image => formData.append('images[]', image));
-            selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
-            selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
-
-            // Ajouter les variations au formData
-            if (variations.length > 0) {
-                // Regrouper les variations par couleur pour éviter la duplication des images
-                const variationsByColor = variations.reduce((acc, variation) => {
-                    const colorId = variation.color.id;
-                    if (!acc[colorId]) {
-                        acc[colorId] = {
-                            color: variation.color,
-                            images: [], // Initialise le tableau d'images pour ce groupe de couleurs
-                            sizes: [],
-                            shoeSizes: []
-                        };
-                    }
-
-                    // Ajoute les images de la variation actuelle au groupe de couleurs
-                    variation.images.forEach(image => {
-                        // Évite d'ajouter des doublons si une image est déjà présente
-                        if (!acc[colorId].images.some((existingImage: File) => existingImage.name === image.name)) {
-                            acc[colorId].images.push(image);
-                        }
-                    });
-
-                    if (selectedAttributeType === 'colorAndAttribute') {
-                        if (variation.sizes && variation.sizes.length > 0) {
-                            variation.sizes.forEach(size => {
-                                const attributeValueId = size.id; // Assuming size.id is the attribute value ID
-                                
-
-                                acc[colorId].sizes.push({
-                                    id: size.id,
-                                    name: size.name,
-                                    quantity: size.quantity,
-                                    price: attributeValuePrices[attributeValueId],
-                                });
-                            });
-                        }
-                        if (variation.shoeSizes && variation.shoeSizes.length > 0) {
-                            variation.shoeSizes.forEach(shoeSize => {
-                                const attributeValueId = shoeSize.id; // Assuming shoeSize.id is the attribute value ID
-                              
-
-                                acc[colorId].shoeSizes.push({
-                                    id: shoeSize.id,
-                                    name: shoeSize.name,
-                                    quantity: shoeSize.quantity,
-                                    price: attributeValuePrices[attributeValueId],
-                                });
-                            });
-                        }
-                    } else if (selectedAttributeType === 'colorOnly') {
-                        acc[colorId].price = globalColorPrice; // Set global price for color only variations
-                        acc[colorId].quantity = variation.quantity;
-
-                    }
-
-
-                    return acc;
-                }, {} as Record<string, any>);
-
-                // Ajouter les variations groupées par couleur
-                formData.append('variations', JSON.stringify(Object.values(variationsByColor)));
-
-                // Ajouter les images des variations par couleur
-                Object.values(variationsByColor).forEach((colorGroup: any) => {
-                    colorGroup.images.forEach((image: File, imageIndex: number) => {
-                        formData.append(`color_${colorGroup.color.id}_image_${imageIndex}`, image);
-                    });
-                });
-            }
-
-            // Afficher le contenu du formData pour vérification
-            console.log('Contenu du formData:');
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}:`, value);
-            }
-
-            const reponse = await addProduct(formData);
-            console.log(reponse)
-            toast.success('Produit créé avec succès', {
-                description: "Vous pouvez désormais accéder à votre liste de produits",
-                duration: 4000, // ms
-            });
-            navigate('/seller/products')
-        } catch (error) {
-
-
-            toast.error('Une erreur est survenue lors de la création du produit', {
-                description: "Veuillez réessayer",
-                action: {
-                    label: "Réessayer",
-                    onClick: () => window.location.href = "/seller/create-product"
-                },
-                duration: 4000, // ms
-            });
-            console.error(error);
-        }
-    };
-
-    const handleChangeGender = (value: string) => {
-        setGender(Number(value))
-    };
-
-    const handleCityChange = (value: string) => {
-        setCity(value);
+    //
+    const handleRemoveExistingImage = (imageId: number) => {
+        setImagesToDelete(prev => [...prev, imageId]);
+        // Optionally visually remove it from the UI, though submission handles deletion
+        // This would require associating images with their IDs in the `images` state as well.
     };
 
     const addWholesalePrice = () => {
@@ -750,90 +640,19 @@ const EditProductPage: React.FC = () => {
         }
     };
 
-
-
-
-
-    const [variationFrames, setVariationFrames] = useState<Variation[]>([]);
-
-    // Effet pour générer les variations quand les tailles ou couleurs changent
-    useEffect(() => {
-        if (variationFrames.length > 0) {
-            generateVariations();
-        }
-    }, [variationFrames, getAttributes, attributes, globalColorPrice, attributeValuePrices, selectedAttributeId, getAttributeValueByGroup]);
-
-    const [sizePrices, setSizePrices] = useState<Record<number, number>>({});
-    const [shoeSizePrices, setShoeSizePrices] = useState<Record<number, number>>({});
-
-    console.log(setSizePrices, setShoeSizePrices)
-    const getUniqueAttributeValues = () => {
-        const attributeValueIds = new Set<number>();
-        if (selectedAttributeType === 'colorAndAttribute' && selectedAttributeId && getAttributeValueByGroup) {
-            variationFrames.forEach(frame => {
-                frame.sizes.forEach(size => {
-                    // Check if the size.id exists in the current selected attribute group's values
-                    const isAttributeValue = getAttributeValueByGroup.some((group: { values: { id: number }[] }) =>
-                        group.values.some((val: any) => val.id === size.id)
-                    );
-                    if (isAttributeValue) {
-                        attributeValueIds.add(size.id);
-                    }
-                });
-            });
-        }
-        return Array.from(attributeValueIds);
-    };
-
-
-    const updateAttributeValuePrice = (attributeValueId: number, price: number) => {
-        setAttributeValuePrices(prevPrices => ({
-            ...prevPrices,
-            [attributeValueId]: price
-        }));
-    };
-
-    const addVariationFrame = () => {
-        setVariationFrames(prevFrames => [
-            ...prevFrames,
-            {
-                id: `frame-${Date.now()}`,
-                productId: '',
-                color: { id: 0, name: '', hex: '' }, // Default color
-                sizes: [],
-                shoeSizes: [],
-                images: [],
-                quantity: 0,
-                price: 0,
-            }
-        ]);
-    };
-
-    const updateVariationFrame = (frameId: string, updates: Partial<Variation>) => {
-        setVariationFrames(variationFrames.map(frame =>
-            frame.id === frameId ? { ...frame, ...updates } : frame
-        ));
-    };
-
-
-
-    const removeVariationFrame = (frameId: string) => {
-        setVariationFrames(variationFrames.filter(frame => frame.id !== frameId));
-    };
-
     const handleVariationImageUpload = async (frameId: string, files: FileList) => {
         try {
-            // Limite le nombre d'images par variation (exemple : 3)
-            const maxImages = 3;
+            const maxImagesPerVariation = 3;
             const currentFrame = variationFrames.find(frame => frame.id === frameId);
             const currentImages = currentFrame?.images || [];
 
-            if (currentImages.length + files.length > maxImages) {
-                toast.error(`Vous ne pouvez sélectionner que ${maxImages} images par variation.`);
+            const existingImageCount = currentImages.filter(img => typeof img === 'string').length;
+
+            if (currentImages.filter(img => img instanceof File).length + files.length + existingImageCount > maxImagesPerVariation) {
+                toast.error(`Vous ne pouvez sélectionner que ${maxImagesPerVariation} images par variation.`);
                 return;
             }
 
-            // Compression multiple des images
             const compressedFiles = await compressMultipleImages(files, {
                 maxWidth: 1920,
                 maxHeight: 1080,
@@ -841,7 +660,6 @@ const EditProductPage: React.FC = () => {
                 maxSizeMB: 2,
             });
 
-            // Mise à jour des variations avec les images compressées
             setVariationFrames(variationFrames.map(frame =>
                 frame.id === frameId
                     ? { ...frame, images: [...frame.images, ...compressedFiles] }
@@ -855,10 +673,7 @@ const EditProductPage: React.FC = () => {
 
         } catch (error) {
             console.error('Erreur lors de la compression des images:', error);
-            toast.error("Erreur lors de la compression", {
-                description: "Veuillez essayer avec une autre image",
-                duration: 4000,
-            });
+            toast.error("Erreur lors de la compression");
         }
     };
 
@@ -867,133 +682,36 @@ const EditProductPage: React.FC = () => {
             frame.id === frameId
                 ? { ...frame, images: frame.images.filter((_, idx) => idx !== imageIndex) }
                 : frame
-        ));
+        ));clumb
     };
 
-    // Fonction pour générer toutes les combinaisons possibles
-    const generateVariations = () => {
-        const colors = variationFrames.map(frame => frame.color).filter(Boolean);
-
-        const newVariations: Variation[] = [];
-
-        colors.forEach(color => {
-            const existingFrame = variationFrames.find(frame => color.id && frame.color.id === color.id);
-            if (existingFrame) {
-                // Check if frame has any sizes or shoeSizes (attribute-based variation)
-                const hasAttributes = existingFrame.sizes.length > 0 || existingFrame.shoeSizes.length > 0;
-
-                if (hasAttributes) {
-                    // Create variations for each size/shoeSize
-                    const allAttributeValues = [...existingFrame.sizes, ...existingFrame.shoeSizes];
-
-                    allAttributeValues.forEach(attrValue => {
-                        newVariations.push({
-                            id: `frame-${Date.now()}-${color.id}-${attrValue.id}`,
-                            productId: '',
-                            color: color,
-                            sizes: existingFrame.sizes,
-                            shoeSizes: existingFrame.shoeSizes,
-                            images: existingFrame.images,
-                            quantity: attrValue.quantity || 0,
-                            price: attrValue.price || 0,
-                        });
-                    });
-                } else {
-                    // Handle color only variations
-                    newVariations.push({
-                        id: `frame-${Date.now()}`,
-                        productId: '',
-                        color: color,
-                        sizes: [],
-                        shoeSizes: [],
-                        images: existingFrame.images,
-                        quantity: existingFrame.quantity || 0,
-                        price: existingFrame.price || 0,
-                    });
-                }
-            }
+    const removeExistingVariationImage = (frameId: string, imageUrl: string) => {
+        // Track which existing images should be deleted
+        setVariationImagesToDelete(prev => {
+            const frameImages = prev[frameId] || [];
+            // We'll store the image URL for reference, but in practice you may need the image ID from your backend
+            // Simple hashCode for demonstration, actual implementation might require stable IDs.
+            const hashCode = (str: string) => str.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            return {
+                ...prev,
+                [frameId]: [...frameImages, hashCode(imageUrl)] // Simple hash for tracking
+            };
         });
 
-        // Filter existing variations to avoid duplicates
-        const uniqueVariations = newVariations.filter(newVar =>
-            !variationFrames.some(existing =>
-                existing.color.id === newVar.color.id &&
-                existing.sizes.length === newVar.sizes.length &&
-                existing.shoeSizes.length === newVar.shoeSizes.length
-            )
-        );
-
-        setVariations([...uniqueVariations]); // Update the main variations state
+        // Remove from the frame images display
+        setVariationFrames(variationFrames.map(frame =>
+            frame.id === frameId
+                ? { ...frame, images: frame.images.filter(img => img !== imageUrl) }
+                : frame
+        ));
     };
-
-    // Effet pour générer les variations structurées
-    useEffect(() => {
-        const generateStructuredVariations = () => {
-            const newVariations: Variation[] = [];
-
-            variationFrames.forEach(frame => {
-                const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.color.id);
-
-                if (!color) return;
-
-                // Cas 1: Variation couleur uniquement
-                if (selectedAttributeType === 'colorOnly') {
-                    newVariations.push({
-                        id: frame.id,
-                        productId: '',
-                        color: {
-                            id: frame.color.id,
-                            name: color.value,
-                            hex: color.hex_color
-                        },
-                        sizes: [],
-                        shoeSizes: [],
-                        images: frame.images.map(image => image as unknown as File),
-                        quantity: frame.quantity || 0,
-                        price: globalColorPrice || 0,
-                    });
-                } else if (selectedAttributeType === 'colorAndAttribute' && selectedAttributeId) {
-                    frame.sizes.forEach(attributeValue => {
-                        const attributeValueData = getAttributeValueByGroup?.flatMap((group: any) => group.values).find((val: any) => val.id === attributeValue.id);
-                        if (attributeValueData) {
-                            newVariations.push({
-                                id: `variation-${frame.id}-${attributeValue.id}`,
-                                productId: '',
-                                color: {
-                                    id: frame.color.id,
-                                    name: color.value,
-                                    hex: color.hex_color
-                                },
-                                sizes: [{ id: attributeValue.id, name: attributeValue.name, quantity: attributeValue.quantity, price: attributeValuePrices[attributeValue.id] || 0 }],
-                                shoeSizes: [],
-                                images: frame.images.map(image => image as unknown as File),
-                                quantity: attributeValue.quantity || 0,
-                                price: attributeValuePrices[attributeValue.id] || 0,
-                            });
-                        }
-                    });
-                }
-            });
-
-            setVariations(newVariations);
-        };
-
-        generateStructuredVariations();
-    }, [variationFrames, getAttributes, attributes, globalColorPrice, attributeValuePrices, selectedAttributeId, getAttributeValueByGroup, selectedAttributeType]);
-
-    // Effet pour gérer l'initialisation depuis l'URL
-   
-
-
-
-
 
 
     const addAttributeValueToVariation = (frameId: string, attributeValueId: number, attributeValueName: string, quantity: number) => {
         setVariationFrames(prevFrames =>
             prevFrames.map(frame =>
                 frame.id === frameId
-                    ? { ...frame, sizes: [...frame.sizes, { id: attributeValueId, name: attributeValueName, quantity, price: 0 }] }
+                    ? { ...frame, sizes: [...frame.sizes, { id: attributeValueId, name: attributeValueName, quantity, price: 0 }] } // Initial price can be 0, updated later
                     : frame
             )
         );
@@ -1007,63 +725,156 @@ const EditProductPage: React.FC = () => {
                     : frame
             )
         );
+        // Also remove the price associated with this attribute value if it exists
+        setAttributeValuePrices(prev => {
+            const newState = { ...prev };
+            delete newState[attributeValueId];
+            return newState;
+        });
+    };
+
+    const addVariationFrame = () => {
+        // Ensure we only add if not colorOnly or if colorOnly and there are no frames yet
+        if (selectedAttributeType === 'colorOnly' && variationFrames.length > 0) {
+            toast.warn("Vous ne pouvez ajouter qu'une seule variation pour les produits de type 'Couleur uniquement'.");
+            return;
+        }
+
+        setVariationFrames(prevFrames => [
+            ...prevFrames,
+            {
+                id: `frame-${Date.now()}-${Math.random()}`, // Unique ID for the frame
+                productId: product?.id || '',
+                color: { id: 0, name: '', hex: '' },
+                sizes: [],
+                shoeSizes: [], // Initialize empty
+                images: [],
+                quantity: 0, // Default quantity if color only
+                price: 0, // Default price if color only
+                isColorOnly: selectedAttributeType === 'colorOnly'
+            }
+        ]);
+    };
+
+    const updateVariationFrame = (frameId: string, updates: Partial<Variation>) => {
+        setVariationFrames(variationFrames.map(frame =>
+            frame.id === frameId ? { ...frame, ...updates } : frame
+        ));
+    };
+
+    const removeVariationFrame = (frameId: string) => {
+        setVariationFrames(variationFrames.filter(frame => frame.id !== frameId));
+        // When removing a frame, also clean up related prices if they are frame-specific.
+        // For color-only, globalColorPrice is used. For colorAndAttribute, prices are tied to attributeValueId.
+        // The `generateVariations` and `handleSubmit` will handle the final structure.
+    };
+
+    const generateVariations = () => {
+        // This function should create the `variations` array based on `variationFrames` and selected attributes/colors.
+        // It needs to handle different `selectedAttributeType` scenarios.
+
+        const newVariations: Variation[] = [];
+
+        variationFrames.forEach(frame => {
+            const color = frame.color;
+            if (!color || color.id === 0) return; // Skip if no color selected
+
+            if (selectedAttributeType === 'colorOnly') {
+                newVariations.push({
+                    id: frame.id, // Use frame ID for easier mapping
+                    productId: product?.id || '',
+                    color: color,
+                    sizes: [],
+                    shoeSizes: [],
+                    images: frame.images, // Use frame images for this variation
+                    quantity: frame.quantity || 0,
+                    price: globalColorPrice > 0 ? globalColorPrice : (frame.price || 0), // Use global price or frame price
+                    isColorOnly: true
+                });
+            } else if (selectedAttributeType === 'colorAndAttribute' && frame.sizes.length > 0) {
+                frame.sizes.forEach(size => {
+                    const sizePrice = attributeValuePrices[size.id] !== undefined ? attributeValuePrices[size.id] : 0; // Use configured price, default to 0
+                    newVariations.push({
+                        id: `${frame.id}-${size.id}`, // Unique ID for variation, linking frame and size
+                        productId: product?.id || '',
+                        color: color,
+                        sizes: [size], // Include this specific size
+                        shoeSizes: [], // Assuming size refers to 'Taille' which might not be shoe size
+                        images: frame.images, // Use frame images for this variation
+                        quantity: size.quantity,
+                        price: sizePrice,
+                        isColorOnly: false
+                    });
+                });
+            } else if (selectedAttributeType === 'colorAndAttribute' && frame.sizes.length === 0) {
+                // If colorAndAttribute but no sizes selected for this frame, create a variation with just color
+                 newVariations.push({
+                     id: frame.id, // Use frame ID
+                     productId: product?.id || '',
+                     color: color,
+                     sizes: [],
+                     shoeSizes: [],
+                     images: frame.images,
+                     quantity: frame.quantity || 0, // Fallback quantity if no sizes
+                     price: frame.price || 0, // Fallback price if no specific size price is set
+                     isColorOnly: false
+                 });
+            }
+        });
+
+        setVariations(newVariations);
     };
 
 
+    const getUniqueAttributeValues = () => {
+        const attributeValueIds = new Set<number>();
+        if (selectedAttributeType === 'colorAndAttribute' && selectedAttributeId && getAttributeValueByGroup) {
+            variationFrames.forEach(frame => {
+                frame.sizes.forEach(size => {
+                    // Ensure the size is actually part of the selected attribute group
+                    const isAttributeValue = getAttributeValueByGroup.some((group: { values: { id: number }[] }) =>
+                        group.values.some((val: any) => val.id === size.id)
+                    );
+                    if (isAttributeValue) {
+                        attributeValueIds.add(size.id);
+                    }
+                });
+            });
+        }
+        return Array.from(attributeValueIds);
+    };
+
+    const updateAttributeValuePrice = (attributeValueId: number, price: number) => {
+        setAttributeValuePrices(prevPrices => ({
+            ...prevPrices,
+            [attributeValueId]: price
+        }));
+    };
+
+    // Show loading state while fetching product data
+    if (isLoadingProduct || isLoadingProductInput) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="flex flex-col items-center gap-3">
+                    <Loader2 className="w-8 h-8 animate-spin text-[#ed7e0f]" />
+                    <p className="text-gray-600">Chargement du produit...</p>
+                </div>
+            </div>
+        );
+    }
+
+    const attributesArray = getAttributes?.data || []; // All color attributes
 
     return (
-        <div className="min-h-screen bg-gray-50   max-sm:pb-16">
-          
-
+        <div className="min-h-screen bg-gray-50 max-sm:pb-16">
             <form onSubmit={handleSubmit} className='' encType='multipart/form-data'>
-                {/* Header avec boutons d'action */}
+                {/* Header */}
                 <header className="sticky top-16 px-24 max-sm:px-0 z-30 bg-white border-b">
                     <div className="max-w-7xl mx-auto px-4 py-4">
-                        {/* Version mobile */}
-                        <div className="md:hidden">
-                            <div className="flex items-center justify-between mb-4">
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/seller/products")}
-                                    className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
-                                >
-                                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                                    </svg>
-                                </button>
-                                <div className='flex max-sm:flex-col'>
-                                <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
-                                    {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
-                                    
-                                </h1>
-                                {isWholesale && (
-                                        <span className="text-center gap-1 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-full">
-                                            Vente en gros
-                                        </span>
-                                    )}
-                                </div>
-                                
-                                <button
-                                    type="submit"
-                                    className="p-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500"
-                                >
-                                    {isLoadingAddProduct ? (
-                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                    ) : <span className='max-sm:text-sm'>Mise a jour</span>}
-                                </button>
-                            </div>
-                            <p className="text-sm text-gray-600 text-center">
-                                {productType === 'simple'
-                                    ? 'Ajoutez un nouveau produit sans variations'
-                                    : 'Créez un produit avec plusieurs variations'}
-                            </p>
-                        </div>
-
-                        {/* Version desktop */}
                         <div className="hidden md:flex items-center justify-between">
                             <div>
                                 <h1 className="text-2xl font-bold bg-gradient-to-r from-[#ed7e0f] to-orange-600 bg-clip-text text-transparent">
-                                    {productType === 'simple' ? 'Créer un produit simple' : 'Créer un produit variable'}
+                                    {productType === 'simple' ? 'Modifier un produit simple' : 'Modifier un produit variable'}
                                     {isWholesale && (
                                         <span className="ml-3 inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-sm font-medium rounded-full">
                                             📦 Vente en gros
@@ -1071,9 +882,7 @@ const EditProductPage: React.FC = () => {
                                     )}
                                 </h1>
                                 <p className="text-gray-600 mt-1">
-                                    {productType === 'simple'
-                                        ? 'Ajoutez un nouveau produit sans variations'
-                                        : 'Créez un produit avec plusieurs variations'}
+                                    Modifiez les informations de votre produit
                                 </p>
                             </div>
                             <div className="flex items-center gap-3">
@@ -1088,49 +897,67 @@ const EditProductPage: React.FC = () => {
                                     type="submit"
                                     className="px-6 py-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium flex items-center gap-2"
                                 >
-                                    {isLoadingAddProduct ? (
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                    ) : (
-                                        <>
+                                    
+                                        
                                             <Save className="w-4 h-4" />
-                                            Modifier le produit
-                                        </>
-                                    )}
+                                            Mettre à jour
+                                    
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Mobile version */}
+                        <div className="md:hidden">
+                            <div className="flex items-center justify-between mb-4">
+                                <button
+                                    type="button"
+                                    onClick={() => navigate("/seller/products")}
+                                    className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
+                                >
+                                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+                                <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
+                                    Modifier produit
+                                </h1>
+                                <button
+                                    type="submit"
+                                    className="p-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl"
+                                >
+                                   
+                                       
+                                    <span className='text-sm'>Mettre à jour</span>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </header>
 
-                <main className="max-w-7xl pl-24 max-sm:px-4  px-4 py-8">
+                <main className="max-w-7xl pl-24 max-sm:px-4 px-4 py-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Colonne principale */}
+                        {/* Main column */}
                         <div className="md:col-span-2 space-y-6">
-                            {/* Informations de base */}
+                            {/* Basic info */}
                             <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                                 <input
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full max-sm:placeholder:text-lg px-4 py-3 text-2xl font-medium border-0 border-b focus:ring-0 focus:border-[#ed7e0f]"
+                                    className="w-full px-4 py-3 text-2xl font-medium border-0 border-b focus:ring-0 focus:border-[#ed7e0f]"
                                     placeholder="Nom du produit"
                                 />
 
                                 {productType === 'simple' && (
                                     <div className="grid grid-cols-2 gap-4">
-
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
                                             <input
                                                 type="number"
                                                 value={price}
                                                 onChange={(e) => setPrice(e.target.value)}
-                                                className="w-full max-sm:placeholder:text-md px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                                                placeholder={
-                                                    isWholesale && isOnlyWhole
-                                                        ? "Prix d'un article"
-                                                        : "Prix de détail (Fcfa)"
-                                                }
+                                                className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                                placeholder="Prix (FCFA)"
                                             />
                                         </div>
 
@@ -1140,28 +967,25 @@ const EditProductPage: React.FC = () => {
                                                 type="number"
                                                 value={stock}
                                                 onChange={(e) => setStock(e.target.value)}
-                                                className="w-full max-sm:placeholder:text-sm px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                                className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                                                 placeholder="Quantité disponible"
-
                                             />
                                         </div>
                                     </div>
                                 )}
 
-                                    {productType === "variable" && <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                                            <input
-                                                type="number"
-                                                value={stock}
-                                                onChange={(e) => setStock(e.target.value)}
-                                                className="w-full max-sm:placeholder:text-sm px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                                                placeholder="Quantité disponible"
-
-                                            />
-                                        </div>}
-                                        
-
-
+                                {productType === "variable" && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Stock global (si non défini par variation)</label>
+                                        <input
+                                            type="number"
+                                            value={stock}
+                                            onChange={(e) => setStock(e.target.value)}
+                                            className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                            placeholder="Quantité disponible"
+                                        />
+                                    </div>
+                                )}
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -1169,14 +993,12 @@ const EditProductPage: React.FC = () => {
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         rows={6}
-                                        className="w-full max-sm:placeholder:text-md px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                        className="w-full px-4 py-3 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                                         placeholder="Description détaillée du produit..."
                                     />
                                 </div>
                             </div>
-
-                            {/* Section Vente en Gros - Visible uniquement si isWholesale est true */}
-                            {isWholesale && productType === "simple" && (
+  {isWholesale && (
                                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
@@ -1188,89 +1010,9 @@ const EditProductPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Prix de gros */}
                                     <div className="space-y-4">
                                         {wholesalePrices.map((price, index) => (
-                                            <div key={`${index} + ${price}`} className="bg-white rounded-xl p-4 border border-purple-200">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <span  className="text-sm font-medium text-purple-600">Prix #{index + 1}</span>
-                                                    {wholesalePrices.length > 1 && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeWholesalePrice(index)}
-                                                            className="p-1 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                                        >
-                                                            <X className="w-4 h-4" />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                                 {arrayWholesalePrices.map((price, index) => (
-                                                <div className="grid grid-cols-2 gap-4">
-
-                                                   
-                                                    <div>
-                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Quantité minimale</label>
-                                                        
-                                                        <input
-                                                            type="number"
-                                                            min="1"
-                                                            value={price.min_quantity}
-                                                            onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
-                                                                i === index ? { ...p, min_quantity: Number(e.target.value) } : p
-                                                            ))}
-                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                                            placeholder="Ex: 10"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
-                                                        <input
-                                                            type="number"
-                                                            min="0"
-                                                            value={price.wholesale_price}
-                                                            onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
-                                                                i === index ? { ...p, wholesale_price: Number(e.target.value) } : p
-                                                            ))}
-                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                                            placeholder="Ex: 5000"
-                                                        />
-                                                    </div>
-                                                    
-                                                </div>
-                                                ))}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Bouton ajouter un nouveau prix */}
-                                    <div className="mt-4 flex justify-center">
-                                        <button
-                                            type="button"
-                                            onClick={addWholesalePrice}
-                                            className="px-4 py-2 bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
-                                        >
-                                            + Ajouter un prix
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-                            {isWholesale && productType === "variable" && (
-                                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
-                                            <span className="text-2xl">📦</span>
-                                        </div>
-                                        <div>
-                                            <h2 className="text-xl max-sm:text-lg font-bold text-gray-900">Prix de Gros pour Variations</h2>
-                                            <p className="text-purple-600 text-xs font-medium">Configurez vos tarifs pour les revendeurs par couleur</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Prix de gros */}
-                                    <div className="space-y-4">
-                                        {wholesalePrices.map((price, index) => (
-                                            <div key={`${index} + ${price}`} className="bg-white rounded-xl p-4 border border-purple-200">
+                                            <div key={index} className="bg-white rounded-xl p-4 border border-purple-200">
                                                 <div className="flex items-center justify-between mb-3">
                                                     <span className="text-sm font-medium text-purple-600">Prix #{index + 1}</span>
                                                     {wholesalePrices.length > 1 && (
@@ -1283,23 +1025,22 @@ const EditProductPage: React.FC = () => {
                                                         </button>
                                                     )}
                                                 </div>
-                                                { arrayWholesalePrices.map((price, index) => (
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <label className="block text-sm max-sm:text-xs font-semibold text-gray-700 mb-2">Quantité minimale</label>
+                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Quantité minimale</label>
                                                         <input
                                                             type="number"
-                                                                min="1"
+                                                            min="1"
                                                             value={price.min_quantity}
                                                             onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
                                                                 i === index ? { ...p, min_quantity: Number(e.target.value) } : p
                                                             ))}
-                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500"
                                                             placeholder="Ex: 10"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-sm max-sm:text-xs font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
+                                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Prix par unité (FCFA)</label>
                                                         <input
                                                             type="number"
                                                             min="0"
@@ -1307,38 +1048,36 @@ const EditProductPage: React.FC = () => {
                                                             onChange={(e) => setWholesalePrices(prev => prev.map((p, i) =>
                                                                 i === index ? { ...p, wholesale_price: Number(e.target.value) } : p
                                                             ))}
-                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                            className="w-full px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500"
                                                             placeholder="Ex: 5000"
                                                         />
                                                     </div>
                                                 </div>
-                                                ))}
                                             </div>
                                         ))}
                                     </div>
 
-                                    {/* Bouton ajouter un nouveau prix */}
                                     <div className="mt-4 flex justify-center">
                                         <button
                                             type="button"
                                             onClick={addWholesalePrice}
-                                            className="px-4 py-2 max-sm:text-xs bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+                                            className="px-4 py-2 bg-transparent border border-purple-500 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
                                         >
                                             + Ajouter un prix
                                         </button>
                                     </div>
                                 </div>
                             )}
-
-                            {/* Catégories et sous-catégories */}
+                            {/* Categories */}
                             <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                                 <div>
-                                    <label className="block text-lg max-sm:text-sm font-semibold mb-4">Genre produit</label>
-                                    <Select name='gender' value={gender.toString()}  onValueChange={handleChangeGender}>
+                                    <label className="block text-lg font-semibold mb-4">Genre produit</label>
+                                    <Select name='gender' value={gender.toString()} onValueChange={handleChangeGender}>
                                         <SelectTrigger className="bg-gray-50 border-0">
                                             <SelectValue placeholder="Choisir un genre" />
                                         </SelectTrigger>
                                         <SelectContent>
+                                            <SelectItem value="0">Aucun</SelectItem>
                                             <SelectItem value="1">Homme</SelectItem>
                                             <SelectItem value="2">Femme</SelectItem>
                                             <SelectItem value="3">Enfant</SelectItem>
@@ -1350,7 +1089,7 @@ const EditProductPage: React.FC = () => {
                                 {gender !== 0 && (
                                     <>
                                         <div>
-                                            <label className="block max-sm:text-sm text-lg font-semibold mb-4">Catégories</label>
+                                            <label className="block text-lg font-semibold mb-4">Catégories</label>
                                             {isLoadingCategoriesByGender ? (
                                                 <div className="flex items-center justify-center h-20">
                                                     <Loader2 className="w-6 h-6 animate-spin text-[#ed7e0f]" />
@@ -1375,7 +1114,7 @@ const EditProductPage: React.FC = () => {
                                                 ) : (
                                                     <MultiSelect
                                                         options={subCategoriesByGender?.categories || []}
-                                                        selected={selectedSubCategories}
+                                                         selected={selectedSubCategories}
                                                         onChange={handleChangeSubCategories}
                                                         placeholder="Sélectionner les sous-catégories..."
                                                     />
@@ -1386,7 +1125,7 @@ const EditProductPage: React.FC = () => {
                                 )}
                             </div>
 
-                            {/* Informations de contact */}
+                            {/* Contact info */}
                             <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
                                 <h2 className="text-lg font-semibold">Informations de contact</h2>
                                 <div className="space-y-4">
@@ -1404,55 +1143,49 @@ const EditProductPage: React.FC = () => {
                                                 onChange={(e) => setWhatsappNumber(e.target.value)}
                                                 className="w-full pl-12 pr-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
                                                 placeholder="Ex: +237 656488374"
-
                                             />
                                         </div>
                                     </div>
 
-                                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Ville cible</label>
-                    <Select name='city' value={town}  onValueChange={handleCityChange}>
-                      <SelectTrigger className="bg-gray-50 border-0">
-                      <SelectValue placeholder="Sélectionnez votre ville de livraison">
-                              {towns?.towns.find((t: { id: string, town_name: string }) => t.town_name === town)?.town_name}
-                          </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {townsLoading ? (
-                          <SelectItem value="loading">Chargement des villes...</SelectItem>
-                        ) : (
-                          towns?.towns.map((town: { id: string, town_name: string }) => (
-                            <SelectItem 
-                              key={town.id} 
-                              value={String(town.id)}
-
-                            >
-                              
-                              {town.town_name}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Ville cible</label>
+                                        <Select name='city' value={city} onValueChange={handleCityChange}>
+                                            <SelectTrigger className="bg-gray-50 border-0">
+                                                <SelectValue placeholder="Sélectionnez votre ville de livraison" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {townsLoading ? (
+                                                    <SelectItem value="loading">Chargement des villes...</SelectItem>
+                                                ) : (
+                                                    towns?.towns.map((town: { id: string, town_name: string }) => (
+                                                        <SelectItem key={town.id} value={town.town_name}>
+                                                            {town.town_name}
+                                                        </SelectItem>
+                                                    ))
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Wholesale section */}
+                          
                         </div>
 
-                        {/* Colonne latérale */}
+                        {/* Side column */}
                         <div className="space-y-6">
                             {productType === 'simple' ? (
                                 <>
-                                    {/* Photo mise en avant pour produit simple */}
                                     <div className="bg-white rounded-2xl shadow-sm p-6">
-                                        <h2 className="text-lg max-sm:text-sm font-semibold mb-4">Photo mise en avant</h2>
+                                        <h2 className="text-lg font-semibold mb-4">Photo mise en avant</h2>
                                         <div className="aspect-square w-64 max-sm:w-44 h-64 max-sm:h-44 rounded-xl overflow-hidden border-2 border-dashed border-gray-200">
-                                            {featuredImage ? (
+                                            {featuredImage instanceof File ? ( // Display newly uploaded file
                                                 <div className="relative group h-64">
                                                     <img
-                                                        src={URL.createObjectURL(featuredImage)}
+                                                        src={URL.createObjectURL(featuredImage) || "/placeholder.svg"}
                                                         alt="Featured product"
-                                                        className="w-full max-sm:w-44 h-full max-sm:h-44 object-cover"
+                                                        className="w-full h-full object-cover"
                                                     />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                         <button
@@ -1464,7 +1197,24 @@ const EditProductPage: React.FC = () => {
                                                         </button>
                                                     </div>
                                                 </div>
-                                            ) : (
+                                            ) : typeof featuredImage === 'string' ? ( // Display existing image URL
+                                                <div className="relative group h-64">
+                                                    <img
+                                                        src={featuredImage || "/placeholder.svg"}
+                                                        alt="Existing featured product"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                        <button
+                                                            type="button"
+                                                            onClick={removeFeaturedImage}
+                                                            className="p-2 bg-white/90 rounded-full hover:bg-white"
+                                                        >
+                                                            <X className="w-5 h-5" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : ( // Placeholder if no image is set
                                                 <label className="h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
                                                     <Upload className="w-10 h-10 text-gray-400" />
                                                     <span className="mt-2 text-sm text-gray-500">Ajouter une photo</span>
@@ -1479,32 +1229,59 @@ const EditProductPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Galerie d'images pour produit simple */}
                                     <div className="bg-white rounded-2xl shadow-sm p-6">
-                                        <h2 className="text-lg font-semibold max-sm:text-sm mb-4">Galerie d'images</h2>
+                                        <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
                                         <div className="grid grid-cols-3 gap-4">
-                                            {images.map((image, index) => (
-                                                <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
-                                                    <img
-                                                        src={URL.createObjectURL(image)}
-                                                        alt={`Product ${index + 1}`}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeImage(index)}
-                                                            className="p-2 bg-white rounded-full hover:bg-gray-100"
-                                                        >
-                                                            <X className="w-4 h-4" />
-                                                        </button>
+                                            {images.map((image, index) => { // Display newly uploaded images
+                                                // This mapping assumes 'images' contains only new files.
+                                                // If it also contains existing images (e.g., after initial load), this needs adjustment.
+                                                return (
+                                                    <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
+                                                        <img
+                                                            src={URL.createObjectURL(image) || "/placeholder.svg"}
+                                                            alt={`Product ${index + 1}`}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeImage(index)} // This removeImage needs to correctly handle both new and existing
+                                                                className="p-2 bg-white rounded-full hover:bg-gray-100"
+                                                            >
+                                                                <X className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
+
+                                            {product?.product_images
+                                                && product.product_images
+                                                    .filter((img: any) => !imagesToDelete.includes(img.id))
+                                                    .map((img: any, index: number) => (
+                                                      <div key={`existing-${index}`} className="relative group aspect-square rounded-xl overflow-hidden">
+                                                        <img
+                                                          src={img.path || "/placeholder.svg"}
+                                                          alt={`Existing ${index + 1}`}
+                                                          className="w-full h-full object-cover"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => setImagesToDelete([...imagesToDelete, img.id])}
+                                                            className="p-2 bg-white rounded-full hover:bg-gray-100"
+                                                          >
+                                                            <X className="w-4 h-4 text-red-500" />
+                                                          </button>
+                                                        </div>
+                                                      </div>
+                                                    ))
+                                            }
+
 
                                             <label className="aspect-square rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed border-gray-200">
-                                                <Upload className="w-8 h-8 max-sm:w-5 max-sm:h-5 text-gray-400" />
-                                                <span className="mt-2 text-sm max-sm:text-xs text-gray-500">Ajouter</span>
+                                                <Upload className="w-8 h-8 text-gray-400" />
+                                                <span className="mt-2 text-sm text-gray-500">Ajouter</span>
                                                 <input
                                                     type="file"
                                                     className="hidden"
@@ -1522,7 +1299,7 @@ const EditProductPage: React.FC = () => {
                                     <div className="bg-white rounded-2xl shadow-sm p-6">
                                         <div className="flex items-center justify-between mb-6">
                                             <div>
-                                                <h2 className="text-lg font-semibold max-sm:text-sm text-gray-900">Attributs du produit</h2>
+                                                <h2 className="text-lg max-sm:text-sm font-semibold text-gray-900">Attributs du produit</h2>
                                                 <p className="text-sm text-gray-500 mt-1 max-sm:text-xs">Configurez les variations de votre produit</p>
                                             </div>
                                             <div className="flex items-center gap-2">
@@ -1530,8 +1307,17 @@ const EditProductPage: React.FC = () => {
                                                     type="button"
                                                     className="px-3 py-1.5 max-sm:text-xs text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                                                     onClick={() => {
-                                                        setAttributes([]);
-                                                        setVariants([]);
+                                                        // Resetting these states would require careful consideration of side effects
+                                                        // For now, let's focus on the core functionality.
+                                                        // Consider if resetting attributes and variations is always desired.
+                                                        // setAttributes([]); // May not be desirable to clear existing attributes if they are fetched
+                                                        // setVariations([]); // Clearing variations might be okay
+                                                        setVariationFrames([]); // Clearing frames is definitely needed for a reset
+                                                        setSelectedAttributeId(null);
+                                                        setSelectedAttributeType(null);
+                                                        setAttributeValuePrices({});
+                                                        setGlobalColorPrice(0);
+                                                        addVariationFrame(); // Add a default frame to start
                                                     }}
                                                 >
                                                     Réinitialiser
@@ -1547,10 +1333,11 @@ const EditProductPage: React.FC = () => {
                                                     type="button"
                                                     onClick={() => {
                                                         setSelectedAttributeType('colorOnly');
-                                                        setAttributes(attributes.filter(attr => !attr.affectsPrice));
-                                                        setVariants([]);
-                                                        setVariationFrames([]);
-                                                        addVariationFrame();
+                                                        // Filter out attributes that affect price (like Size) if switching to colorOnly
+                                                        setAttributes(prev => prev.filter(attr => attr.id === 1 || !attr.affectsPrice)); // Keep color, remove price-affecting ones
+                                                        setVariations([]); // Clear existing generated variations
+                                                        setVariationFrames([]); // Clear existing frames
+                                                        addVariationFrame(); // Start with a new frame
                                                     }}
                                                     className={`p-4 h-24 rounded-xl max-sm:text-xs border-2 transition-all ${selectedAttributeType === 'colorOnly'
                                                         ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
@@ -1570,9 +1357,9 @@ const EditProductPage: React.FC = () => {
                                                     type="button"
                                                     onClick={() => {
                                                         setSelectedAttributeType('colorAndAttribute');
-                                                        setVariants([]);
-                                                        setVariationFrames([]);
-                                                        addVariationFrame();
+                                                        setVariations([]); // Clear existing generated variations
+                                                        setVariationFrames([]); // Clear existing frames
+                                                        addVariationFrame(); // Start with a new frame
                                                     }}
                                                     className={`p-4 h-24 rounded-xl border-2 transition-all ${selectedAttributeType === 'colorAndAttribute'
                                                         ? 'border-[#ed7e0f] bg-[#ed7e0f]/5'
@@ -1600,22 +1387,24 @@ const EditProductPage: React.FC = () => {
                                                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
                                                     value={selectedAttributeId || ''}
                                                     onChange={(e) => {
-                                                        const selectedCat = availableAttributes.find((attr: any) => attr.attribute_id === parseInt(e.target.value));
+                                                        const selectedAttrId = parseInt(e.target.value);
+                                                        const selectedCat = availableAttributes?.find((attr: any) => attr.attribute_id === selectedAttrId);
+
                                                         if (selectedCat) {
-                                                            setSelectedAttributeId(selectedCat.attribute_id);
+                                                            setSelectedAttributeId(selectedAttrId);
                                                             setAttributes(prev => {
                                                                 const existingAttribute = prev.find(attr => attr.affectsPrice);
                                                                 if (existingAttribute) {
                                                                     return prev.map(attr =>
                                                                         attr.affectsPrice
-                                                                            ? { ...attr, name: selectedCat.attribute_name, id: selectedCat.attribute_id }
+                                                                            ? { ...attr, name: selectedCat.attribute_name, id: selectedAttrId }
                                                                             : attr
                                                                     );
                                                                 } else {
                                                                     return [
-                                                                        ...prev.filter(attr => !attr.affectsPrice),
+                                                                        ...prev.filter(attr => attr.id === 1 || !attr.affectsPrice), // Keep color and non-price attributes
                                                                         {
-                                                                            id: selectedCat.attribute_id,
+                                                                            id: selectedAttrId,
                                                                             name: selectedCat.attribute_name,
                                                                             affectsPrice: true,
                                                                             values: []
@@ -1624,35 +1413,17 @@ const EditProductPage: React.FC = () => {
                                                                 }
                                                             });
                                                         } else {
-                                                            // If no category is selected, remove the price-affecting attribute
-                                                            setAttributes(prev => prev.filter(attr => !attr.affectsPrice));
+                                                            // If no attribute is selected, remove the affectsPrice attribute if it was not color
+                                                            setAttributes(prev => prev.filter(attr => attr.id === 1 || !attr.affectsPrice));
                                                             setSelectedAttributeId(null);
                                                         }
-                                                        setVariants([]);
+                                                        setVariations([]);
                                                         setVariationFrames([]);
                                                         addVariationFrame();
-                                                        if (variationFrames.length > 0) {
-                                                            setVariationFrames([{
-                                                                id: variationFrames[0].id,
-                                                                sizes: [],
-                                                                productId: "",
-                                                                shoeSizes: [],
-                                                                images: [],
-                                                                quantity: 0,
-                                                                price: 0,
-                                                                color: {
-                                                                    id: 0,
-                                                                    name: "",
-                                                                    hex: ""
-                                                                }
-                                                            }]);
-                                                        } else {
-                                                            addVariationFrame();
-                                                        }
                                                     }}
                                                 >
                                                     <option value="">Sélectionner un attribut</option>
-                                                    {!isLoading && availableAttributes.map((attr: any) => (
+                                                    {!isLoadingAttributes && availableAttributes?.map((attr: any) => (
                                                         <option key={attr.attribute_id} value={attr.attribute_id}>
                                                             {attr.category_name} ({attr.attribute_name})
                                                         </option>
@@ -1692,7 +1463,7 @@ const EditProductPage: React.FC = () => {
                                                         </div>
 
                                                         <div className="space-y-6">
-                                                            {/* Première ligne : Couleur et Taille/Pointure */}
+                                                            {/* Couleur et Attribut */}
                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                                 {/* Sélection de la couleur */}
                                                                 <div>
@@ -1700,9 +1471,12 @@ const EditProductPage: React.FC = () => {
                                                                     <Select
                                                                         value={frame.color?.id.toString()}
                                                                         onValueChange={(value) => {
-                                                                            const selectedColor = getAttributes?.[0]?.values.find((c: any) => c.id === Number(value));
+                                                                            const selectedColorId = Number(value);
+                                                                            const selectedColor = attributesArray.find(attr => attr.id === 1)?.values.find((c: any) => c.id === selectedColorId);
                                                                             if (selectedColor) {
                                                                                 updateVariationFrame(frame.id, { color: { id: selectedColor.id, name: selectedColor.value, hex: selectedColor.hex_color } });
+                                                                            } else if (selectedColorId === 0) { // Option to clear color
+                                                                                 updateVariationFrame(frame.id, { color: { id: 0, name: '', hex: '' } });
                                                                             }
                                                                         }}
                                                                     >
@@ -1710,8 +1484,14 @@ const EditProductPage: React.FC = () => {
                                                                             <SelectValue placeholder="Choisir une couleur" />
                                                                         </SelectTrigger>
                                                                         <SelectContent>
-                                                                            {getAttributes?.[0]?.values
-                                                                                .filter((color: any) => !variationFrames.some(f => f.color.id === color.id && f.id !== frame.id))
+                                                                            <SelectItem value="0">Aucune couleur</SelectItem>
+                                                                            {/* Use attributesArray here */}
+                                                                            {attributesArray.find(attr => attr.id === 1)?.values
+                                                                                // Filter out colors already used in other frames to avoid duplicates, unless it's the only option left
+                                                                                .filter((color: any) => color.id !== 0 && (
+                                                                                    frame.color.id === color.id ||
+                                                                                    !variationFrames.some(f => f.color.id === color.id && f.id !== frame.id)
+                                                                                ))
                                                                                 .map((color: any) => (
                                                                                     <SelectItem key={color.id} value={color.id.toString()}>
                                                                                         <div className="flex items-center gap-2">
@@ -1719,29 +1499,34 @@ const EditProductPage: React.FC = () => {
                                                                                                 className="w-4 h-4 rounded-full border border-gray-200"
                                                                                                 style={{ backgroundColor: color.hex_color }}
                                                                                             />
-                                                                                            <span>{color.value} </span>
+                                                                                            <span>{color.value}</span>
                                                                                         </div>
                                                                                     </SelectItem>
                                                                                 ))}
                                                                         </SelectContent>
                                                                     </Select>
                                                                 </div>
-                                                                {/* Champ quantité pour couleur uniquement */}
-                                                                {!attributes.some(attr => attr.affectsPrice) && (
-                                                                    <div>
-                                                                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quantité</label>
-                                                                        <input
-                                                                            type="number"
-                                                                            min={1}
-                                                                            value={frame.quantity ?? ''}
-                                                                            onChange={e => updateVariationFrame(frame.id, { quantity: Number(e.target.value) })}
-                                                                            className="w-full px-4 py-2 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
-                                                                            placeholder="Quantité pour cette couleur"
 
-                                                                        />
-                                                                    </div>
+                                                                {/* Quantity and Price for Color Only */}
+                                                                {selectedAttributeType === 'colorOnly' && frame.color.id !== 0 && (
+                                                                    <>
+                                                                        <div>
+                                                                            <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quantité</label>
+                                                                            <input
+                                                                                type="number"
+                                                                                min={1}
+                                                                                value={frame.quantity ?? ''}
+                                                                                onChange={e => updateVariationFrame(frame.id, { quantity: Number(e.target.value) })}
+                                                                                className="w-full px-4 py-2 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
+                                                                                placeholder="Quantité pour cette couleur"
+                                                                            />
+                                                                        </div>
+                                                                        {/* Price for colorOnly will be handled in the dedicated Price section */}
+                                                                    </>
                                                                 )}
 
+
+                                                                {/* Attribute Selection for ColorAndAttribute */}
                                                                 {(selectedAttributeType === 'colorAndAttribute' && selectedAttributeId && getAttributeValueByGroup) && (
                                                                     <div>
                                                                         <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Attribut</label>
@@ -1751,17 +1536,24 @@ const EditProductPage: React.FC = () => {
                                                                                     const selectedValueId = Number(value);
                                                                                     let selectedValue: any;
 
-                                                                                    getAttributeValueByGroup?.forEach((group: any) => {
+                                                                                    getAttributeValueByGroup?.some((group: any) => {
                                                                                         const found = group.values.find((val: any) => val.id === selectedValueId);
                                                                                         if (found) {
                                                                                             selectedValue = found;
+                                                                                            return true; // Exit loop once found
                                                                                         }
+                                                                                        return false;
                                                                                     });
 
                                                                                     if (selectedValue) {
-                                                                                        const quantity = prompt(`Quantité pour ${selectedValue.value}:`, "1");
-                                                                                        if (quantity && !isNaN(Number(quantity))) {
-                                                                                            addAttributeValueToVariation(frame.id, selectedValueId, selectedValue.value, Number(quantity));
+                                                                                        const quantityStr = prompt(`Quantité pour ${selectedValue.value}:`, "1");
+                                                                                        if (quantityStr !== null) { // User didn't cancel
+                                                                                            const quantity = Number(quantityStr);
+                                                                                            if (!isNaN(quantity) && quantity > 0) {
+                                                                                                addAttributeValueToVariation(frame.id, selectedValueId, selectedValue.value, quantity);
+                                                                                            } else {
+                                                                                                toast.error("Veuillez entrer une quantité valide.");
+                                                                                            }
                                                                                         }
                                                                                     }
                                                                                 }}
@@ -1771,14 +1563,12 @@ const EditProductPage: React.FC = () => {
                                                                                 </SelectTrigger>
                                                                                 <SelectContent>
                                                                                     {getAttributeValueByGroup?.map((group: any) => {
-                                                                                        // Filtrer les valeurs déjà sélectionnées
-                                                                                        const availableValues = group.values.filter((value: any) => 
+                                                                                        const availableValues = group.values.filter((value: any) =>
                                                                                             !frame.sizes.some((size: any) => size.id === value.id)
                                                                                         );
-                                                                                        
-                                                                                        // Ne pas afficher le groupe s'il n'y a plus de valeurs disponibles
+
                                                                                         if (availableValues.length === 0) return null;
-                                                                                        
+
                                                                                         return (
                                                                                             <SelectGroup key={group.group_id}>
                                                                                                 <SelectLabel>{group.group_label}</SelectLabel>
@@ -1793,6 +1583,7 @@ const EditProductPage: React.FC = () => {
                                                                                 </SelectContent>
                                                                             </Select>
 
+                                                                            {/* Display added sizes/attributes */}
                                                                             <div className="flex flex-wrap gap-2">
                                                                                 {frame.sizes.map((size) => {
                                                                                     const attributeGroup = getAttributeValueByGroup?.find((group: any) =>
@@ -1803,6 +1594,7 @@ const EditProductPage: React.FC = () => {
                                                                                         <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
                                                                                             <span className="text-sm"> {sizeData?.value} Qté :{size.quantity}</span>
                                                                                             <button
+                                                                                                type="button"
                                                                                                 onClick={() => removeAttributeValueFromVariation(frame.id, size.id)}
                                                                                                 className="text-gray-400 hover:text-gray-600"
                                                                                             >
@@ -1821,21 +1613,44 @@ const EditProductPage: React.FC = () => {
                                                             <div>
                                                                 <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Images de la variation</label>
                                                                 <div className="grid grid-cols-4 gap-3">
-                                                                    {frame.images.map((image, idx) => (
-                                                                        <div key={idx} className="relative group aspect-square">
-                                                                            <img
-                                                                                src={URL.createObjectURL(image)}
-                                                                                alt={`Variation ${idx + 1}`}
-                                                                                className="w-16 h-16 object-cover rounded-xl"
-                                                                            />
-                                                                            <button
-                                                                                onClick={() => removeVariationImage(frame.id, idx)}
-                                                                                className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
-                                                                            >
-                                                                                <X className="w-4 h-4 text-red-500" />
-                                                                            </button>
-                                                                        </div>
-                                                                    ))}
+                                                                    {/* Update the image display section to allow deletion of existing variation images */}
+                                                                    {frame.images.map((image, idx) => {
+                                                                        if (typeof image === 'string') { // Existing image URL
+                                                                            return (
+                                                                                <div key={idx} className="relative group aspect-square">
+                                                                                    <img
+                                                                                        src={image || "/placeholder.svg"}
+                                                                                        alt={`Variation ${idx + 1}`}
+                                                                                        className="w-16 h-16 object-cover rounded-xl"
+                                                                                    />
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() => removeExistingVariationImage(frame.id, image)}
+                                                                                        className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
+                                                                                    >
+                                                                                        <X className="w-4 h-4 text-red-500" />
+                                                                                    </button>
+                                                                                </div>
+                                                                            );
+                                                                        } else { // Newly uploaded File object
+                                                                            return (
+                                                                                <div key={idx} className="relative group aspect-square">
+                                                                                    <img
+                                                                                        src={URL.createObjectURL(image) || "/placeholder.svg"}
+                                                                                        alt={`Variation ${idx + 1}`}
+                                                                                        className="w-16 h-16 object-cover rounded-xl"
+                                                                                    />
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={() => removeVariationImage(frame.id, idx)}
+                                                                                        className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:bg-red-50"
+                                                                                    >
+                                                                                        <X className="w-4 h-4 text-red-500" />
+                                                                                    </button>
+                                                                                </div>
+                                                                            );
+                                                                        }
+                                                                    })}
                                                                     <label className="aspect-square flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50/80 hover:border-[#ed7e0f] transition-all group">
                                                                         <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#ed7e0f]" />
                                                                         <span className="text-xs text-gray-400 group-hover:text-[#ed7e0f]">Ajouter</span>
@@ -1856,7 +1671,8 @@ const EditProductPage: React.FC = () => {
                                                 <button
                                                     type="button"
                                                     onClick={addVariationFrame}
-                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md text-[#ed7e0f] bg-[#ed7e0f]/10 hover:bg-[#ed7e0f]/20 transition-colors"
+                                                    disabled={selectedAttributeType === 'colorOnly' && variationFrames.length > 0}
+                                                    className={`w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${selectedAttributeType === 'colorOnly' && variationFrames.length > 0 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'text-[#ed7e0f] bg-[#ed7e0f]/10 hover:bg-[#ed7e0f]/20'}`}
                                                 >
                                                     <Plus className="w-4 h-4" />
                                                     Ajouter une variation
@@ -1865,12 +1681,12 @@ const EditProductPage: React.FC = () => {
                                         </div>
                                     )}
 
-                                    {/* Section des prix par taille/pointure */}
+                                    {/* Section des prix */}
                                     <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
                                         <h3 className="text-lg max-sm:text-sm font-semibold text-gray-900 mb-4">Prix des variations</h3>
 
-                                        {/* Prix global pour les variations de couleur uniquement */}
-                                        {!attributes.some(attr => attr.affectsPrice) && (
+                                        {/* Global Price for Color Only products */}
+                                        {selectedAttributeType === 'colorOnly' && (
                                             <div className="mb-6">
                                                 <h4 className="text-sm font-medium text-gray-700 mb-3">Prix global pour toutes les couleurs</h4>
                                                 <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
@@ -1879,29 +1695,34 @@ const EditProductPage: React.FC = () => {
                                                         value={globalColorPrice || ''}
                                                         onChange={(e) => setGlobalColorPrice(Number(e.target.value))}
                                                         placeholder="Prix global (FCFA)"
-                                                        className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                                                        className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
                                                     />
                                                 </div>
                                             </div>
                                         )}
 
+                                        {/* Individual Attribute Prices for ColorAndAttribute */}
                                         {(selectedAttributeType === 'colorAndAttribute' && getUniqueAttributeValues().length > 0) && (
                                             <div className="mb-6">
-
                                                 <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                                                     {getUniqueAttributeValues().map(attributeValueId => {
                                                         let attributeValueData: any;
-                                                        getAttributeValueByGroup?.forEach((group: any) => {
+                                                        getAttributeValueByGroup?.some((group: any) => {
                                                             const found = group.values.find((val: any) => val.id === attributeValueId);
                                                             if (found) {
                                                                 attributeValueData = found;
+                                                                return true;
                                                             }
+                                                            return false;
                                                         });
+
+                                                        // Find the corresponding attribute name
+                                                        const attributeName = attributes.find(attr => attr.id === selectedAttributeId)?.name || 'Attribut';
 
                                                         return (
                                                             <div key={attributeValueId} className="flex flex-col items-start gap-3 bg-gray-50 p-3 rounded-xl">
                                                                 <div>
-                                                                    <span className="font-medium text-[#6e0a13]">{attributes.find(attr => attr.id === selectedAttributeId)?.name}:</span> <span>{attributeValueData?.value} {attributeValueData.label}</span>
+                                                                    <span className="font-medium text-[#6e0a13]">{attributeName}:</span> <span>{attributeValueData?.value} {attributeValueData?.label}</span>
                                                                 </div>
 
                                                                 <input
@@ -1909,12 +1730,8 @@ const EditProductPage: React.FC = () => {
                                                                     value={attributeValuePrices[attributeValueId] || ''}
                                                                     onChange={(e) => updateAttributeValuePrice(attributeValueId, Number(e.target.value))}
                                                                     placeholder="Prix (FCFA)"
-                                                                    className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
+                                                                    className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f]"
                                                                 />
-
-                                                             
-
-                                                             
                                                             </div>
                                                         );
                                                     })}
@@ -1923,26 +1740,29 @@ const EditProductPage: React.FC = () => {
                                         )}
                                     </div>
 
-                                    {/* Liste des variations sélectionnées */}
+                                    {/* List of generated variations for preview */}
                                     {variationFrames.length > 0 && (
                                         <div className="mt-8">
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Variations générées</h3>
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Aperçu des variations générées</h3>
                                             <div className="grid grid-cols-1 gap-4">
                                                 {variationFrames.map((frame) => {
-                                                    const color = getAttributes?.[0]?.values.find((c: any) => c?.id === frame?.color?.id);
+                                                    // Find color data for display
+                                                    const color = attributesArray.find(attr => attr.id === 1)?.values.find((c: any) => c.id === frame.color.id);
 
+                                                    // Find attribute name for display
+                                                    const attributeName = attributes.find(attr => attr.id === selectedAttributeId)?.name || 'Attribut';
 
                                                     return (
-                                                        <div key={frame?.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all">
+                                                        <div key={frame.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all">
                                                             <div className="flex items-center gap-4">
                                                                 {frame.images.length > 0 ? (
                                                                     <div className="relative w-20 h-20 flex-shrink-0">
                                                                         <img
-                                                                            src={URL.createObjectURL(frame.images[0])}
+                                                                            src={typeof frame.images[0] === 'string' ? frame.images[0] : URL.createObjectURL(frame.images[0] as File)}
                                                                             alt="Variation"
                                                                             className="w-full h-full object-cover rounded-lg"
                                                                         />
-                                                                        {frame.images.length > 1 && (
+                                                                        {frame.images.filter(img => typeof img === 'string').length + frame.images.filter(img => img instanceof File).length > 1 && (
                                                                             <div className="absolute -top-1 -right-1 bg-white rounded-full px-2 py-0.5 border border-gray-100 shadow-sm">
                                                                                 <span className="text-xs text-gray-500">+{frame.images.length - 1}</span>
                                                                             </div>
@@ -1955,9 +1775,9 @@ const EditProductPage: React.FC = () => {
                                                                 )}
 
                                                                 <div className="flex-1 min-w-0">
-                                                                    {/* En-tête avec la couleur */}
-                                                                    {color && (
-                                                                        <div className="flex flex-col items-start gap-2 mb-3">
+                                                                    {/* Display Color */}
+                                                                    {frame.color.id !== 0 && color && (
+                                                                        <div className='mb-3'>
                                                                             <div className='flex items-center gap-2'>
                                                                                 <div
                                                                                     className="w-5 h-5 rounded-full border border-gray-200"
@@ -1965,52 +1785,58 @@ const EditProductPage: React.FC = () => {
                                                                                 />
                                                                                 <span className="text-base text-sm font-medium">{color.value}</span>
                                                                             </div>
-                                                                            {selectedAttributeType === 'colorOnly' && (
-                                                                                <>
-                                                                                    <div>
-                                                                                        <span className='text-sm'>Prix :</span>
-                                                                                        <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
-                                                                                            {globalColorPrice || 0} FCFA
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <span className="text-xs text-gray-500">Quantité: {frame.quantity}</span>
-                                                                                    </div>
-                                                                                </>
-                                                                            )}
-
                                                                         </div>
                                                                     )}
 
-                                                                    {/* Grille des tailles/pointures */}
-                                                                    <div className="space-y-3">
-                                                                        {/* Attributs */}
-                                                                        {selectedAttributeType === 'colorAndAttribute' && frame.sizes.length > 0 && (
-                                                                            <div className="flex flex-wrap gap-2">
-                                                                                {frame.sizes.map(attributeItem => {
-                                                                                    let attributeValueData: any;
-                                                                                    getAttributeValueByGroup?.forEach((group: any) => {
-                                                                                        const found = group.values.find((val: any) => val.id === attributeItem.id);
-                                                                                        if (found) {
-                                                                                            attributeValueData = found;
-                                                                                        }
-                                                                                    });
-                                                                                    return (
-                                                                                        <div key={attributeItem.id} className="bg-gray-50 rounded-lg p-2">
-                                                                                            <div className="text-sm font-medium">{attributeValueData?.value} {attributeValueData?.label}</div>
-                                                                                            <div className="flex items-center gap-2 mt-1">
-                                                                                                <span className="text-xs text-gray-500">Qté: {attributeItem.quantity}</span>
-                                                                                                <span className="text-xs font-medium text-[#ed7e0f]">{attributeValuePrices[attributeItem.id] || 0} FCFA</span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    );
-                                                                                })}
+                                                                    {/* Display Price and Quantity */}
+                                                                    {selectedAttributeType === 'colorOnly' && frame.color.id !== 0 && (
+                                                                        <>
+                                                                            <div className="flex justify-between items-center">
+                                                                                <span className='text-sm'>Prix :</span>
+                                                                                <span className="text-sm font-medium text-[#ed7e0f] ml-auto">
+                                                                                    {globalColorPrice > 0 ? `${globalColorPrice} FCFA` : 'N/A'}
+                                                                                </span>
                                                                             </div>
-                                                                        )}
-                                                                    </div>
+                                                                            <div className="flex justify-between items-center mt-1">
+                                                                                <span className="text-xs text-gray-500">Quantité:</span>
+                                                                                <span className="text-xs font-medium">{frame.quantity}</span>
+                                                                            </div>
+                                                                        </>
+                                                                    )}
+
+                                                                    {/* Update the variation preview to display sizes/attributes more clearly */}
+                                                                    {selectedAttributeType === 'colorAndAttribute' && frame.sizes.length > 0 && (
+                                                                        <div className="flex flex-col gap-2">
+                                                                            {frame.sizes.map(attributeItem => {
+                                                                                let attributeValueData: any;
+                                                                                getAttributeValueByGroup?.some((group: any) => {
+                                                                                    const found = group.values.find((val: any) => val.id === attributeItem.id);
+                                                                                    if (found) {
+                                                                                        attributeValueData = found;
+                                                                                        return true;
+                                                                                    }
+                                                                                    return false;
+                                                                                });
+                                                                                const price = attributeValuePrices[attributeItem.id] || 0;
+
+                                                                                return (
+                                                                                    <div key={attributeItem.id} className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                                                                                        <div className="text-sm font-medium text-gray-900">
+                                                                                            <span className="text-[#ed7e0f]">{attributeName}:</span> {attributeValueData?.value || attributeItem.name}{attributeValueData?.label ? ` (${attributeValueData.label})` : ''}
+                                                                                        </div>
+                                                                                        <div className="flex justify-between items-center mt-1 gap-2">
+                                                                                            <span className="text-xs text-gray-500">Qté: <span className="font-medium">{attributeItem.quantity}</span></span>
+                                                                                            <span className="text-xs font-medium text-[#ed7e0f]">{price > 0 ? `${price} FCFA` : 'À définir'}</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                );
+                                                                            })}
+                                                                        </div>
+                                                                    )}
                                                                 </div>
 
                                                                 <button
+                                                                    type="button"
                                                                     onClick={() => removeVariationFrame(frame.id)}
                                                                     className="p-2 hover:bg-gray-50 rounded-lg transition-colors self-start"
                                                                 >
