@@ -10,6 +10,7 @@ import {
 
 import { useAddProductMutation } from '@/services/sellerService';
 import { useGetAttributeByCategoryQuery, useGetAttributeValueByGroupQuery, useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
+import VariationConfigModal from '@/components/VariationConfigModal';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem, SelectGroup, SelectLabel } from '@/components/ui/select';
@@ -83,10 +84,20 @@ const CreateProductPage: React.FC = () => {
     const [city, setCity] = useState('');
     const { data: { data: getAttributes } = {} } = useGetAttributeValuesQuery("1");
     const { data: availableAttributes, isLoading } = useGetAttributeByCategoryQuery('guard');
-
+    const [attributeValueWholesalePrices, setAttributeValueWholesalePrices] = useState<Record<number, Array<{ min_quantity: number; wholesale_price: number; }>>>({});
     const [selectedAttributeId, setSelectedAttributeId] = useState<number | null>(null);
     const [globalColorPrice, setGlobalColorPrice] = useState<number>(0);
     const [selectedAttributeType, setSelectedAttributeType] = useState<string | null>(null);
+    
+    // State for VariationConfigModal
+    const [isVariationModalOpen, setIsVariationModalOpen] = useState(false);
+    const [pendingVariationData, setPendingVariationData] = useState<{
+        frameId: any;
+        attributeValueId: number;
+        attributeValueName: string;
+        colorName: string;
+        colorHex: string;
+    } | null>(null);
     const [attributeValuePrices, setAttributeValuePrices] = useState<Record<number, number>>({});
     const { data: getAttributeValueByGroup } = useGetAttributeValueByGroupQuery(selectedAttributeId ? selectedAttributeId.toString() : skipToken)
     const [isWholesale, setIsWholesale] = useState<boolean | null>(
@@ -250,6 +261,26 @@ const CreateProductPage: React.FC = () => {
 
 
 
+    const handleVariationModalConfirm = (data: { quantity: number; wholesalePrices?: Array<{ min_quantity: number; wholesale_price: number }> }) => {
+        if (!pendingVariationData) return;
+
+        const { frameId, attributeValueId, attributeValueName } = pendingVariationData;
+
+        // Add attribute value to variation
+        addAttributeValueToVariation(frameId, attributeValueId, attributeValueName, data.quantity);
+
+        // If wholesale, save wholesale prices
+        if (isWholesale && data.wholesalePrices) {
+            setAttributeValueWholesalePrices(prev => ({
+                ...prev,
+                [attributeValueId]: data.wholesalePrices!
+            }));
+        }
+
+        setIsVariationModalOpen(false);
+        setPendingVariationData(null);
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -266,7 +297,19 @@ const CreateProductPage: React.FC = () => {
                     toast.error(`Veuillez remplir le prix pour l'attribut ${attributeValueId}.`);
                     return;
                 }
-              
+                if (isWholesale) {
+                    const wholesalePrices = attributeValueWholesalePrices[attributeValueId];
+                    if (!wholesalePrices || wholesalePrices.length === 0) {
+                        toast.error(`Veuillez configurer au moins un palier de prix de gros pour l'attribut ${attributeValueId}.`);
+                        return;
+                    }
+                    for (const wp of wholesalePrices) {
+                        if (!wp.min_quantity || wp.min_quantity <= 0 || !wp.wholesale_price || wp.wholesale_price <= 0) {
+                            toast.error(`Veuillez vérifier les prix de gros et les quantités minimales pour l'attribut ${attributeValueId}.`);
+                            return;
+                        }
+                    }
+                }
             }
         }
 
@@ -1618,6 +1661,7 @@ const CreateProductPage: React.FC = () => {
                                                                         <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Attribut</label>
                                                                         <div className="space-y-3">
                                                                             <Select
+                                                                                value={pendingVariationData?.frameId === frame.id ? pendingVariationData.attributeValueId.toString() : ''}
                                                                                 onValueChange={(value) => {
                                                                                     const selectedValueId = Number(value);
                                                                                     let selectedValue: any;
@@ -1630,10 +1674,17 @@ const CreateProductPage: React.FC = () => {
                                                                                     });
 
                                                                                     if (selectedValue) {
-                                                                                        const quantity = prompt(`Quantité pour ${selectedValue.value}:`, "1");
-                                                                                        if (quantity && !isNaN(Number(quantity))) {
-                                                                                            addAttributeValueToVariation(frame.id, selectedValueId, selectedValue.value, Number(quantity));
-                                                                                        }
+                                                                                        // Get color info for the modal
+                                                                                        const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.color.id);
+                                                                                        
+                                                                                        setPendingVariationData({
+                                                                                            frameId: frame.id,
+                                                                                            attributeValueId: selectedValueId,
+                                                                                            attributeValueName: selectedValue.value,
+                                                                                            colorName: color?.value || 'Couleur',
+                                                                                            colorHex: color?.hex_color || '#000000'
+                                                                                        });
+                                                                                        setIsVariationModalOpen(true);
                                                                                     }
                                                                                 }}
                                                                             >
@@ -1900,6 +1951,21 @@ const CreateProductPage: React.FC = () => {
                     </div>
                 </main>
             </form>
+            {pendingVariationData && (
+                <VariationConfigModal
+                    isOpen={isVariationModalOpen}
+                    onClose={() => {
+                        setIsVariationModalOpen(false);
+                        setPendingVariationData(null);
+                    }}
+                    onConfirm={handleVariationModalConfirm}
+                    isWholesale={isWholesale || false}
+                    attributeName={attributes.find(attr => attr.id === selectedAttributeId)?.name || 'Attribut'}
+                    attributeValue={pendingVariationData.attributeValueName}
+                    colorName={pendingVariationData.colorName}
+                    colorHex={pendingVariationData.colorHex}
+                />
+            )}
         </div>
     );
 };
