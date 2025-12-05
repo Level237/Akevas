@@ -9,12 +9,15 @@ interface WholesalePrice {
 interface VariationConfigModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (data: { quantity: number; wholesalePrices?: WholesalePrice[] }) => void;
+    onConfirm: (data: { quantity: number; price: number; wholesalePrices?: WholesalePrice[] }) => void;
     isWholesale: boolean;
     attributeName: string;
     attributeValue: string;
     colorName: string;
     colorHex: string;
+    initialQuantity?: number;
+    initialPrice?: number;
+    initialWholesalePrices?: WholesalePrice[];
 }
 
 const VariationConfigModal: React.FC<VariationConfigModalProps> = ({
@@ -25,9 +28,13 @@ const VariationConfigModal: React.FC<VariationConfigModalProps> = ({
     attributeName,
     attributeValue,
     colorName,
-    colorHex
+    colorHex,
+    initialQuantity = 1,
+    initialPrice = 0,
+    initialWholesalePrices
 }) => {
     const [quantity, setQuantity] = useState<number>(1);
+    const [price, setPrice] = useState<number>(0);
     const [wholesalePrices, setWholesalePrices] = useState<WholesalePrice[]>([
         { min_quantity: 10, wholesale_price: 0 }
     ]);
@@ -35,11 +42,12 @@ const VariationConfigModal: React.FC<VariationConfigModalProps> = ({
 
     useEffect(() => {
         if (isOpen) {
-            setQuantity(1);
-            setWholesalePrices([{ min_quantity: 10, wholesale_price: 0 }]);
+            setQuantity(initialQuantity);
+            setPrice(initialPrice);
+            setWholesalePrices(initialWholesalePrices && initialWholesalePrices.length > 0 ? initialWholesalePrices : [{ min_quantity: 10, wholesale_price: 0 }]);
             setError(null);
         }
-    }, [isOpen]);
+    }, [isOpen, initialQuantity, initialPrice, initialWholesalePrices]);
 
     const handleAddPrice = () => {
         setWholesalePrices([...wholesalePrices, { min_quantity: 0, wholesale_price: 0 }]);
@@ -61,6 +69,11 @@ const VariationConfigModal: React.FC<VariationConfigModalProps> = ({
             return;
         }
 
+        if (price < 0) {
+            setError("Le prix unitaire ne peut pas être négatif");
+            return;
+        }
+
         if (isWholesale) {
             if (wholesalePrices.length === 0) {
                 setError("Veuillez ajouter au moins un prix de gros");
@@ -76,6 +89,7 @@ const VariationConfigModal: React.FC<VariationConfigModalProps> = ({
 
         onConfirm({
             quantity,
+            price,
             wholesalePrices: isWholesale ? wholesalePrices : undefined
         });
         onClose();
@@ -115,22 +129,39 @@ const VariationConfigModal: React.FC<VariationConfigModalProps> = ({
                     )}
 
                     {/* Stock Quantity */}
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Quantité en stock
-                        </label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Package className="h-5 w-5 text-gray-400" />
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Quantité en stock
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Package className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(Number(e.target.value))}
+                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                    placeholder="0"
+                                />
                             </div>
-                            <input
-                                type="number"
-                                min="1"
-                                value={quantity}
-                                onChange={(e) => setQuantity(Number(e.target.value))}
-                                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                                placeholder="0"
-                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Prix unitaire (FCFA)
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={price}
+                                    onChange={(e) => setPrice(Number(e.target.value))}
+                                    className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
+                                    placeholder="0"
+                                />
+                            </div>
                         </div>
                     </div>
 

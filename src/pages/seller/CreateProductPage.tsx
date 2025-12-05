@@ -261,13 +261,37 @@ const CreateProductPage: React.FC = () => {
 
 
 
-    const handleVariationModalConfirm = (data: { quantity: number; wholesalePrices?: Array<{ min_quantity: number; wholesale_price: number }> }) => {
+    const handleVariationModalConfirm = (data: { quantity: number; price: number; wholesalePrices?: Array<{ min_quantity: number; wholesale_price: number }> }) => {
         if (!pendingVariationData) return;
 
         const { frameId, attributeValueId, attributeValueName } = pendingVariationData;
 
-        // Add attribute value to variation
-        addAttributeValueToVariation(frameId, attributeValueId, attributeValueName, data.quantity);
+        // Check if attribute value already exists in the frame
+        setVariationFrames(prevFrames => 
+            prevFrames.map(frame => {
+                if (frame.id === frameId) {
+                    const existingSizeIndex = frame.sizes.findIndex(s => s.id === attributeValueId);
+                    if (existingSizeIndex >= 0) {
+                        // Update existing
+                        const newSizes = [...frame.sizes];
+                        newSizes[existingSizeIndex] = { ...newSizes[existingSizeIndex], quantity: data.quantity };
+                        return { ...frame, sizes: newSizes };
+                    } else {
+                        // Add new
+                        return { ...frame, sizes: [...frame.sizes, { id: attributeValueId, name: attributeValueName, quantity: data.quantity, price: 0 }] };
+                    }
+                }
+                return frame;
+            })
+        );
+
+        // Update attribute value price
+        if (data.price >= 0) {
+            setAttributeValuePrices(prev => ({
+                ...prev,
+                [attributeValueId]: data.price
+            }));
+        }
 
         // If wholesale, save wholesale prices
         if (isWholesale && data.wholesalePrices) {
@@ -427,13 +451,6 @@ const CreateProductPage: React.FC = () => {
                 return;
             }
             
-            if (!stock.trim()) {
-                toast.error('La quantité de stock du produit est obligatoire', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000, // ms
-                });
-                return;
-            }
             if (!description.trim()) {
                 toast.error('La description du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
@@ -441,13 +458,7 @@ const CreateProductPage: React.FC = () => {
                 });
                 return;
             }
-            if (isWholesale && wholesalePrices.some(price => price.min_quantity <= 0 || price.wholesale_price <= 0)) {
-                toast.error('Les quantités minimales et les prix par lot doivent être spécifiés', {
-                    description: "Veuillez remplir tous les champs obligatoires",
-                    duration: 4000,
-                });
-                return;
-            }
+            
             if (gender === 0) {
                 toast.error('Le genre du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
@@ -986,15 +997,7 @@ const CreateProductPage: React.FC = () => {
 
 
 
-    const addAttributeValueToVariation = (frameId: string, attributeValueId: number, attributeValueName: string, quantity: number) => {
-        setVariationFrames(prevFrames =>
-            prevFrames.map(frame =>
-                frame.id === frameId
-                    ? { ...frame, sizes: [...frame.sizes, { id: attributeValueId, name: attributeValueName, quantity, price: 0 }] }
-                    : frame
-            )
-        );
-    };
+
 
     const removeAttributeValueFromVariation = (frameId: string, attributeValueId: number) => {
         setVariationFrames(prevFrames =>
@@ -1806,43 +1809,6 @@ const CreateProductPage: React.FC = () => {
                                                 </div>
                                             </div>
                                         )}
-
-                                        {(selectedAttributeType === 'colorAndAttribute' && getUniqueAttributeValues().length > 0) && (
-                                            <div className="mb-6">
-
-                                                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                                                    {getUniqueAttributeValues().map(attributeValueId => {
-                                                        let attributeValueData: any;
-                                                        getAttributeValueByGroup?.forEach((group: any) => {
-                                                            const found = group.values.find((val: any) => val.id === attributeValueId);
-                                                            if (found) {
-                                                                attributeValueData = found;
-                                                            }
-                                                        });
-
-                                                        return (
-                                                            <div key={attributeValueId} className="flex flex-col items-start gap-3 bg-gray-50 p-3 rounded-xl">
-                                                                <div>
-                                                                    <span className="font-medium text-[#6e0a13]">{attributes.find(attr => attr.id === selectedAttributeId)?.name}:</span> <span>{attributeValueData?.value} {attributeValueData.label}</span>
-                                                                </div>
-
-                                                                <input
-                                                                    type="number"
-                                                                    value={attributeValuePrices[attributeValueId] || ''}
-                                                                    onChange={(e) => updateAttributeValuePrice(attributeValueId, Number(e.target.value))}
-                                                                    placeholder="Prix (FCFA)"
-                                                                    className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#ed7e0f] focus:border-transparent"
-                                                                />
-
-                                                             
-
-                                                             
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
 
                                     {/* Liste des variations sélectionnées */}
@@ -1881,11 +1847,16 @@ const CreateProductPage: React.FC = () => {
                                                                     {color && (
                                                                         <div className="flex flex-col items-start gap-2 mb-3">
                                                                             <div className='flex items-center gap-2'>
+                                                                                <div>
                                                                                 <div
                                                                                     className="w-5 h-5 rounded-full border border-gray-200"
                                                                                     style={{ backgroundColor: color.hex_color }}
                                                                                 />
                                                                                 <span className="text-base text-sm font-medium">{color.value}</span>
+                                                                                </div>
+                                                                                <div>
+
+                                                                                </div>
                                                                             </div>
                                                                             {selectedAttributeType === 'colorOnly' && (
                                                                                 <>
@@ -1918,11 +1889,45 @@ const CreateProductPage: React.FC = () => {
                                                                                         }
                                                                                     });
                                                                                     return (
-                                                                                        <div key={attributeItem.id} className="bg-gray-50 rounded-lg p-2">
-                                                                                            <div className="text-sm font-medium">{attributeValueData?.value} {attributeValueData?.label}</div>
-                                                                                            <div className="flex items-center gap-2 mt-1">
-                                                                                                <span className="text-xs text-gray-500">Qté: {attributeItem.quantity}</span>
-                                                                                                <span className="text-xs font-medium text-[#ed7e0f]">{attributeValuePrices[attributeItem.id] || 0} FCFA</span>
+                                                                                        <div 
+                                                                                            key={attributeItem.id} 
+                                                                                            className="bg-gray-50 rounded-lg p-3 w-full cursor-pointer hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200"
+                                                                                            onClick={() => {
+                                                                                                setPendingVariationData({
+                                                                                                    frameId: frame.id,
+                                                                                                    attributeValueId: attributeItem.id,
+                                                                                                    attributeValueName: attributeValueData?.value || '',
+                                                                                                    colorName: color?.value || '',
+                                                                                                    colorHex: color?.hex_color || ''
+                                                                                                });
+                                                                                                setIsVariationModalOpen(true);
+                                                                                            }}
+                                                                                        >
+                                                                                            <div className="flex flex-col gap-3">
+                                                                                                {/* Partie Gauche : Détails Stock */}
+                                                                                                <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                                                                                                    <div className="text-sm font-medium text-gray-900">{attributeValueData?.value} {attributeValueData?.label}</div>
+                                                                                                    <div className="flex items-center gap-3 text-xs">
+                                                                                                        <div className="flex items-center gap-1">
+                                                                                                            <span className="text-gray-500">Qté:</span>
+                                                                                                            <span className="font-medium text-gray-900">{attributeItem.quantity}</span>
+                                                                                                        </div>
+                                                                                                        <div className="flex items-center gap-1">
+                                                                                                            <span className="text-gray-500">Prix:</span>
+                                                                                                            <span className="font-medium text-[#ed7e0f]">{attributeValuePrices[attributeItem.id] || 0} FCFA</span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                                {/* Partie Droite : Résumé Prix de gros */}
+                                                                                                {isWholesale && attributeValueWholesalePrices[attributeItem.id] && (
+                                                                                                    <div className="flex items-center gap-2">
+                                                                                                        <div className="px-2 py-1 bg-orange-50 text-[#ed7e0f] rounded text-[10px] font-medium border border-orange-100">
+                                                                                                            {attributeValueWholesalePrices[attributeItem.id].length} prix de gros configurés
+                                                                                                        </div>
+                                                                                                        <span className="text-[10px] text-gray-400 italic">Cliquez pour modifier</span>
+                                                                                                    </div>
+                                                                                                )}
                                                                                             </div>
                                                                                         </div>
                                                                                     );
@@ -1964,6 +1969,14 @@ const CreateProductPage: React.FC = () => {
                     attributeValue={pendingVariationData.attributeValueName}
                     colorName={pendingVariationData.colorName}
                     colorHex={pendingVariationData.colorHex}
+                    initialQuantity={
+                        variationFrames
+                            .find(f => f.id === pendingVariationData.frameId)
+                            ?.sizes.find(s => s.id === pendingVariationData.attributeValueId)
+                            ?.quantity || 1
+                    }
+                    initialPrice={attributeValuePrices[pendingVariationData.attributeValueId] || 0}
+                    initialWholesalePrices={attributeValueWholesalePrices[pendingVariationData.attributeValueId]}
                 />
             )}
         </div>
