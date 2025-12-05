@@ -769,12 +769,7 @@ const CreateProductPage: React.FC = () => {
     };
 
 
-    const updateAttributeValuePrice = (attributeValueId: number, price: number) => {
-        setAttributeValuePrices(prevPrices => ({
-            ...prevPrices,
-            [attributeValueId]: price
-        }));
-    };
+    
 
     const addVariationFrame = () => {
         setVariationFrames(prevFrames => [
