@@ -42,7 +42,7 @@ export default function ProductDetailPageAdmin() {
     }
   };
 
-  console.log(product)
+  
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -352,6 +352,9 @@ export default function ProductDetailPageAdmin() {
                                 )}
                                 <th className="px-2 py-1 text-left">Prix</th>
                                 <th className="px-2 py-1 text-left">Stock</th>
+                                {variation.attributes?.some((attr: any) => attr.wholesale_prices?.length > 0) && (
+                                  <th className="px-2 py-1 text-left">Prix de gros</th>
+                                )}
                               </tr>
                             </thead>
                             <tbody>
@@ -360,6 +363,21 @@ export default function ProductDetailPageAdmin() {
                                   <td className="px-2 py-1">{attr.value} {attr.label}</td>
                                   <td className="px-2 py-1">{Number(attr.price).toLocaleString()} FCFA</td>
                                   <td className="px-2 py-1">{attr.quantity}</td>
+                                  {variation.attributes?.some((a: any) => a.wholesale_prices?.length > 0) && (
+                                    <td className="px-2 py-1">
+                                      {attr.wholesale_prices && attr.wholesale_prices.length > 0 ? (
+                                        <div className="flex flex-col gap-1">
+                                          {attr.wholesale_prices.map((wp: any, idx: number) => (
+                                            <span key={idx} className="text-xs bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded border border-purple-100 whitespace-nowrap">
+                                              {wp.min_quantity}+ : {Number(wp.wholesale_price).toLocaleString()} FCFA
+                                            </span>
+                                          ))}
+                                        </div>
+                                      ) : (
+                                        <span className="text-gray-400 text-xs">-</span>
+                                      )}
+                                    </td>
+                                  )}
                                 </tr>
                               )) :
 

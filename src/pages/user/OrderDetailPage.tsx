@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useGetOrderDetailQuery } from '@/services/auth';
 import AsyncLink from '@/components/ui/AsyncLink';
 
-const TAX_RATE = 0.05; // 5% de TVA
+const TAX_RATE = 0.03; // 5% de TVA
 
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];

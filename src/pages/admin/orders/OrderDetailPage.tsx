@@ -3,11 +3,11 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone, Truck, Clock, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
+import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone, Truck, Clock, CheckCircle, AlertCircle, ArrowRight, Store } from 'lucide-react';
 import { useAdminDetailOrderQuery } from '@/services/adminService';
 import { Button } from '@/components/ui/button';
 
-const TAX_RATE = 0.05; // 5% de TVA
+const TAX_RATE = 0.03; // 5% de TVA
 
 const formatDateSafely = (dateString: string) => {
     try {
@@ -32,6 +32,24 @@ const formatPrice = (price: string | number) => {
     return `${numPrice.toLocaleString('fr-FR')} XAF`;
 };
 
+const getShopFromProduct = (product: any) => {
+    if (product.shop) return product.shop;
+    
+    // Fallback if shop info is flat on product
+    if (product.shop_id) {
+        return {
+            shop_id: product.shop_id,
+            shop_name: product.shop_name,
+            shop_profile: product.shop_profile,
+            shop_created_at: product.shop_created_at,
+            residence: product.residence,
+            whatsapp_number: product.whatsapp_number,
+            user: { id: product.user_id } // minimal user info
+        };
+    }
+    return null;
+};
+
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
     // Ajouter les produits avec variation (orderVariations)
@@ -41,6 +59,7 @@ const getOrderItems = (order: any) => {
             if (item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
                 const attributeValue = item.variation_attribute.value;
+                const shop = variation.shop || getShopFromProduct(variation); // variation might have product fields if flattened
 
                 allOrderItems.push({
                     id: item.id,
@@ -53,13 +72,14 @@ const getOrderItems = (order: any) => {
                     image: variation.images?.[0]?.path || '',
                     total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
                     type: 'variation',
-                    shop: variation.shop || null,
-                    seller: variation.shop?.user || null
+                    shop: shop,
+                    seller: shop?.user || null
                 });
             }
             // Cas 2: variation_attribute est null mais product_variation existe directement
             else if (item.product_variation) {
                 const variation = item.product_variation;
+                const shop = variation.shop || getShopFromProduct(variation);
 
                 allOrderItems.push({
                     id: item.id,
@@ -72,8 +92,8 @@ const getOrderItems = (order: any) => {
                     image: variation.images?.[0]?.path || '',
                     total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
                     type: 'variation',
-                    shop: variation.shop || null,
-                    seller: variation.shop?.user || null
+                    shop: shop,
+                    seller: shop?.user || null
                 });
             }
         });
@@ -83,6 +103,8 @@ const getOrderItems = (order: any) => {
     if (order.order_details && order.order_details.length > 0) {
         order.order_details.forEach((item: any) => {
             if (item && item.product) {
+                const shop = item.product.shop || getShopFromProduct(item.product);
+                
                 allOrderItems.push({
                     id: item.id,
                     name: item.product?.product_name || 'Produit inconnu',
@@ -93,8 +115,8 @@ const getOrderItems = (order: any) => {
                     image: item.product?.product_profile || '',
                     total: parseInt(item.quantity) * parseFloat(item.price),
                     type: 'simple',
-                    shop: item.product?.shop || null,
-                    seller: item.product?.shop?.user || null
+                    shop: shop,
+                    seller: shop?.user || null
                 });
             }
         });
@@ -174,6 +196,8 @@ export default function AdminOrderDetailPage() {
     const shippingFee = Number(order?.fee_of_shipping || 0);
     const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
     const totalWithTax = itemsTotal + shippingFee + taxAmount;
+
+    const uniqueShops = Array.from(new Map(orderItems.map((item: any) => [item.shop?.shop_id, item.shop])).values()).filter(Boolean);
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -279,6 +303,7 @@ export default function AdminOrderDetailPage() {
                     </Card>
                 </div>
 
+
                 {/* Articles commandés */}
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6">Articles commandés</h2>
@@ -331,10 +356,6 @@ export default function AdminOrderDetailPage() {
                                                         {item.shop.shop_name}
                                                         <ArrowRight className="w-3 h-3" />
                                                     </a>
-                                                </div>
-                                                <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
-                                                    <Phone className="h-3 w-3" />
-                                                    <span>{item.shop.phone || 'Téléphone non disponible'}</span>
                                                 </div>
                                             </div>
                                         )}
