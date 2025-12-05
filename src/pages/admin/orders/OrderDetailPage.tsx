@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone, Truck, Clock, CheckCircle, AlertCircle, ArrowRight, Store } from 'lucide-react';
+import { Package, MapPin, ArrowLeft, Receipt, Calendar, Phone, Truck, Clock, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
 import { useAdminDetailOrderQuery } from '@/services/adminService';
 import { Button } from '@/components/ui/button';
 
@@ -197,7 +197,6 @@ export default function AdminOrderDetailPage() {
     const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
     const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
-    const uniqueShops = Array.from(new Map(orderItems.map((item: any) => [item.shop?.shop_id, item.shop])).values()).filter(Boolean);
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
