@@ -646,6 +646,8 @@ const CreateProductPage: React.FC = () => {
                                     name: size.name,
                                     quantity: size.quantity,
                                     price: attributeValuePrices[attributeValueId],
+                                    is_wholesale: isWholesale,
+                                    wholesale_prices: attributeValueWholesalePrices[attributeValueId] || []
                                 });
                             });
                         }
@@ -659,6 +661,8 @@ const CreateProductPage: React.FC = () => {
                                     name: shoeSize.name,
                                     quantity: shoeSize.quantity,
                                     price: attributeValuePrices[attributeValueId],
+                                    is_wholesale: isWholesale,
+                                    wholesale_prices: attributeValueWholesalePrices[attributeValueId] || []
                                 });
                             });
                         }
