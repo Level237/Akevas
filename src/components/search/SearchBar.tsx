@@ -254,7 +254,7 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
                             <h4 className="font-medium text-xs text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
                               {product.product_name}
                             </h4>
-                            <p className="text-sm font-semibold text-orange-500 mt-1">
+                            <p className="text-xs font-semibold text-orange-500 mt-1">
                               {new Intl.NumberFormat('fr-FR', {
                                 style: 'currency',
                                 currency: 'XAF'
