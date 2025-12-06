@@ -24,7 +24,7 @@ export default function PaymentTicketPage() {
   const { ref } = useParams();
   const { data: payment, isLoading } = useShowPaymentWithReferenceQuery(ref);
   const [isDownloading, setIsDownloading] = useState(false);
-
+  console.log(payment)
   if (isLoading || !payment) {
     return <Skeleton className="w-full h-[600px]" />;
   }

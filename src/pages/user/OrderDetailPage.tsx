@@ -156,7 +156,7 @@ const OrderDetailPage = () => {
                         </Badge>
                         <Button className="bg-green-600 hover:bg-green-700 text-white" asChild>
                             <AsyncLink to={`/user/payment/${payment?.transaction_ref}`}>
-                                <Receipt className="w-4 h-4 mr-2" /> Voir le ticket
+                                <Receipt className="w-4 h-4 mr-2" /> Voir le Reçu
                             </AsyncLink>
                         </Button>
                     </div>
@@ -193,7 +193,7 @@ const OrderDetailPage = () => {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600 max-sm:text-sm">Méthode de paiement</span>
-                                <span className="font-medium max-sm:text-sm">{currentOrder?.payment_method === "0" ? "Carte de crédit" : "Mobile Money"}</span>
+                                <span className="font-medium max-sm:text-sm">{currentOrder?.payment_method === "1" ? "Carte de crédit" : "Mobile Money"}</span>
                             </div>
                         </div>
                     </Card>

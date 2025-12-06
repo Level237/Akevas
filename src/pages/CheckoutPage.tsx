@@ -29,7 +29,7 @@ interface DeliveryAddress {
   deliveryOption: DeliveryOption;
 }
 
-const TAX_RATE = 0.05; // 5% de TVA
+const TAX_RATE = 0.03;
 
 const CheckoutPage: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('cm.orange');

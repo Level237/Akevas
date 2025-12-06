@@ -555,10 +555,10 @@ export default function MobileMoneyPaymentPage() {
                         transition={{ delay: 0.2 }}
                       >
                         <h3 className={`text-lg font-semibold ${formDataPayment.paymentMethod==="cm.orange" ? "text-orange-700" : "text-blue-700"}`}>
-                          Génération de votre ticket...
+                          Génération de votre Reçu...
                         </h3>
                         <p className="text-sm text-gray-500 max-w-xs">
-                          Nous préparons votre ticket de paiement. Cela ne prendra qu'un instant.
+                          Nous préparons votre Reçu de paiement. Cela ne prendra qu'un instant.
                         </p>
                         <motion.div
                           className="flex space-x-1 mt-2"
@@ -589,10 +589,10 @@ export default function MobileMoneyPaymentPage() {
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <span className="text-lg font-semibold text-green-700 mb-2">
-                    Ticket de paiement prêt !
+                  Votre Reçu de paiement prêt !
                   </span>
                   <span className="text-sm text-gray-600 mb-6">
-                    Votre ticket de paiement a été généré avec succès. Téléchargez-le pour vos archives.
+                    Votre Reçu de paiement a été généré avec succès. Téléchargez-le pour vos archives.
                   </span>
                 </div>
                 <Link
@@ -600,7 +600,7 @@ export default function MobileMoneyPaymentPage() {
                   to={`/user/payment/${paymentRef}`}
                   className={`${formDataPayment.paymentMethod==="cm.orange" ? "bg-[#ff7900] hover:bg-[#ff7900]/80" : "bg-blue-600 hover:bg-blue-700"} text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300`}
                 >
-                  Voir le ticket
+                  Voir le Reçu
                 </Link>
               </motion.div>
               )}
