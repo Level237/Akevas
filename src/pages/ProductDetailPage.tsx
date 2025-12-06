@@ -598,7 +598,7 @@ const ProductDetailPage: React.FC = () => {
                             <OptimizedImage
                               src={image.path}
                               alt={`${product.product_name} ${idx + 1}`}
-                              className="w-full h-full object-contain"
+                              className="w-full h-full object-contain bg-white"
 
                             />
                           </button>
@@ -634,7 +634,7 @@ const ProductDetailPage: React.FC = () => {
                       <OptimizedImage
                         src={getAllImages()[selectedImage]?.path || product.product_profile}
                         alt={product.product_name}
-                        className={`w-full h-full object-cover transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-[-12px]'}`}
+                        className={`w-full h-full object-contain bg-white transition-transform duration-200 ${isZoomed ? 'scale-150' : 'scale-[-12px]'}`}
 
                       />
                     </motion.div>
@@ -741,7 +741,7 @@ const ProductDetailPage: React.FC = () => {
                                   <OptimizedImage
                                     src={variation.images?.[0]}
                                     alt={variation.color.name}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-contain bg-white"
                                   />
                                 </div>
                                 <div>
