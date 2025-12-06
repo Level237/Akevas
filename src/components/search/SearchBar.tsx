@@ -209,6 +209,63 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
             ) : (
               <div className="divide-y divide-gray-100/70">
                 {/* Boutiques */}
+
+                {data?.products && data.products.length > 0 && (
+                  <div className="p-6">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Package2 className="w-4 h-4 text-orange-500" />
+                      Produits ({data.products.length})
+                    </h3>
+                    <div className="grid grid-cols-4 gap-4">
+                      {data.products.map((product: any) => (
+                        <Link
+                          key={product.id}
+                          to={`/produit/${product.product_url}`}
+                          className="group rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200"
+                          onClick={() => setIsSearchOpen(false)}
+                        >
+                          <div className="relative aspect-square overflow-hidden">
+                            <OptimizedImage
+                              src={getProductThumbnail(product)}
+                              alt={product.product_name}
+                              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                            />
+                            {/* Affichage des couleurs si variations */}
+                            {product?.variations?.length > 0 && (
+                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 px-2 py-1 rounded-full shadow-sm">
+                                {getColorSwatches(product).map((color: any) => (
+                                  <div
+                                    key={color.hex}
+                                    title={color.name}
+                                    className="w-3.5 h-3.5 rounded-full border border-gray-200"
+                                    style={{
+                                      backgroundColor: color.hex,
+                                      boxShadow: '0 0 0 1px #ccc',
+                                    }}
+                                  />
+                                ))}
+                                {product.variations.length > 4 && (
+                                  <span className="text-[10px] text-gray-600">+{product.variations.length - 4}</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-3 bg-white">
+                            <h4 className="font-medium text-xs text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
+                              {product.product_name}
+                            </h4>
+                            <p className="text-sm font-semibold text-orange-500 mt-1">
+                              {new Intl.NumberFormat('fr-FR', {
+                                style: 'currency',
+                                currency: 'XAF'
+                              }).format(getDisplayPrice(product))}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {data?.shops && data.shops.length > 0 && (
                   <div className="p-6">
                     <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -243,62 +300,7 @@ export default function SearchBar({ className = '', variant = 'header' }: Search
                 )}
 
                 {/* Produits */}
-                {data?.products && data.products.length > 0 && (
-                  <div className="p-6">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                      <Package2 className="w-4 h-4 text-orange-500" />
-                      Produits ({data.products.length})
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      {data.products.map((product: any) => (
-                        <Link
-                          key={product.id}
-                          to={`/produit/${product.product_url}`}
-                          className="group rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200"
-                          onClick={() => setIsSearchOpen(false)}
-                        >
-                          <div className="relative aspect-square overflow-hidden">
-                            <OptimizedImage
-                              src={getProductThumbnail(product)}
-                              alt={product.product_name}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            {/* Affichage des couleurs si variations */}
-                            {product?.variations?.length > 0 && (
-                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 px-2 py-1 rounded-full shadow-sm">
-                                {getColorSwatches(product).map((color: any) => (
-                                  <div
-                                    key={color.hex}
-                                    title={color.name}
-                                    className="w-3.5 h-3.5 rounded-full border border-gray-200"
-                                    style={{
-                                      backgroundColor: color.hex,
-                                      boxShadow: '0 0 0 1px #ccc',
-                                    }}
-                                  />
-                                ))}
-                                {product.variations.length > 4 && (
-                                  <span className="text-[10px] text-gray-600">+{product.variations.length - 4}</span>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          <div className="p-3 bg-white">
-                            <h4 className="font-medium text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
-                              {product.product_name}
-                            </h4>
-                            <p className="text-sm font-semibold text-orange-500 mt-1">
-                              {new Intl.NumberFormat('fr-FR', {
-                                style: 'currency',
-                                currency: 'XAF'
-                              }).format(getDisplayPrice(product))}
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                
 
                 {/* Aucun résultat */}
                 {(!data?.shops?.length && !data?.products?.length) && !isLoading && (

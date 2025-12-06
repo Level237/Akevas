@@ -98,29 +98,8 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
   }, []);
   return (
     <div className="space-y-8">
-      {/* Boutiques */}
-      {data?.shops && data.shops.length > 0 && (
-        <div>
-          <h3 className="text-sm font-medium text-gray-500 mb-4">Boutiques</h3>
-          <div className="space-y-4">
-            {data.shops.map((shop: any) => (
-              <Link key={shop.shop_id} to={`/shop/${shop.shop_id}`} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                <OptimizedImage
-                  src={`${shop.shop_profile}`}
-                  alt={shop.shop_name}
-                  className="w-16 h-16 flex-shrink-0 object-cover rounded-lg"
-                />
-                <div>
-                  <h4 className="font-medium">{shop.shop_name}</h4>
-                  <p className="text-sm text-gray-500 line-clamp-2">{shop.shop_description}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* Produits */}
+{/* Produits */}
       {data?.products && data.products.length > 0 && (
         <div>
           <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
@@ -174,6 +153,29 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
           </div>
         </div>
       )}
+      {/* Boutiques */}
+      {data?.shops && data.shops.length > 0 && (
+        <div>
+          <h3 className="text-sm font-medium text-gray-500 mb-4">Boutiques</h3>
+          <div className="space-y-4">
+            {data.shops.map((shop: any) => (
+              <Link key={shop.shop_id} to={`/shop/${shop.shop_id}`} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                <OptimizedImage
+                  src={`${shop.shop_profile}`}
+                  alt={shop.shop_name}
+                  className="w-16 h-16 flex-shrink-0 object-cover rounded-lg"
+                />
+                <div>
+                  <h4 className="font-medium">{shop.shop_name}</h4>
+                  <p className="text-sm text-gray-500 line-clamp-2">{shop.shop_description}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+    
 
       {(!data?.shops?.length && !data?.products?.length) && !isLoading && (
         <div className="text-center text-gray-500 py-8">
