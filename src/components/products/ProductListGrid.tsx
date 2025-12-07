@@ -27,16 +27,16 @@ const ProductCard = memo(({
   
   return (
     <motion.div
-      className="m-3 w-[290px] cursor-pointer max-sm:max-w-56 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
+      className="m-3 w-[250px] max-h-[400px] cursor-pointer max-sm:max-w-56 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
       layout
     >
       <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
         <AsyncLink to={`/produit/${product.product_url}`}>
-          <div className="relative aspect-[4/3] max-sm:aspect-[4/3]">
+          <div className="relative h-[170px] max-sm:aspect-[4/3]">
             <OptimizedImage
               src={product.product_profile}
               alt={product.product_name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
             <div className="absolute cursor-pointer inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             
