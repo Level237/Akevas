@@ -17,11 +17,82 @@ const statusMap: Record<string, { label: string; color: string }> = {
   '3': { label: 'Annulé', color: 'text-red-600' },
 };
 
+const getOrderItems = (order: any) => {
+    const allOrderItems: any[] = [];
+    // Vérifier si order existe
+    if (!order) {
+        return allOrderItems;
+    }
+
+    // Ajouter les produits avec variation (orderVariations)
+    if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
+        order.orderVariations.forEach((item: any) => {
+            // Cas 1: variation_attribute existe avec product_variation
+            if (item && item.variation_attribute && item.variation_attribute.product_variation) {
+                const variation = item.variation_attribute.product_variation;
+                const attributeValue = item.variation_attribute.value;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    hex : variation.color?.hex   || "",
+                    size: attributeValue || '',
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: parseFloat(item.variation_price) || 0,
+                    image: variation.images?.[0]?.path || '',
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    type: 'variation'
+                });
+            }
+            // Cas 2: variation_attribute est null mais product_variation existe directement
+            else if (item && item.product_variation) {
+                const variation = item.product_variation;
+
+                allOrderItems.push({
+                    id: item.id,
+                    name: variation.product_name || 'Produit inconnu',
+                    color: variation.color?.name || '',
+                    hex : variation.color?.hex   || "",
+                    size: '',
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: parseFloat(item.variation_price) || 0,
+                    image: variation.images?.[0]?.path || '',
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    type: 'variation'
+                });
+            }
+        });
+    }
+
+    // Ajouter les produits sans variation (order_details)
+    if (order.order_details && order.order_details.length > 0) {
+        order.order_details.forEach((item: any) => {
+            if (item && item.product) {
+                allOrderItems.push({
+                    id: item.id,
+                    name: item.product?.product_name || 'Produit inconnu',
+                    color: '',
+                    size: '',
+                    quantity: parseInt(item.quantity) || 0,
+                    price: parseFloat(item.price) || 0,
+                    image: item.product?.product_profile || '',
+                    total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
+                    type: 'simple'
+                });
+            }
+        });
+    }
+
+    return allOrderItems;
+};
+
 export default function PaymentTicketPage() {
   const { ref } = useParams();
   const { data: payment, isLoading } = useShowPaymentWithReferenceQuery(ref);
   const [isDownloading, setIsDownloading] = useState(false);
 
+  console.log(payment)
   if (isLoading || !payment) {
     return <Skeleton className="w-full h-[600px]" />;
   }
@@ -44,34 +115,15 @@ export default function PaymentTicketPage() {
   // Aggregate all products
   const allProducts: any[] = [];
   payment.order.forEach((order: any) => {
-    if (order.orderVariations) {
-      order.orderVariations.forEach((item: any) => {
-        const variation = item.variation_attribute?.product_variation;
-        if (variation) {
-          allProducts.push({
-            name: variation.product_name,
-            details: `${variation.color?.name || ''} ${item.variation_attribute.value || ''}`.trim(),
-            quantity: item.variation_quantity,
-            price: item.variation_price,
-            total: item.variation_quantity * item.variation_price
-          });
-        }
-      });
-    }
-    if (order.order_details) {
-      order.order_details.forEach((item: any) => {
-        if (item.product) {
-          allProducts.push({
-            name: item.product.product_name,
-            details: '-',
-            quantity: item.quantity,
-            price: item.price,
-            total: item.quantity * item.price
-          });
-        }
-      });
-    }
+      const items = getOrderItems(order);
+      allProducts.push(...items);
   });
+
+  const TAX_RATE = 0.03; // 5% de TVA (Note: 0.03 is 3%, but comment says 5%. Keeping consistent with OrderDetailPage)
+  const itemsTotal = allProducts.reduce((total: number, item: any) => total + item.total, 0);
+  const shippingFee = Number(mainOrder?.fee_of_shipping || 0);
+  const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
+  const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
   // Barcode simulation (CSS)
   const Barcode = () => (
@@ -104,8 +156,6 @@ export default function PaymentTicketPage() {
               {/* Logo Area */}
               <div className="p-4 flex flex-col items-center justify-center border-b-2 md:border-b-0 md:border-r-2 border-gray-800">
                 <img src={logo} alt="Akevas Logo" className="h-20 object-contain mb-2" />
-                <div className="text-xs font-bold text-center uppercase tracking-wider">République du Cameroun</div>
-                <div className="text-[10px] text-center text-gray-600 uppercase">Paix - Travail - Patrie</div>
               </div>
 
               {/* Center Title Area */}
@@ -211,7 +261,18 @@ export default function PaymentTicketPage() {
                      </span>
                    ))}
                 </div>
+                 {/* Row 6: Delivery Address */}
+               <div className="flex border-b border-gray-800">
+                <div className="w-1/3 md:w-1/2 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+                  Adresse de Livraison /<br/>Delivery Address
+                </div>
+                <div className="w-2/3 md:w-1/2 p-2 flex flex-col justify-center text-xs uppercase">
+                   <div className="font-bold">{mainOrder.userName}</div>
+                   <div>{mainOrder.emplacement}</div>
+                   <div>{mainOrder.userPhone}</div>
+                </div>
               </div>
+            </div>
             </div>
 
             {/* Product Details Section */}
@@ -223,6 +284,7 @@ export default function PaymentTicketPage() {
               <table className="w-full text-xs md:text-sm text-left">
                 <thead>
                   <tr className="bg-blue-50 border-b border-gray-800">
+                    <th className="p-2 border-r border-gray-800 uppercase w-16 text-center">Img</th>
                     <th className="p-2 border-r border-gray-800 uppercase w-1/2">Désignation / Description</th>
                     <th className="p-2 border-r border-gray-800 uppercase text-center">Qté / Qty</th>
                     <th className="p-2 border-r border-gray-800 uppercase text-right">P.U / Unit Price</th>
@@ -232,9 +294,23 @@ export default function PaymentTicketPage() {
                 <tbody>
                   {allProducts.map((prod, idx) => (
                     <tr key={idx} className="border-b border-gray-800 last:border-b-0">
+                      <td className="p-2 border-r border-gray-800 text-center">
+                        <img 
+                            src={prod.image} 
+                            alt={prod.name} 
+                            className="w-10 h-10 object-cover mx-auto border border-gray-300"
+                            onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/40x40?text=Img'; }}
+                        />
+                      </td>
                       <td className="p-2 border-r border-gray-800">
+                        
                         <div className="font-bold">{prod.name}</div>
-                        {prod.details !== '-' && <div className="text-gray-500 text-[10px]">{prod.details}</div>}
+                        {(prod.color || prod.size) && (
+                            <div className="text-gray-500 text-[10px]">
+                                {prod.color && <span className={`flex items-center`}>Couleur: <div className={`w-3 h-3 mr-2 ml-2 border rounded-full bg-[${prod.hex}]`}></div> {prod.color}</span>}
+                                {prod.size && <span className={`text-[10px] ${prod.size}`}>Taille: {prod.size}</span>}
+                            </div>
+                        )}
                       </td>
                       <td className="p-2 border-r border-gray-800 text-center">{prod.quantity}</td>
                       <td className="p-2 border-r border-gray-800 text-right">{parseInt(prod.price).toLocaleString('fr-FR')}</td>
@@ -245,6 +321,26 @@ export default function PaymentTicketPage() {
               </table>
             </div>
 
+            <div style={{display: 'flex', justifyContent: 'flex-end', padding: '16px', backgroundColor: '#f9fafb', borderBottom: '2px solid #1f2937'}}>
+                        <div style={{width: '50%', fontSize: '12px'}}>
+                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
+                                <span style={{textTransform: 'uppercase'}}>Sous-total / Subtotal:</span>
+                                <span style={{fontWeight: 'bold'}}>{itemsTotal.toLocaleString('fr-FR')} XAF</span>
+                            </div>
+                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
+                                <span style={{textTransform: 'uppercase'}}>Frais de livraison / Shipping Fee:</span>
+                                <span style={{fontWeight: 'bold'}}>{shippingFee.toLocaleString('fr-FR')} XAF</span>
+                            </div>
+                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
+                                <span style={{textTransform: 'uppercase'}}>TVA / Tax (5%):</span>
+                                <span style={{fontWeight: 'bold'}}>{taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
+                            </div>
+                            <div style={{display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #1f2937', paddingTop: '4px', marginTop: '4px', fontSize: '14px'}}>
+                                <span style={{fontWeight: 'bold', textTransform: 'uppercase'}}>Total (TTC):</span>
+                                <span style={{fontWeight: 'bold'}}>{totalWithTax.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
+                            </div>
+                        </div>
+                      </div>
 
              {/* Footer Note */}
              <div className="bg-gray-50 border-t-2 border-gray-800 p-2 text-center text-[10px] uppercase text-gray-500">
@@ -272,17 +368,26 @@ export default function PaymentTicketPage() {
               tempDiv.style.backgroundColor = '#ffffff';
               
               // Helper to generate product rows for PDF
-              const productRows = allProducts.map(prod => `
+              const productRows = allProducts.map(prod => {
+                const details = [];
+                if (prod.color) details.push(`Couleur: ${prod.color}`);
+                if (prod.size) details.push(`Taille: ${prod.size}`);
+                const detailsStr = details.join(' | ');
+
+                return `
                 <tr style="border-bottom: 1px solid #1f2937;">
+                  <td style="padding: 8px; border-right: 1px solid #1f2937; text-align: center;">
+                    ${prod.image ? `<img src="${prod.image}" style="width: 30px; height: 30px; object-fit: cover; border: 1px solid #ccc;" />` : '-'}
+                  </td>
                   <td style="padding: 8px; border-right: 1px solid #1f2937;">
                     <div style="font-weight: bold; text-transform: uppercase;">${prod.name}</div>
-                    ${prod.details !== '-' ? `<div style="color: #6b7280; font-size: 10px;">${prod.details}</div>` : ''}
+                    ${detailsStr ? `<div style="color: #6b7280; font-size: 10px;">${detailsStr}</div>` : ''}
                   </td>
                   <td style="padding: 8px; border-right: 1px solid #1f2937; text-align: center;">${prod.quantity}</td>
                   <td style="padding: 8px; border-right: 1px solid #1f2937; text-align: right;">${parseInt(prod.price).toLocaleString('fr-FR')}</td>
                   <td style="padding: 8px; text-align: right; font-weight: bold;">${parseInt(prod.total).toLocaleString('fr-FR')}</td>
                 </tr>
-              `).join('');
+              `}).join('');
 
               tempDiv.innerHTML = `
                 <div style="padding: 20px; font-family: sans-serif; color: #000;">
@@ -352,6 +457,15 @@ export default function PaymentTicketPage() {
                           <div style="width: 30%; background-color: #eff6ff; padding: 8px; font-weight: bold; border-right: 1px solid #1f2937; text-transform: uppercase;">Commandes /<br/>Orders</div>
                           <div style="width: 70%; padding: 8px;">${payment.order.map((o: any) => `#${o.id}`).join(', ')}</div>
                         </div>
+                         <!-- Row 6: Address -->
+                        <div style="display: flex; border-bottom: 1px solid #1f2937;">
+                          <div style="width: 30%; background-color: #eff6ff; padding: 8px; font-weight: bold; border-right: 1px solid #1f2937; text-transform: uppercase;">Adresse /<br/>Address</div>
+                          <div style="width: 70%; padding: 8px; text-transform: uppercase;">
+                             <div>${mainOrder.userName}</div>
+                             <div>${mainOrder.emplacement}</div>
+                             <div>${mainOrder.userPhone}</div>
+                          </div>
+                        </div>
                       </div>
 
                       <!-- Product List Header -->
@@ -363,7 +477,8 @@ export default function PaymentTicketPage() {
                       <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                         <thead>
                           <tr style="background-color: #eff6ff; border-bottom: 1px solid #1f2937;">
-                            <th style="padding: 8px; border-right: 1px solid #1f2937; text-align: left; width: 50%;">Désignation / Description</th>
+                            <th style="padding: 8px; border-right: 1px solid #1f2937; text-align: center; width: 10%;">Img</th>
+                            <th style="padding: 8px; border-right: 1px solid #1f2937; text-align: left; width: 40%;">Désignation / Description</th>
                             <th style="padding: 8px; border-right: 1px solid #1f2937; text-align: center;">Qté / Qty</th>
                             <th style="padding: 8px; border-right: 1px solid #1f2937; text-align: right;">P.U / Unit Price</th>
                             <th style="padding: 8px; text-align: right;">Total</th>
@@ -371,8 +486,31 @@ export default function PaymentTicketPage() {
                         </thead>
                         <tbody>
                           ${productRows}
+
                         </tbody>
                       </table>
+
+                      <!-- Totals -->
+                      <div style="display: flex; justify-content: flex-end; padding: 16px; background-color: #f9fafb; border-bottom: 2px solid #1f2937;">
+                        <div style="width: 50%; font-size: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="text-transform: uppercase;">Sous-total / Subtotal:</span>
+                                <span style="font-weight: bold;">${itemsTotal.toLocaleString('fr-FR')} XAF</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="text-transform: uppercase;">Frais de livraison / Shipping Fee:</span>
+                                <span style="font-weight: bold;">${shippingFee.toLocaleString('fr-FR')} XAF</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="text-transform: uppercase;">TVA / Tax (5%):</span>
+                                <span style="font-weight: bold;">${taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-top: 1px solid #1f2937; padding-top: 4px; margin-top: 4px; font-size: 14px;">
+                                <span style="font-weight: bold; text-transform: uppercase;">Total (TTC):</span>
+                                <span style="font-weight: bold;">${totalWithTax.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
+                            </div>
+                        </div>
+                      </div>
 
                       <!-- Footer -->
                       <div style="background-color: #f9fafb; border-top: 2px solid #1f2937; padding: 8px; text-align: center; font-size: 9px; text-transform: uppercase; color: #6b7280;">
