@@ -108,7 +108,7 @@ const ProductCard = ({ product,viewMode }: { product: Product,viewMode?:string }
                 <OptimizedImage
                   src={product.product_profile}
                   alt={product.product_name}
-                  className="w-full h-full object-cover transform  transition-transform duration-300"
+                  className="w-full h-full object-contain transform  transition-transform duration-300"
                 />
                 <div className="absolute bottom-0">
                 {colorSwatches.length > 0 && (
