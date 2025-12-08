@@ -66,6 +66,7 @@ const ShareProduct: React.FC<ShareProductProps> = ({ productName, url }) => {
 
   const handleShare = (shareUrl: string, platform: string) => {
     window.open(shareUrl, '_blank', 'width=600,height=400');
+    console.log(platform);
   };
 
   return (
