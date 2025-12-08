@@ -332,7 +332,7 @@ export default function PaymentTicketPage() {
                                 <span style={{fontWeight: 'bold'}}>{shippingFee.toLocaleString('fr-FR')} XAF</span>
                             </div>
                             <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
-                                <span style={{textTransform: 'uppercase'}}>TVA / Tax (5%):</span>
+                                <span style={{textTransform: 'uppercase'}}>TVA / Tax (3%):</span>
                                 <span style={{fontWeight: 'bold'}}>{taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
                             </div>
                             <div style={{display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #1f2937', paddingTop: '4px', marginTop: '4px', fontSize: '14px'}}>

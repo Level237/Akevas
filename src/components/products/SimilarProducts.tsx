@@ -29,7 +29,7 @@ const SimilarProducts = ({ similarProducts, isLoadingSimilarProducts }: { simila
                                         href={`/produit/${product.product_url}`}
                                         className="block h-full p-2 rounded-xl hover:bg-gray-50 transition-colors"
                                     >
-                                        <div className="relative aspect-square rounded-lg overflow-hidden mb-2">
+                                        <div className="relative rounded-lg overflow-hidden mb-2">
                                             <img
                                                 src={product.product_profile}
                                                 alt={product.product_name}
