@@ -25,6 +25,7 @@ import CheckoutDrawer from '@/components/ui/CheckoutDrawer';
 import { ProductReview } from '@/components/products/ProductReview';
 import OptimizedImage from '@/components/OptimizedImage';
 import { toast } from 'sonner';
+import ShareProduct from '@/components/products/ShareProduct';
 
 // Skeleton Loader Component
 const ProductDetailSkeleton = () => (
@@ -1180,6 +1181,11 @@ const ProductDetailPage: React.FC = () => {
                           Réponse rapide garantie
                         </p>
                       </div>
+                      
+                      <ShareProduct 
+                        productName={product.product_name} 
+                        url={window.location.href} 
+                      />
                     </div>
                   </div>
                 </div>
