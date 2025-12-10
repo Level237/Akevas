@@ -506,7 +506,7 @@ const ProductDetailPage: React.FC = () => {
   const openWhatsApp = () => {
     const message = `Bonjour ! J'aimerai avoir plus de détails sur ce produit : ${product?.product_name}\n\nLien du produit : ${window.location.href}`;
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/237674654624?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/237688565543?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
 
