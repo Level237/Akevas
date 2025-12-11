@@ -145,25 +145,24 @@ export default function PaymentTicketPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 flex flex-col items-center">
+    <div className="min-h-screen bg-gray-100 py-4 px-2 md:py-8 md:px-4 flex flex-col items-center">
       <div className="w-full max-w-4xl bg-white shadow-2xl overflow-hidden mb-8 print:shadow-none">
         {/* Document Border Container */}
-        <div className="border-4 border-gray-800 m-2 p-1">
+        <div className="border-4 border-gray-800 m-1 md:m-2 p-1">
           <div className="border-2 border-gray-800">
-            
-            {/* Header Section */}
+          
             <div className="grid grid-cols-1 md:grid-cols-3 border-b-2 border-gray-800">
               {/* Logo Area */}
               <div className="p-4 flex flex-col items-center justify-center border-b-2 md:border-b-0 md:border-r-2 border-gray-800">
-                <img src={logo} alt="Akevas Logo" className="h-20 object-contain mb-2" />
+                <img src={logo} alt="Akevas Logo" className="h-16 md:h-20 object-contain mb-2" />
               </div>
 
               {/* Center Title Area */}
               <div className="flex flex-col justify-center text-center p-2 border-b-2 md:border-b-0 md:border-r-2 border-gray-800">
                  <Barcode />
                  <div className="border-t-2 border-gray-800 mt-2 pt-2">
-                    <h1 className="font-bold text-lg uppercase leading-tight">Reçu de Paiement /<br/>Payment Receipt</h1>
-                    <h2 className="font-bold text-md uppercase mt-1 text-gray-700">Akevas Online Store</h2>
+                    <h1 className="font-bold text-base md:text-lg uppercase leading-tight">Reçu de Paiement /<br/>Payment Receipt</h1>
+                    <h2 className="font-bold text-sm md:text-md uppercase mt-1 text-gray-700">Akevas Online Store</h2>
                  </div>
               </div>
 
@@ -176,44 +175,47 @@ export default function PaymentTicketPage() {
                     amount: payment.price,
                     date: mainOrder.created_at
                   })}
-                  size={120}
+                  size={100}
                   level="H"
                 />
-              </div>
+              </div> 
             </div>
 
             {/* Blue Bar Title */}
             <div className="bg-blue-300 border-b-2 border-gray-800 py-1 px-4 text-center">
-              <h3 className="font-bold text-sm uppercase tracking-wide">Informations sur le Paiement / Payment Information</h3>
+              <h3 className="font-bold text-xs 
+              
+              
+              md:text-sm uppercase tracking-wide">Informations sur le Paiement / Payment Information</h3>
             </div>
 
             {/* Information Grid */}
             <div className="text-sm">
               {/* Row 1: Name */}
-              <div className="flex border-b border-gray-800">
-                <div className="w-1/3 md:w-1/4 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+              <div className="flex flex-col md:flex-row border-b border-gray-800">
+                <div className="w-full md:w-1/4 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                   Prénoms & Nom /<br/>Full Name
                 </div>
-                <div className="w-2/3 md:w-3/4 p-2 font-semibold uppercase flex items-center">
+                <div className="w-full md:w-3/4 p-2 font-semibold uppercase flex items-center">
                   {payment.user}
                 </div>
               </div>
 
               {/* Row 2: Reference & Date */}
               <div className="flex flex-col md:flex-row border-b border-gray-800">
-                <div className="flex w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-800">
-                  <div className="w-1/2 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+                <div className="flex flex-col md:flex-row w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-800">
+                  <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                     Référence /<br/>Reference
                   </div>
-                  <div className="w-1/2 p-2 flex items-center font-mono">
+                  <div className="w-full md:w-1/2 p-2 flex items-center font-mono">
                     {payment.transaction_ref}
                   </div>
                 </div>
-                <div className="flex w-full md:w-1/2">
-                  <div className="w-1/2 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+                <div className="flex flex-col md:flex-row w-full md:w-1/2">
+                  <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                     Date /<br/>Date
                   </div>
-                  <div className="w-1/2 p-2 flex items-center">
+                  <div className="w-full md:w-1/2 p-2 flex items-center">
                     {date}
                   </div>
                 </div>
@@ -221,129 +223,129 @@ export default function PaymentTicketPage() {
 
               {/* Row 3: Amount & Status */}
               <div className="flex flex-col md:flex-row border-b border-gray-800">
-                <div className="flex w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-800">
-                  <div className="w-1/2 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+                <div className="flex flex-col md:flex-row w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-800">
+                  <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                     Montant /<br/>Amount
                   </div>
-                  <div className="w-1/2 p-2 flex items-center font-bold text-lg">
+                  <div className="w-full md:w-1/2 p-2 flex items-center font-bold text-lg">
                     {parseInt(payment.price).toLocaleString('fr-FR')} XAF
                   </div>
                 </div>
-                <div className="flex w-full md:w-1/2">
-                  <div className="w-1/2 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+                <div className="flex flex-col md:flex-row w-full md:w-1/2">
+                  <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                     Statut /<br/>Status
                   </div>
-                  <div className={`w-1/2 p-2 flex items-center font-bold uppercase ${status.color}`}>
+                  <div className={`w-full md:w-1/2 p-2 flex items-center font-bold uppercase ${status.color}`}>
                     {status.label}
                   </div>
                 </div>
               </div>
 
               {/* Row 4: Purpose */}
-              <div className="flex border-b border-gray-800">
-                <div className="w-1/3 md:w-1/4 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+              <div className="flex flex-col md:flex-row border-b border-gray-800">
+                <div className="w-full md:w-1/4 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                   Objet /<br/>Purpose
                 </div>
-                <div className="w-2/3 md:w-3/4 p-2 uppercase flex items-center">
+                <div className="w-full md:w-3/4 p-2 uppercase flex items-center">
                   {payment.payment_of}
                 </div>
               </div>
 
                {/* Row 5: Orders */}
-               <div className="flex border-b border-gray-800">
-                <div className="w-1/3 md:w-1/4 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+               <div className="flex flex-col md:flex-row border-b border-gray-800">
+                <div className="w-full md:w-1/4 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                   Commandes /<br/>Orders
                 </div>
-                <div className="w-2/3 md:w-3/4 p-2 flex items-center text-xs">
+                <div className="w-full md:w-3/4 p-2 flex items-center text-xs flex-wrap">
                    {payment.order.map((o: any) => (
-                     <span key={o.id} className="mr-2 bg-gray-100 px-2 py-1 rounded border border-gray-300">
+                     <span key={o.id} className="mr-2 mb-1 bg-gray-100 px-2 py-1 rounded border border-gray-300">
                        #{o.id} ({o.itemsCount} articles)
                      </span>
                    ))}
                 </div>
+              </div>
                  {/* Row 6: Delivery Address */}
-               <div className="flex border-b border-gray-800">
-                <div className="w-1/3 md:w-1/2 bg-blue-50 p-2 font-bold border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
+               <div className="flex flex-col md:flex-row border-b border-gray-800">
+                <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                   Adresse de Livraison /<br/>Delivery Address
                 </div>
-                <div className="w-2/3 md:w-1/2 p-2 flex flex-col justify-center text-xs uppercase">
+                <div className="w-full md:w-1/2 p-2 flex flex-col justify-center text-xs uppercase">
                    <div className="font-bold">{mainOrder.userName}</div>
                    <div>{mainOrder.emplacement}</div>
                    <div>{mainOrder.userPhone}</div>
                 </div>
               </div>
             </div>
-            </div>
 
             {/* Product Details Section */}
             <div className="bg-blue-300 border-b-2 border-gray-800 py-1 px-4 text-center">
-              <h3 className="font-bold text-sm uppercase tracking-wide">Détails des Produits / Product Details</h3>
+              <h3 className="font-bold text-xs md:text-sm uppercase tracking-wide">Détails des Produits / Product Details</h3>
             </div>
             
             <div className="overflow-x-auto">
-              <table className="w-full text-xs md:text-sm text-left">
+              <table className="w-full text-[10px] md:text-sm text-left">
                 <thead>
                   <tr className="bg-blue-50 border-b border-gray-800">
-                    <th className="p-2 border-r border-gray-800 uppercase w-16 text-center">Img</th>
-                    <th className="p-2 border-r border-gray-800 uppercase w-1/2">Désignation / Description</th>
-                    <th className="p-2 border-r border-gray-800 uppercase text-center">Qté / Qty</th>
-                    <th className="p-2 border-r border-gray-800 uppercase text-right">P.U / Unit Price</th>
-                    <th className="p-2 uppercase text-right">Total</th>
+                    <th className="p-1 md:p-2 border-r border-gray-800 uppercase w-10 md:w-16 text-center">Img</th>
+                    <th className="p-1 md:p-2 border-r border-gray-800 uppercase w-1/2">Désignation / Description</th>
+                    <th className="p-1 md:p-2 border-r border-gray-800 uppercase text-center">Qté</th>
+                    <th className="p-1 md:p-2 border-r border-gray-800 uppercase text-right">P.U</th>
+                    <th className="p-1 md:p-2 uppercase text-right">Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   {allProducts.map((prod, idx) => (
                     <tr key={idx} className="border-b border-gray-800 last:border-b-0">
-                      <td className="p-2 border-r border-gray-800 text-center">
+                      <td className="p-1 md:p-2 border-r border-gray-800 text-center">
                         <img 
                             src={prod.image} 
                             alt={prod.name} 
-                            className="w-10 h-10 object-cover mx-auto border border-gray-300"
+                            className="w-8 h-8 md:w-10 md:h-10 object-cover mx-auto border border-gray-300"
                             onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/40x40?text=Img'; }}
                         />
                       </td>
-                      <td className="p-2 border-r border-gray-800">
+                      <td className="p-1 md:p-2 border-r border-gray-800">
                         
-                        <div className="font-bold">{prod.name}</div>
+                        <div className="font-bold truncate max-w-[120px] md:max-w-none">{prod.name}</div>
                         {(prod.color || prod.size) && (
-                            <div className="text-gray-500 text-[10px]">
-                                {prod.color && <span className={`flex items-center`}>Couleur: <div className={`w-3 h-3 mr-2 ml-2 border rounded-full bg-[${prod.hex}]`}></div> {prod.color}</span>}
-                                {prod.size && <span className={`text-[10px] ${prod.size}`}>Taille: {prod.size}</span>}
+                            <div className="text-gray-500 text-[9px] md:text-[10px]">
+                                {prod.color && <span className={`flex items-center`}>Couleur: <div className={`w-2 h-2 md:w-3 md:h-3 mr-1 ml-1 border rounded-full bg-[${prod.hex}]`}></div> {prod.hex}</span>}
+                                {prod.size && <span className={`text-[9px] md:text-[10px] ${prod.size}`}>Taille: {prod.size}</span>}
                             </div>
                         )}
                       </td>
-                      <td className="p-2 border-r border-gray-800 text-center">{prod.quantity}</td>
-                      <td className="p-2 border-r border-gray-800 text-right">{parseInt(prod.price).toLocaleString('fr-FR')}</td>
-                      <td className="p-2 text-right font-bold">{parseInt(prod.total).toLocaleString('fr-FR')}</td>
+                      <td className="p-1 md:p-2 border-r border-gray-800 text-center">{prod.quantity}</td>
+                      <td className="p-1 md:p-2 border-r border-gray-800 text-right whitespace-nowrap">{parseInt(prod.price).toLocaleString('fr-FR')}</td>
+                      <td className="p-1 md:p-2 text-right font-bold whitespace-nowrap">{parseInt(prod.total).toLocaleString('fr-FR')}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            <div style={{display: 'flex', justifyContent: 'flex-end', padding: '16px', backgroundColor: '#f9fafb', borderBottom: '2px solid #1f2937'}}>
-                        <div style={{width: '50%', fontSize: '12px'}}>
-                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
-                                <span style={{textTransform: 'uppercase'}}>Sous-total / Subtotal:</span>
-                                <span style={{fontWeight: 'bold'}}>{itemsTotal.toLocaleString('fr-FR')} XAF</span>
+            <div className="flex justify-end p-2 md:p-4 bg-gray-50 border-b-2 border-gray-800">
+                        <div className="w-full md:w-1/2 text-xs">
+                            <div className="flex justify-between mb-1">
+                                <span className="uppercase">Sous-total / Subtotal:</span>
+                                <span className="font-bold">{itemsTotal.toLocaleString('fr-FR')} XAF</span>
                             </div>
-                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
-                                <span style={{textTransform: 'uppercase'}}>Frais de livraison / Shipping Fee:</span>
-                                <span style={{fontWeight: 'bold'}}>{shippingFee.toLocaleString('fr-FR')} XAF</span>
+                            <div className="flex justify-between mb-1">
+                                <span className="uppercase">Frais de livraison / Shipping:</span>
+                                <span className="font-bold">{shippingFee.toLocaleString('fr-FR')} XAF</span>
                             </div>
-                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '4px'}}>
-                                <span style={{textTransform: 'uppercase'}}>TVA / Tax (3%):</span>
-                                <span style={{fontWeight: 'bold'}}>{taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
+                            <div className="flex justify-between mb-1">
+                                <span className="uppercase">TVA / Tax (3%):</span>
+                                <span className="font-bold">{taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
                             </div>
-                            <div style={{display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #1f2937', paddingTop: '4px', marginTop: '4px', fontSize: '14px'}}>
-                                <span style={{fontWeight: 'bold', textTransform: 'uppercase'}}>Total (TTC):</span>
-                                <span style={{fontWeight: 'bold'}}>{totalWithTax.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
+                            <div className="flex justify-between border-t border-gray-800 pt-1 mt-1 text-sm">
+                                <span className="font-bold uppercase">Total (TTC):</span>
+                                <span className="font-bold">{totalWithTax.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
                             </div>
                         </div>
                       </div>
 
              {/* Footer Note */}
-             <div className="bg-gray-50 border-t-2 border-gray-800 p-2 text-center text-[10px] uppercase text-gray-500">
+             <div className="bg-gray-50 border-t-2 border-gray-800 p-2 text-center text-[8px] md:text-[10px] uppercase text-gray-500">
                 Ce document est un reçu électronique généré par Akevas. / This document is an electronic receipt generated by Akevas.
              </div>
 

@@ -509,7 +509,9 @@ const ProductDetailPage: React.FC = () => {
     const whatsappUrl = `https://wa.me/237688565543?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
+  
 
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
