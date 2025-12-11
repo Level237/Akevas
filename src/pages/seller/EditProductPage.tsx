@@ -580,6 +580,7 @@ const EditProductPage: React.FC = () => {
 
                 // Handle variation images
                  variationFrames.forEach((frame, frameIndex) => {
+                    console.log(frameIndex)
                      frame.images.forEach((img, imgIndex) => {
                          if (img instanceof File) {
                             formData.append(`variation_images[${frame.id}][${imgIndex}]`, img);
