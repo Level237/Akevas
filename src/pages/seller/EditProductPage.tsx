@@ -828,7 +828,7 @@ const EditProductPage: React.FC = () => {
     const addVariationFrame = () => {
         // Ensure we only add if not colorOnly or if colorOnly and there are no frames yet
         if (selectedAttributeType === 'colorOnly' && variationFrames.length > 0) {
-            toast.warn("Vous ne pouvez ajouter qu'une seule variation pour les produits de type 'Couleur uniquement'.");
+            toast.error("Vous ne pouvez ajouter qu'une seule variation pour les produits de type 'Couleur uniquement'.");
             return;
         }
 
@@ -1564,7 +1564,7 @@ const EditProductPage: React.FC = () => {
                                                                         value={frame.color?.id.toString()}
                                                                         onValueChange={(value) => {
                                                                             const selectedColorId = Number(value);
-                                                                            const selectedColor = attributesArray.find(attr => attr.id === 1)?.values.find((c: any) => c.id === selectedColorId);
+                                                                            const selectedColor = attributesArray.find((attr:any) => attr.id === 1)?.values.find((c: any) => c.id === selectedColorId);
                                                                             if (selectedColor) {
                                                                                 updateVariationFrame(frame.id, { color: { id: selectedColor.id, name: selectedColor.value, hex: selectedColor.hex_color } });
                                                                             } else if (selectedColorId === 0) { // Option to clear color
@@ -1578,7 +1578,7 @@ const EditProductPage: React.FC = () => {
                                                                         <SelectContent>
                                                                             <SelectItem value="0">Aucune couleur</SelectItem>
                                                                             {/* Use attributesArray here */}
-                                                                            {attributesArray.find(attr => attr.id === 1)?.values
+                                                                            {attributesArray.find((attr:any) => attr.id === 1)?.values
                                                                                 // Filter out colors already used in other frames to avoid duplicates, unless it's the only option left
                                                                                 .filter((color: any) => color.id !== 0 && (
                                                                                     frame.color.id === color.id ||
@@ -1853,7 +1853,7 @@ const EditProductPage: React.FC = () => {
                                             <div className="grid grid-cols-1 gap-4">
                                                 {variationFrames.map((frame) => {
                                                     // Find color data for display
-                                                    const color = attributesArray.find(attr => attr.id === 1)?.values.find((c: any) => c.id === frame.color.id);
+                                                    const color = attributesArray.find((attr:any) => attr.id === 1)?.values.find((c: any) => c.id === frame.color.id);
 
                                                     // Find attribute name for display
                                                     const attributeName = attributes.find(attr => attr.id === selectedAttributeId)?.name || 'Attribut';
@@ -1982,7 +1982,7 @@ const EditProductPage: React.FC = () => {
                         setPendingVariationData(null);
                     }}
                     onConfirm={handleVariationModalConfirm}
-                    isWholesale={isWholesale}
+                    isWholesale={isWholesale || false}
                     attributeName={selectedAttributeType === 'colorAndAttribute' ? 'Taille' : 'Couleur'} // Or dynamic attribute name
                     attributeValue={pendingVariationData.attributeValueName}
                     colorName={pendingVariationData.colorName}
