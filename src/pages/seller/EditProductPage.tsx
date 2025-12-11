@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, Plus, X, Save, Loader2, Image } from 'lucide-react';
 
-import { useAddProductMutation, useGetEditProductQuery } from '@/services/sellerService';
+import { useUpdateProductMutation, useGetEditProductQuery } from '@/services/sellerService';
 import { useGetAttributeByCategoryQuery, useGetAttributeValueByGroupQuery, useGetAttributeValuesQuery, useGetCategoryByGenderQuery, useGetParentForCategoriesQuery, useGetSubCategoriesQuery, useGetTownsQuery } from '@/services/guardService';
 import { MultiSelect } from '@/components/ui/multiselect';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -95,8 +95,7 @@ const EditProductPage: React.FC = () => {
     const [variationFrames, setVariationFrames] = useState<Variation[]>([]);
     const [variations, setVariations] = useState<Variation[]>([]); // This might not be used directly in the UI but for submission
     const [attributes, setAttributes] = useState<ProductAttribute[]>([]);
-    const [sizePrices, setSizePrices] = useState<Record<number, number>>({}); // Potentially unused
-    const [shoeSizePrices, setShoeSizePrices] = useState<Record<number, number>>({}); // Potentially unused
+    console.log(variations)
 
     const [imagesToDelete, setImagesToDelete] = useState<number[]>([]);
     const [variationImagesToDelete, setVariationImagesToDelete] = useState<Record<string, number[]>>({});
@@ -111,7 +110,7 @@ const EditProductPage: React.FC = () => {
         colorHex: string;
     } | null>(null);
     const [attributeValueWholesalePrices, setAttributeValueWholesalePrices] = useState<Record<number, Array<{ min_quantity: number; wholesale_price: number; }>>>({});
-
+    const [updateProduct, { isLoading: isLoadingUpdateProduct }] = useUpdateProductMutation()
     // Query hooks
     const { data: getAttributes } = useGetAttributeValuesQuery("1"); // Assuming '1' is for colors
     const { data: availableAttributes, isLoading: isLoadingAttributes } = useGetAttributeByCategoryQuery('guard');
@@ -178,6 +177,7 @@ const EditProductPage: React.FC = () => {
             if (product.product_images && Array.isArray(product.product_images)) {
                 // Store existing image URLs, not Files
                 const existingImageUrls = product.product_images.map((img: any) => img.path);
+                setImages(existingImageUrls);
                 // We need a way to reference these existing images for deletion.
                 // For now, we'll just store them, and the `imagesToDelete` state will be managed separately.
             }
@@ -601,7 +601,8 @@ const EditProductPage: React.FC = () => {
                  }
             }
 
-
+           const response = await updateProduct(formData);
+           console.log(response);
             
             toast.success('Produit mis à jour avec succès', {
                 description: "Vos modifications ont été enregistrées",
@@ -711,24 +712,22 @@ const EditProductPage: React.FC = () => {
     };
 
     const removeImage = (index: number) => {
-        // If the image being removed is an existing image, mark it for deletion
-        const currentImage = product?.product_images?.[index]; // This might need adjustment if images are reordered
-        if (currentImage) {
-             // This logic is tricky because `product.product_images` might not be in the same order as `images` state if new images were added.
-             // A better approach might be to have the `images` state store objects with both File and original ID.
-             // For now, we'll use a placeholder for the logic.
-            console.warn("Attempting to remove an existing image. Robust deletion tracking needs implementation.");
-            // setImagesToDelete(prev => [...prev, currentImage.id]); // Assuming currentImage has an 'id' field
+        const imageToRemove = images[index];
+
+        // If it's a string (URL), it's an existing image
+        if (typeof imageToRemove === 'string') {
+            // Find the image object in product.product_images to get its ID
+            const existingImage = product?.product_images?.find((img: any) => img.path === imageToRemove);
+            if (existingImage) {
+                setImagesToDelete(prev => [...prev, existingImage.id]);
+            }
         }
+
         setImages(images.filter((_, i) => i !== index));
     };
 
     //
-    const handleRemoveExistingImage = (imageId: number) => {
-        setImagesToDelete(prev => [...prev, imageId]);
-        // Optionally visually remove it from the UI, though submission handles deletion
-        // This would require associating images with their IDs in the `images` state as well.
-    };
+    
 
     const addWholesalePrice = () => {
         setWholesalePrices(prev => [...prev, { min_quantity: 0, wholesale_price: 0 }]);
@@ -992,7 +991,9 @@ const EditProductPage: React.FC = () => {
                                     
                                         
                                             <Save className="w-4 h-4" />
-                                            Mettre à jour
+                                            {isLoadingUpdateProduct ? (
+                                                                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                                                                ) : <span className='max-sm:text-sm'>Mettre à jour</span>}
                                     
                                 </button>
                             </div>
