@@ -163,7 +163,7 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
                     <img
                       src={product.product_profile}
                       alt={product.product_name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />
                   )}
 
@@ -370,7 +370,7 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
                     <img
                       src={product.product_profile}
                       alt={product.product_name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-12 object-contain group-hover:scale-105 transition-transform duration-300"
                     />
                   )}
 

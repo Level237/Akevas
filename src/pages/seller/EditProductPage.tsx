@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectValue, SelectTrigger, SelectItem, SelectGr
 import { toast } from 'sonner';
 import { compressMultipleImages } from '@/lib/imageCompression';
 import { skipToken } from '@reduxjs/toolkit/query';
+import VariationConfigModal from '@/components/VariationConfigModal';
 
 interface ProductAttribute {
     id: number;
@@ -52,7 +53,7 @@ interface Variation {
             wholesale_price: number;
         }[];
     }[];
-    images: File[] | string[]; // Allow File objects or strings (URLs)
+    images: (File | string)[]; // Allow File objects or strings (URLs)
     quantity: number;
     price: number;
     isColorOnly?: boolean;
@@ -100,8 +101,19 @@ const EditProductPage: React.FC = () => {
     const [imagesToDelete, setImagesToDelete] = useState<number[]>([]);
     const [variationImagesToDelete, setVariationImagesToDelete] = useState<Record<string, number[]>>({});
 
+    // State for VariationConfigModal
+    const [isVariationModalOpen, setIsVariationModalOpen] = useState(false);
+    const [pendingVariationData, setPendingVariationData] = useState<{
+        frameId: string;
+        attributeValueId: number;
+        attributeValueName: string;
+        colorName: string;
+        colorHex: string;
+    } | null>(null);
+    const [attributeValueWholesalePrices, setAttributeValueWholesalePrices] = useState<Record<number, Array<{ min_quantity: number; wholesale_price: number; }>>>({});
+
     // Query hooks
-    const { data: getAttributes, isLoading: isLoadingAttributesData } = useGetAttributeValuesQuery("1"); // Assuming '1' is for colors
+    const { data: getAttributes } = useGetAttributeValuesQuery("1"); // Assuming '1' is for colors
     const { data: availableAttributes, isLoading: isLoadingAttributes } = useGetAttributeByCategoryQuery('guard');
     const { data: getAttributeValueByGroup } = useGetAttributeValueByGroupQuery(selectedAttributeId ? selectedAttributeId.toString() : skipToken);
     const { data: categoriesByGender, isLoading: isLoadingCategoriesByGender } = useGetCategoryByGenderQuery(gender);
@@ -238,6 +250,8 @@ const EditProductPage: React.FC = () => {
 
                 if (!isColorOnly) {
                     const prices: Record<number, number> = {};
+                    const wholesalePrices: Record<number, { min_quantity: number; wholesale_price: number }[]> = {};
+
                     product.variations.forEach((variation: any) => {
                         if (variation.attributes && Array.isArray(variation.attributes)) {
                             variation.attributes.forEach((attr: any) => {
@@ -245,10 +259,15 @@ const EditProductPage: React.FC = () => {
                                 if (attr.id && attr.price !== undefined && !prices[attr.id]) {
                                     prices[attr.id] = parseFloat(attr.price) || 0;
                                 }
+                                // Store wholesale prices
+                                if (attr.id && attr.wholesale_prices && Array.isArray(attr.wholesale_prices) && !wholesalePrices[attr.id]) {
+                                     wholesalePrices[attr.id] = attr.wholesale_prices;
+                                }
                             });
                         }
                     });
                     setAttributeValuePrices(prices);
+                    setAttributeValueWholesalePrices(wholesalePrices);
                 }
             }
 
@@ -318,10 +337,97 @@ const EditProductPage: React.FC = () => {
     }, [variationFrames, getAttributes, attributes, globalColorPrice, attributeValuePrices, selectedAttributeId, getAttributeValueByGroup, productType, selectedAttributeType]);
 
 
+    const handleVariationModalConfirm = (data: { quantity: number; price: number; wholesalePrices?: Array<{ min_quantity: number; wholesale_price: number }> }) => {
+        if (!pendingVariationData) return;
+
+        const { frameId, attributeValueId, attributeValueName } = pendingVariationData;
+
+        // Check if attribute value already exists in the frame
+        setVariationFrames(prevFrames => 
+            prevFrames.map(frame => {
+                if (frame.id === frameId) {
+                    const existingSizeIndex = frame.sizes.findIndex(s => s.id === attributeValueId);
+                    if (existingSizeIndex >= 0) {
+                        // Update existing
+                        const newSizes = [...frame.sizes];
+                        newSizes[existingSizeIndex] = { 
+                            ...newSizes[existingSizeIndex], 
+                            quantity: data.quantity,
+                            price: data.price, // Store price in size as well for reference
+                            wholesalePrices: data.wholesalePrices 
+                        };
+                        return { ...frame, sizes: newSizes };
+                    } else {
+                        // Add new
+                        return { 
+                            ...frame, 
+                            sizes: [...frame.sizes, { 
+                                id: attributeValueId, 
+                                name: attributeValueName, 
+                                quantity: data.quantity, 
+                                price: data.price,
+                                wholesalePrices: data.wholesalePrices 
+                            }] 
+                        };
+                    }
+                }
+                return frame;
+            })
+        );
+
+        // Update attribute value price
+        if (data.price >= 0) {
+            setAttributeValuePrices(prev => ({
+                ...prev,
+                [attributeValueId]: data.price
+            }));
+        }
+
+        // If wholesale, save wholesale prices
+        if (isWholesale && data.wholesalePrices) {
+            setAttributeValueWholesalePrices(prev => ({
+                ...prev,
+                [attributeValueId]: data.wholesalePrices!
+            }));
+        }
+
+        setIsVariationModalOpen(false);
+        setPendingVariationData(null);
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Validation logic (same as CreateProductPage)
+        // Validation des prix des variations
+        if (selectedAttributeType === 'colorOnly') {
+            if (!globalColorPrice || globalColorPrice <= 0) {
+                toast.error('Veuillez remplir le prix global pour toutes les couleurs.');
+                return;
+            }
+        } else if (selectedAttributeType === 'colorAndAttribute') {
+            const uniqueAttributeValues = getUniqueAttributeValues();
+            for (const attributeValueId of uniqueAttributeValues) {
+                if (!attributeValuePrices[attributeValueId] || attributeValuePrices[attributeValueId] <= 0) {
+                    toast.error(`Veuillez remplir le prix pour l'attribut ${attributeValueId}.`);
+                    return;
+                }
+                if (isWholesale) {
+                    const wholesalePrices = attributeValueWholesalePrices[attributeValueId];
+                    if (!wholesalePrices || wholesalePrices.length === 0) {
+                        toast.error(`Veuillez configurer au moins un palier de prix de gros pour l'attribut ${attributeValueId}.`);
+                        return;
+                    }
+                    for (const wp of wholesalePrices) {
+                        if (!wp.min_quantity || wp.min_quantity <= 0 || !wp.wholesale_price || wp.wholesale_price <= 0) {
+                            toast.error(`Veuillez vérifier les prix de gros et les quantités minimales pour l'attribut ${attributeValueId}.`);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Validation logic
         if (!name.trim()) {
             toast.error('Le nom du produit est obligatoire');
             return;
@@ -406,12 +512,6 @@ const EditProductPage: React.FC = () => {
                 toast.error('Veuillez définir un prix pour chaque attribut.');
                 return;
             }
-            if (selectedAttributeType === 'colorOnly' && variationFrames.some(frame => (frame.price === undefined || frame.price <= 0) && globalColorPrice <= 0)) {
-                // This check might be redundant if globalColorPrice is mandatory and validated above
-                // But it ensures individual frame prices are considered if global is not used.
-                toast.error('Veuillez définir un prix pour chaque couleur ou utiliser le prix global.');
-                return;
-            }
         }
 
         try {
@@ -463,13 +563,13 @@ const EditProductPage: React.FC = () => {
                         id: size.id === 0 ? null : size.id, // Null for new sizes, original ID for existing
                         quantity: size.quantity,
                         price: attributeValuePrices[size.id] !== undefined ? attributeValuePrices[size.id] : (size.price || 0), // Use attribute price if set, fallback to size price or 0
-                        wholesalePrices: size.wholesalePrices
+                        wholesalePrices: attributeValueWholesalePrices[size.id] || size.wholesalePrices || []
                     })),
                     shoeSizes: frame.shoeSizes.map(shoeSize => ({ // Assuming shoeSizes are handled similarly if they exist
                         id: shoeSize.id === 0 ? null : shoeSize.id,
                         quantity: shoeSize.quantity,
                         price: shoeSize.price,
-                        wholesalePrices: shoeSize.wholesalePrices
+                        wholesalePrices: attributeValueWholesalePrices[shoeSize.id] || shoeSize.wholesalePrices || []
                     })),
                     quantity: selectedAttributeType === 'colorOnly' ? frame.quantity : 0, // Quantity for colorOnly, 0 for colorAndAttribute (handled by sizes)
                     price: selectedAttributeType === 'colorOnly' ? (globalColorPrice > 0 ? globalColorPrice : frame.price) : 0, // Price for colorOnly
@@ -682,7 +782,7 @@ const EditProductPage: React.FC = () => {
             frame.id === frameId
                 ? { ...frame, images: frame.images.filter((_, idx) => idx !== imageIndex) }
                 : frame
-        ));clumb
+        ));
     };
 
     const removeExistingVariationImage = (frameId: string, imageUrl: string) => {
@@ -707,15 +807,7 @@ const EditProductPage: React.FC = () => {
     };
 
 
-    const addAttributeValueToVariation = (frameId: string, attributeValueId: number, attributeValueName: string, quantity: number) => {
-        setVariationFrames(prevFrames =>
-            prevFrames.map(frame =>
-                frame.id === frameId
-                    ? { ...frame, sizes: [...frame.sizes, { id: attributeValueId, name: attributeValueName, quantity, price: 0 }] } // Initial price can be 0, updated later
-                    : frame
-            )
-        );
-    };
+
 
     const removeAttributeValueFromVariation = (frameId: string, attributeValueId: number) => {
         setVariationFrames(prevFrames =>
@@ -974,18 +1066,7 @@ const EditProductPage: React.FC = () => {
                                     </div>
                                 )}
 
-                                {productType === "variable" && (
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Stock global (si non défini par variation)</label>
-                                        <input
-                                            type="number"
-                                            value={stock}
-                                            onChange={(e) => setStock(e.target.value)}
-                                            className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-[#ed7e0f]"
-                                            placeholder="Quantité disponible"
-                                        />
-                                    </div>
-                                )}
+                            
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -998,7 +1079,7 @@ const EditProductPage: React.FC = () => {
                                     />
                                 </div>
                             </div>
-  {isWholesale && (
+  {isWholesale && productType === "simple" && (
                                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
@@ -1380,55 +1461,66 @@ const EditProductPage: React.FC = () => {
 
                                         {selectedAttributeType === 'colorAndAttribute' && (
                                             <div className="mb-8">
-                                                <label htmlFor="attribute-category" className="block text-sm font-medium text-gray-700 mb-2">Sélectionner la catégorie d'attribut</label>
-                                                <select
-                                                    id="attribute-category"
-                                                    name="attribute-category"
-                                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
-                                                    value={selectedAttributeId || ''}
-                                                    onChange={(e) => {
-                                                        const selectedAttrId = parseInt(e.target.value);
-                                                        const selectedCat = availableAttributes?.find((attr: any) => attr.attribute_id === selectedAttrId);
-
-                                                        if (selectedCat) {
-                                                            setSelectedAttributeId(selectedAttrId);
-                                                            setAttributes(prev => {
-                                                                const existingAttribute = prev.find(attr => attr.affectsPrice);
-                                                                if (existingAttribute) {
-                                                                    return prev.map(attr =>
-                                                                        attr.affectsPrice
-                                                                            ? { ...attr, name: selectedCat.attribute_name, id: selectedAttrId }
-                                                                            : attr
-                                                                    );
-                                                                } else {
-                                                                    return [
-                                                                        ...prev.filter(attr => attr.id === 1 || !attr.affectsPrice), // Keep color and non-price attributes
-                                                                        {
-                                                                            id: selectedAttrId,
-                                                                            name: selectedCat.attribute_name,
-                                                                            affectsPrice: true,
-                                                                            values: []
-                                                                        }
-                                                                    ];
-                                                                }
-                                                            });
-                                                        } else {
-                                                            // If no attribute is selected, remove the affectsPrice attribute if it was not color
-                                                            setAttributes(prev => prev.filter(attr => attr.id === 1 || !attr.affectsPrice));
-                                                            setSelectedAttributeId(null);
-                                                        }
-                                                        setVariations([]);
-                                                        setVariationFrames([]);
-                                                        addVariationFrame();
-                                                    }}
-                                                >
-                                                    <option value="">Sélectionner un attribut</option>
-                                                    {!isLoadingAttributes && availableAttributes?.map((attr: any) => (
-                                                        <option key={attr.attribute_id} value={attr.attribute_id}>
-                                                            {attr.category_name} ({attr.attribute_name})
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                <label className="block text-sm font-medium text-gray-700 mb-3">Sélectionner la catégorie d'attribut</label>
+                                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                                    {!isLoadingAttributes && availableAttributes?.map((attr: any) => {
+                                                        const isSelected = selectedAttributeId === attr.attribute_id;
+                                                        return (
+                                                            <button
+                                                                key={attr.attribute_id}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const selectedCat = attr;
+                                                                    if (selectedCat) {
+                                                                        setSelectedAttributeId(selectedCat.attribute_id);
+                                                                        setAttributes(prev => {
+                                                                            const existingAttribute = prev.find(a => a.affectsPrice);
+                                                                            if (existingAttribute) {
+                                                                                return prev.map(a =>
+                                                                                    a.affectsPrice
+                                                                                        ? { ...a, name: selectedCat.attribute_name, id: selectedCat.attribute_id }
+                                                                                        : a
+                                                                                );
+                                                                            } else {
+                                                                                return [
+                                                                                    ...prev.filter(a => a.id === 1 || !a.affectsPrice), // Keep color (id 1) and non-price attributes
+                                                                                    {
+                                                                                        id: selectedCat.attribute_id,
+                                                                                        name: selectedCat.attribute_name,
+                                                                                        affectsPrice: true,
+                                                                                        values: []
+                                                                                    }
+                                                                                ];
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    
+                                                                    setVariations([]);
+                                                                    setVariationFrames([]);
+                                                                    addVariationFrame();
+                                                                }}
+                                                                className={`
+                                                                    relative flex flex-col items-start p-2 rounded-xl border-2 transition-all duration-200 text-left
+                                                                    ${isSelected 
+                                                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 shadow-sm' 
+                                                                        : 'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'
+                                                                    }
+                                                                `}
+                                                            >
+                                                                <span className={`text-xs font-semibold tracking-wider mb-1 ${isSelected ? 'text-[#ed7e0f]' : 'text-gray-500'}`}>
+                                                                    {attr.category_name}
+                                                                </span>
+                                                                <span className={`font-medium text-xs ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>
+                                                                    {attr.attribute_name}
+                                                                </span>
+                                                                
+                                                                {isSelected && (
+                                                                    <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#ed7e0f]" />
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -1546,15 +1638,14 @@ const EditProductPage: React.FC = () => {
                                                                                     });
 
                                                                                     if (selectedValue) {
-                                                                                        const quantityStr = prompt(`Quantité pour ${selectedValue.value}:`, "1");
-                                                                                        if (quantityStr !== null) { // User didn't cancel
-                                                                                            const quantity = Number(quantityStr);
-                                                                                            if (!isNaN(quantity) && quantity > 0) {
-                                                                                                addAttributeValueToVariation(frame.id, selectedValueId, selectedValue.value, quantity);
-                                                                                            } else {
-                                                                                                toast.error("Veuillez entrer une quantité valide.");
-                                                                                            }
-                                                                                        }
+                                                                                        setPendingVariationData({
+                                                                                            frameId: frame.id,
+                                                                                            attributeValueId: selectedValueId,
+                                                                                            attributeValueName: selectedValue.value,
+                                                                                            colorName: frame.color.name,
+                                                                                            colorHex: frame.color.hex
+                                                                                        });
+                                                                                        setIsVariationModalOpen(true);
                                                                                     }
                                                                                 }}
                                                                             >
@@ -1591,12 +1682,27 @@ const EditProductPage: React.FC = () => {
                                                                                     );
                                                                                     const sizeData = attributeGroup?.values.find((val: any) => val.id === size.id);
                                                                                     return (
-                                                                                        <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
-                                                                                            <span className="text-sm"> {sizeData?.value} Qté :{size.quantity}</span>
+                                                                                        <div key={size.id} className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full border border-gray-200">
+                                                                                            <button
+                                                                                                type="button"
+                                                                                                onClick={() => {
+                                                                                                    setPendingVariationData({
+                                                                                                        frameId: frame.id,
+                                                                                                        attributeValueId: size.id,
+                                                                                                        attributeValueName: size.name,
+                                                                                                        colorName: frame.color.name,
+                                                                                                        colorHex: frame.color.hex
+                                                                                                    });
+                                                                                                    setIsVariationModalOpen(true);
+                                                                                                }}
+                                                                                                className="text-sm hover:text-[#ed7e0f] transition-colors"
+                                                                                            >
+                                                                                                {sizeData?.value || size.name} (Qté: {size.quantity})
+                                                                                            </button>
                                                                                             <button
                                                                                                 type="button"
                                                                                                 onClick={() => removeAttributeValueFromVariation(frame.id, size.id)}
-                                                                                                className="text-gray-400 hover:text-gray-600"
+                                                                                                className="text-gray-400 hover:text-red-500 transition-colors ml-1"
                                                                                             >
                                                                                                 <X className="w-3 h-3" />
                                                                                             </button>
@@ -1820,7 +1926,19 @@ const EditProductPage: React.FC = () => {
                                                                                 const price = attributeValuePrices[attributeItem.id] || 0;
 
                                                                                 return (
-                                                                                    <div key={attributeItem.id} className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                                                                                    <div key={attributeItem.id}
+                                                                                    onClick={() => {
+                                                                                        setPendingVariationData({
+                                                                                            frameId: frame.id,
+                                                                                            attributeValueId: attributeItem.id,
+                                                                                            attributeValueName: attributeValueData?.value || '',
+                                                                                            colorName: color?.value || '',
+                                                                                            colorHex: color?.hex_color || ''
+                                                                                        });
+                                                                                        setIsVariationModalOpen(true);
+                                                                                    }}
+                                                                                    
+                                                                                    className="bg-gray-50 cursor-pointer rounded-lg p-2 border border-gray-200">
                                                                                         <div className="text-sm font-medium text-gray-900">
                                                                                             <span className="text-[#ed7e0f]">{attributeName}:</span> {attributeValueData?.value || attributeItem.name}{attributeValueData?.label ? ` (${attributeValueData.label})` : ''}
                                                                                         </div>
@@ -1855,6 +1973,33 @@ const EditProductPage: React.FC = () => {
                     </div>
                 </main>
             </form>
+            {/* Variation Configuration Modal */}
+            {pendingVariationData && (
+                <VariationConfigModal
+                    isOpen={isVariationModalOpen}
+                    onClose={() => {
+                        setIsVariationModalOpen(false);
+                        setPendingVariationData(null);
+                    }}
+                    onConfirm={handleVariationModalConfirm}
+                    isWholesale={isWholesale}
+                    attributeName={selectedAttributeType === 'colorAndAttribute' ? 'Taille' : 'Couleur'} // Or dynamic attribute name
+                    attributeValue={pendingVariationData.attributeValueName}
+                    colorName={pendingVariationData.colorName}
+                    colorHex={pendingVariationData.colorHex}
+                    initialQuantity={
+                        variationFrames
+                            .find(f => f.id === pendingVariationData.frameId)
+                            ?.sizes.find(s => s.id === pendingVariationData.attributeValueId)?.quantity
+                    }
+                    initialPrice={
+                        attributeValuePrices[pendingVariationData.attributeValueId]
+                    }
+                    initialWholesalePrices={
+                        attributeValueWholesalePrices[pendingVariationData.attributeValueId]
+                    }
+                />
+            )}
         </div>
     );
 };
