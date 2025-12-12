@@ -12,7 +12,7 @@ interface NotificationChatWidgetProps {
   whatsappMessage?: string;
 }
 
-const NotificationChatWidget: React.FC<NotificationChatWidgetProps> = ({ bottomClass = 'bottom-4 max-sm:bottom-24', whatsappNumber = "237674654624", whatsappMessage = "Bonjour, j'ai besoin d'aide en tant que vendeur AKEVAS." }) => {
+const NotificationChatWidget: React.FC<NotificationChatWidgetProps> = ({ bottomClass = 'bottom-4 max-sm:bottom-24', whatsappNumber = "237688565543", whatsappMessage = "Bonjour, j'ai besoin d'aide en tant que vendeur AKEVAS." }) => {
   const { data: allNotifications, isLoading } = useAllNotificationQuery('seller');
   const [isOpen, setIsOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
