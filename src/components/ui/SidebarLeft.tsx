@@ -56,10 +56,24 @@ export default function SidebarLeft() {
         {navItems.map((item) => {
           const active = location.pathname === item.path;
           const Icon = item.icon;
+          const linkPath = item.label === 'Ma Boutique' ? `/shop/${shopId}` : item.path;
+          
           return (
-            <AsyncLink
+
+            <>
+
+            {item.label == "Ma Boutique" ? (
+              <a href={`https://akevas.com/shop/${shopId}`} target='_blank' className={`group flex flex-col mb-2 items-center w-full py-2 rounded-xl transition relative ${active ? 'bg-[#6e0a13]/10 text-[#ed7e0f] font-semibold shadow' : 'text-[#ed7e0f]/80 hover:bg-[#6e0a13]/5 hover:text-[#6e0a13]'}`}>
+              <Icon className={`w-6 h-6 mb-0.5 transition ${active ? 'text-[#ed7e0f]' : 'text-[#ed7e0f]/60 group-hover:text-[#ed7e0f]'}`} />
+              <span className="text-[10px] font-medium tracking-wide">{item.label}</span>
+              {active && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#ed7e0f] rounded-r-full" />
+              )}
+            </a>
+            ) : (
+              <AsyncLink
               key={item.path}
-              to={item.path}
+              to={linkPath}
               className={`group flex flex-col mb-2 items-center w-full py-2 rounded-xl transition relative ${active ? 'bg-[#6e0a13]/10 text-[#ed7e0f] font-semibold shadow' : 'text-[#ed7e0f]/80 hover:bg-[#6e0a13]/5 hover:text-[#6e0a13]'}`}
             >
               <Icon className={`w-6 h-6 mb-0.5 transition ${active ? 'text-[#ed7e0f]' : 'text-[#ed7e0f]/60 group-hover:text-[#ed7e0f]'}`} />
@@ -68,6 +82,9 @@ export default function SidebarLeft() {
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#ed7e0f] rounded-r-full" />
               )}
             </AsyncLink>
+            )}
+            </>
+          
           );
         })}
       </nav>

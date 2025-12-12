@@ -145,11 +145,11 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
 
                 {/* Bouton principal pour utilisateurs connectés */}
                 {currentUser && currentUser.role_id === 2 && currentUser.isSeller === 1 && (
-                  <AsyncLink to={`/shop/${currentUser.shop?.shop_id}`}>
+                  <a href={`https://akevas.com/shop/${currentUser.shop?.shop_id}`} target="_blank">
                     <Button className="w-full bg-[#ed7e0f] hover:bg-[#ed7e0f]/80 text-sm">
                       Voir ma boutique
                     </Button>
-                  </AsyncLink>
+                  </a>
                 )}
                 {currentUser && currentUser.role_id === 4 && (
                   <AsyncLink to="/delivery/dashboard">
