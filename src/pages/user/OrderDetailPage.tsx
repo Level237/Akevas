@@ -206,7 +206,7 @@ const OrderDetailPage = () => {
                         </h2>
                         <div className="space-y-2">
                             <p className="font-medium max-sm:text-sm">{currentOrder?.userName}</p>
-                            <p className="text-gray-600 max-sm:text-sm">{currentOrder?.emplacement}</p>
+                            <p className="text-gray-600 max-sm:text-sm">{currentOrder.quarter_delivery ? currentOrder?.quarter_delivery : currentOrder?.emplacement}</p>
                             <p className="text-gray-600 max-sm:text-sm">{currentOrder?.userPhone}</p>
                         </div>
                     </Card>
