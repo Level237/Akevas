@@ -271,7 +271,7 @@ export default function PaymentTicketPage() {
                 </div>
                 <div className="w-full md:w-1/2 p-2 flex flex-col justify-center text-xs uppercase">
                    <div className="font-bold">{mainOrder.userName}</div>
-                   <div>{mainOrder.emplacement}</div>
+                   <div>{mainOrder.quarter_delivery ==null ? mainOrder.emplacement : mainOrder.quarter_delivery}</div>
                    <div>{mainOrder.userPhone}</div>
                 </div>
               </div>
