@@ -5,7 +5,8 @@ import {
   Linkedin, 
   Link2, 
   Check,
-  Share2
+  Share2,
+  MoreHorizontal
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -69,6 +70,24 @@ const ShareProduct: React.FC<ShareProductProps> = ({ productName, url }) => {
     console.log(platform);
   };
 
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: productName,
+          text: `Découvrez ce produit : ${productName}`,
+          url: url,
+        });
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+             toast.error('Erreur lors du partage');
+        }
+      }
+    } else {
+      toast.error('Le partage n\'est pas supporté sur cet appareil');
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-sm p-4 mt-4">
       <div className="flex items-center gap-2 mb-4">
@@ -81,7 +100,7 @@ const ShareProduct: React.FC<ShareProductProps> = ({ productName, url }) => {
           <button
             key={link.name}
             onClick={() => handleShare(link.url, link.name)}
-            className={`p-2.5 rounded-xl transition-all duration-200 ${link.color}`}
+            className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 ${link.color}`}
             title={`Partager sur ${link.name}`}
           >
             <link.icon className="w-5 h-5" />
@@ -90,7 +109,7 @@ const ShareProduct: React.FC<ShareProductProps> = ({ productName, url }) => {
         
         <button
           onClick={handleCopyLink}
-          className={`p-2.5 rounded-xl transition-all duration-200 ${
+          className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 ${
             copied 
               ? 'bg-green-100 text-green-700' 
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -98,6 +117,14 @@ const ShareProduct: React.FC<ShareProductProps> = ({ productName, url }) => {
           title="Copier le lien"
         >
           {copied ? <Check className="w-5 h-5" /> : <Link2 className="w-5 h-5" />}
+        </button>
+
+        <button
+            onClick={handleNativeShare}
+            className="p-2.5 rounded-xl transition-all duration-200 bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95"
+            title="Plus d'options"
+        >
+            <MoreHorizontal className="w-5 h-5" />
         </button>
       </div>
     </div>
