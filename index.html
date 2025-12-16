@@ -11,14 +11,4 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
-
-  <script>
-    const bots = ["googlebot", "facebookexternalhit", "whatsapp", "twitterbot", "bingbot", "linkedinbot"];
-    const isBot = bots.some(bot => navigator.userAgent.toLowerCase().includes(bot));
-
-    if (isBot) {
-        // On redirige le robot vers la page SEO de ton API
-        window.location.href = "https://api-akevas.akevas.com/render-seo?url=" + window.location.href;
-    }
-</script>
 </html>
