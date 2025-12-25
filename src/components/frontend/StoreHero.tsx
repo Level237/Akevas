@@ -15,7 +15,7 @@ const SlideControls = memo(({ slides, currentSlide, setCurrentSlide }:{slides:an
   }, [setCurrentSlide]);
 
   return (
-    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+    <div className="absolute  bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
       {Array.isArray(slides) && slides.map((_:any, index:any) => (
         <button
           key={index}
@@ -112,8 +112,8 @@ export default function StoreHero() {
   }, []);
 
   const renderMobileSlide = useCallback(() => (
-    <motion.div className={`w-full h-full ${slides[currentSlide].bgColor}`}>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/20 z-0" />
+    <motion.div className={`w-full h-full   ${slides[currentSlide].bgColor}`}>
+      <div className="absolute  inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/20 z-0" />
       <div className="relative h-full z-10 p-6 flex flex-col">
         <motion.span className="self-start px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-xs mb-4">
           {currentSlide === 0 ? "Vendeur" : currentSlide === 1 ? "Livreur" : "Marketplace"}
@@ -169,14 +169,14 @@ export default function StoreHero() {
 
   return (
     <>
-      <motion.section className="w-full md:hidden relative h-[480px]  overflow-hidden">
+      <motion.section className="w-full   md:hidden relative h-[480px]  overflow-hidden">
         <AnimatePresence mode="wait">
           {renderMobileSlide()}
         </AnimatePresence>
       </motion.section>
 
-      <section className="flex max-sm:flex-col max-sm:hidden items-start max-sm:mx-2 max-sm:mt-6 gap-4 lg:mx-16 md:mx-0 h-[30rem]">
-        <motion.section className="lg:w-[75%] md:w-[100%] max-sm:hidden md:rounded-none lg:rounded-3xl relative h-96 overflow-hidden">
+      <section className="flex max-sm:flex-col max-w-[1440px] justify-center mx-auto  max-sm:hidden items-start max-sm:mx-2 max-sm:mt-6 gap-4 lg:mx-16 md:mx-0 h-[30rem]">
+        <motion.section className="lg:w-[75%]  md:w-[100%]  max-sm:hidden md:rounded-none lg:rounded-3xl relative h-96 overflow-hidden">
           <motion.div
             className={`absolute inset-0 ${slides[currentSlide].bgColor}`}
             initial={false}
@@ -243,7 +243,7 @@ export default function StoreHero() {
           <SlideControls slides={slides} currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} />
         </motion.section>
 
-        <motion.section className="w-full max-sm:hidden hidden max-sm:block lg:rounded-3xl relative h-96 bg-orange-800 overflow-hidden">
+        <motion.section className="w-full  max-sm:hidden hidden max-sm:block lg:rounded-3xl relative h-96 bg-orange-800 overflow-hidden">
           <div className="flex w-full h-full">
             <div className="w-full p-10 flex flex-col items-center justify-center">
               <motion.h1 className="text-4xl max-sm:text-xl flex-1 font-bold text-white mb-4">

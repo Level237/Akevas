@@ -27,10 +27,10 @@ const ProductCard = memo(({
   
   return (
     <motion.div
-      className="m-3 w-[250px] max-h-[400px] cursor-pointer max-sm:max-w-56 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
+      className="m-3 w-[250px]  max-h-[400px] cursor-pointer max-sm:max-w-56 transition-transform duration-200 snap-start flex-shrink-0 max-sm:w-full"
       layout
     >
-      <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+      <div className="group  bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
         <AsyncLink to={`/produit/${product.product_url}`}>
           <div className="relative h-[170px] max-sm:aspect-[4/3]">
             <OptimizedImage
@@ -229,7 +229,7 @@ const ProductListGrid = ({ products = [], isLoading, gridColumn, type }: { produ
   }, []);
 
   return (
-    <section className="lg:min-h-screen max-sm:min-h-[100%] max-sm:m-1 w-full relative">
+    <section className=" max-sm:min-h-[100%] max-sm:m-1 w-full relative">
       <div className='flex justify-between mb-4 items-center'>
         <div className='flex items-start flex-col'>
           <h2 className='text-2xl max-sm:text-xl  hidden max-sm:block font-bold text-gray-900'>

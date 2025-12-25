@@ -42,17 +42,17 @@ export default function CategoryShowcase({categories, isLoading, title, titleCat
 
   if (isLoading) {
     return (
-      <div className="min-h-[600px] flex items-center justify-center">
+      <div className="min-h-[600px]   flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     )
   }
 
   return (
-    <section className="py-20 max-sm:py-12 bg-[#6e0a13] md:mt-0   lg:-mt-28 max-sm:-mt-1 from-black to-[#6e0a13] text-white">
-      <div className=" ml-12 max-sm:ml-2 px-4">
+    <section className="py-20 max-sm:py-12 bg-[#6e0a13] md:mt-0    lg:-mt-28 max-sm:-mt-1 from-black to-[#6e0a13] text-white">
+      <div className=" ml-12 max-sm:ml-2 px-4 ">
         {/* Header with Navigation Controls */}
-        <div className="flex items-center  justify-between mb-16">
+        <div className="flex items-center max-w-[1440px] mx-auto  justify-between mb-16">
           <div className="flex-1">
             <span className="inline-block max-sm:hidden px-4 py-1.5 bg-[#ed7e0f]/10 backdrop-blur-sm rounded-full text-[#ed7e0f]">
               {title}
@@ -82,7 +82,7 @@ export default function CategoryShowcase({categories, isLoading, title, titleCat
         {/* Optimized Categories Grid/Carousel */}
         <div 
           ref={containerRef}
-          className="flex gap-6 overflow-x-hidden  overflow-x-auto pb-8 "
+          className="flex gap-6 overflow-x-hidden max-w-[1440px] mx-auto  overflow-x-auto pb-8 "
           style={{
             scrollSnapType: 'x mandatory',
             WebkitOverflowScrolling: 'touch'

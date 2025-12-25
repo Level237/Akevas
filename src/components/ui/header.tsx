@@ -201,8 +201,8 @@ const Header = () => {
 
   const { data: userData, isLoading } = useGetUserQuery('Auth');
 
-console.log('us')
-console.log(userData)
+
+
 
 
   // Optimiser les effets
@@ -285,7 +285,7 @@ console.log(userData)
       {/* Sticky Header */}
       <header
         ref={headerRef}
-        className="w-full max-sm:hidden bg-white border-b z-50  fixed top-0 left-0 transition-all duration-300 -translate-y-full"
+        className="w-full   max-sm:hidden bg-white border-b z-50  fixed top-0 left-0 transition-all duration-300 -translate-y-full"
       >
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
@@ -489,11 +489,11 @@ console.log(userData)
         </div>
 
         {/* Version Desktop */}
-        <div className="hidden lg:block mx-16 px-4 py-3">
+        <div className="hidden max-w-[1440px] mx-auto lg:block mx-16 px-4 py-3">
           {/* Top bar avec logo, recherche et actions */}
           <div className="flex items-center justify-between gap-4">
             <AsyncLink to="/" className="flex-shrink-0">
-              <img
+              <OptimizedImage
                 src={logo}
                 alt="AKEVAS"
                 className="h-28 w-auto"
