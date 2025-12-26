@@ -958,7 +958,7 @@ const EditProductPage: React.FC = () => {
     const attributesArray = getAttributes?.data || []; // All color attributes
 
     return (
-        <div className="min-h-screen bg-gray-50 max-sm:pb-16">
+        <div className="min-h-screen max-w-[1440px] mx-auto bg-gray-50 max-sm:pb-16">
             <form onSubmit={handleSubmit} className='' encType='multipart/form-data'>
                 {/* Header */}
                 <header className="sticky top-16 px-24 max-sm:px-0 z-30 bg-white border-b">
@@ -1266,7 +1266,11 @@ const EditProductPage: React.FC = () => {
                                             {featuredImage instanceof File ? ( // Display newly uploaded file
                                                 <div className="relative group h-64">
                                                     <img
-                                                        src={URL.createObjectURL(featuredImage) || "/placeholder.svg"}
+                                                       src={featuredImage instanceof File || featuredImage as Blob instanceof Blob 
+                                                            ? URL.createObjectURL(featuredImage) 
+                                                            : ""
+                                                        } 
+
                                                         alt="Featured product"
                                                         className="w-full h-full object-cover"
                                                     />
@@ -1321,7 +1325,9 @@ const EditProductPage: React.FC = () => {
                                                 return (
                                                     <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
                                                         <img
-                                                            src={URL.createObjectURL(image) || "/placeholder.svg"}
+                                                            src={image instanceof File || image as Blob instanceof Blob 
+                                                            ? URL.createObjectURL(image) 
+                                                            : ""}
                                                             alt={`Product ${index + 1}`}
                                                             className="w-full h-full object-cover"
                                                         />
@@ -1744,7 +1750,10 @@ const EditProductPage: React.FC = () => {
                                                                             return (
                                                                                 <div key={idx} className="relative group aspect-square">
                                                                                     <img
-                                                                                        src={URL.createObjectURL(image) || "/placeholder.svg"}
+                                                                                        src={image instanceof File || image as Blob instanceof Blob 
+                                                                                        ? URL.createObjectURL(image) 
+                                                                                        : ""
+                                                                                        } 
                                                                                         alt={`Variation ${idx + 1}`}
                                                                                         className="w-16 h-16 object-cover rounded-xl"
                                                                                     />

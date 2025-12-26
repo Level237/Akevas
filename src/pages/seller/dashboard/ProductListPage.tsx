@@ -35,7 +35,7 @@ const DashboardProductListPage = () => {
   }
 
   return (
-    <div className="container mx-24 w-92  max-sm:mx-auto px-4 py-8">
+    <div className="container max-w-[1440px] mx-auto mx-24 w-92  max-sm:mx-auto px-4 py-8">
       
       <div className='mb-6 mr-24'>
         {!isLoading && sellerData?.last_feedbacks_product_verification != 0 && !isTrashView && !isRejectedView  && <RejectedProductAlert rejectedCount={sellerData?.last_feedbacks_product_verification as number}/>}

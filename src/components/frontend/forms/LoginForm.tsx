@@ -100,12 +100,12 @@ export default function LoginForm() {
     }
   }
   return (
-    <div className="flex flex-col px-8 py-6 ">
+    <div className="flex   flex-col px-8 py-6 ">
       <div className="mb-2 md:px-2">
 
       </div>
 
-      <div className="flex flex-col space-y-1 md:px-28">
+      <div className="flex  flex-col space-y-1 md:px-28">
         <Link to="/">
           <div className="space-y-1 flex justify-center items-center ">
 

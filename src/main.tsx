@@ -10,7 +10,11 @@ if (rootElement) {
   rootElement.setAttribute('translate', 'no');        // désactive la traduction automatique
   rootElement.classList.add('notranslate');           // renforcé par la classe CSS
 }
-createRoot(rootElement!).render(
+
+if (!rootElement) {
+  throw new Error("L'élément racine 'root' n'a pas été trouvé dans le DOM.");
+}
+createRoot(rootElement).render(
   <StrictMode>
     <Provider store={store}>
     <App />

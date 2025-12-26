@@ -4,8 +4,8 @@ import shop from '@/assets/shop.jpg'
 
 export default function LoginPage() {
   return (
-    <div className="h-[100vh] overflow-hidden w-full bg-white">
-      <div className="mx-auto grid min-h-screen md:grid-cols-2">
+    <div className="h-[100vh]  overflow-hidden w-full bg-white">
+      <div className="mx-auto  grid min-h-screen md:grid-cols-2">
         {/* Left Column - Login Form */}
         <div className="relative">
 

@@ -1011,7 +1011,7 @@ const CreateProductPage: React.FC = () => {
 
 
     return (
-        <div className="min-h-screen bg-gray-50   max-sm:pb-16">
+        <div className="min-h-screen bg-gray-50 max-w-[1440px] mx-auto   max-sm:pb-16">
             {/* Modal de sélection du type de produit */}
             {showModal && (
                 <ProductTypeModal
