@@ -132,8 +132,9 @@ const EditProductPage: React.FC = () => {
             setStock(product.product_quantity || '');
             setIsWholesale(product.isWholeSale === 1 || product.isWholeSale === true);
             setIsOnlyWhole(product.is_only_wholesale === 1 || product.is_only_wholesale === true);
-
-            setCity(product.residence || '');
+            const city = product.residence == "Douala" ? "1" : "2";
+            setCity(city);
+            
             // Set wholesale prices if available
             if (product.productWholeSales && product.productWholeSales.length > 0) {
                 setWholesalePrices(product.productWholeSales);
@@ -275,6 +276,8 @@ const EditProductPage: React.FC = () => {
         }
     }, [product, isLoadingProduct, availableAttributes]);
 
+
+   
     // Initialize attributes like in CreateProductPage
     useEffect(() => {
         const attributesArray = getAttributes?.data || [];
@@ -552,11 +555,12 @@ const EditProductPage: React.FC = () => {
                 formData.append('images_to_delete', JSON.stringify(imagesToDelete));
             }
 
+            
             // Handle variations for variable products
             if (productType === 'variable' && variationFrames.length > 0) {
                 // Prepare variations data for API. This structure might need adjustment based on backend expectations.
                 const variationsPayload = variationFrames.map(frame => ({
-                    id: frame.id.startsWith('frame-') ? null : frame.id, // Send null for new variations, original ID for updates
+                    id: frame.id, // Send null for new variations, original ID for updates
                     productId: product?.id,
                     color_id: frame.color.id,
                     sizes: frame.sizes.map(size => ({
@@ -601,8 +605,8 @@ const EditProductPage: React.FC = () => {
                      formData.append('wholesale_prices', JSON.stringify(wholesalePrices));
                  }
             }
-
-           const response = await updateProduct(formData);
+            formData.append('_method', 'PUT');
+           const response = await updateProduct({id: product?.id, data: formData});
            console.log(response);
             
             toast.success('Produit mis à jour avec succès', {
@@ -642,6 +646,8 @@ const EditProductPage: React.FC = () => {
     const handleCityChange = (value: string) => {
         setCity(value);
     };
+
+    console.log(city)
 
     const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -1241,7 +1247,7 @@ const EditProductPage: React.FC = () => {
                                                     <SelectItem value="loading">Chargement des villes...</SelectItem>
                                                 ) : (
                                                     towns?.towns.map((town: { id: string, town_name: string }) => (
-                                                        <SelectItem key={town.id} value={town.town_name}>
+                                                        <SelectItem key={town.id} value={town.id}>
                                                             {town.town_name}
                                                         </SelectItem>
                                                     ))
