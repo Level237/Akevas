@@ -137,11 +137,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
             <div className="flex-1 text-white">
               <div className="flex items-center gap-4 mb-2">
                 <h1 className="text-3xl font-bold">{shop.shop.shop_key}</h1>
-                {store.isPremium && (
-                  <span className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full">
-                    Premium
-                  </span>
-                )}
+                
               </div>
               <div className="flex items-center gap-6 text-gray-200">
                 <div className="flex items-center">
@@ -202,17 +198,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
             </div>
             
             {/* Actions */}
-            <div className="flex flex-row lg:flex-row items-center gap-3 w-full lg:w-auto  lg:mt-0">
-            <div className="btn-outline flex items-center w-full lg:w-auto">
-              <Users className="w-4 h-4 mr-2 text-[#ed7e0f]" />
-                <h2 className='text-gray-200 font-bold'>124 followers</h2>
-              </div>
-              <Button className=" bg-[#ed7e0f] w-full lg:w-auto">
-                Suivre
-                <UserPlus className="w-4 h-4 ml-2" />
-              </Button>
-              
-            </div>
+           
           </div>
         </div>
       </div>
@@ -263,37 +249,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
               <h2 className="text-xl font-semibold mb-4">À propos de {store?.name}</h2>
               <p className="text-gray-600">{store?.description}</p>
               
-              <div className="mt-8 space-y-6">
-                <div>
-                  <h3 className="font-medium mb-2">Horaires d'ouverture</h3>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-                    {store?.openingHours.map((hour, index) => (
-                      <div key={index} className="flex justify-between py-1 border-b">
-                        <span className="text-gray-600">{hour.day}</span>
-                        <span className="font-medium">{hour.hours}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-medium mb-2">Contact</h3>
-                  <div className="space-y-2">
-                    <p className="flex items-center gap-2 text-gray-600">
-                      <Phone className="w-4 h-4" />
-                      {store?.phone}
-                    </p>
-                    <p className="flex items-center gap-2 text-gray-600">
-                      <Mail className="w-4 h-4" />
-                      {store?.email}
-                    </p>
-                    <p className="flex items-center gap-2 text-gray-600">
-                      <MapPin className="w-4 h-4" />
-                      {store?.address}
-                    </p>
-                  </div>
-                </div>
-              </div>
+             
             </div>
           </div>
         )}

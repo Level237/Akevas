@@ -101,6 +101,7 @@ const CheckoutPage: React.FC = () => {
     return deliveryFees[address.deliveryOption];
   };
 
+  const totalPriceCart = useSelector((state: RootState) => state.cart.totalPrice)
   const subtotal = totalCartPrice;
   const shipping = getDeliveryFee();
   console.log(shipping)
@@ -739,12 +740,7 @@ const CheckoutPage: React.FC = () => {
                   <span className="text-gray-500">Sous-total</span>
                   <span className="font-medium">
                     {s == "1" ?
-                      cartItems.reduce((sum, item) => {
-                        const price = item.selectedVariation?.attributes?.price
-                          ? parseFloat(item.selectedVariation.attributes.price)
-                          : parseFloat(item.product.product_price);
-                        return sum + (price * item.quantity);
-                      }, 0).toFixed(2)
+                      totalPriceCart || '0'
                       : totalPrice || '0'
                     } Fcfa
                   </span>

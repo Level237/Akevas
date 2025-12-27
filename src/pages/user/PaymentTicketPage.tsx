@@ -309,7 +309,7 @@ export default function PaymentTicketPage() {
                         <div className="font-bold truncate max-w-[120px] md:max-w-none">{prod.name}</div>
                         {(prod.color || prod.size) && (
                             <div className="text-gray-500 text-[9px] md:text-[10px]">
-                                {prod.color && <span className={`flex items-center`}>Couleur: <div className={`w-2 h-2 md:w-3 md:h-3 mr-1 ml-1 border rounded-full bg-[${prod.hex}]`}></div> {prod.hex}</span>}
+                                {prod.color && <span className={`flex items-center`}>Couleur: <div className={`w-2 h-2 md:w-3 md:h-3 mr-1 ml-1 border rounded-full bg-[${prod.hex}]`}></div> {prod.color}</span>}
                                 {prod.size && <span className={`text-[9px] md:text-[10px] ${prod.size}`}>Taille: {prod.size}</span>}
                             </div>
                         )}

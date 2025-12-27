@@ -134,12 +134,6 @@ const ShopCard = memo(({ shop }: { shop: Shop }) => {
         
         {/* Premium Badge */}
         
-          <div className="absolute top-4 right-4">
-            <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-amber-200 to-yellow-400 text-amber-900 rounded-full flex items-center gap-1">
-              <Shield className="w-3 h-3" />
-              Premium
-            </span>
-          </div>
         
 
         {/* Shop Logo */}
@@ -188,29 +182,7 @@ const ShopCard = memo(({ shop }: { shop: Shop }) => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
-              <Package className="w-4 h-4" />
-              <span className="text-sm">Produits</span>
-            </div>
-            <p className="font-semibold">{shop.products.length}</p>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
-              <Users className="w-4 h-4" />
-              <span className="text-sm">Followers</span>
-            </div>
-            <p className="font-semibold">12</p>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
-              <Clock className="w-4 h-4" />
-              <span className="text-sm">Réponse</span>
-            </div>
-            <p className="font-semibold">12</p>
-          </div>
-        </div>
+        
 
         {/* Actions */}
         <div className="flex items-center gap-3">
@@ -219,9 +191,7 @@ const ShopCard = memo(({ shop }: { shop: Shop }) => {
               Voir la boutique
             </Button>
           </AsyncLink>
-          <Button variant="outline" size="icon">
-            <Heart className="w-4 h-4" />
-          </Button>
+         
         </div>
 
       </div>
