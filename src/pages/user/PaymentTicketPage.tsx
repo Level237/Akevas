@@ -17,6 +17,8 @@ const statusMap: Record<string, { label: string; color: string }> = {
   '3': { label: 'Annulé', color: 'text-red-600' },
 };
 
+
+
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
     // Vérifier si order existe
@@ -31,24 +33,24 @@ const getOrderItems = (order: any) => {
             if (item && item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
                 const attributeValue = item.variation_attribute.value;
-
+                const attributePrice = item.variation_attribute.price;
                 allOrderItems.push({
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
                     hex : variation.color?.hex   || "",
                     size: attributeValue || '',
+                    price:variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : attributePrice,
                     quantity: parseInt(item.variation_quantity) || 0,
-                    price: parseFloat(item.variation_price) || 0,
                     image: variation.images?.[0]?.path || '',
-                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(attributePrice) || 0),
                     type: 'variation'
                 });
             }
             // Cas 2: variation_attribute est null mais product_variation existe directement
             else if (item && item.product_variation) {
                 const variation = item.product_variation;
-
+                const price = variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : variation.price
                 allOrderItems.push({
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
@@ -56,9 +58,9 @@ const getOrderItems = (order: any) => {
                     hex : variation.color?.hex   || "",
                     size: '',
                     quantity: parseInt(item.variation_quantity) || 0,
-                    price: parseFloat(item.variation_price) || 0,
+                    price:price,
                     image: variation.images?.[0]?.path || '',
-                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(price) || 0),
                     type: 'variation'
                 });
             }
@@ -67,7 +69,10 @@ const getOrderItems = (order: any) => {
 
     // Ajouter les produits sans variation (order_details)
     if (order.order_details && order.order_details.length > 0) {
+
+      
         order.order_details.forEach((item: any) => {
+          const price = item.product?.product_price
             if (item && item.product) {
                 allOrderItems.push({
                     id: item.id,
@@ -75,9 +80,9 @@ const getOrderItems = (order: any) => {
                     color: '',
                     size: '',
                     quantity: parseInt(item.quantity) || 0,
-                    price: parseFloat(item.price) || 0,
+                    price: price,
                     image: item.product?.product_profile || '',
-                    total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
+                    total: (parseInt(item.quantity) || 0) * (parseFloat(price) || 0),
                     type: 'simple'
                 });
             }
@@ -114,15 +119,17 @@ export default function PaymentTicketPage() {
 
   // Aggregate all products
   const allProducts: any[] = [];
+  
   payment.order.forEach((order: any) => {
       const items = getOrderItems(order);
       allProducts.push(...items);
   });
 
+  console.log(allProducts)
   const TAX_RATE = 0.03; // 5% de TVA (Note: 0.03 is 3%, but comment says 5%. Keeping consistent with OrderDetailPage)
   const itemsTotal = allProducts.reduce((total: number, item: any) => total + item.total, 0);
   const shippingFee = Number(mainOrder?.fee_of_shipping || 0);
-  const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
+  const taxAmount = (itemsTotal) * TAX_RATE;
   const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
   // Barcode simulation (CSS)
@@ -223,14 +230,7 @@ export default function PaymentTicketPage() {
 
               {/* Row 3: Amount & Status */}
               <div className="flex flex-col md:flex-row border-b border-gray-800">
-                <div className="flex flex-col md:flex-row w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-800">
-                  <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
-                    Montant /<br/>Amount
-                  </div>
-                  <div className="w-full md:w-1/2 p-2 flex items-center font-bold text-lg">
-                    {parseInt(payment.price).toLocaleString('fr-FR')} XAF
-                  </div>
-                </div>
+               
                 <div className="flex flex-col md:flex-row w-full md:w-1/2">
                   <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
                     Statut /<br/>Status
@@ -334,7 +334,7 @@ export default function PaymentTicketPage() {
                                 <span className="font-bold">{shippingFee.toLocaleString('fr-FR')} XAF</span>
                             </div>
                             <div className="flex justify-between mb-1">
-                                <span className="uppercase">TVA / Tax (3%):</span>
+                                <span className="uppercase">Frais (3%):</span>
                                 <span className="font-bold">{taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
                             </div>
                             <div className="flex justify-between border-t border-gray-800 pt-1 mt-1 text-sm">
@@ -440,10 +440,7 @@ export default function PaymentTicketPage() {
                         </div>
                         <!-- Row 3 -->
                         <div style="display: flex; border-bottom: 1px solid #1f2937;">
-                          <div style="width: 50%; display: flex; border-right: 1px solid #1f2937;">
-                             <div style="width: 50%; background-color: #eff6ff; padding: 8px; font-weight: bold; border-right: 1px solid #1f2937; text-transform: uppercase;">Montant /<br/>Amount</div>
-                             <div style="width: 50%; padding: 8px; font-weight: bold; font-size: 14px;">${parseInt(payment.price).toLocaleString('fr-FR')} XAF</div>
-                          </div>
+                         
                           <div style="width: 50%; display: flex;">
                              <div style="width: 50%; background-color: #eff6ff; padding: 8px; font-weight: bold; border-right: 1px solid #1f2937; text-transform: uppercase;">Statut /<br/>Status</div>
                              <div style="width: 50%; padding: 8px; font-weight: bold; text-transform: uppercase;">${status.label}</div>
@@ -504,7 +501,7 @@ export default function PaymentTicketPage() {
                                 <span style="font-weight: bold;">${shippingFee.toLocaleString('fr-FR')} XAF</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                                <span style="text-transform: uppercase;">TVA / Tax (5%):</span>
+                                <span style="text-transform: uppercase;">Frais:</span>
                                 <span style="font-weight: bold;">${taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; border-top: 1px solid #1f2937; padding-top: 4px; margin-top: 4px; font-size: 14px;">

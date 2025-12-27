@@ -512,7 +512,7 @@ const ProductDetailPage: React.FC = () => {
   
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen max-w-[1440px] mx-auto bg-gray-50">
       <Header />
 
       <main className="">

@@ -29,32 +29,34 @@ const getOrderItems = (order: any) => {
             if (item && item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
                 const attributeValue = item.variation_attribute.value;
-
+                const attributePrice = item.variation_attribute.price;
                 allOrderItems.push({
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
+                    hex : variation.color?.hex   || "",
                     size: attributeValue || '',
+                    price:variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : attributePrice,
                     quantity: parseInt(item.variation_quantity) || 0,
-                    price: parseFloat(item.variation_price) || 0,
                     image: variation.images?.[0]?.path || '',
-                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(attributePrice) || 0),
                     type: 'variation'
                 });
             }
             // Cas 2: variation_attribute est null mais product_variation existe directement
             else if (item && item.product_variation) {
                 const variation = item.product_variation;
-
+                const price = variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : variation.price
                 allOrderItems.push({
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
+                    hex : variation.color?.hex   || "",
                     size: '',
                     quantity: parseInt(item.variation_quantity) || 0,
-                    price: parseFloat(item.variation_price) || 0,
+                    price:price,
                     image: variation.images?.[0]?.path || '',
-                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(item.variation_price) || 0),
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(price) || 0),
                     type: 'variation'
                 });
             }
@@ -63,7 +65,10 @@ const getOrderItems = (order: any) => {
 
     // Ajouter les produits sans variation (order_details)
     if (order.order_details && order.order_details.length > 0) {
+
+      
         order.order_details.forEach((item: any) => {
+          const price = item.product?.product_price
             if (item && item.product) {
                 allOrderItems.push({
                     id: item.id,
@@ -71,9 +76,9 @@ const getOrderItems = (order: any) => {
                     color: '',
                     size: '',
                     quantity: parseInt(item.quantity) || 0,
-                    price: parseFloat(item.price) || 0,
+                    price: price,
                     image: item.product?.product_profile || '',
-                    total: (parseInt(item.quantity) || 0) * (parseFloat(item.price) || 0),
+                    total: (parseInt(item.quantity) || 0) * (parseFloat(price) || 0),
                     type: 'simple'
                 });
             }
@@ -128,7 +133,7 @@ const OrderDetailPage = () => {
     const hasVariations = orderItems.some((item: any) => item.type === 'variation');
     const itemsTotal = orderItems.reduce((total: number, item: any) => total + item.total, 0);
     const shippingFee = Number(currentOrder?.fee_of_shipping || 0);
-    const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
+    const taxAmount = itemsTotal  * TAX_RATE;
     const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
     return (
@@ -184,7 +189,7 @@ const OrderDetailPage = () => {
                                 <span className="font-medium max-sm:text-sm">{currentOrder?.fee_of_shipping || 0} XAF</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600 max-sm:text-sm">TVA (5%)</span>
+                                <span className="text-gray-600 max-sm:text-sm">TVA (3%)</span>
                                 <span className="font-medium max-sm:text-sm">{taxAmount.toFixed(2)} XAF</span>
                             </div>
                             <div className="flex justify-between border-t pt-2">

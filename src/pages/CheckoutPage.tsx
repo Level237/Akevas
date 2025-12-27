@@ -754,7 +754,7 @@ const CheckoutPage: React.FC = () => {
                   <span className="font-medium text-green-600">{shipping} Fcfa</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">TVA</span>
+                  <span className="text-gray-500">Frais</span>
                   <span className="font-medium">
                     {s == "1" ?
                       (total * TAX_RATE)
@@ -769,7 +769,7 @@ const CheckoutPage: React.FC = () => {
                       {totalWithTax} Fcfa
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">TVA incluse</p>
+                  <p className="text-xs text-gray-500 mt-1">Frais inclus</p>
                 </div>
               </div>
 
@@ -833,7 +833,7 @@ const CheckoutPage: React.FC = () => {
                         'Expédition et livraison à domicile'
                   }</p>
                   <p>Frais de livraison: {shipping} FCFA</p>
-                  <p>TVA:  {s == "1" ?
+                  <p>Frais:  {s == "1" ?
                     (total * TAX_RATE).toFixed(2)
                     : (parseInt(totalPrice || '0') * TAX_RATE)
                   } Fcfa FCFA</p>
