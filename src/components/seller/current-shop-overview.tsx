@@ -12,12 +12,7 @@ import {
   Grid,
   List,
   SlidersHorizontal,
-  UserPlus,
-  Users,
-  Phone,
-  Mail
 } from 'lucide-react';
-import { Button } from '../ui/button';
 
 import { useState } from 'react';
 import ShopReviews from '../stores/ShopReviews';

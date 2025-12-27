@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, memo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, MapPin, Package, Clock, Shield, Search, Heart, Users, ShoppingBag, TrendingUp, Filter } from 'lucide-react';
+import { Star, MapPin, Search, ShoppingBag, TrendingUp, Filter } from 'lucide-react';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import AsyncLink from '@/components/ui/AsyncLink';
