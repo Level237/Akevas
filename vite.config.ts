@@ -6,7 +6,11 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export const manifestForPlugIn = {
   registerType: 'autoUpdate' as const,
-  includeAssests: ['favicon.png', 'service-worker.js'],
+  includeAssets: ['favicon.png', 'service-worker.js'],
+  workbox: {
+    maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 Mo
+    globIgnores: ['**/*.map'], // optionnel mais recommandé
+  },
   devOptions: {
     enabled: true,
     type: 'module',
