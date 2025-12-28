@@ -6,7 +6,6 @@ import {
   Link2, 
   Check,
   Share2,
-  MoreHorizontal
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -124,7 +123,7 @@ const ShareProduct: React.FC<ShareProductProps> = ({ productName, url }) => {
             className="p-2.5 rounded-xl transition-all duration-200 bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105 active:scale-95"
             title="Plus d'options"
         >
-            <MoreHorizontal className="w-5 h-5" />
+            <Share2 className="w-4 h-4 text-gray-500" />
         </button>
       </div>
     </div>
