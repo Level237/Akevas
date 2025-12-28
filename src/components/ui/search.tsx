@@ -2,7 +2,7 @@ import OptimizedImage from "@/components/OptimizedImage";
 import { useGetHistorySearchQuery, useGetUserQuery } from "@/services/auth";
 import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
-import { Clock, Search, TrendingUp, X } from "lucide-react"
+import { Clock, Search, X } from "lucide-react"
 import { useState, useEffect, Suspense, useCallback } from "react";
 import { Link} from "react-router-dom";
 
@@ -246,19 +246,6 @@ export default function SearchResource({open}:{open:()=>void}){
       );
 
       const {data:history,isLoading:isLoadingSearch} = useGetHistorySearchQuery('auth')
-      const searchHistory = [
-        'Robe d\'été fleurie',
-        'Nike Air Max',
-        'Sac à main cuir',
-        'Montre connectée'
-      ];
-      
-      const trendingSearches = [
-        'Sneakers tendance',
-        'Robes de soirée',
-        'Accessoires homme',
-        'Bijoux argent'
-      ];
 
     return (
         <>
