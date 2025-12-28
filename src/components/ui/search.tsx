@@ -311,7 +311,7 @@ export default function SearchResource({open}:{open:()=>void}){
                         Recherches récentes
                       </h3>
                       <div className="space-y-2">
-                        {!isLoadingSearch && history?.map((search:any, index:number) => (
+                        {!isLoadingSearch && history && history?.map((search:any, index:number) => (
                           <button
                             key={index}
                             onClick={() => {
@@ -323,6 +323,8 @@ export default function SearchResource({open}:{open:()=>void}){
                             {search.search_term}
                           </button>
                         ))}
+
+                        {isLoadingSearch && <p>Chargement...</p>}
                       </div>
                     </div>
 
