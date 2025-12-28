@@ -206,6 +206,13 @@ export const authService = createApi({
             }),
             invalidatesTags: ['Auth'],
         }),
+        getHistorySearch:builder.query({
+            query:()=>({
+                url:'/api/v1/recents/histories',
+                method:'GET'
+            }),
+            providesTags:['Auth']
+        })
     })
 })
 
@@ -213,6 +220,7 @@ export const {
     useLoginMutation,
     useWebhookPaymentMutation,
     useControlPaymentMutation,
+    useGetHistorySearchQuery,
     useGetUserQuery,
     useLogoutMutation,
     useNewStoreMutation,

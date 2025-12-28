@@ -1,5 +1,5 @@
 import OptimizedImage from "@/components/OptimizedImage";
-import { useGetUserQuery } from "@/services/auth";
+import { useGetHistorySearchQuery, useGetUserQuery } from "@/services/auth";
 import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
 import { Clock, Search, TrendingUp, X } from "lucide-react"
@@ -229,25 +229,23 @@ export default function SearchResource({open}:{open:()=>void}){
         query: '',
       });
 
-      // État séparé pour la requête debounced
-      const [debouncedQuery, setDebouncedQuery] = useState(searchState.query);
+      // État séparé pour la requête soumise
+      const [submittedQuery, setSubmittedQuery] = useState(searchState.query);
 
-      // Effet pour gérer le debounce
+      // Reset submittedQuery quand l'input est vide pour réafficher l'historique
       useEffect(() => {
-        const timer = setTimeout(() => {
-          setDebouncedQuery(searchState.query);
-        }, 400); // Attendre 400ms après la dernière frappe
-
-        return () => {
-          clearTimeout(timer);
-        };
+        if (!searchState.query) {
+          setSubmittedQuery('');
+        }
       }, [searchState.query]);
 
-      // Utiliser debouncedQuery au lieu de searchState.query
+      // Utiliser submittedQuery au lieu de debouncedQuery
       const {data, isLoading} = useSearchByQueryQuery(
-        {query: debouncedQuery, userId: userData?.user_id ? userData.user_id : 0},
-        { skip: debouncedQuery === '' } // Skip la requête si la recherche est vide
+        {query: submittedQuery, userId: userData?.id ? userData.id : 0},
+        { skip: !submittedQuery } // Skip la requête si la recherche soumise est vide
       );
+
+      const {data:history,isLoading:isLoadingSearch} = useGetHistorySearchQuery('auth')
       const searchHistory = [
         'Robe d\'été fleurie',
         'Nike Air Max',
@@ -277,7 +275,13 @@ export default function SearchResource({open}:{open:()=>void}){
                   <X className="w-6 h-6" />
                 </button>
 
-                <div className="flex-1 relative">
+                <form 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSubmittedQuery(searchState.query);
+                  }}
+                  className="flex-1 relative"
+                >
                   <input
                     type="text"
                     value={searchState.query}
@@ -286,13 +290,15 @@ export default function SearchResource({open}:{open:()=>void}){
                     className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ed7e0f]"
                     autoFocus
                   />
-                  <Search className="absolute max-s left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                </div>
+                  <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    <Search className="w-5 h-5" />
+                  </button>
+                </form>
               </div>
 
               {/* Search Content avec défilement */}
               <div className="flex-1 overflow-y-auto py-6">
-                {searchState.query ? (
+                {submittedQuery ? (
                   <Suspense fallback={<SearchSkeleton />}>
                     <SearchResults data={data} isLoading={isLoading} />
                   </Suspense>
@@ -305,36 +311,21 @@ export default function SearchResource({open}:{open:()=>void}){
                         Recherches récentes
                       </h3>
                       <div className="space-y-2">
-                        {searchHistory.map((search, index) => (
+                        {!isLoadingSearch && history?.map((search:any, index:number) => (
                           <button
                             key={index}
-                            onClick={() => setSearchState(prev => ({ ...prev, query: search }))}
+                            onClick={() => {
+                              setSearchState(prev => ({ ...prev, query: search.search_term }));
+                              setSubmittedQuery(search.search_term);
+                            }}
                             className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
                           >
-                            {search}
+                            {search.search_term}
                           </button>
                         ))}
                       </div>
                     </div>
 
-                    {/* Tendances */}
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-4 flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4" />
-                        Tendances
-                      </h3>
-                      <div className="space-y-2">
-                        {trendingSearches.map((search, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setSearchState(prev => ({ ...prev, query: search }))}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
-                          >
-                            {search}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 )}
               </div>
