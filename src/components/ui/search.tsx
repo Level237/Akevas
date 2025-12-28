@@ -224,7 +224,7 @@ const SearchSkeleton = () => (
 
 export default function SearchResource({open}:{open:()=>void}){
   
-      const { data: userData, isLoading: isLoadingUser } = useGetUserQuery('Auth');
+      const { data: userData} = useGetUserQuery('Auth');
       const [searchState, setSearchState] = useState({
         query: '',
       });
