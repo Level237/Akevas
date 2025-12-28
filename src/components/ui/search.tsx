@@ -1,4 +1,5 @@
 import OptimizedImage from "@/components/OptimizedImage";
+import { useGetUserQuery } from "@/services/auth";
 import { useSearchByQueryQuery } from "@/services/guardService";
 import {motion} from "framer-motion"
 import { Clock, Search, TrendingUp, X } from "lucide-react"
@@ -223,7 +224,7 @@ const SearchSkeleton = () => (
 
 export default function SearchResource({open}:{open:()=>void}){
   
-
+      const { data: userData, isLoading: isLoadingUser } = useGetUserQuery('Auth');
       const [searchState, setSearchState] = useState({
         query: '',
       });
@@ -244,7 +245,7 @@ export default function SearchResource({open}:{open:()=>void}){
 
       // Utiliser debouncedQuery au lieu de searchState.query
       const {data, isLoading} = useSearchByQueryQuery(
-        {query: debouncedQuery, userId: 0},
+        {query: debouncedQuery, userId: userData?.user_id ? userData.user_id : 0},
         { skip: debouncedQuery === '' } // Skip la requête si la recherche est vide
       );
       const searchHistory = [
