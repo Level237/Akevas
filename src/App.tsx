@@ -17,9 +17,6 @@ function App() {
 
   const dispatch = useDispatch();
   const { data, isLoading, isError, isSuccess, isUninitialized } = useCheckAuthQuery(undefined, {
-      // Le `checkAuth` doit toujours être lancé au moins une fois au démarrage de l'app.
-      // Il peut être skippé si vous voulez une détection purement locale au démarrage
-      // et ne valider que sur les PrivateRoutes, mais ce n'est pas ce que vous cherchez ici.
   });
 console.log(data)
   useEffect(() => {
