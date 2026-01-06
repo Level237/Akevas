@@ -6,6 +6,9 @@ import { Product } from '@/types/products';
 import Header from '@/components/ui/header';
 import MobileNav from '@/components/ui/mobile-nav';
 
+
+
+
 const ProductListPage: React.FC = () => {
   const [pageParam] = useQueryState('page', {
     defaultValue: '1',
