@@ -222,7 +222,7 @@ export const authService = createApi({
         }),
         verifyOtp: builder.mutation({
             query: (data) => ({
-                url: "/api/verify-otp",
+                url: "/api/password/verify-otp",
                 method: "POST",
                 body: data,
             }),

@@ -86,7 +86,7 @@ export default function OtpVerificationForm() {
 
     try {
       const res = await verifyOtp({ email, otp_code: otpCode }).unwrap();
-      
+      console.log(res)
       if(res.temp_token){
         toast.success("Code vérifié avec succès", {
           position: "bottom-center",
@@ -132,7 +132,7 @@ export default function OtpVerificationForm() {
                 maxLength={1}
                 key={index}
                 value={data}
-                ref={el => inputRefs.current[index] = el}
+                ref={(el) => { inputRefs.current[index] = el }}
                 onChange={e => handleChange(e.target, index)}
                 onKeyDown={e => handleKeyDown(e, index)}
                 onPaste={handlePaste}
