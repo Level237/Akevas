@@ -29,6 +29,9 @@ import ListCustomerPage from "@/pages/admin/customers/ListCustomerPage";
 import ListOrdersPage from "@/pages/admin/orders/ListOrdersPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import AdminLoginPage from "@/pages/admin/LoginPage";
+import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
+import OtpVerificationPage from "@/pages/auth/OtpVerificationPage";
+import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import AccountPage from "@/pages/AccountPage";
 import CategoryProductsPage from "@/pages/category/CategoryProductsPage";
 import UserRootDashboard from "@/components/Layouts/UserRootDashboard";
@@ -110,6 +113,18 @@ export const routes = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />
+  },
+  {
+    path: '/verify-otp',
+    element: <OtpVerificationPage />
+  },
+{
+    path: "/reset-password/:token",
+    element: <ResetPasswordPage />
   }
   ]
 },

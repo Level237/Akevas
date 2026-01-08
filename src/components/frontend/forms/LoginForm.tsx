@@ -97,15 +97,15 @@ export default function LoginForm() {
     }
   }
   return (
-    <div className="flex flex-col px-2 py-6 ">
-      <a href="/" className="inline-flex items-center gap-2 mx-2 text-orange-600 hover:underline font-medium">
+    <div className="flex  flex-col px-2 py-6 ">
+      <a href="/" className="inline-flex  items-center gap-2 mx-2 text-orange-600 hover:underline font-medium">
             <ArrowLeft className="w-5 h-5" />
           
           </a>
    
 
-      <div className="flex flex-col space-y-2 md:px-16 mx-16 max-sm:mx-1">
-        <div className="space-y-2 flex justify-center items-center ">
+      <div className="flex  flex-col xl:mx-64 xl:justify-center xl:mt-44 space-y-2 md:px-16 mx-16 max-sm:mx-1">
+        <div className="space-y-2  flex justify-center items-center ">
           <img
             src={logo}
             alt="Logo"
@@ -164,7 +164,12 @@ export default function LoginForm() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm" htmlFor="password">Password</label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm" htmlFor="password">Password</label>
+              <a href="/forgot-password" className="text-sm font-medium text-[#ed7e0f] hover:underline">
+                Mot de passe oublié ?
+              </a>
+            </div>
             <div className="relative">
               <Input
                 id="password"

@@ -212,7 +212,28 @@ export const authService = createApi({
                 method:'GET'
             }),
             providesTags:['Auth']
-        })
+        }),
+        forgotPassword: builder.mutation({
+            query: (data) => ({
+                url: "/api/password/forgot",
+                method: "POST",
+                body: data,
+            }),
+        }),
+        verifyOtp: builder.mutation({
+            query: (data) => ({
+                url: "/api/verify-otp",
+                method: "POST",
+                body: data,
+            }),
+        }),
+        resetPassword: builder.mutation({
+            query: (data) => ({
+                url: "/api/reset-password",
+                method: "POST",
+                body: data,
+            }),
+        }),
     })
 })
 
@@ -241,5 +262,8 @@ export const {
     useVerifyPaymentMutation,
     useInitPayinMutation,
     useVerifyPayinMutation,
-    useUpdateUserMutation
+    useUpdateUserMutation,
+    useForgotPasswordMutation,
+    useVerifyOtpMutation,
+    useResetPasswordMutation
 } = authService
