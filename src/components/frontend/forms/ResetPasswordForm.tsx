@@ -6,7 +6,7 @@ import logo from "@/assets/favicon.png"
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import { useParams } from "react-router-dom";
 export default function ResetPasswordForm() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,8 +17,10 @@ export default function ResetPasswordForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const {token} =  useParams();
 
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -30,7 +32,7 @@ export default function ResetPasswordForm() {
     }
 
     try {
-      await resetPassword({ email, password, password_confirmation: confirmPassword }).unwrap();
+      await resetPassword({ email:email, password:password, temp_token:token,password_confirmation:confirmPassword }).unwrap();
       toast.success("Mot de passe réinitialisé avec succès", {
         position: "bottom-center",
       });
