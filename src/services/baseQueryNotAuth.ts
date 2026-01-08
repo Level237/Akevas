@@ -10,6 +10,8 @@ const staggeredBaseQuery = async (args: any, api: any, extraOptions: any) => {
     timeout: 10000,
 
     prepareHeaders: (headers) => {
+      headers.set('Content-Type', 'application/json');
+      headers.set('Accept', 'application/json');
       return headers;
     },
 

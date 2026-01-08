@@ -7,6 +7,7 @@ export const baseQuery = fetchBaseQuery({
     prepareHeaders: (headers) => {
 
         headers.set('Content-Type', 'application/json');
+        headers.set('Accept', 'application/json');
 
         return headers;
     }

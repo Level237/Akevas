@@ -85,7 +85,7 @@ export default function OtpVerificationForm() {
     }
 
     try {
-      const res = await verifyOtp({ email, otp_code: otpCode }).unwrap();
+      const res = await verifyOtp({ email:email, otp: otpCode }).unwrap();
       console.log(res)
       if(res.temp_token){
         toast.success("Code vérifié avec succès", {
