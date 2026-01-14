@@ -101,16 +101,16 @@ const CurrentHomeByGenderPage = () => {
         <div className="absolute inset-0">
           <OptimizedImage 
             src={currentGender?.gender_profile}
-            alt={currentGender.gender_name}
+            alt={currentGender?.gender_name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
         <div className="relative container mx-auto px-4 h-full flex items-center">
           <div className="max-w-2xl text-white">
-            <h1 className="text-5xl max-sm:text-3xl font-bold mb-4">Collection {currentGender.gender_name}</h1>
+            <h1 className="text-5xl max-sm:text-3xl font-bold mb-4">Collection {currentGender?.gender_name}</h1>
             <p className="text-xl max-sm:text-sm opacity-90">
-              {currentGender.gender_description}
+              {currentGender?.gender_description}
             </p>
           </div>
         </div>
@@ -119,8 +119,8 @@ const CurrentHomeByGenderPage = () => {
         <StoreStories shops={currentGender?.shops} isLoading={isLoading} title={`Boutiques ${currentGender?.gender_name}`} description={`Découvrez nos meilleures boutiques ${currentGender?.gender_name}`} />
       </div>  
       {/* Tendances du moment */}
-      <div className="bg-gray-200 py-16">
-        <div className="container mx-auto px-4">
+      <div className="pt-24   max-sm:pt-12 pb-24 lg:pb-44  bg-gray-200">
+        <div className="max-w-[1440px] mx-auto  max-sm:ml-2  px-4 max-sm:pr-0 sm:px-6">
           <SectionHeader title={`Produits ${currentGender?.gender_name}`} description={`Découvrez nos meilleurs produits ${currentGender?.gender_name}`} />
           <ProductListGrid products={currentGender?.products} isLoading={isLoading} />
         </div>
