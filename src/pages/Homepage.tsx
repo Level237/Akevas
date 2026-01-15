@@ -93,7 +93,7 @@ const Homepage = () => {
         
         <main className="relative">
           <GenderNavigationMobile />
-          <div className="relative ">
+          <div className="relative">
             <StoreHero />
             <StoreStories title="Boutiques en vedette" description="Découvrez les boutiques en vedette" shops={localShops} isLoading={shopsLoading} />
             <PremiumProducts />

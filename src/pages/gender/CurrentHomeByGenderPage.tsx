@@ -115,7 +115,7 @@ const CurrentHomeByGenderPage = () => {
           </div>
         </div>
       </div>}
-      <div className='mt-12'>
+      <div className='relative'>
         <StoreStories shops={currentGender?.shops} isLoading={isLoading} title={`Boutiques ${currentGender?.gender_name}`} description={`Découvrez nos meilleures boutiques ${currentGender?.gender_name}`} />
       </div>  
       {/* Tendances du moment */}
