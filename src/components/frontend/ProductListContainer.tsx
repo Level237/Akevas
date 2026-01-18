@@ -7,7 +7,7 @@ import { normalizeProduct } from '@/lib/normalizeProduct';
 import ProductCard from '@/components/products/ProductCard';
 import { Product } from '@/types/products';
 import ProductFilters from '@/components/filters/ProductFilters';
-
+import { useInView } from 'react-intersection-observer';
 type ProductListContainerProps = {
   presetCategoryIds?: number[];
   hero?: React.ReactNode;
@@ -27,14 +27,42 @@ const sortOptions = [
   { id: 'rating', label: 'Meilleures notes' }
 ];
 
-const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCategoryIds = [], hero, products: productsProp, isLoadingOverride, totalPagesOverride, currentPageOverride, getPageUrlOverride, showCategories = true }) => {
-  const [searchParams] = useQueryState('page', {
-    defaultValue: '1',
-    parse: (v) => v || '1',
-    serialize: (v) => v
-  });
-  const currentPage = currentPageOverride ?? parseInt(searchParams || '1', 10);
-  const [totalPages, setTotalPages] = useState(0);
+const ProductSkeleton = () => {
+  return (
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse border border-gray-100">
+      {/* Zone Image */}
+      <div className="aspect-square bg-gray-200" />
+      
+      {/* Zone Infos */}
+      <div className="p-4 space-y-3">
+        {/* Titre */}
+        <div className="h-4 bg-gray-200 rounded-md w-3/4" />
+        {/* Catégorie/Vendeur */}
+        <div className="h-3 bg-gray-100 rounded-md w-1/2" />
+        
+        <div className="flex items-center justify-between mt-4">
+          {/* Prix */}
+          <div className="h-6 bg-gray-200 rounded-md w-1/4" />
+          {/* Bouton */}
+          <div className="h-8 bg-gray-100 rounded-lg w-1/3" />
+        </div>
+      </div>
+    </div>
+  );
+};
+const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCategoryIds = [], hero, showCategories = true }) => {
+  
+  
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [page, setPage] = useState(1);
+
+
+
+const { ref: lastItemRef, inView: lastItemInView } = useInView({ threshold: 0.1 });
+
+ 
+  
+  
 
   const [minPrice] = useQueryState('min_price', {
     defaultValue: 0,
@@ -104,7 +132,8 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
   const [debouncedBulkPriceRange, setDebouncedBulkPriceRange] = useState(selectedBulkPriceRange);
   const [isFiltering, setIsFiltering] = useState(false);
 
-  useEffect(() => {
+
+    useEffect(() => {
     setDebouncedMinPrice(minPrice);
     setDebouncedMaxPrice(maxPrice);
     setDebouncedCategories(effectiveCategories);
@@ -141,10 +170,11 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
       return () => clearTimeout(timeoutId);
     }
   }, [minPrice, maxPrice, effectiveCategories, selectedColors, selectedAttributes, selectedGenders, isSellerMode, selectedBulkPriceRange, debouncedMinPrice, debouncedMaxPrice, debouncedCategories, debouncedColors, debouncedAttributes, debouncedGenders, debouncedSellerMode, debouncedBulkPriceRange]);
+  
 
-  const shouldSkipQuery = productsProp !== undefined;
-  const { data: { productList, totalPagesResponse } = {}, isLoading } = useGetAllProductsQuery({
-    page: currentPage,
+ 
+  const { data, isLoading, isFetching } = useGetAllProductsQuery({
+    page: page,
     min_price: debouncedMinPrice,
     max_price: debouncedMaxPrice,
     categories: debouncedCategories,
@@ -153,41 +183,40 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
     gender: debouncedGenders,
     seller_mode: debouncedSellerMode,
     bulk_price_range: debouncedBulkPriceRange
-  }, { skip: shouldSkipQuery });
+  });
+
+ 
+
+  useEffect(() => {
+    if (data?.productList) {
+      if (page === 1) {
+        // Si c'est la page 1 (nouveau filtre), on remplace tout
+        setAllProducts(data.productList);
+      } else {
+        // Sinon, on ajoute à la suite sans doublons
+        setAllProducts(prev => {
+          const existingIds = new Set(prev.map(p => p.id));
+          const newUnique = data.productList.filter((p:any) => !existingIds.has(p.id));
+          return [...prev, ...newUnique];
+        });
+      }
+    }
+  }, [data?.productList, page]);
+
+  useEffect(() => {
+    // On ne charge la suite que si le dernier élément de la page courante est visible ET qu'il reste des pages
+    if (lastItemInView && data?.hasMore && !isFetching && !isLoading) {
+      setPage(prev => prev + 1);
+      console.log('level1')
+    }
+    console.log(page)
+  }, [lastItemInView, data?.hasMore, isFetching, isLoading]);
+
   const { data: { data: categories } = {}, isLoading: categoriesLoading } = useGetCategoriesWithParentIdNullQuery('guard', {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: 30
   });
 
-  const safeProducts = (productsProp !== undefined ? productsProp : (productList || []));
-  const normalizedProducts = safeProducts.map(normalizeProduct);
-
-  useEffect(() => {
-    const pages = totalPagesOverride ?? totalPagesResponse;
-    if (pages !== undefined) {
-      setTotalPages(pages);
-    }
-  }, [totalPagesResponse, totalPagesOverride]);
-
-  useEffect(() => {
-    if (totalPages > 0 && (currentPage < 1 || currentPage > totalPages)) {
-      // redirect to 1; we can rely on URL param managed above
-      window.history.replaceState(null, '', updatePageInSearchParams(1));
-    }
-  }, [currentPage, totalPages]);
-
-  const updatePageInSearchParams = (pageNumber: number) => {
-    if (getPageUrlOverride) return getPageUrlOverride(pageNumber);
-    const params = new URLSearchParams(window.location.search);
-    params.set('page', pageNumber.toString());
-    if (minPrice > 0) params.set('min_price', minPrice.toString());
-    if (maxPrice < 500000) params.set('max_price', maxPrice.toString());
-    if (effectiveCategories.length > 0) params.set('categories', effectiveCategories.join(','));
-    if (selectedColors.length > 0) params.set('colors', selectedColors.join(','));
-    if (selectedAttributes.length > 0) params.set('attribut', selectedAttributes.join(','));
-    if (selectedGenders.length > 0) params.set('gender', selectedGenders.join(','));
-    return `?${params.toString()}`;
-  };
 
   const [sortBy, setSortBy] = useState('popular');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -233,6 +262,10 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
     setSelectedBulkPriceRange('');
   }, [presetCategoryIds, setSelectedAttributes, setSelectedBulkPriceRange, setSelectedCategories, setSelectedColors, setSelectedGenders, setIsSellerMode]);
 
+  
+  const normalizedProducts = useMemo(() => allProducts.map(normalizeProduct), [allProducts]);
+
+  
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       {hero}
@@ -301,66 +334,48 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({ presetCateg
 
           <div className="lg:col-span-3">
             <div className={viewMode === 'grid' ? 'grid grid-cols-2   max-sm:items-center sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}>
-              {(isLoadingOverride ?? isLoading) || isFiltering ? (
-                Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className={viewMode === 'grid' ? 'animate-pulse' : 'animate-pulse'}>
-                    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                      <div className="aspect-square bg-gray-200 w-full"></div>
-                      <div className="p-4 space-y-3">
-                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-                        <div className="flex items-center justify-between mt-4">
-                          <div className="h-6 bg-gray-200 rounded w-16"></div>
-                          <div className="h-8 bg-gray-200 rounded w-20"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : normalizedProducts && normalizedProducts.length > 0 ? (
-                normalizedProducts.map((product: Product) => (
-                  <ProductCard key={product.id} product={product} viewMode={viewMode} />
-                ))
-              ) : (
-                <div className="col-span-full flex flex-col items-center justify-center py-16 px-4">
-                  <div className="w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-gray-100">
-                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun produit trouvé</h3>
-                  <p className="text-gray-500 text-center max-w-sm">Aucun produit ne correspond à vos critères de recherche. Essayez de modifier vos filtres.</p>
-                  <a href={'/products'} className="mt-4 px-4 py-2 bg-[#ed7e0f] text-white rounded-lg hover:bg-[#ed7e0f]/90 transition-colors">Réinitialiser les filtres</a>
-                </div>
-              )}
-            </div>
 
-            {normalizedProducts && normalizedProducts.length > 0 && (
-              <div className="flex items-center max-sm:w-full justify-center gap-2 max-sm:mt-0 max-sm:mt-12  max-sm:mb-24 mx-96 max-sm:mx-1 mt-8">
-                {currentPage > 1 && (
-                  <a href={updatePageInSearchParams(currentPage - 1)} className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block">Précédent</a>
+             {normalizedProducts.map((product, idx) => {
+                // On observe le dernier élément de chaque page de 18
+                const isLastOfBatch = (idx + 1) % 18 === 0 || idx === normalizedProducts.length - 1;
+                return (
+                  <div
+                    key={product.id}
+                    ref={isLastOfBatch ? lastItemRef : undefined}
+                  >
+                    <ProductCard product={product} viewMode={viewMode} />
+                  </div>
+                );
+              })}
+
+          {(isLoading || isFiltering) && normalizedProducts.length === 0 && (
+      Array.from({ length: 6 }).map((_, index) => (
+        <ProductSkeleton key={`initial-loader-${index}`} />
+      ))
+    )}
+
+
+ 
+
+              <div ref={lastItemRef} className="h-20 flex flex-col items-center justify-center mt-8 w-full col-span-full">
+                {isFetching && data?.hasMore && (
+                  <div className="flex flex-col items-center gap-2">
+                     <div className="w-8 h-8 border-4 border-[#ed7e0f] border-t-transparent rounded-full animate-spin"></div>
+                     <p className="text-sm text-gray-500 font-medium">Chargement des produits suivants...</p>
+                  </div>
                 )}
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: totalPages }, (_, index) => {
-                    const pageNumber = index + 1;
-                    if (pageNumber === 1 || pageNumber === totalPages || (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)) {
-                      return (
-                        <a key={pageNumber} href={updatePageInSearchParams(pageNumber)} className={`w-10 h-10 max-sm:text-xs rounded-lg flex items-center justify-center ${currentPage === pageNumber ? 'bg-[#ed7e0f] text-white' : 'bg-white hover:bg-gray-50'}`}>
-                          {pageNumber}
-                        </a>
-                      );
-                    } else if (pageNumber === currentPage - 3 || pageNumber === currentPage + 3) {
-                      return <span key={pageNumber}>...</span>;
-                    }
-                    return null;
-                  })}
-                </div>
-                {currentPage < totalPages && (
-                  <a href={updatePageInSearchParams(currentPage + 1)} className="px-3 py-2 max-sm:hidden rounded-lg border border-gray-300 hover:bg-gray-50 inline-block">Suivant</a>
+                {!data?.hasMore && allProducts.length > 0 && (
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-2xl">✨</span>
+                    <p className="text-gray-400 text-sm font-medium">
+                      Vous avez exploré tout le catalogue Akevas
+                    </p>
+                  </div>
                 )}
               </div>
-            )}
+            </div>
+
+            {/* Pagination removed for infinite scroll */}
           </div>
         </div>
       </main>

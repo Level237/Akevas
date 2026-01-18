@@ -145,44 +145,33 @@ export const guardService = createApi({
             providesTags: ['guard'],
         }),
         getAllProducts: builder.query({
-            query: ({ page, min_price, max_price, categories, colors, attribut, gender, seller_mode, bulk_price_range }) => {
+            query: ({ page = 1, min_price, max_price, categories, colors, attribut, gender, seller_mode, bulk_price_range }) => {
                 const params = new URLSearchParams();
+                
+                // On utilise 'page' au lieu de 'cursor'
                 params.append('page', page.toString());
-                if (min_price && min_price > 0) {
-                    params.append('min_price', min_price.toString());
-                }
-                if (max_price && max_price < 500000) {
-                    params.append('max_price', max_price.toString());
-                }
-                if (categories && categories.length > 0) {
-                    params.append('categories', categories.join(','));
-                }
-                if (colors && colors.length > 0) {
-                    params.append('colors', colors.join(','));
-                }
-                if (attribut && attribut.length > 0) {
-                    params.append('attribut', attribut.join(','));
-                }
-                if (gender && gender.length > 0) {
-                    params.append('gender', gender.join(','));
-                }
-
-                if (seller_mode !== false) {
-                    params.append('seller_mode', seller_mode.toString());
-                }
-                if (bulk_price_range) {
-                    params.append('bulk_price_range', bulk_price_range);
-                }
+                
+                if (min_price && min_price > 0) params.append('min_price', min_price.toString());
+                if (max_price && max_price < 500000) params.append('max_price', max_price.toString());
+                if (categories?.length > 0) params.append('categories', categories.join(','));
+                if (colors?.length > 0) params.append('colors', colors.join(','));
+                if (attribut?.length > 0) params.append('attribut', attribut.join(','));
+                if (gender?.length > 0) params.append('gender', gender.join(','));
+                if (seller_mode) params.append('seller_mode', 'true');
+                if (bulk_price_range) params.append('bulk_price_range', bulk_price_range);
+        
                 return {
                     url: `/api/all/products?${params.toString()}`,
                     method: "GET",
                 };
             },
-            transformResponse: (response: { data: Product[], meta: { last_page: number, current_page: number, total: number } }) => ({
+            transformResponse: (response: any) => ({
                 productList: response.data,
-                totalPagesResponse: response.meta.last_page,
-                currentPageResponse: response.meta.current_page,
-                totalProductsResponse: response.meta.total,
+                // On extrait les infos de pagination depuis l'objet 'meta'
+                currentPage: response.meta.current_page,
+                lastPage: response.meta.last_page,
+                total: response.meta.total,
+                hasMore: response.meta.current_page < response.meta.last_page
             }),
             providesTags: ['guard'],
         }),
