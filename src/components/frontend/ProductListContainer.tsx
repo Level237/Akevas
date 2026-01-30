@@ -156,6 +156,8 @@ const { ref: lastItemRef, inView: lastItemInView } = useInView({ threshold: 0.1 
 
     if (hasPriceChanged || hasCategoriesChanged || hasColorsChanged || hasAttributesChanged || hasGendersChanged || hasSellerModeChanged || hasBulkPriceRangeChanged) {
       setIsFiltering(true);
+      console.log('loin')
+      
       const timeoutId = setTimeout(() => {
         setDebouncedMinPrice(minPrice);
         setDebouncedMaxPrice(maxPrice);
@@ -166,6 +168,7 @@ const { ref: lastItemRef, inView: lastItemInView } = useInView({ threshold: 0.1 
         setDebouncedSellerMode(isSellerMode);
         setDebouncedBulkPriceRange(selectedBulkPriceRange);
         setIsFiltering(false);
+        location.reload();
       }, 500);
       return () => clearTimeout(timeoutId);
     }
@@ -183,6 +186,9 @@ const { ref: lastItemRef, inView: lastItemInView } = useInView({ threshold: 0.1 
     gender: debouncedGenders,
     seller_mode: debouncedSellerMode,
     bulk_price_range: debouncedBulkPriceRange
+  },{
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: 30
   });
 
  
@@ -317,7 +323,10 @@ const { ref: lastItemRef, inView: lastItemInView } = useInView({ threshold: 0.1 
               onCategoryToggle={toggleCategory}
               onClearAll={clearAllFilters}
               isMobile={false}
-              onCloseMobile={() => setShowMobileFilters(false)}
+              onCloseMobile={() => {
+                setShowMobileFilters(false)
+                location.reload();
+              }}
               isFiltering={isFiltering}
               selectedColors={selectedColors}
               onColorToggle={toggleColor}

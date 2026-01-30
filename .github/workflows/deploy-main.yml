@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: hostinger
     steps:
       - name: Checkout Code Akevas
         uses:  actions/checkout@v3
@@ -29,11 +30,13 @@ jobs:
           echo 'RewriteCond %{REQUEST_FILENAME} !-d' >> ./dist/.htaccess
           echo 'RewriteRule ^ index.html [QSA,L]' >> ./dist/.htaccess
           
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Deploy via SSH (Rsync)
+        uses: Burnett01/rsync-deployments@5.2.1
         with:
-          server: ftp.viens-yamo.com
-          username: akevasftp@akevas.com
-          password: jMylEA6+(oHD
-          local-dir: ./dist/
-          server-dir: /
+          switches: -avzr --delete
+          path: ./dist/
+          remote_path: domains/akevas.com/public_html/
+          remote_host: ${{ secrets.HOST }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_key: ${{ secrets.SSH_KEY }}
+          remote_port: ${{ secrets.PORT }}

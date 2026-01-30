@@ -211,7 +211,10 @@ const ProductFilters = ({
                     type="radio"
                     name="priceType"
                     checked={isSellerMode === option.value}
-                    onChange={() => onSellerToggle?.(option.value)}
+                    onChange={() => {
+                      onSellerToggle?.(option.value)
+                      
+                    }}
                     className="sr-only"
                   />
                   <span className={`text-xs font-medium transition-colors

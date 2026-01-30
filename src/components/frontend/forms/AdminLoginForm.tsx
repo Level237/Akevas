@@ -20,6 +20,8 @@ export default function AdminLoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [login, { isLoading, isError, error }] = useLoginMutation()
+
+    
     if (error) {
         console.log(error)
     }
@@ -28,7 +30,7 @@ export default function AdminLoginForm() {
         try {
             const userObject = { phone_number: phone, password: password, role_id: 1 }
             const userData = await login(userObject)
-
+            console.log(userData)
             const cookies = new Cookies();
             cookies.set('accessToken', userData.data.access_token, { path: '/', secure: true });
             cookies.set('refreshToken', userData.data.refresh_token, { path: '/', secure: true });
