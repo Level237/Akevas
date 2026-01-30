@@ -67,7 +67,7 @@ export default function LoginForm() {
       setGoogleLoading(true);
 
       // 1. Définir l'URL de base de l'API
-      const API_BASE_URL = "https://api-akevas.akevas.com";
+      const API_BASE_URL = "https://api.akevas.com";
 
       // 2. Construire l'URL exacte de la route d'initialisation (GET /api/v1/auth/google)
       // Assurez-vous que le préfixe de votre groupe de route est bien 'api/v1' ou adaptez-le
