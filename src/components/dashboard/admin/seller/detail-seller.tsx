@@ -9,9 +9,9 @@ import { Check, X, MapPin, Phone, Mail, Globe, ArrowLeft } from "lucide-react"
 import { useNavigate, useParams } from 'react-router-dom';
 import { CheckStateSeller } from './list-sellers';
 
-interface DetailSellerProps{
-    shop:Seller,
-    isLoading:boolean
+interface DetailSellerProps {
+  shop: Seller,
+  isLoading: boolean
 }
 
 // Ajout du composant ImageViewer
@@ -19,7 +19,7 @@ const ImageViewer = ({ src, onClose }: { src: string; onClose: () => void }) => 
   if (!src || src === "/placeholder.svg") return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center"
       onClick={(e) => {
         e.preventDefault();
@@ -28,7 +28,7 @@ const ImageViewer = ({ src, onClose }: { src: string; onClose: () => void }) => 
       }}
     >
       <div className="relative w-full h-full flex items-center justify-center p-4">
-        <button 
+        <button
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -52,8 +52,8 @@ const ImageViewer = ({ src, onClose }: { src: string; onClose: () => void }) => 
   );
 };
 
-export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
-  const [confirmOrNotShop, {isLoading:isConfirm}] = useConfirmOrNotShopMutation();
+export default function DetailSeller({ shop, isLoading }: DetailSellerProps) {
+  const [confirmOrNotShop, { isLoading: isConfirm }] = useConfirmOrNotShopMutation();
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -64,9 +64,9 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
     if (state === "1") {
       const data = {
         state: state,
-        isPublished: true,
-        shop_level:"2",
-        isSeller:true
+        isPublished: 1,
+        shop_level: "2",
+        isSeller: true
       };
       await confirmOrNotShop({
         shop_id: shop.shop.shop_id,
@@ -76,17 +76,17 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
     }
   }
 
-  const decline=async()=>{
+  const decline = async () => {
     if (rejectReason.trim()) {
       const data = {
         state: "2",
-        isPublished: false,
-        isSeller:false,
-        shop_level:"1",
-        user_id:shop.id,
+        isPublished: 0,
+        isSeller: false,
+        shop_level: "1",
+        user_id: shop.id,
         message: rejectReason
       };
-      const res=await confirmOrNotShop({
+      const res = await confirmOrNotShop({
         shop_id: shop.shop.shop_id,
         formData: data
       });
@@ -112,7 +112,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
         </div>
       }
 
-      {!isLoading &&  
+      {!isLoading &&
         <div>
           {/* Bouton retour */}
           <div className="mb-4">
@@ -128,16 +128,16 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Détails de la boutique</h1>
             <div className="space-x-2 max-sm:flex max-sm:flex-col max-sm:gap-4">
-              {shop.shop.state!=="2"  && (
-                <Button disabled={isConfirm}  onClick={()=>setOpenRejectDialog(true)} variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
+              {shop.shop.state !== "2" && (
+                <Button disabled={isConfirm} onClick={() => setOpenRejectDialog(true)} variant="outline" className="bg-red-100 hover:bg-red-200 text-red-600">
                   <X className="mr-2 h-4 w-4" /> Rejeter
                 </Button>
               )}
-              {shop.shop.state!=="1" && (
-                <Button disabled={isConfirm}  onClick={()=>confirm("1")} variant="outline" className="bg-green-100 hover:bg-green-200 text-green-600">
-                  {isLoading ?  <div className="animate-spin inline-block w-5 h-5 size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
+              {shop.shop.state !== "1" && (
+                <Button disabled={isConfirm} onClick={() => confirm("1")} variant="outline" className="bg-green-100 hover:bg-green-200 text-green-600">
+                  {isLoading ? <div className="animate-spin inline-block w-5 h-5 size-6 border-[3px] border-current border-t-transparent text-white/90 rounded-full" role="status" aria-label="loading">
                     <span className="sr-only">Loading...</span>
-                  </div>: <><Check className="mr-2 h-4 w-4" /> Approuver</>}
+                  </div> : <><Check className="mr-2 h-4 w-4" /> Approuver</>}
                 </Button>
               )}
               <Dialog open={openRejectDialog} onOpenChange={setOpenRejectDialog}>
@@ -183,9 +183,9 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
               </CardHeader>
               <CardContent>
                 {selectedImage && (
-                  <ImageViewer 
-                    src={selectedImage} 
-                    onClose={() => setSelectedImage(null)} 
+                  <ImageViewer
+                    src={selectedImage}
+                    onClose={() => setSelectedImage(null)}
                   />
                 )}
                 <div className="mb-6">
@@ -278,7 +278,7 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
                 </CardHeader>
                 <CardContent>
                   <div className='flex flex-wrap gap-2'>
-                    {shop.shop.categories?.map((category,index)=>(
+                    {shop.shop.categories?.map((category, index) => (
                       <p className='text-sm bg-gray-100 p-2 rounded-md' key={index}>{category.category_name}</p>
                     ))}
                   </div>
@@ -292,9 +292,9 @@ export default function DetailSeller({shop,isLoading}:DetailSellerProps) {
   )
 }
 
-export function DetailSellerContainer(){
+export function DetailSellerContainer() {
   const { id } = useParams();
   const { data: { data: shop } = {}, isLoading } = useGetSellerQuery(id);
 
-  return <DetailSeller shop={shop} isLoading={isLoading}/>
+  return <DetailSeller shop={shop} isLoading={isLoading} />
 }

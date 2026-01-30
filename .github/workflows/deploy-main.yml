@@ -33,7 +33,7 @@ jobs:
       - name: Deploy via SSH (Rsync)
         uses: Burnett01/rsync-deployments@5.2.1
         with:
-          switches: -avzr --delete
+          switches: -avzr --delete --exclude='api' --exclude='seller' --exclude='delivery'
           path: ./dist/
           remote_path: domains/akevas.com/public_html/
           remote_host: ${{ secrets.HOST }}

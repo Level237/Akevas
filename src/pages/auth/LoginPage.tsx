@@ -13,7 +13,7 @@ export default function LoginPage() {
         {/* Left Column - Login Form */}
         <div className="relative">
 
-        <div className="absolute top-4 left-4 max-sm:block  sm:hidden">
+          <div className="absolute top-4 left-4 max-sm:block  sm:hidden">
             <button
               onClick={() => navigate(-1)}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -48,7 +48,7 @@ export default function LoginPage() {
 
 
         </Card>
-        
+
       </div>
     </div>
   );
