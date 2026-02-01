@@ -148,7 +148,7 @@ export default function Header({
               />
             </div>
             {/* Coins */}
-            <div className="hidden xs:flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full bg-[#fff7f0] border border-[#ed7e0f]/20 text-[#ed7e0f] font-semibold text-xs sm:text-sm">
+            <div className="flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full bg-[#fff7f0] border border-[#ed7e0f]/20 text-[#ed7e0f] font-semibold text-xs sm:text-sm">
               <Coins className="w-4 h-4 mr-1" />
               <span>{sellerData?.shop?.coins ?? 0}</span>
             </div>

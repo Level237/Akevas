@@ -88,7 +88,7 @@ const CreateProductPage: React.FC = () => {
     const [selectedAttributeId, setSelectedAttributeId] = useState<number | null>(null);
     const [globalColorPrice, setGlobalColorPrice] = useState<number>(0);
     const [selectedAttributeType, setSelectedAttributeType] = useState<string | null>(null);
-    
+
     // State for VariationConfigModal
     const [isVariationModalOpen, setIsVariationModalOpen] = useState(false);
     const [pendingVariationData, setPendingVariationData] = useState<{
@@ -267,7 +267,7 @@ const CreateProductPage: React.FC = () => {
         const { frameId, attributeValueId, attributeValueName } = pendingVariationData;
 
         // Check if attribute value already exists in the frame
-        setVariationFrames(prevFrames => 
+        setVariationFrames(prevFrames =>
             prevFrames.map(frame => {
                 if (frame.id === frameId) {
                     const existingSizeIndex = frame.sizes.findIndex(s => s.id === attributeValueId);
@@ -337,7 +337,7 @@ const CreateProductPage: React.FC = () => {
             }
         }
 
-        
+
 
         // Validation pour les produits simples
         if (productType === 'simple') {
@@ -450,7 +450,7 @@ const CreateProductPage: React.FC = () => {
                 });
                 return;
             }
-            
+
             if (!description.trim()) {
                 toast.error('La description du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
@@ -458,7 +458,7 @@ const CreateProductPage: React.FC = () => {
                 });
                 return;
             }
-            
+
             if (gender === 0) {
                 toast.error('Le genre du produit est obligatoire', {
                     description: "Veuillez remplir tous les champs obligatoires",
@@ -639,7 +639,7 @@ const CreateProductPage: React.FC = () => {
                         if (variation.sizes && variation.sizes.length > 0) {
                             variation.sizes.forEach(size => {
                                 const attributeValueId = size.id; // Assuming size.id is the attribute value ID
-                                
+
 
                                 acc[colorId].sizes.push({
                                     id: size.id,
@@ -654,7 +654,7 @@ const CreateProductPage: React.FC = () => {
                         if (variation.shoeSizes && variation.shoeSizes.length > 0) {
                             variation.shoeSizes.forEach(shoeSize => {
                                 const attributeValueId = shoeSize.id; // Assuming shoeSize.id is the attribute value ID
-                              
+
 
                                 acc[colorId].shoeSizes.push({
                                     id: shoeSize.id,
@@ -769,7 +769,7 @@ const CreateProductPage: React.FC = () => {
     };
 
 
-    
+
 
     const addVariationFrame = () => {
         setVariationFrames(prevFrames => [
@@ -1041,17 +1041,17 @@ const CreateProductPage: React.FC = () => {
                                     </svg>
                                 </button>
                                 <div className='flex max-sm:flex-col'>
-                                <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
-                                    {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
-                                    
-                                </h1>
-                                {isWholesale && (
+                                    <h1 className="text-xl font-bold bg-gradient-to-r from-[#6e0a13] to-orange-600 bg-clip-text text-transparent">
+                                        {productType === 'simple' ? 'Produit simple' : 'Produit variable'}
+
+                                    </h1>
+                                    {isWholesale && (
                                         <span className="text-center gap-1 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-full">
                                             Vente en gros
                                         </span>
                                     )}
                                 </div>
-                                
+
                                 <button
                                     type="submit"
                                     className="p-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500"
@@ -1534,7 +1534,7 @@ const CreateProductPage: React.FC = () => {
                                                                             }
                                                                         });
                                                                     }
-                                                                    
+
                                                                     setVariants([]);
                                                                     // Reset to a single empty frame
                                                                     setVariationFrames([{
@@ -1554,8 +1554,8 @@ const CreateProductPage: React.FC = () => {
                                                                 }}
                                                                 className={`
                                                                     relative flex flex-col items-start p-2 rounded-xl border-2 transition-all duration-200 text-left
-                                                                    ${isSelected 
-                                                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 shadow-sm' 
+                                                                    ${isSelected
+                                                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 shadow-sm'
                                                                         : 'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'
                                                                     }
                                                                 `}
@@ -1566,7 +1566,7 @@ const CreateProductPage: React.FC = () => {
                                                                 <span className={`font-medium text-xs ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>
                                                                     {attr.attribute_name}
                                                                 </span>
-                                                                
+
                                                                 {isSelected && (
                                                                     <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#ed7e0f]" />
                                                                 )}
@@ -1678,7 +1678,7 @@ const CreateProductPage: React.FC = () => {
                                                                                     if (selectedValue) {
                                                                                         // Get color info for the modal
                                                                                         const color = getAttributes?.[0]?.values.find((c: any) => c.id === frame.color.id);
-                                                                                        
+
                                                                                         setPendingVariationData({
                                                                                             frameId: frame.id,
                                                                                             attributeValueId: selectedValueId,
@@ -1696,13 +1696,13 @@ const CreateProductPage: React.FC = () => {
                                                                                 <SelectContent>
                                                                                     {getAttributeValueByGroup?.map((group: any) => {
                                                                                         // Filtrer les valeurs déjà sélectionnées
-                                                                                        const availableValues = group.values.filter((value: any) => 
+                                                                                        const availableValues = group.values.filter((value: any) =>
                                                                                             !frame.sizes.some((size: any) => size.id === value.id)
                                                                                         );
-                                                                                        
+
                                                                                         // Ne pas afficher le groupe s'il n'y a plus de valeurs disponibles
                                                                                         if (availableValues.length === 0) return null;
-                                                                                        
+
                                                                                         return (
                                                                                             <SelectGroup key={group.group_id}>
                                                                                                 <SelectLabel>{group.group_label}</SelectLabel>
@@ -1847,11 +1847,11 @@ const CreateProductPage: React.FC = () => {
                                                                         <div className="flex flex-col items-start gap-2 mb-3">
                                                                             <div className='flex items-center gap-2'>
                                                                                 <div>
-                                                                                <div
-                                                                                    className="w-5 h-5 rounded-full border border-gray-200"
-                                                                                    style={{ backgroundColor: color.hex_color }}
-                                                                                />
-                                                                                <span className="text-base text-sm font-medium">{color.value}</span>
+                                                                                    <div
+                                                                                        className="w-5 h-5 rounded-full border border-gray-200"
+                                                                                        style={{ backgroundColor: color.hex_color }}
+                                                                                    />
+                                                                                    <span className="text-base text-sm font-medium">{color.value}</span>
                                                                                 </div>
                                                                                 <div>
 
@@ -1888,8 +1888,8 @@ const CreateProductPage: React.FC = () => {
                                                                                         }
                                                                                     });
                                                                                     return (
-                                                                                        <div 
-                                                                                            key={attributeItem.id} 
+                                                                                        <div
+                                                                                            key={attributeItem.id}
                                                                                             className="bg-gray-50 rounded-lg p-3 w-full cursor-pointer hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200"
                                                                                             onClick={() => {
                                                                                                 setPendingVariationData({
