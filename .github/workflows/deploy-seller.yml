@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: hostinger
     steps:
       - name: Checkout Code Seller Akevas
         uses:  actions/checkout@v3
@@ -32,8 +33,10 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.viens-yamo.com
-          username: akevasftp@akevas.com
-          password: jMylEA6+(oHD
-          local-dir: ./dist/
-          server-dir: /seller/
+          switches: -avzr --delete --exclude='api' --exclude='seller' --exclude='delivery'
+          path: ./dist/
+          remote_path: domains/akevas.com/public_html/seller/
+          remote_host: ${{ secrets.HOST }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_key: ${{ secrets.SSH_KEY }}
+          remote_port: ${{ secrets.PORT }}
