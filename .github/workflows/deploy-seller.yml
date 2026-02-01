@@ -1,4 +1,4 @@
-name: Deploy to seller.akevas.com
+name: Deploy to Akevas.com
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: hostinger
     steps:
-      - name: Checkout Code Seller Akevas
+      - name: Checkout Code Akevas
         uses:  actions/checkout@v3
 
       - name: Install pnpm
@@ -30,8 +30,8 @@ jobs:
           echo 'RewriteCond %{REQUEST_FILENAME} !-d' >> ./dist/.htaccess
           echo 'RewriteRule ^ index.html [QSA,L]' >> ./dist/.htaccess
           
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Deploy via SSH (Rsync)
+        uses: Burnett01/rsync-deployments@5.2.1
         with:
           switches: -avzr --delete --exclude='api' --exclude='seller' --exclude='delivery'
           path: ./dist/
