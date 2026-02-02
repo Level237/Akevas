@@ -9,7 +9,7 @@ export const PrivateRoute = () => {
     const dispatch = useDispatch();
 
     // Le seul moyen de savoir si l'utilisateur est authentifié est ici :
-    const { data, isLoading, isError} = useCheckAuthQuery(undefined, {
+    const { data, isLoading, isError } = useCheckAuthQuery(undefined, {
         // On veut absolument lancer la requête à chaque fois
         refetchOnMountOrArgChange: true,
     });
@@ -25,18 +25,18 @@ export const PrivateRoute = () => {
     // 1. Tant que le backend n'a pas répondu → on bloque le rendu
     if (isLoading) {
         return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ed7e0f]"></div>
-      </div>
-    );
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ed7e0f]"></div>
+            </div>
+        );
     }
 
     // 2. Backend dit : PAS AUTHENTIFIÉ → redirect immédiate
     if (isError || data?.isAuthenticated === false) {
+        const redirectPath = encodeURIComponent(location.pathname + location.search);
         return (
             <Navigate
-                to="/login"
-                state={{ from: location }}
+                to={`/login?redirect=${redirectPath}`}
                 replace
             />
         );

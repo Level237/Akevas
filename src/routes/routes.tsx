@@ -45,9 +45,9 @@ export const routes = createBrowserRouter([
     element: <Homepage />
   },
   {
-        path: "*",
-        element: <NotFoundPage />
-      },
+    path: "*",
+    element: <NotFoundPage />
+  },
   {
     path: '/payment/mobile-money',
     element: <MobileMoneyPaymentPage />
@@ -64,54 +64,54 @@ export const routes = createBrowserRouter([
     path: '/coins/ticket/:ref',
     element: <ConfirmationPage />
   },
- {
-  path: '/',
-  element: <GuardRoute />,
-  children: [
-    {
-      path: '/login',
-      element: <LoginPage />,
-    },
-    {
-    path: '/authenticate',
-    element: <AuthenticatePage />
-  },
-    {
-    path: '/seller-registration/personal-info',
-    element: <PersonalInfoPage />
-  }, {
-    path: '/seller-registration/security-info',
-    element: <SecurityInfoPage />
-  },
   {
-    path: '/seller-registration/shop-info',
-    element: <ShopInfoPage />
+    path: '/',
+    element: <GuardRoute />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+      {
+        path: '/authenticate',
+        element: <AuthenticatePage />
+      },
+      {
+        path: '/seller-registration/personal-info',
+        element: <PersonalInfoPage />
+      }, {
+        path: '/seller-registration/security-info',
+        element: <SecurityInfoPage />
+      },
+      {
+        path: '/seller-registration/shop-info',
+        element: <ShopInfoPage />
+      },
+      {
+        path: '/seller-registration/seller-type',
+        element: <SellerTypePage />
+      },
+      {
+        path: '/seller-registration/address-info',
+        element: <AddressInfoPage />
+      },
+      {
+        path: '/seller-registration/generating',
+        element: <StoreGenerationPage />
+      },
+      {
+        path: '/seller-registration/identity-info',
+        element: <IdentityInfoPage />
+      },
+    ]
   },
-  {
-    path: '/seller-registration/seller-type',
-    element: <SellerTypePage />
-  },
-  {
-    path: '/seller-registration/address-info',
-    element: <AddressInfoPage />
-  },
-  {
-    path: '/seller-registration/generating',
-    element: <StoreGenerationPage />
-  },
-  {
-    path: '/seller-registration/identity-info',
-    element: <IdentityInfoPage />
-  },
-  ]
-},
 
-  
+
   {
     path: '/help',
     element: <HelpCenterPage />
   },
- 
+
   {
     path: '/checkout/boost',
     element: <CheckoutBoostPage />
@@ -120,79 +120,79 @@ export const routes = createBrowserRouter([
     path: '/checkout/recharge',
     element: <CheckoutRechargePage />
   },
-  
-  {
-    path:"/",
-    element: <PrivateRoute />,
-     children: [
-    {
-      element: <SellerRootDashboard />,
-      children: [
-        {
-        path: '/seller/dashboard',
-        element: <DashboardPage />
-      },
-      {
-        path: '/seller/create-product',
-        element: <CreateProductPage />
-      },
-      {
-        path: '/seller/product/edit/:url',
-        element: <EditProductPage />
-      },
-      {
-        path: "/orders",
-        element: <OrdersPage />
-      },
-      {
-        path: '/seller/orders/:orderId',
-        element: <OrderDetailPage />
-      },
-      {
-        path: '/recharge',
-        element: <RechargePage />
-      },
-      {
-        path: '/seller/update-docs',
-        element: <UpdateShopPage />
-      },
-      {
-        path: '/shop-reviews',
-        element: <ReviewsPage />
-      },
-      {
 
-        path: '/shop/editor',
-        element: <StoreEditorPage />
-      },
+  {
+    path: "/",
+    element: <PrivateRoute />,
+    children: [
       {
-        path: '/seller/products',
-        element: <DashboardProductListPage />
+        element: <SellerRootDashboard />,
+        children: [
+          {
+            path: '/seller/dashboard',
+            element: <DashboardPage />
+          },
+          {
+            path: '/seller/create-product',
+            element: <CreateProductPage />
+          },
+          {
+            path: '/seller/product/edit/:url',
+            element: <EditProductPage />
+          },
+          {
+            path: "/orders",
+            element: <OrdersPage />
+          },
+          {
+            path: '/seller/orders/:orderId',
+            element: <OrderDetailPage />
+          },
+          {
+            path: '/recharge',
+            element: <RechargePage />
+          },
+          {
+            path: '/seller/update-docs',
+            element: <UpdateShopPage />
+          },
+          {
+            path: '/shop-reviews',
+            element: <ReviewsPage />
+          },
+          {
+
+            path: '/shop/editor',
+            element: <StoreEditorPage />
+          },
+          {
+            path: '/seller/products',
+            element: <DashboardProductListPage />
+          },
+          {
+            path: '/catalogue',
+            element: <SellerCatalog />
+          },
+          {
+            path: '/account',
+            element: <AccountPage />
+          },
+          {
+            path: '/shop/customize',
+            element: <StoreCustomizationPage />
+          },
+
+          {
+            path: 'seller/notifications',
+            element: <NotificationsPage />
+          },
+          {
+            path: 'seller/notifications/:notificationId',
+            element: <NotificationsPage />
+          },
+        ]
       },
-      {
-        path: '/catalogue',
-        element: <SellerCatalog />
-      },
-      {
-        path: '/account',
-        element: <AccountPage />
-      },
-      {
-        path: '/shop/customize',
-        element: <StoreCustomizationPage />
-      },
-      
-      {
-        path: 'seller/notifications',
-        element: <NotificationsPage />
-      },
-      {
-        path: 'seller/notifications/:notificationId',
-        element: <NotificationsPage />
-      },
-      ]
-    },
-     
+
     ]
   },
   {
@@ -215,7 +215,7 @@ export const routes = createBrowserRouter([
     element: <ShopsPage />
   },
 
-  
+
 
 
 ]);
