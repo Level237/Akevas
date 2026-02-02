@@ -65,7 +65,7 @@ const EditProductPage: React.FC = () => {
     const [isLoadingProductInput, setIsLoadingProductInput] = useState(true);
 
     const { data: product, isLoading: isLoadingProduct } = useGetEditProductQuery(url || skipToken);
-    
+
 
     // Base product fields
     const [name, setName] = useState('');
@@ -134,7 +134,7 @@ const EditProductPage: React.FC = () => {
             setIsOnlyWhole(product.is_only_wholesale === 1 || product.is_only_wholesale === true);
             const city = product.residence == "Douala" ? "1" : "2";
             setCity(city);
-            
+
             // Set wholesale prices if available
             if (product.productWholeSales && product.productWholeSales.length > 0) {
                 setWholesalePrices(product.productWholeSales);
@@ -145,29 +145,29 @@ const EditProductPage: React.FC = () => {
             setProductType(hasVariations ? 'variable' : 'simple');
 
             // Set categories
-             if (product?.parent_category && product?.parent_category.length > 0) {
-        const categoryIds = product?.parent_category.map((cat:any) => cat.id);
-        setSelectedCategories(categoryIds);
-        console.log(product)
-        // Déterminer le genre basé sur les catégories
-        if (product?.parent_category.some((cat:any) => cat.category_name.toLowerCase().includes('femme'))) {
-          setGender(2);
-        } else if (product.parent_category.some((cat:any) => cat.category_name.toLowerCase().includes('homme'))) {
-          setGender(1);
-        } else if (product.parent_category.some((cat:any) => cat.category_name.toLowerCase().includes('enfant'))) {
-          setGender(3);
-        } else {
-          setGender(4); // Mixte par défaut
-        }
-      }
+            if (product?.parent_category && product?.parent_category.length > 0) {
+                const categoryIds = product?.parent_category.map((cat: any) => cat.id);
+                setSelectedCategories(categoryIds);
+                console.log(product)
+                // Déterminer le genre basé sur les catégories
+                if (product?.parent_category.some((cat: any) => cat.category_name.toLowerCase().includes('femme'))) {
+                    setGender(2);
+                } else if (product.parent_category.some((cat: any) => cat.category_name.toLowerCase().includes('homme'))) {
+                    setGender(1);
+                } else if (product.parent_category.some((cat: any) => cat.category_name.toLowerCase().includes('enfant'))) {
+                    setGender(3);
+                } else {
+                    setGender(4); // Mixte par défaut
+                }
+            }
 
-      if (product?.child_category && product?.child_category.length > 0) {
-        const categoryIds = product.child_category.map((cat:any) => cat.id);
-        setSelectedSubCategories(categoryIds);
-        
-        // Déterminer le genre basé sur les catégories
-      }
-      
+            if (product?.child_category && product?.child_category.length > 0) {
+                const categoryIds = product.child_category.map((cat: any) => cat.id);
+                setSelectedSubCategories(categoryIds);
+
+                // Déterminer le genre basé sur les catégories
+            }
+
 
             // Handle existing featured image
             if (product.product_profile) {
@@ -262,7 +262,7 @@ const EditProductPage: React.FC = () => {
                                 }
                                 // Store wholesale prices
                                 if (attr.id && attr.wholesale_prices && Array.isArray(attr.wholesale_prices) && !wholesalePrices[attr.id]) {
-                                     wholesalePrices[attr.id] = attr.wholesale_prices;
+                                    wholesalePrices[attr.id] = attr.wholesale_prices;
                                 }
                             });
                         }
@@ -277,7 +277,7 @@ const EditProductPage: React.FC = () => {
     }, [product, isLoadingProduct, availableAttributes]);
 
 
-   
+
     // Initialize attributes like in CreateProductPage
     useEffect(() => {
         const attributesArray = getAttributes?.data || [];
@@ -329,11 +329,11 @@ const EditProductPage: React.FC = () => {
         if (productType === 'variable' && variationFrames.length > 0) {
             generateVariations();
         } else if (productType === 'variable' && variationFrames.length === 0 && selectedAttributeType) {
-             // If product type is variable but no frames exist, and an attribute type is selected,
-             // it might mean we need to initialize with a frame.
-             if (variationFrames.length === 0) {
+            // If product type is variable but no frames exist, and an attribute type is selected,
+            // it might mean we need to initialize with a frame.
+            if (variationFrames.length === 0) {
                 addVariationFrame(); // Add a default frame to start if none exists
-             }
+            }
         }
         // Dependencies: variationFrames, getAttributes (for color values), attributes, globalColorPrice, attributeValuePrices, selectedAttributeId, getAttributeValueByGroup
         // Need to ensure these are stable or memoized if they cause infinite loops.
@@ -346,31 +346,31 @@ const EditProductPage: React.FC = () => {
         const { frameId, attributeValueId, attributeValueName } = pendingVariationData;
 
         // Check if attribute value already exists in the frame
-        setVariationFrames(prevFrames => 
+        setVariationFrames(prevFrames =>
             prevFrames.map(frame => {
                 if (frame.id === frameId) {
                     const existingSizeIndex = frame.sizes.findIndex(s => s.id === attributeValueId);
                     if (existingSizeIndex >= 0) {
                         // Update existing
                         const newSizes = [...frame.sizes];
-                        newSizes[existingSizeIndex] = { 
-                            ...newSizes[existingSizeIndex], 
+                        newSizes[existingSizeIndex] = {
+                            ...newSizes[existingSizeIndex],
                             quantity: data.quantity,
                             price: data.price, // Store price in size as well for reference
-                            wholesalePrices: data.wholesalePrices 
+                            wholesalePrices: data.wholesalePrices
                         };
                         return { ...frame, sizes: newSizes };
                     } else {
                         // Add new
-                        return { 
-                            ...frame, 
-                            sizes: [...frame.sizes, { 
-                                id: attributeValueId, 
-                                name: attributeValueName, 
-                                quantity: data.quantity, 
+                        return {
+                            ...frame,
+                            sizes: [...frame.sizes, {
+                                id: attributeValueId,
+                                name: attributeValueName,
+                                quantity: data.quantity,
                                 price: data.price,
-                                wholesalePrices: data.wholesalePrices 
-                            }] 
+                                wholesalePrices: data.wholesalePrices
+                            }]
                         };
                     }
                 }
@@ -491,13 +491,13 @@ const EditProductPage: React.FC = () => {
                 return;
             }
             if (selectedAttributeType === 'colorAndAttribute' && variationFrames.some(frame => frame.sizes.length === 0 && (selectedAttributeId && getAttributeValueByGroup))) {
-                 toast.error('Chaque variation avec attribut doit avoir au moins une valeur d\'attribut assignée.');
-                 return;
+                toast.error('Chaque variation avec attribut doit avoir au moins une valeur d\'attribut assignée.');
+                return;
             }
-             if (selectedAttributeType === 'colorAndAttribute' && variationFrames.some(frame => frame.sizes.some(size => size.quantity <= 0))) {
-                 toast.error('La quantité pour chaque taille/attribut doit être supérieure à zéro.');
-                 return;
-             }
+            if (selectedAttributeType === 'colorAndAttribute' && variationFrames.some(frame => frame.sizes.some(size => size.quantity <= 0))) {
+                toast.error('La quantité pour chaque taille/attribut doit être supérieure à zéro.');
+                return;
+            }
             if (selectedAttributeType === 'colorOnly' && variationFrames.some(frame => frame.quantity <= 0)) {
                 toast.error('La quantité pour chaque couleur doit être supérieure à zéro.');
                 return;
@@ -510,7 +510,7 @@ const EditProductPage: React.FC = () => {
                 toast.error('Le prix global de la couleur est requis pour les produits variables avec seulement des couleurs.');
                 return;
             }
-             // Check for variations with no price set when they should have one
+            // Check for variations with no price set when they should have one
             if (selectedAttributeType === 'colorAndAttribute' && variationFrames.some(frame => frame.sizes.some(size => (attributeValuePrices[size.id] === undefined || attributeValuePrices[size.id] <= 0)))) {
                 toast.error('Veuillez définir un prix pour chaque attribut.');
                 return;
@@ -555,7 +555,7 @@ const EditProductPage: React.FC = () => {
                 formData.append('images_to_delete', JSON.stringify(imagesToDelete));
             }
 
-            
+
             // Handle variations for variable products
             if (productType === 'variable' && variationFrames.length > 0) {
                 // Prepare variations data for API. This structure might need adjustment based on backend expectations.
@@ -583,32 +583,32 @@ const EditProductPage: React.FC = () => {
                 formData.append('variations', JSON.stringify(variationsPayload));
 
                 // Handle variation images
-                 variationFrames.forEach((frame, frameIndex) => {
+                variationFrames.forEach((frame, frameIndex) => {
                     console.log(frameIndex)
-                     frame.images.forEach((img, imgIndex) => {
-                         if (img instanceof File) {
+                    frame.images.forEach((img, imgIndex) => {
+                        if (img instanceof File) {
                             formData.append(`variation_images[${frame.id}][${imgIndex}]`, img);
-                         }
-                         // If img is a URL, it's assumed to be an existing image and not re-uploaded.
-                         // Your API should handle existing image references.
-                     });
-                 });
+                        }
+                        // If img is a URL, it's assumed to be an existing image and not re-uploaded.
+                        // Your API should handle existing image references.
+                    });
+                });
 
                 if (Object.keys(variationImagesToDelete).length > 0) {
                     formData.append('variation_images_to_delete', JSON.stringify(variationImagesToDelete));
                 }
             } else if (productType === 'simple') {
                 // For simple products, the base price and stock are used.
-                 formData.append('product_price', price);
-                 formData.append('product_quantity', stock);
-                 if (isWholesale) {
-                     formData.append('wholesale_prices', JSON.stringify(wholesalePrices));
-                 }
+                formData.append('product_price', price);
+                formData.append('product_quantity', stock);
+                if (isWholesale) {
+                    formData.append('wholesale_prices', JSON.stringify(wholesalePrices));
+                }
             }
             formData.append('_method', 'PUT');
-           const response = await updateProduct({id: product?.id, data: formData});
-           console.log(response);
-            
+            const response = await updateProduct({ id: product?.id, data: formData });
+            console.log(response);
+
             toast.success('Produit mis à jour avec succès', {
                 description: "Vos modifications ont été enregistrées",
                 duration: 4000,
@@ -734,7 +734,7 @@ const EditProductPage: React.FC = () => {
     };
 
     //
-    
+
 
     const addWholesalePrice = () => {
         setWholesalePrices(prev => [...prev, { min_quantity: 0, wholesale_price: 0 }]);
@@ -906,17 +906,17 @@ const EditProductPage: React.FC = () => {
                 });
             } else if (selectedAttributeType === 'colorAndAttribute' && frame.sizes.length === 0) {
                 // If colorAndAttribute but no sizes selected for this frame, create a variation with just color
-                 newVariations.push({
-                     id: frame.id, // Use frame ID
-                     productId: product?.id || '',
-                     color: color,
-                     sizes: [],
-                     shoeSizes: [],
-                     images: frame.images,
-                     quantity: frame.quantity || 0, // Fallback quantity if no sizes
-                     price: frame.price || 0, // Fallback price if no specific size price is set
-                     isColorOnly: false
-                 });
+                newVariations.push({
+                    id: frame.id, // Use frame ID
+                    productId: product?.id || '',
+                    color: color,
+                    sizes: [],
+                    shoeSizes: [],
+                    images: frame.images,
+                    quantity: frame.quantity || 0, // Fallback quantity if no sizes
+                    price: frame.price || 0, // Fallback price if no specific size price is set
+                    isColorOnly: false
+                });
             }
         });
 
@@ -995,13 +995,13 @@ const EditProductPage: React.FC = () => {
                                     type="submit"
                                     className="px-6 py-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl hover:from-[#ed7e0f]/90 hover:to-orange-500 font-medium flex items-center gap-2"
                                 >
-                                    
-                                        
-                                            <Save className="w-4 h-4" />
-                                            {isLoadingUpdateProduct ? (
-                                                                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                                                                ) : <span className='max-sm:text-sm'>Mettre à jour</span>}
-                                    
+
+
+                                    <Save className="w-4 h-4" />
+                                    {isLoadingUpdateProduct ? (
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                    ) : <span className='max-sm:text-sm'>Mettre à jour</span>}
+
                                 </button>
                             </div>
                         </div>
@@ -1025,8 +1025,8 @@ const EditProductPage: React.FC = () => {
                                     type="submit"
                                     className="p-2 bg-[#6e0a13] to-orange-600 text-white rounded-xl"
                                 >
-                                   
-                                       
+
+
                                     <span className='text-sm'>Mettre à jour</span>
                                 </button>
                             </div>
@@ -1074,7 +1074,7 @@ const EditProductPage: React.FC = () => {
                                     </div>
                                 )}
 
-                            
+
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -1087,7 +1087,7 @@ const EditProductPage: React.FC = () => {
                                     />
                                 </div>
                             </div>
-  {isWholesale && productType === "simple" && (
+                            {isWholesale && productType === "simple" && (
                                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
@@ -1203,7 +1203,7 @@ const EditProductPage: React.FC = () => {
                                                 ) : (
                                                     <MultiSelect
                                                         options={subCategoriesByGender?.categories || []}
-                                                         selected={selectedSubCategories}
+                                                        selected={selectedSubCategories}
                                                         onChange={handleChangeSubCategories}
                                                         placeholder="Sélectionner les sous-catégories..."
                                                     />
@@ -1259,7 +1259,7 @@ const EditProductPage: React.FC = () => {
                             </div>
 
                             {/* Wholesale section */}
-                          
+
                         </div>
 
                         {/* Side column */}
@@ -1272,10 +1272,10 @@ const EditProductPage: React.FC = () => {
                                             {featuredImage instanceof File ? ( // Display newly uploaded file
                                                 <div className="relative group h-64">
                                                     <img
-                                                       src={featuredImage instanceof File || featuredImage as Blob instanceof Blob 
-                                                            ? URL.createObjectURL(featuredImage) 
+                                                        src={featuredImage instanceof File || featuredImage as Blob instanceof Blob
+                                                            ? URL.createObjectURL(featuredImage)
                                                             : ""
-                                                        } 
+                                                        }
 
                                                         alt="Featured product"
                                                         className="w-full h-full object-cover"
@@ -1325,51 +1325,28 @@ const EditProductPage: React.FC = () => {
                                     <div className="bg-white rounded-2xl shadow-sm p-6">
                                         <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
                                         <div className="grid grid-cols-3 gap-4">
-                                            {images.map((image, index) => { // Display newly uploaded images
-                                                // This mapping assumes 'images' contains only new files.
-                                                // If it also contains existing images (e.g., after initial load), this needs adjustment.
-                                                return (
-                                                    <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
-                                                        <img
-                                                            src={image instanceof File || image as Blob instanceof Blob 
-                                                            ? URL.createObjectURL(image) 
-                                                            : ""}
-                                                            alt={`Product ${index + 1}`}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => removeImage(index)} // This removeImage needs to correctly handle both new and existing
-                                                                className="p-2 bg-white rounded-full hover:bg-gray-100"
-                                                            >
-                                                                <X className="w-4 h-4" />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
+
 
                                             {product?.product_images
                                                 && product.product_images
                                                     .filter((img: any) => !imagesToDelete.includes(img.id))
                                                     .map((img: any, index: number) => (
-                                                      <div key={`existing-${index}`} className="relative group aspect-square rounded-xl overflow-hidden">
-                                                        <img
-                                                          src={img.path || "/placeholder.svg"}
-                                                          alt={`Existing ${index + 1}`}
-                                                          className="w-full h-full object-cover"
-                                                        />
-                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                          <button
-                                                            type="button"
-                                                            onClick={() => setImagesToDelete([...imagesToDelete, img.id])}
-                                                            className="p-2 bg-white rounded-full hover:bg-gray-100"
-                                                          >
-                                                            <X className="w-4 h-4 text-red-500" />
-                                                          </button>
+                                                        <div key={`existing-${index}`} className="relative group aspect-square rounded-xl overflow-hidden">
+                                                            <img
+                                                                src={img.path || "/placeholder.svg"}
+                                                                alt={`Existing ${index + 1}`}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setImagesToDelete([...imagesToDelete, img.id])}
+                                                                    className="p-2 bg-white rounded-full hover:bg-gray-100"
+                                                                >
+                                                                    <X className="w-4 h-4 text-red-500" />
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                      </div>
                                                     ))
                                             }
 
@@ -1508,15 +1485,15 @@ const EditProductPage: React.FC = () => {
                                                                             }
                                                                         });
                                                                     }
-                                                                    
+
                                                                     setVariations([]);
                                                                     setVariationFrames([]);
                                                                     addVariationFrame();
                                                                 }}
                                                                 className={`
                                                                     relative flex flex-col items-start p-2 rounded-xl border-2 transition-all duration-200 text-left
-                                                                    ${isSelected 
-                                                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 shadow-sm' 
+                                                                    ${isSelected
+                                                                        ? 'border-[#ed7e0f] bg-[#ed7e0f]/5 shadow-sm'
                                                                         : 'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'
                                                                     }
                                                                 `}
@@ -1527,7 +1504,7 @@ const EditProductPage: React.FC = () => {
                                                                 <span className={`font-medium text-xs ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>
                                                                     {attr.attribute_name}
                                                                 </span>
-                                                                
+
                                                                 {isSelected && (
                                                                     <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#ed7e0f]" />
                                                                 )}
@@ -1578,11 +1555,11 @@ const EditProductPage: React.FC = () => {
                                                                         value={frame.color?.id.toString()}
                                                                         onValueChange={(value) => {
                                                                             const selectedColorId = Number(value);
-                                                                            const selectedColor = attributesArray.find((attr:any) => attr.id === 1)?.values.find((c: any) => c.id === selectedColorId);
+                                                                            const selectedColor = attributesArray.find((attr: any) => attr.id === 1)?.values.find((c: any) => c.id === selectedColorId);
                                                                             if (selectedColor) {
                                                                                 updateVariationFrame(frame.id, { color: { id: selectedColor.id, name: selectedColor.value, hex: selectedColor.hex_color } });
                                                                             } else if (selectedColorId === 0) { // Option to clear color
-                                                                                 updateVariationFrame(frame.id, { color: { id: 0, name: '', hex: '' } });
+                                                                                updateVariationFrame(frame.id, { color: { id: 0, name: '', hex: '' } });
                                                                             }
                                                                         }}
                                                                     >
@@ -1592,7 +1569,7 @@ const EditProductPage: React.FC = () => {
                                                                         <SelectContent>
                                                                             <SelectItem value="0">Aucune couleur</SelectItem>
                                                                             {/* Use attributesArray here */}
-                                                                            {attributesArray.find((attr:any) => attr.id === 1)?.values
+                                                                            {attributesArray.find((attr: any) => attr.id === 1)?.values
                                                                                 // Filter out colors already used in other frames to avoid duplicates, unless it's the only option left
                                                                                 .filter((color: any) => color.id !== 0 && (
                                                                                     frame.color.id === color.id ||
@@ -1756,10 +1733,10 @@ const EditProductPage: React.FC = () => {
                                                                             return (
                                                                                 <div key={idx} className="relative group aspect-square">
                                                                                     <img
-                                                                                        src={image instanceof File || image as Blob instanceof Blob 
-                                                                                        ? URL.createObjectURL(image) 
-                                                                                        : ""
-                                                                                        } 
+                                                                                        src={image instanceof File || image as Blob instanceof Blob
+                                                                                            ? URL.createObjectURL(image)
+                                                                                            : ""
+                                                                                        }
                                                                                         alt={`Variation ${idx + 1}`}
                                                                                         className="w-16 h-16 object-cover rounded-xl"
                                                                                     />
@@ -1870,7 +1847,7 @@ const EditProductPage: React.FC = () => {
                                             <div className="grid grid-cols-1 gap-4">
                                                 {variationFrames.map((frame) => {
                                                     // Find color data for display
-                                                    const color = attributesArray.find((attr:any) => attr.id === 1)?.values.find((c: any) => c.id === frame.color.id);
+                                                    const color = attributesArray.find((attr: any) => attr.id === 1)?.values.find((c: any) => c.id === frame.color.id);
 
                                                     // Find attribute name for display
                                                     const attributeName = attributes.find(attr => attr.id === selectedAttributeId)?.name || 'Attribut';
@@ -1944,18 +1921,18 @@ const EditProductPage: React.FC = () => {
 
                                                                                 return (
                                                                                     <div key={attributeItem.id}
-                                                                                    onClick={() => {
-                                                                                        setPendingVariationData({
-                                                                                            frameId: frame.id,
-                                                                                            attributeValueId: attributeItem.id,
-                                                                                            attributeValueName: attributeValueData?.value || '',
-                                                                                            colorName: color?.value || '',
-                                                                                            colorHex: color?.hex_color || ''
-                                                                                        });
-                                                                                        setIsVariationModalOpen(true);
-                                                                                    }}
-                                                                                    
-                                                                                    className="bg-gray-50 cursor-pointer rounded-lg p-2 border border-gray-200">
+                                                                                        onClick={() => {
+                                                                                            setPendingVariationData({
+                                                                                                frameId: frame.id,
+                                                                                                attributeValueId: attributeItem.id,
+                                                                                                attributeValueName: attributeValueData?.value || '',
+                                                                                                colorName: color?.value || '',
+                                                                                                colorHex: color?.hex_color || ''
+                                                                                            });
+                                                                                            setIsVariationModalOpen(true);
+                                                                                        }}
+
+                                                                                        className="bg-gray-50 cursor-pointer rounded-lg p-2 border border-gray-200">
                                                                                         <div className="text-sm font-medium text-gray-900">
                                                                                             <span className="text-[#ed7e0f]">{attributeName}:</span> {attributeValueData?.value || attributeItem.name}{attributeValueData?.label ? ` (${attributeValueData.label})` : ''}
                                                                                         </div>
