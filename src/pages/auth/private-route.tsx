@@ -31,17 +31,10 @@ export const PrivateRoute = () => {
         );
     }
 
-    // 2. Backend dit : PAS AUTHENTIFIÉ → redirect immédiate
     if (isError || data?.isAuthenticated === false) {
         const redirectPath = encodeURIComponent(location.pathname + location.search);
-        return (
-            <Navigate
-                to={`/login?redirect=${redirectPath}`}
-                replace
-            />
-        );
+        return <Navigate to={`/login?redirect=${redirectPath}`} replace />;
     }
 
-    // 3. Backend a validé → afficher la page protégée
     return <Outlet />;
 };

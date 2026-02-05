@@ -140,6 +140,10 @@ const EditProductPage: React.FC = () => {
                 setWholesalePrices(product.productWholeSales);
             }
 
+            if (product.images && product.images.length > 0) {
+                setImages(product.images);
+            }
+
             // Determine product type
             const hasVariations = product.variations && product.variations.length > 0;
             setProductType(hasVariations ? 'variable' : 'simple');
@@ -179,6 +183,7 @@ const EditProductPage: React.FC = () => {
                 // Store existing image URLs, not Files
                 const existingImageUrls = product.product_images.map((img: any) => img.path);
                 setImages(existingImageUrls);
+                console.log(existingImageUrls)
                 // We need a way to reference these existing images for deletion.
                 // For now, we'll just store them, and the `imagesToDelete` state will be managed separately.
             }
@@ -546,7 +551,7 @@ const EditProductPage: React.FC = () => {
                 // This depends on your API. For now, we assume not sending means no change.
             }
 
-
+            console.log(images)
             images.forEach(image => formData.append('images[]', image));
             selectedCategories.forEach(category => formData.append('categories[]', category.toString()));
             selectedSubCategories.forEach(subCategory => formData.append('sub_categories[]', subCategory.toString()));
@@ -555,12 +560,14 @@ const EditProductPage: React.FC = () => {
                 formData.append('images_to_delete', JSON.stringify(imagesToDelete));
             }
 
+            console.log(imagesToDelete)
 
             // Handle variations for variable products
             if (productType === 'variable' && variationFrames.length > 0) {
                 // Prepare variations data for API. This structure might need adjustment based on backend expectations.
                 const variationsPayload = variationFrames.map(frame => ({
-                    id: frame.id, // Send null for new variations, original ID for updates
+                    id: typeof frame.id === 'string' && frame.id.startsWith('frame-') ? null : frame.id,
+                    tempId: frame.id, // Send null for new variations, original ID for updates
                     productId: product?.id,
                     color_id: frame.color.id,
                     sizes: frame.sizes.map(size => ({
@@ -580,11 +587,12 @@ const EditProductPage: React.FC = () => {
                     isColorOnly: selectedAttributeType === 'colorOnly',
                 }));
 
+
                 formData.append('variations', JSON.stringify(variationsPayload));
 
                 // Handle variation images
-                variationFrames.forEach((frame, frameIndex) => {
-                    console.log(frameIndex)
+                variationFrames.forEach((frame) => {
+
                     frame.images.forEach((img, imgIndex) => {
                         if (img instanceof File) {
                             formData.append(`variation_images[${frame.id}][${imgIndex}]`, img);
@@ -597,6 +605,9 @@ const EditProductPage: React.FC = () => {
                 if (Object.keys(variationImagesToDelete).length > 0) {
                     formData.append('variation_images_to_delete', JSON.stringify(variationImagesToDelete));
                 }
+
+                console.log(variationImagesToDelete)
+                console.log()
             } else if (productType === 'simple') {
                 // For simple products, the base price and stock are used.
                 formData.append('product_price', price);
@@ -614,7 +625,7 @@ const EditProductPage: React.FC = () => {
                 duration: 4000,
             });
 
-            navigate('/seller/products');
+            //navigate('/seller/products');
         } catch (error: any) {
             console.error('Erreur lors de la mise à jour:', error);
             const errorMessage = error.data?.message || "Veuillez vérifier les informations fournies.";
@@ -728,13 +739,14 @@ const EditProductPage: React.FC = () => {
             if (existingImage) {
                 setImagesToDelete(prev => [...prev, existingImage.id]);
             }
+
         }
 
         setImages(images.filter((_, i) => i !== index));
     };
 
     //
-
+    console.log(images)
 
     const addWholesalePrice = () => {
         setWholesalePrices(prev => [...prev, { min_quantity: 0, wholesale_price: 0 }]);
@@ -1325,30 +1337,32 @@ const EditProductPage: React.FC = () => {
                                     <div className="bg-white rounded-2xl shadow-sm p-6">
                                         <h2 className="text-lg font-semibold mb-4">Galerie d'images</h2>
                                         <div className="grid grid-cols-3 gap-4">
-
-
-                                            {product?.product_images
-                                                && product.product_images
-                                                    .filter((img: any) => !imagesToDelete.includes(img.id))
-                                                    .map((img: any, index: number) => (
-                                                        <div key={`existing-${index}`} className="relative group aspect-square rounded-xl overflow-hidden">
-                                                            <img
-                                                                src={img.path || "/placeholder.svg"}
-                                                                alt={`Existing ${index + 1}`}
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => setImagesToDelete([...imagesToDelete, img.id])}
-                                                                    className="p-2 bg-white rounded-full hover:bg-gray-100"
-                                                                >
-                                                                    <X className="w-4 h-4 text-red-500" />
-                                                                </button>
-                                                            </div>
+                                            {images.map((image, index) => { // Display newly uploaded images
+                                                // This mapping assumes 'images' contains only new files.
+                                                // If it also contains existing images (e.g., after initial load), this needs adjustment.
+                                                return (
+                                                    <div key={index} className="relative group aspect-square rounded-xl overflow-hidden">
+                                                        <img
+                                                            src={image instanceof File || image as Blob instanceof Blob
+                                                                ? URL.createObjectURL(image)
+                                                                : image}
+                                                            alt={`Product ${index + 1}`}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeImage(index)} // This removeImage needs to correctly handle both new and existing
+                                                                className="p-2 bg-white rounded-full hover:bg-gray-100"
+                                                            >
+                                                                <X className="w-4 h-4" />
+                                                            </button>
                                                         </div>
-                                                    ))
-                                            }
+                                                    </div>
+                                                );
+                                            })}
+
+
 
 
                                             <label className="aspect-square rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed border-gray-200">
