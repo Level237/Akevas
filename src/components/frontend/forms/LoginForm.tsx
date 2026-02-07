@@ -104,7 +104,7 @@ export default function LoginForm() {
       </a>
 
 
-      <div className="flex  flex-col xl:mx-64 xl:justify-center xl:mt-44 space-y-2 md:px-16 md:mx-4 max-sm:mx-1">
+      <div className="flex  flex-col space-y-1 md:px-28">
         <div className="space-y-2  flex justify-center items-center ">
           <img
             src={logo}
@@ -236,6 +236,6 @@ export default function LoginForm() {
           </a>
         </p>
       </div>
-    </div>
+    </div >
   )
 }
