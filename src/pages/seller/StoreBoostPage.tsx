@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -18,7 +18,7 @@ import {
 import { useCheckAuthQuery } from '@/services/auth';
 import { useGetSubscriptionQuery } from '@/services/guardService';
 import IsLoadingComponents from '@/components/ui/isLoadingComponents';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { useBoostShopMutation, useCurrentSellerQuery } from '@/services/sellerService';
 import { SellerResponse } from '@/types/seller';
@@ -32,16 +32,16 @@ import AsyncLink from '@/components/ui/AsyncLink';
 const StoreBoostPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [boostShop]=useBoostShopMutation();
+  const [boostShop] = useBoostShopMutation();
   const [selectedPlanDetails, setSelectedPlanDetails] = useState<any>(null);
   const [selectedPayment, setSelectedPayment] = useState<'card' | 'orange' | 'momo'>('card');
   const [isLoadingBoost] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [phone, setPhone] = useState('');
-  const { data:checkAuth, isLoading } = useCheckAuthQuery();
+  const { data: checkAuth, isLoading } = useCheckAuthQuery();
   const { data: subscription, isLoading: isLoadingSubscription } = useGetSubscriptionQuery("guard");
-  const {data: { data: sellerData }= {},isLoading:isLoadingSeller}=useCurrentSellerQuery<SellerResponse>('seller')
+  const { data: { data: sellerData } = {}, isLoading: isLoadingSeller } = useCurrentSellerQuery<SellerResponse>('seller')
   const userCoins = sellerData?.shop.coins;
   const shopLevel = sellerData?.shop.level;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -54,8 +54,8 @@ const StoreBoostPage: React.FC = () => {
   }
 
   const handlePlanSelection = (planId: string, planPrice: number) => {
-    if (!isLoadingSeller ) {
-      if(userCoins !==null && sellerData?.shop?.coins !==undefined && parseInt(sellerData.shop.coins) < planPrice) {
+    if (!isLoadingSeller) {
+      if (userCoins !== null && sellerData?.shop?.coins !== undefined && parseInt(sellerData.shop.coins) < planPrice) {
         setIsModalOpen(true);
         return;
       }
@@ -64,10 +64,10 @@ const StoreBoostPage: React.FC = () => {
       setIsLevelError(true);
       return;
     }
-    if(!isLoading && checkAuth?.isAuthenticated!==true){
-        redirectToLogin({redirectUrl:"/seller/pro"})
+    if (!isLoading && checkAuth?.isAuthenticated !== true) {
+      redirectToLogin({ redirectUrl: "/seller/pro" })
     }
-    const plan = subscription.find((p:any) => p.id === planId);
+    const plan = subscription.find((p: any) => p.id === planId);
     setSelectedPlan(planId);
     setSelectedPlanDetails(plan);
     setIsDrawerOpen(true);
@@ -79,11 +79,11 @@ const StoreBoostPage: React.FC = () => {
     try {
       // Créer le contenu du PDF
       const doc = new jsPDF();
-      
+
       // Ajouter le titre
       doc.setFontSize(20);
       doc.text('Reçu de Transaction', 105, 20, { align: 'center' });
-      
+
       // Ajouter les détails de la transaction
       doc.setFontSize(12);
       doc.text(`ID de Transaction: ${paymentId}`, 20, 40);
@@ -92,7 +92,7 @@ const StoreBoostPage: React.FC = () => {
       doc.text(`Coins dépensés: ${selectedPlanDetails?.subscription_price}`, 20, 70);
       doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 80);
       doc.text(`Heure: ${new Date().toLocaleTimeString()}`, 20, 90);
-      
+
       // Ajouter le QR code
       const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(paymentId)}`;
       const qrCodeResponse = await fetch(qrCodeUrl);
@@ -102,9 +102,9 @@ const StoreBoostPage: React.FC = () => {
         reader.onloadend = () => resolve(reader.result);
         reader.readAsDataURL(qrCodeBlob);
       });
-      
+
       doc.addImage(qrCodeDataUrl as string, 'PNG', 85, 100, 40, 40);
-      
+
       // Sauvegarder le PDF
       doc.save(`receipt-${paymentId}.pdf`);
     } catch (error) {
@@ -125,7 +125,7 @@ const StoreBoostPage: React.FC = () => {
 
       const response = await boostShop(formData);
       setBoostResponse(response);
-      
+
       if (response.data.status === 1 && response.data.paymentId) {
         setBoostStatus('success');
         // Déclencher l'animation confetti
@@ -134,7 +134,7 @@ const StoreBoostPage: React.FC = () => {
           spread: 70,
           origin: { x: 0.5, y: 0.6 }
         });
-        
+
         // Générer le reçu avec l'ID de paiement
         await generateReceipt(response.data.paymentId);
       } else {
@@ -163,7 +163,7 @@ const StoreBoostPage: React.FC = () => {
             <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center">
               <AlertCircle className="w-10 h-10 text-red-600" />
             </div>
-            
+
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 Niveau de boutique insuffisant
@@ -193,285 +193,284 @@ const StoreBoostPage: React.FC = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero Section avec animation */}
-        {!isLoading && sellerData?.shop.isSubscribe===0 || !sellerData ?  <>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#ed7e0f] to-orange-600">
-            Boostez votre visibilité
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Augmentez vos ventes en rendant votre boutique plus visible auprès de millions d'acheteurs potentiels
-          </p>
-        </motion.div>
-
-        {/* Plans de boost avec nouveau design */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {!isLoadingSubscription && subscription.map((plan:any, index:any) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 ${
-                plan.id===2 ? 'ring-2 ring-[#ed7e0f]' : ''
-              }`}
-            >
-              {plan.id===2 && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white px-6 py-2 text-sm font-medium rounded-full">
-                  Recommandé
-                </div>
-              )}
-
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  {plan.subscription_name}
-                </h3>
-                <div className="flex items-baseline mb-6">
-                  <span className="text-5xl font-bold text-[#ed7e0f]">{plan.subscription_price} XAF</span>
-                  <span className="text-gray-500 ml-2">/ {plan.subscription_duration}</span>
-                </div>
-
-                <ul className="space-y-4 mb-8">
-                  {plan.descriptions.map((feature:any, index:any) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-[#ed7e0f] flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-600">{feature.description_name}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  onClick={() => handlePlanSelection(plan.id, plan.subscription_price)}
-                  className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
-                    ${plan.recommended 
-                      ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
-                      : 'bg-orange-50 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white'
-                    }`}
-                >
-                  {isLoadingBoost && plan.id===selectedPlan ? <div className='flex justify-center items-center'>En cours de traitement...</div> : 'Sélectionner ce plan'}
-                </button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Modal pour coins insuffisants */}
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <AlertCircle className="w-6 h-6 text-red-600" />
-                Coins insuffisants
-              </DialogTitle>
-              <DialogDescription>
-                Vous n'avez pas assez de coins pour sélectionner ce plan. Veuillez recharger votre compte.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="secondary">Annuler</Button>
-              </DialogClose>
-              <Button onClick={() => navigate('/recharge')} className="bg-[#ed7e0f] hover:bg-[#d97100]">
-                Recharger votre compte
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* MODAL DE PAIEMENT MODERNE */}
-        <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
-          <DialogContent
-            className="max-w-lg w-full rounded-t-3xl fixed bottom-0 left-1/2 -translate-x-1/2 mb-0 p-0 overflow-hidden shadow-2xl border-0"
-            style={{ borderRadius: '2rem 2rem 0 0', marginBottom: 0 }}
-          >
-            <div className="bg-gradient-to-r from-[#ed7e0f]/10 to-orange-100 p-6 flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">Détails du paiement</h3>
-                <DialogClose asChild>
-                  <button className="p-2 rounded-full hover:bg-orange-50 transition">
-                    <AlertCircle className="w-5 h-5 text-gray-400" />
-                  </button>
-                </DialogClose>
-              </div>
-              {selectedPlanDetails && (
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Plan</span>
-                    <span className="font-semibold">{selectedPlanDetails.subscription_name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Durée</span>
-                    <span className="font-semibold">{selectedPlanDetails.subscription_duration}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Prix</span>
-                    <span className="font-bold text-[#ed7e0f]">{selectedPlanDetails.subscription_price} XAF</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Moyen de paiement</label>
-                <div className="flex gap-3">
-                  <Button
-                    variant={selectedPayment === 'card' ? 'default' : 'outline'}
-                    className={`flex-1 ${selectedPayment === 'card' ? 'bg-[#ed7e0f] text-white' : ''}`}
-                    onClick={() => setSelectedPayment('card')}
-                  >
-                    Carte Bancaire
-                  </Button>
-                  <Button
-                    variant={selectedPayment === 'orange' ? 'default' : 'outline'}
-                    className={`flex-1 ${selectedPayment === 'orange' ? 'bg-[#ed7e0f] text-white' : ''}`}
-                    onClick={() => setSelectedPayment('orange')}
-                  >
-                    Orange Money
-                  </Button>
-                  <Button
-                    variant={selectedPayment === 'momo' ? 'default' : 'outline'}
-                    className={`flex-1 ${selectedPayment === 'momo' ? 'bg-[#ed7e0f] text-white' : ''}`}
-                    onClick={() => setSelectedPayment('momo')}
-                  >
-                    MoMo
-                  </Button>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Numéro de téléphone</label>
-                <Input
-                  type="tel"
-                  placeholder="Ex: 6 99 99 99 99"
-                  value={phone}
-                  onChange={e => setPhone(e.target.value)}
-                  className="py-3 text-base bg-white/80 border-gray-300 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/30"
-                />
-              </div>
-
-              <DialogFooter className="mt-6">
-                <Button
-                  className="w-full bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                  onClick={() => {
-                    setIsPaymentModalOpen(false);
-                    // Ici tu peux lancer la logique de paiement selon le moyen choisi
-                    // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=${selectedPayment}&phone=${phone}`);
-                  }}
-                  disabled={!phone || phone.length < 8}
-                >
-                  Continuer
-                </Button>
-              </DialogFooter>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Avantages du boost */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mt-20"
-        >
-          <h2 className="text-2xl font-bold text-center mb-8">
-            Pourquoi booster votre boutique ?
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Star className="w-6 h-6 text-[#ed7e0f]" />
-              </div>
-              <h3 className="font-medium mb-2">Visibilité accrue</h3>
-              <p className="text-gray-600">
-                Apparaissez en priorité dans les résultats de recherche
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-6 h-6 text-[#ed7e0f]" />
-              </div>
-              <h3 className="font-medium mb-2">Plus de ventes</h3>
-              <p className="text-gray-600">
-                Augmentez significativement vos conversions
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-6 h-6 text-[#ed7e0f]" />
-              </div>
-              <h3 className="font-medium mb-2">Badge spécial</h3>
-              <p className="text-gray-600">
-                Démarquez-vous avec un badge distinctif
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Award className="w-6 h-6 text-[#ed7e0f]" />
-              </div>
-              <h3 className="font-medium mb-2">Support prioritaire</h3>
-              <p className="text-gray-600">
-                Bénéficiez d'une assistance personnalisée
-              </p>
-            </div>
-          </div>
-        </motion.div>
-        </>: <>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#ed7e0f] to-orange-600">
-            Vous avez déjà un abonnement Pro actif
-          </h1>
+        {!isLoading && sellerData?.shop.isSubscribe === 0 || !sellerData ? <>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto bg-white rounded-3xl shadow-lg p-8 border border-orange-100"
+            className="text-center mb-16"
           >
-            <div className="flex flex-col items-center gap-6">
-              <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center">
-                <Crown className="w-10 h-10 text-[#ed7e0f]" />
+            <h1 className="text-5xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#ed7e0f] to-orange-600">
+              Boostez votre visibilité
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Augmentez vos ventes en rendant votre boutique plus visible auprès de millions d'acheteurs potentiels
+            </p>
+          </motion.div>
+
+          {/* Plans de boost avec nouveau design */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {!isLoadingSubscription && subscription.map((plan: any, index: any) => (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={`group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 ${plan.id === 2 ? 'ring-2 ring-[#ed7e0f]' : ''
+                  }`}
+              >
+                {plan.id === 2 && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white px-6 py-2 text-sm font-medium rounded-full">
+                    Recommandé
+                  </div>
+                )}
+
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    {plan.subscription_name}
+                  </h3>
+                  <div className="flex items-baseline mb-6">
+                    <span className="text-5xl font-bold text-[#ed7e0f]">{plan.subscription_price} XAF</span>
+                    <span className="text-gray-500 ml-2">/ {plan.subscription_duration} jours</span>
+                  </div>
+
+                  <ul className="space-y-4 mb-8">
+                    {plan.descriptions.map((feature: any, index: any) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <Check className="w-5 h-5 text-[#ed7e0f] flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-600">{feature.description_name}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handlePlanSelection(plan.id, plan.subscription_price)}
+                    className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                    ${plan.recommended
+                        ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
+                        : 'bg-orange-50 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white'
+                      }`}
+                  >
+                    {isLoadingBoost && plan.id === selectedPlan ? <div className='flex justify-center items-center'>En cours de traitement...</div> : plan.id === 1 ? 'Continuez gratuitement' : 'Sélectionner ce plan'}
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Modal pour coins insuffisants */}
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                  Coins insuffisants
+                </DialogTitle>
+                <DialogDescription>
+                  Vous n'avez pas assez de coins pour sélectionner ce plan. Veuillez recharger votre compte.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="secondary">Annuler</Button>
+                </DialogClose>
+                <Button onClick={() => navigate('/recharge')} className="bg-[#ed7e0f] hover:bg-[#d97100]">
+                  Recharger votre compte
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* MODAL DE PAIEMENT MODERNE */}
+          <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
+            <DialogContent
+              className="max-w-lg w-full rounded-t-3xl fixed bottom-0 left-1/2 -translate-x-1/2 mb-0 p-0 overflow-hidden shadow-2xl border-0"
+              style={{ borderRadius: '2rem 2rem 0 0', marginBottom: 0 }}
+            >
+              <div className="bg-gradient-to-r from-[#ed7e0f]/10 to-orange-100 p-6 flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-gray-900">Détails du paiement</h3>
+                  <DialogClose asChild>
+                    <button className="p-2 rounded-full hover:bg-orange-50 transition">
+                      <AlertCircle className="w-5 h-5 text-gray-400" />
+                    </button>
+                  </DialogClose>
+                </div>
+                {selectedPlanDetails && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Plan</span>
+                      <span className="font-semibold">{selectedPlanDetails.subscription_name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Durée</span>
+                      <span className="font-semibold">{selectedPlanDetails.subscription_duration}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Prix</span>
+                      <span className="font-bold text-[#ed7e0f]">{selectedPlanDetails.subscription_price} XAF</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Moyen de paiement</label>
+                  <div className="flex gap-3">
+                    <Button
+                      variant={selectedPayment === 'card' ? 'default' : 'outline'}
+                      className={`flex-1 ${selectedPayment === 'card' ? 'bg-[#ed7e0f] text-white' : ''}`}
+                      onClick={() => setSelectedPayment('card')}
+                    >
+                      Carte Bancaire
+                    </Button>
+                    <Button
+                      variant={selectedPayment === 'orange' ? 'default' : 'outline'}
+                      className={`flex-1 ${selectedPayment === 'orange' ? 'bg-[#ed7e0f] text-white' : ''}`}
+                      onClick={() => setSelectedPayment('orange')}
+                    >
+                      Orange Money
+                    </Button>
+                    <Button
+                      variant={selectedPayment === 'momo' ? 'default' : 'outline'}
+                      className={`flex-1 ${selectedPayment === 'momo' ? 'bg-[#ed7e0f] text-white' : ''}`}
+                      onClick={() => setSelectedPayment('momo')}
+                    >
+                      MoMo
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Numéro de téléphone</label>
+                  <Input
+                    type="tel"
+                    placeholder="Ex: 6 99 99 99 99"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    className="py-3 text-base bg-white/80 border-gray-300 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/30"
+                  />
+                </div>
+
+                <DialogFooter className="mt-6">
+                  <Button
+                    className="w-full bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                    onClick={() => {
+                      setIsPaymentModalOpen(false);
+                      // Ici tu peux lancer la logique de paiement selon le moyen choisi
+                      // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=${selectedPayment}&phone=${phone}`);
+                    }}
+                    disabled={!phone || phone.length < 8}
+                  >
+                    Continuer
+                  </Button>
+                </DialogFooter>
               </div>
-              
+            </DialogContent>
+          </Dialog>
+
+          {/* Avantages du boost */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-20"
+          >
+            <h2 className="text-2xl font-bold text-center mb-8">
+              Pourquoi booster votre boutique ?
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Profitez de tous les avantages Pro
-                </h3>
-                <p className="text-gray-600 mb-8">
-                  Accédez à votre tableau de bord pour gérer votre boutique et suivre vos performances
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Star className="w-6 h-6 text-[#ed7e0f]" />
+                </div>
+                <h3 className="font-medium mb-2">Visibilité accrue</h3>
+                <p className="text-gray-600">
+                  Apparaissez en priorité dans les résultats de recherche
                 </p>
               </div>
 
-              <div className="flex gap-4 w-full max-w-md">
-                <button
-                  onClick={() => window.history.back()}
-                  className="flex-1 py-4 px-6 rounded-2xl font-medium transition-all duration-300 
-                    bg-orange-50 text-[#ed7e0f] hover:bg-orange-100"
-                >
-                  Retour
-                </button>
-                
-                <AsyncLink
-                  to="/seller/dashboard"
-                  className="flex-1 py-4 px-6 rounded-2xl font-medium transition-all duration-300 
-                    bg-[#ed7e0f] text-white hover:bg-orange-600"
-                >
-                  Dashboard
-                </AsyncLink>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="w-6 h-6 text-[#ed7e0f]" />
+                </div>
+                <h3 className="font-medium mb-2">Plus de ventes</h3>
+                <p className="text-gray-600">
+                  Augmentez significativement vos conversions
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-6 h-6 text-[#ed7e0f]" />
+                </div>
+                <h3 className="font-medium mb-2">Badge spécial</h3>
+                <p className="text-gray-600">
+                  Démarquez-vous avec un badge distinctif
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Award className="w-6 h-6 text-[#ed7e0f]" />
+                </div>
+                <h3 className="font-medium mb-2">Support prioritaire</h3>
+                <p className="text-gray-600">
+                  Bénéficiez d'une assistance personnalisée
+                </p>
               </div>
             </div>
           </motion.div>
-        </motion.div>
+        </> : <>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h1 className="text-5xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#ed7e0f] to-orange-600">
+              Vous avez déjà un abonnement Pro actif
+            </h1>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-2xl mx-auto bg-white rounded-3xl shadow-lg p-8 border border-orange-100"
+            >
+              <div className="flex flex-col items-center gap-6">
+                <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center">
+                  <Crown className="w-10 h-10 text-[#ed7e0f]" />
+                </div>
+
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Profitez de tous les avantages Pro
+                  </h3>
+                  <p className="text-gray-600 mb-8">
+                    Accédez à votre tableau de bord pour gérer votre boutique et suivre vos performances
+                  </p>
+                </div>
+
+                <div className="flex gap-4 w-full max-w-md">
+                  <button
+                    onClick={() => window.history.back()}
+                    className="flex-1 py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                    bg-orange-50 text-[#ed7e0f] hover:bg-orange-100"
+                  >
+                    Retour
+                  </button>
+
+                  <AsyncLink
+                    to="/seller/dashboard"
+                    className="flex-1 py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                    bg-[#ed7e0f] text-white hover:bg-orange-600"
+                  >
+                    Dashboard
+                  </AsyncLink>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         </>}
-       
-        
+
+
       </main>
 
       <AnimatePresence>
@@ -481,7 +480,7 @@ const StoreBoostPage: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
-              style={{backdropFilter: 'blur(100px)'}}
+              style={{ backdropFilter: 'blur(100px)' }}
               className="fixed inset-0 backdrop-blur-sm bg-black/90 z-40"
               onClick={() => setIsDrawerOpen(false)}
             />
@@ -541,24 +540,24 @@ const StoreBoostPage: React.FC = () => {
                 </div>
 
                 <div className='flex justify-center gap-6 items-center'>
-                <Button
-                  className="w-full h-12 bg-transparent text-[#ed7e0f] border border-[#ed7e0f] font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-transparent transition-all duration-300 text-lg"
-                  onClick={() => {
-                    setIsDrawerOpen(false);
-                    // Lancer la logique de paiement par coins ici
-                    // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=coins`);
-                  }}
-                  
-                >
-                 Annuler
-                </Button>
-                <Button
-                  className="w-full h-12 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
-                  onClick={handleContinue}
-                  disabled={parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price}
-                >
-                  Continuer
-                </Button>
+                  <Button
+                    className="w-full h-12 bg-transparent text-[#ed7e0f] border border-[#ed7e0f] font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:bg-transparent transition-all duration-300 text-lg"
+                    onClick={() => {
+                      setIsDrawerOpen(false);
+                      // Lancer la logique de paiement par coins ici
+                      // navigate(`/checkout/boost?plan=${selectedPlan}&paymethod=coins`);
+                    }}
+
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    className="w-full h-12 bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+                    onClick={handleContinue}
+                    disabled={parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price}
+                  >
+                    Continuer
+                  </Button>
                 </div>
                 {parseInt(userCoins ?? '0') < selectedPlanDetails?.subscription_price && (
                   <div className="text-center text-sm text-red-500 mt-3">
@@ -671,7 +670,7 @@ const StoreBoostPage: React.FC = () => {
                           </div>
                           <h3 className="text-xl font-semibold text-green-600 mb-2">Boost réussi!</h3>
                           <p className="text-gray-600 mb-6 text-center">Votre boutique a été boostée avec succès</p>
-                          
+
                           {boostResponse?.data?.paymentId && (
                             <div className="space-y-6">
                               <div className="bg-white p-4 rounded-xl shadow-lg">
