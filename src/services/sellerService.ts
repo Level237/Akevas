@@ -90,6 +90,14 @@ export const sellerService = createApi({
                 body: body
             })
         }),
+        boostProduct: builder.mutation({
+            query: (body) => ({
+                url: `/api/v1/boost/product`,
+                method: "POST",
+                body: body
+            }),
+            invalidatesTags: ['seller']
+        }),
         getOrders: builder.query({
             query: () => '/api/v1/seller/orders',
             providesTags: ['seller']
@@ -139,7 +147,7 @@ export const sellerService = createApi({
             providesTags: ['seller']
         }),
 
-        getEditProduct:builder.query({
+        getEditProduct: builder.query({
             query: (url) => ({
                 url: `/api/v1/seller/edit/product/${url}`,
                 method: 'GET'
@@ -168,6 +176,7 @@ export const {
     useGetTicketCoinQuery,
     useVerifyCoinPaymentMutation,
     useBoostShopMutation,
+    useBoostProductMutation,
     useGetEditProductQuery,
     useUpdateCategoriesMutation,
     useUpdateImagesMutation,

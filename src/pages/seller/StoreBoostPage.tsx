@@ -188,8 +188,11 @@ const StoreBoostPage: React.FC = () => {
     );
   }
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen relative bg-gradient-to-b from-gray-50 to-white">
 
+      <div className='absolute top-14 right-14 cursor-pointer' onClick={() => navigate('/seller/dashboard')}>
+        <X className='text-gray-500 hover:text-gray-700' size={28} />
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero Section avec animation */}
@@ -241,17 +244,31 @@ const StoreBoostPage: React.FC = () => {
                       </li>
                     ))}
                   </ul>
-
-                  <button
-                    onClick={() => handlePlanSelection(plan.id, plan.subscription_price)}
-                    className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                  {plan.id === 1 && (
+                    <button
+                      onClick={() => navigate('/seller/dashboard')}
+                      className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
                     ${plan.recommended
-                        ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
-                        : 'bg-orange-50 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white'
-                      }`}
-                  >
-                    {isLoadingBoost && plan.id === selectedPlan ? <div className='flex justify-center items-center'>En cours de traitement...</div> : plan.id === 1 ? 'Continuez gratuitement' : 'Sélectionner ce plan'}
-                  </button>
+                          ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
+                          : 'bg-orange-50 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white'
+                        }`}
+                    >
+                      {isLoadingBoost && plan.id === selectedPlan ? <div className='flex justify-center items-center'>En cours de traitement...</div> : plan.id === 1 ? 'Continuez gratuitement' : 'Sélectionner ce plan'}
+                    </button>
+                  )}
+
+                  {plan.id !== 1 && (
+                    <button
+                      onClick={() => handlePlanSelection(plan.id, plan.subscription_price)}
+                      className={`w-full py-4 px-6 rounded-2xl font-medium transition-all duration-300 
+                    ${plan.recommended
+                          ? 'bg-gradient-to-r from-[#ed7e0f] to-orange-600 text-white hover:shadow-lg hover:scale-105'
+                          : 'bg-orange-50 text-[#ed7e0f] hover:bg-[#ed7e0f] hover:text-white'
+                        }`}
+                    >
+                      {isLoadingBoost && plan.id === selectedPlan ? <div className='flex justify-center items-center'>En cours de traitement...</div> : plan.id === 1 ? 'Continuez gratuitement' : 'Sélectionner ce plan'}
+                    </button>
+                  )}
                 </div>
               </motion.div>
             ))}

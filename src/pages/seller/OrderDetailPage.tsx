@@ -160,9 +160,7 @@ const OrderDetailPage = () => {
     const allOrderItems = getOrderItems(order);
 
     const subtotal = allOrderItems.reduce((sum: number, item: any) => sum + item.total, 0);
-    const shippingFee = parseFloat(order.fee_of_shipping || '0');
-    const taxAmount = (subtotal + shippingFee) * TAX_RATE;
-    const totalWithTax = subtotal + shippingFee + taxAmount;
+    const totalWithTax = subtotal;
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -251,7 +249,8 @@ const OrderDetailPage = () => {
                                 <MapPin className="w-5 h-5 text-gray-500" />
                                 <div>
                                     <p className="font-medium">Adresse</p>
-                                    <p className="text-sm">{order.quarter_delivery || 'Non spécifié'}</p>
+
+                                    <p className="text-gray-600 max-sm:text-sm">{order.quarter_delivery ? order?.quarter_delivery : order?.emplacement}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
@@ -272,17 +271,11 @@ const OrderDetailPage = () => {
                                 <span>Sous-total:</span>
                                 <span>{formatPrice(subtotal)}</span>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Frais de livraison:</span>
-                                <span>{formatPrice(shippingFee)}</span>
-                            </div>
-                            <div className="flex justify-between border-t pt-2 mt-2">
-                                <span className="font-semibold">TVA ({Math.round(TAX_RATE * 100)}%):</span>
-                                <span className="font-semibold">{formatPrice(taxAmount)}</span>
-                            </div>
+
+
                             <div className="flex justify-between border-t border-dashed pt-4 mt-4 text-xl font-bold">
                                 <span>Total (TTC):</span>
-                                <span>{formatPrice(totalWithTax)}</span>
+                                <span className="text-green-600">{formatPrice(totalWithTax)}</span>
                             </div>
                         </div>
                     </Card>

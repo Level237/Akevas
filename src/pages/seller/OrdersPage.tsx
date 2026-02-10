@@ -90,7 +90,7 @@ const getOrderItems = (order: any) => {
 const OrdersPage = () => {
     const { data: ordersData, isLoading } = useGetOrdersQuery('seller');
     const navigate = useNavigate();
-
+    console.log(ordersData)
     const { data: { data: sellerData } = {} } = useCurrentSellerQuery('seller');
 
     if (sellerData?.isSeller === 0) {
@@ -190,7 +190,7 @@ const OrdersPage = () => {
                                     <h4 className="text-sm font-medium text-gray-900 mb-2">Détails de livraison</h4>
                                     <div className="text-sm text-gray-500 space-y-1 bg-gray-50 p-3 rounded-md mb-6">
                                         <p><strong>Quartier:</strong> {order.quarter_delivery || 'Non spécifié'}</p>
-                                        
+
                                         <p><strong>Estimé:</strong> {order.duration_of_delivery || 'Non spécifiée'}</p>
                                     </div>
 

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { ShoppingBag, Wallet, Package, Settings, ArrowRight } from "lucide-react"
+import { TrendingUp, Wallet, Package, Settings, ArrowRight } from "lucide-react"
 import AsyncLink from "../ui/AsyncLink"
 
 
@@ -10,10 +10,10 @@ interface QuickActionsProps {
 export function QuickActions({ sellerData }: QuickActionsProps) {
   const actions = [
     {
-      title: "Catalogue",
-      description: "Gérer vos produits",
-      icon: <ShoppingBag className="w-4 h-4 text-gray-700" />,
-      link: "/catalogue",
+      title: "Statistiques avancées",
+      description: "Voir les statistiques détaillées de votre boutique",
+      icon: <TrendingUp className="w-4 h-4 text-gray-700" />,
+      link: "/seller/statistics",
       metric: "Voir tout"
     },
     {
@@ -44,7 +44,7 @@ export function QuickActions({ sellerData }: QuickActionsProps) {
       <h2 className="text-lg font-semibold text-gray-900 mb-4 px-1">
         Liens rapides
       </h2>
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ export function QuickActions({ sellerData }: QuickActionsProps) {
                   <p className="text-xs text-gray-600 mb-2">
                     {action.description}
                   </p>
-                  
+
                   <div className="flex items-center text-xs font-medium text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
                     <span>Accéder</span>
                     <ArrowRight className="w-3 h-3 ml-1 transform group-hover:translate-x-1 transition-transform" />

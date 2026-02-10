@@ -39,6 +39,7 @@ import EditProductPage from "@/pages/seller/EditProductPage";
 import NotificationsPage from "@/pages/dashboard/seller/notifications";
 import ConfirmationPage from "@/pages/seller/ConfirmationPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import ProductBoostPage from "@/pages/seller/ProductBoostPage";
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -55,6 +56,10 @@ export const routes = createBrowserRouter([
   {
     path: '/seller/pro',
     element: <StoreBoostPage />
+  },
+  {
+    path: '/seller/product/boost/:productUrl',
+    element: <ProductBoostPage />
   },
   {
     path: '/coins/confirmation',
@@ -136,6 +141,7 @@ export const routes = createBrowserRouter([
             path: '/seller/create-product',
             element: <CreateProductPage />
           },
+
           {
             path: '/seller/product/edit/:url',
             element: <EditProductPage />
