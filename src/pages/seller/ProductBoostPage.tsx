@@ -118,7 +118,7 @@ const ProductBoostPage: React.FC = () => {
                     particleCount: 150,
                     spread: 70,
                     origin: { x: 0.5, y: 0.6 },
-                    colors: ['#ed7e0f', '#fbbf24', '#ffffff']
+
                 });
             }
         } catch (e) {

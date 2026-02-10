@@ -89,7 +89,7 @@ const getOrderItems = (order: any) => {
     return allOrderItems;
 };
 
-const TAX_RATE = 0.1925; // 19.25% TVA au Cameroun
+
 
 const OrderDetailPage = () => {
     const { orderId } = useParams<{ orderId: string }>();
