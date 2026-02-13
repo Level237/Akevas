@@ -22,13 +22,8 @@ jobs:
       - name: Build App
         run:  pnpm run build
 
-      - name: Add .htaccess to dist/
-        run: |
-          echo 'Options -Indexes' > ./dist/.htaccess
-          echo 'RewriteEngine On' >> ./dist/.htaccess
-          echo 'RewriteCond %{REQUEST_FILENAME} !-f' >> ./dist/.htaccess
-          echo 'RewriteCond %{REQUEST_FILENAME} !-d' >> ./dist/.htaccess
-          echo 'RewriteRule ^ index.html [QSA,L]' >> ./dist/.htaccess
+      - name: Copy .htaccess to dist/
+        run: cp .htaccess ./dist/.htaccess
           
       - name: Deploy via SSH (Rsync)
         uses: Burnett01/rsync-deployments@5.2.1

@@ -1,0 +1,29 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # 1. --- SEO BRIDGE : REDIRECTION DES BOTS VERS LARAVEL ---
+    # On détecte les robots (Facebook, WhatsApp, Google, etc.)
+    RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|WhatsApp|Twitterbot|googlebot|bingbot|linkedinbot) [NC]
+    # On les redirige vers ton API Laravel (remplace par ton URL d'API réelle)
+    # On passe l'URL actuelle en paramètre pour que Laravel sache quel produit analyser
+    RewriteRule ^(.*)$ https://api.akevas.com/api/seo-bridge?url=%{REQUEST_URI} [L,R=301]
+
+    # 2. --- ROUTAGE REACT : ÉVITER LES ERREURS 404 ---
+    # Si le fichier demandé n'existe pas, on renvoie vers index.html
+    RewriteRule ^index\.html$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.html [L]
+</IfModule>
+
+# 3. --- ANTI-CACHE : FORCER LE NOUVEL INDEX.HTML ---
+<Files "index.html">
+    <IfModule mod_headers.c>
+        FileETag None
+        Header unset ETag
+        Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+    </IfModule>
+</Files>

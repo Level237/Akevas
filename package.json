@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "vite",
         "preinstall": "npx only-allow pnpm",
-        "build": "tsc -b && vite build",
+        "build": "rm -rf dist && vite build",
         "lint": "eslint .",
         "preview": "vite preview"
     },
