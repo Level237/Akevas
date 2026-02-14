@@ -11,23 +11,27 @@ jobs:
     environment: hostinger
     steps:
       - name: Checkout Code Akevas
-        uses:  actions/checkout@v3
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Install Dependancies
-        run:  pnpm install
+        run: pnpm install
 
       - name: Build App
-        run:  pnpm run build
+        # Ajout du nettoyage du dossier dist avant le build
+        run: rm -rf dist && pnpm run build
 
       - name: Copy .htaccess to dist/
+        # Au lieu de faire des 'echo', on copie ton fichier complet qui est à la racine
         run: cp .htaccess ./dist/.htaccess
-          
+
       - name: Deploy via SSH (Rsync)
         uses: Burnett01/rsync-deployments@5.2.1
         with:
+          # L'option --delete va supprimer les vieux fichiers JS sur le serveur (Génial !)
+          # Mais rsync ne touchera pas aux dossiers 'api', 'seller' (parent) et 'delivery'
           switches: -avzr --delete --exclude='api' --exclude='seller' --exclude='delivery'
           path: ./dist/
           remote_path: domains/akevas.com/public_html/seller/
