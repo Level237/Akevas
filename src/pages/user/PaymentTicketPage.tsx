@@ -20,76 +20,76 @@ const statusMap: Record<string, { label: string; color: string }> = {
 
 
 const getOrderItems = (order: any) => {
-    const allOrderItems: any[] = [];
-    // Vérifier si order existe
-    if (!order) {
-        return allOrderItems;
-    }
-
-    // Ajouter les produits avec variation (orderVariations)
-    if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
-        order.orderVariations.forEach((item: any) => {
-            // Cas 1: variation_attribute existe avec product_variation
-            if (item && item.variation_attribute && item.variation_attribute.product_variation) {
-                const variation = item.variation_attribute.product_variation;
-                const attributeValue = item.variation_attribute.value;
-                const attributePrice = item.variation_attribute.price;
-                allOrderItems.push({
-                    id: item.id,
-                    name: variation.product_name || 'Produit inconnu',
-                    color: variation.color?.name || '',
-                    hex : variation.color?.hex   || "",
-                    size: attributeValue || '',
-                    price:variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : attributePrice,
-                    quantity: parseInt(item.variation_quantity) || 0,
-                    image: variation.images?.[0]?.path || '',
-                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(attributePrice) || 0),
-                    type: 'variation'
-                });
-            }
-            // Cas 2: variation_attribute est null mais product_variation existe directement
-            else if (item && item.product_variation) {
-                const variation = item.product_variation;
-                const price = variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : variation.price
-                allOrderItems.push({
-                    id: item.id,
-                    name: variation.product_name || 'Produit inconnu',
-                    color: variation.color?.name || '',
-                    hex : variation.color?.hex   || "",
-                    size: '',
-                    quantity: parseInt(item.variation_quantity) || 0,
-                    price:price,
-                    image: variation.images?.[0]?.path || '',
-                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(price) || 0),
-                    type: 'variation'
-                });
-            }
-        });
-    }
-
-    // Ajouter les produits sans variation (order_details)
-    if (order.order_details && order.order_details.length > 0) {
-
-      
-        order.order_details.forEach((item: any) => {
-          const price = item.product?.product_price
-            if (item && item.product) {
-                allOrderItems.push({
-                    id: item.id,
-                    name: item.product?.product_name || 'Produit inconnu',
-                    color: '',
-                    size: '',
-                    quantity: parseInt(item.quantity) || 0,
-                    price: price,
-                    image: item.product?.product_profile || '',
-                    total: (parseInt(item.quantity) || 0) * (parseFloat(price) || 0),
-                    type: 'simple'
-                });
-            }
-        });
-    }
-
+  const allOrderItems: any[] = [];
+  // Vérifier si order existe
+  if (!order) {
     return allOrderItems;
+  }
+
+  // Ajouter les produits avec variation (orderVariations)
+  if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
+    order.orderVariations.forEach((item: any) => {
+      // Cas 1: variation_attribute existe avec product_variation
+      if (item && item.variation_attribute && item.variation_attribute.product_variation) {
+        const variation = item.variation_attribute.product_variation;
+        const attributeValue = item.variation_attribute.value;
+        const attributePrice = item.variation_attribute.price;
+        allOrderItems.push({
+          id: item.id,
+          name: variation.product_name || 'Produit inconnu',
+          color: variation.color?.name || '',
+          hex: variation.color?.hex || "",
+          size: attributeValue || '',
+          price: variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : attributePrice,
+          quantity: parseInt(item.variation_quantity) || 0,
+          image: variation.images?.[0]?.path || '',
+          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(attributePrice) || 0),
+          type: 'variation'
+        });
+      }
+      // Cas 2: variation_attribute est null mais product_variation existe directement
+      else if (item && item.product_variation) {
+        const variation = item.product_variation;
+        const price = variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : variation.price
+        allOrderItems.push({
+          id: item.id,
+          name: variation.product_name || 'Produit inconnu',
+          color: variation.color?.name || '',
+          hex: variation.color?.hex || "",
+          size: '',
+          quantity: parseInt(item.variation_quantity) || 0,
+          price: price,
+          image: variation.images?.[0]?.path || '',
+          total: (parseInt(item.variation_quantity) || 0) * (parseFloat(price) || 0),
+          type: 'variation'
+        });
+      }
+    });
+  }
+
+  // Ajouter les produits sans variation (order_details)
+  if (order.order_details && order.order_details.length > 0) {
+
+
+    order.order_details.forEach((item: any) => {
+      const price = item.product?.product_price
+      if (item && item.product) {
+        allOrderItems.push({
+          id: item.id,
+          name: item.product?.product_name || 'Produit inconnu',
+          color: '',
+          size: '',
+          quantity: parseInt(item.quantity) || 0,
+          price: price,
+          image: item.product?.product_profile || '',
+          total: (parseInt(item.quantity) || 0) * (parseFloat(price) || 0),
+          type: 'simple'
+        });
+      }
+    });
+  }
+
+  return allOrderItems;
 };
 
 export default function PaymentTicketPage() {
@@ -119,13 +119,13 @@ export default function PaymentTicketPage() {
 
   // Aggregate all products
   const allProducts: any[] = [];
-  
+
   payment.order.forEach((order: any) => {
-      const items = getOrderItems(order);
-      allProducts.push(...items);
+    const items = getOrderItems(order);
+    allProducts.push(...items);
   });
 
-  console.log(allProducts)
+
   const TAX_RATE = 0.03; // 5% de TVA (Note: 0.03 is 3%, but comment says 5%. Keeping consistent with OrderDetailPage)
   const itemsTotal = allProducts.reduce((total: number, item: any) => total + item.total, 0);
   const shippingFee = Number(mainOrder?.fee_of_shipping || 0);
@@ -157,7 +157,7 @@ export default function PaymentTicketPage() {
         {/* Document Border Container */}
         <div className="border-4 border-gray-800 m-1 md:m-2 p-1">
           <div className="border-2 border-gray-800">
-          
+
             <div className="grid grid-cols-1 md:grid-cols-3 border-b-2 border-gray-800">
               {/* Logo Area */}
               <div className="p-4 flex flex-col items-center justify-center border-b-2 md:border-b-0 md:border-r-2 border-gray-800">
@@ -166,11 +166,11 @@ export default function PaymentTicketPage() {
 
               {/* Center Title Area */}
               <div className="flex flex-col justify-center text-center p-2 border-b-2 md:border-b-0 md:border-r-2 border-gray-800">
-                 <Barcode />
-                 <div className="border-t-2 border-gray-800 mt-2 pt-2">
-                    <h1 className="font-bold text-base md:text-lg uppercase leading-tight">Reçu de Paiement /<br/>Payment Receipt</h1>
-                    <h2 className="font-bold text-sm md:text-md uppercase mt-1 text-gray-700">Akevas Online Store</h2>
-                 </div>
+                <Barcode />
+                <div className="border-t-2 border-gray-800 mt-2 pt-2">
+                  <h1 className="font-bold text-base md:text-lg uppercase leading-tight">Reçu de Paiement /<br />Payment Receipt</h1>
+                  <h2 className="font-bold text-sm md:text-md uppercase mt-1 text-gray-700">Akevas Online Store</h2>
+                </div>
               </div>
 
               {/* QR Code Area */}
@@ -185,7 +185,7 @@ export default function PaymentTicketPage() {
                   size={100}
                   level="H"
                 />
-              </div> 
+              </div>
             </div>
 
             {/* Blue Bar Title */}
@@ -201,7 +201,7 @@ export default function PaymentTicketPage() {
               {/* Row 1: Name */}
               <div className="flex flex-col md:flex-row border-b border-gray-800">
                 <div className="w-full md:w-1/4 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
-                  Prénoms & Nom /<br/>Full Name
+                  Prénoms & Nom /<br />Full Name
                 </div>
                 <div className="w-full md:w-3/4 p-2 font-semibold uppercase flex items-center">
                   {payment.user}
@@ -212,7 +212,7 @@ export default function PaymentTicketPage() {
               <div className="flex flex-col md:flex-row border-b border-gray-800">
                 <div className="flex flex-col md:flex-row w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-800">
                   <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
-                    Référence /<br/>Reference
+                    Référence /<br />Reference
                   </div>
                   <div className="w-full md:w-1/2 p-2 flex items-center font-mono">
                     {payment.transaction_ref}
@@ -220,7 +220,7 @@ export default function PaymentTicketPage() {
                 </div>
                 <div className="flex flex-col md:flex-row w-full md:w-1/2">
                   <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
-                    Date /<br/>Date
+                    Date /<br />Date
                   </div>
                   <div className="w-full md:w-1/2 p-2 flex items-center">
                     {date}
@@ -230,10 +230,10 @@ export default function PaymentTicketPage() {
 
               {/* Row 3: Amount & Status */}
               <div className="flex flex-col md:flex-row border-b border-gray-800">
-               
+
                 <div className="flex flex-col md:flex-row w-full md:w-1/2">
                   <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
-                    Statut /<br/>Status
+                    Statut /<br />Status
                   </div>
                   <div className={`w-full md:w-1/2 p-2 flex items-center font-bold uppercase ${status.color}`}>
                     {status.label}
@@ -244,35 +244,35 @@ export default function PaymentTicketPage() {
               {/* Row 4: Purpose */}
               <div className="flex flex-col md:flex-row border-b border-gray-800">
                 <div className="w-full md:w-1/4 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
-                  Objet /<br/>Purpose
+                  Objet /<br />Purpose
                 </div>
                 <div className="w-full md:w-3/4 p-2 uppercase flex items-center">
                   {payment.payment_of}
                 </div>
               </div>
 
-               {/* Row 5: Orders */}
-               <div className="flex flex-col md:flex-row border-b border-gray-800">
+              {/* Row 5: Orders */}
+              <div className="flex flex-col md:flex-row border-b border-gray-800">
                 <div className="w-full md:w-1/4 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
-                  Commandes /<br/>Orders
+                  Commandes /<br />Orders
                 </div>
                 <div className="w-full md:w-3/4 p-2 flex items-center text-xs flex-wrap">
-                   {payment.order.map((o: any) => (
-                     <span key={o.id} className="mr-2 mb-1 bg-gray-100 px-2 py-1 rounded border border-gray-300">
-                       #{o.id} ({o.itemsCount} articles)
-                     </span>
-                   ))}
+                  {payment.order.map((o: any) => (
+                    <span key={o.id} className="mr-2 mb-1 bg-gray-100 px-2 py-1 rounded border border-gray-300">
+                      #{o.id} ({o.itemsCount} articles)
+                    </span>
+                  ))}
                 </div>
               </div>
-                 {/* Row 6: Delivery Address */}
-               <div className="flex flex-col md:flex-row border-b border-gray-800">
+              {/* Row 6: Delivery Address */}
+              <div className="flex flex-col md:flex-row border-b border-gray-800">
                 <div className="w-full md:w-1/2 bg-blue-50 p-2 font-bold border-b md:border-b-0 md:border-r border-gray-800 flex items-center text-xs md:text-sm uppercase">
-                  Adresse de Livraison /<br/>Delivery Address
+                  Adresse de Livraison /<br />Delivery Address
                 </div>
                 <div className="w-full md:w-1/2 p-2 flex flex-col justify-center text-xs uppercase">
-                   <div className="font-bold">{mainOrder.userName}</div>
-                   <div>{mainOrder.quarter_delivery ==null ? mainOrder.emplacement : mainOrder.quarter_delivery}</div>
-                   <div>{mainOrder.userPhone}</div>
+                  <div className="font-bold">{mainOrder.userName}</div>
+                  <div>{mainOrder.quarter_delivery == null ? mainOrder.emplacement : mainOrder.quarter_delivery}</div>
+                  <div>{mainOrder.userPhone}</div>
                 </div>
               </div>
             </div>
@@ -281,7 +281,7 @@ export default function PaymentTicketPage() {
             <div className="bg-blue-300 border-b-2 border-gray-800 py-1 px-4 text-center">
               <h3 className="font-bold text-xs md:text-sm uppercase tracking-wide">Détails des Produits / Product Details</h3>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full text-[10px] md:text-sm text-left">
                 <thead>
@@ -297,21 +297,21 @@ export default function PaymentTicketPage() {
                   {allProducts.map((prod, idx) => (
                     <tr key={idx} className="border-b border-gray-800 last:border-b-0">
                       <td className="p-1 md:p-2 border-r border-gray-800 text-center">
-                        <img 
-                            src={prod.image} 
-                            alt={prod.name} 
-                            className="w-8 h-8 md:w-10 md:h-10 object-cover mx-auto border border-gray-300"
-                            onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/40x40?text=Img'; }}
+                        <img
+                          src={prod.image}
+                          alt={prod.name}
+                          className="w-8 h-8 md:w-10 md:h-10 object-cover mx-auto border border-gray-300"
+                          onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/40x40?text=Img'; }}
                         />
                       </td>
                       <td className="p-1 md:p-2 border-r border-gray-800">
-                        
+
                         <div className="font-bold truncate max-w-[120px] md:max-w-none">{prod.name}</div>
                         {(prod.color || prod.size) && (
-                            <div className="text-gray-500 text-[9px] md:text-[10px]">
-                                {prod.color && <span className={`flex items-center`}>Couleur: <div className={`w-2 h-2 md:w-3 md:h-3 mr-1 ml-1 border rounded-full bg-[${prod.hex}]`}></div> {prod.color}</span>}
-                                {prod.size && <span className={`text-[9px] md:text-[10px] ${prod.size}`}>Taille: {prod.size}</span>}
-                            </div>
+                          <div className="text-gray-500 text-[9px] md:text-[10px]">
+                            {prod.color && <span className={`flex items-center`}>Couleur: <div className={`w-2 h-2 md:w-3 md:h-3 mr-1 ml-1 border rounded-full bg-[${prod.hex}]`}></div> {prod.color}</span>}
+                            {prod.size && <span className={`text-[9px] md:text-[10px] ${prod.size}`}>Taille: {prod.size}</span>}
+                          </div>
                         )}
                       </td>
                       <td className="p-1 md:p-2 border-r border-gray-800 text-center">{prod.quantity}</td>
@@ -324,30 +324,30 @@ export default function PaymentTicketPage() {
             </div>
 
             <div className="flex justify-end p-2 md:p-4 bg-gray-50 border-b-2 border-gray-800">
-                        <div className="w-full md:w-1/2 text-xs">
-                            <div className="flex justify-between mb-1">
-                                <span className="uppercase">Sous-total / Subtotal:</span>
-                                <span className="font-bold">{itemsTotal.toLocaleString('fr-FR')} XAF</span>
-                            </div>
-                            <div className="flex justify-between mb-1">
-                                <span className="uppercase">Frais de livraison / Shipping:</span>
-                                <span className="font-bold">{shippingFee.toLocaleString('fr-FR')} XAF</span>
-                            </div>
-                            <div className="flex justify-between mb-1">
-                                <span className="uppercase">Frais (3%):</span>
-                                <span className="font-bold">{taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
-                            </div>
-                            <div className="flex justify-between border-t border-gray-800 pt-1 mt-1 text-sm">
-                                <span className="font-bold uppercase">Total (TTC):</span>
-                                <span className="font-bold">{totalWithTax.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
-                            </div>
-                        </div>
-                      </div>
+              <div className="w-full md:w-1/2 text-xs">
+                <div className="flex justify-between mb-1">
+                  <span className="uppercase">Sous-total / Subtotal:</span>
+                  <span className="font-bold">{itemsTotal.toLocaleString('fr-FR')} XAF</span>
+                </div>
+                <div className="flex justify-between mb-1">
+                  <span className="uppercase">Frais de livraison / Shipping:</span>
+                  <span className="font-bold">{shippingFee.toLocaleString('fr-FR')} XAF</span>
+                </div>
+                <div className="flex justify-between mb-1">
+                  <span className="uppercase">Frais (3%):</span>
+                  <span className="font-bold">{taxAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
+                </div>
+                <div className="flex justify-between border-t border-gray-800 pt-1 mt-1 text-sm">
+                  <span className="font-bold uppercase">Total :</span>
+                  <span className="font-bold">{totalWithTax.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XAF</span>
+                </div>
+              </div>
+            </div>
 
-             {/* Footer Note */}
-             <div className="bg-gray-50 border-t-2 border-gray-800 p-2 text-center text-[8px] md:text-[10px] uppercase text-gray-500">
-                Ce document est un reçu électronique généré par Akevas. / This document is an electronic receipt generated by Akevas.
-             </div>
+            {/* Footer Note */}
+            <div className="bg-gray-50 border-t-2 border-gray-800 p-2 text-center text-[8px] md:text-[10px] uppercase text-gray-500">
+              Ce document est un reçu électronique généré par Akevas. / This document is an electronic receipt generated by Akevas.
+            </div>
 
           </div>
         </div>
@@ -368,7 +368,7 @@ export default function PaymentTicketPage() {
               tempDiv.style.left = '-9999px';
               tempDiv.style.width = '800px';
               tempDiv.style.backgroundColor = '#ffffff';
-              
+
               // Helper to generate product rows for PDF
               const productRows = allProducts.map(prod => {
                 const details = [];
@@ -558,7 +558,7 @@ export default function PaymentTicketPage() {
 
               const pdfWidth = pdf.internal.pageSize.getWidth();
               const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-              
+
               pdf.addImage(imgData, 'PNG', 0, 40, pdfWidth, pdfHeight);
               pdf.save(`recu-akevas-${payment.transaction_ref}.pdf`);
 
