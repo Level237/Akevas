@@ -34,9 +34,9 @@ const getOrderItems = (order: any) => {
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
-                    hex : variation.color?.hex   || "",
+                    hex: variation.color?.hex || "",
                     size: attributeValue || '',
-                    price:variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : attributePrice,
+                    price: variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : attributePrice,
                     quantity: parseInt(item.variation_quantity) || 0,
                     image: variation.images?.[0]?.path || '',
                     total: (parseInt(item.variation_quantity) || 0) * (parseFloat(attributePrice) || 0),
@@ -51,10 +51,10 @@ const getOrderItems = (order: any) => {
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
-                    hex : variation.color?.hex   || "",
+                    hex: variation.color?.hex || "",
                     size: '',
                     quantity: parseInt(item.variation_quantity) || 0,
-                    price:price,
+                    price: price,
                     image: variation.images?.[0]?.path || '',
                     total: (parseInt(item.variation_quantity) || 0) * (parseFloat(price) || 0),
                     type: 'variation'
@@ -66,9 +66,9 @@ const getOrderItems = (order: any) => {
     // Ajouter les produits sans variation (order_details)
     if (order.order_details && order.order_details.length > 0) {
 
-      
+
         order.order_details.forEach((item: any) => {
-          const price = item.product?.product_price
+            const price = item.product?.product_price
             if (item && item.product) {
                 allOrderItems.push({
                     id: item.id,
@@ -133,7 +133,7 @@ const OrderDetailPage = () => {
     const hasVariations = orderItems.some((item: any) => item.type === 'variation');
     const itemsTotal = orderItems.reduce((total: number, item: any) => total + item.total, 0);
     const shippingFee = Number(currentOrder?.fee_of_shipping || 0);
-    const taxAmount = itemsTotal  * TAX_RATE;
+    const taxAmount = itemsTotal * TAX_RATE;
     const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
     return (
@@ -189,11 +189,11 @@ const OrderDetailPage = () => {
                                 <span className="font-medium max-sm:text-sm">{currentOrder?.fee_of_shipping || 0} XAF</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600 max-sm:text-sm">TVA (3%)</span>
+                                <span className="text-gray-600 max-sm:text-sm">Taxe (3%)</span>
                                 <span className="font-medium max-sm:text-sm">{taxAmount.toFixed(2)} XAF</span>
                             </div>
                             <div className="flex justify-between border-t pt-2">
-                                <span className="text-gray-800 font-semibold max-sm:text-sm">Total (TTC)</span>
+                                <span className="text-gray-800 font-semibold max-sm:text-sm">Total</span>
                                 <span className="font-bold text-lg max-sm:text-sm">{totalWithTax.toFixed(2)} XAF</span>
                             </div>
                             <div className="flex justify-between">
@@ -282,11 +282,11 @@ const OrderDetailPage = () => {
                             <span className="font-medium max-sm:text-sm">{currentOrder?.fee_of_shipping || 0} XAF</span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <span className="text-gray-600">TVA (5%)</span>
+                            <span className="text-gray-600">Taxe (3%)</span>
                             <span className="font-medium">{taxAmount.toFixed(2)} XAF</span>
                         </div>
                         <div className="flex justify-between items-center mt-3 pt-3 border-t">
-                            <span className="text-lg max-sm:text-sm font-semibold">Total (TTC)</span>
+                            <span className="text-lg max-sm:text-sm font-semibold">Total</span>
                             <span className="text-lg max-sm:text-sm font-bold">{totalWithTax.toFixed(2)} XAF</span>
                         </div>
                     </div>

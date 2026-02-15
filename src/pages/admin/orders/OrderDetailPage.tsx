@@ -34,7 +34,7 @@ const formatPrice = (price: string | number) => {
 
 const getShopFromProduct = (product: any) => {
     if (product.shop) return product.shop;
-    
+
     // Fallback if shop info is flat on product
     if (product.shop_id) {
         return {
@@ -104,7 +104,7 @@ const getOrderItems = (order: any) => {
         order.order_details.forEach((item: any) => {
             if (item && item.product) {
                 const shop = item.product.shop || getShopFromProduct(item.product);
-                
+
                 allOrderItems.push({
                     id: item.id,
                     name: item.product?.product_name || 'Produit inconnu',
@@ -194,7 +194,7 @@ export default function AdminOrderDetailPage() {
     const deliveryLocation = getDeliveryLocation(order);
 
     const shippingFee = Number(order?.fee_of_shipping || 0);
-    const taxAmount = (itemsTotal + shippingFee) * TAX_RATE;
+    const taxAmount = itemsTotal * TAX_RATE;
     const totalWithTax = itemsTotal + shippingFee + taxAmount;
 
 
