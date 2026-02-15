@@ -19,47 +19,47 @@ const formatPrice = (price: string | number) => {
 
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
+    // Vérifier si order existe
+    if (!order) {
+        return allOrderItems;
+    }
+
     // Ajouter les produits avec variation (orderVariations)
-    if (order.orderVariations && order.orderVariations.length > 0) {
+    if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
         order.orderVariations.forEach((item: any) => {
             // Cas 1: variation_attribute existe avec product_variation
-            if (item.variation_attribute && item.variation_attribute.product_variation) {
+            if (item && item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
                 const attributeValue = item.variation_attribute.value;
-                const attributeData = variation.attributes_variation?.[0]; // Access the first attribute for quantity and price
-
+                const attributePrice = item.variation_attribute.price;
                 allOrderItems.push({
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
                     hex: variation.color?.hex || "",
                     size: attributeValue || '',
-                    quantity: parseInt(attributeData?.quantity) || 0, // Use quantity from attributeData
-                    price: parseFloat(attributeData?.price) || 0, // Use price from attributeData
+                    price: variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : attributePrice,
+                    quantity: parseInt(item.variation_quantity) || 0,
                     image: variation.images?.[0]?.path || '',
-                    total: (parseInt(attributeData?.quantity) || 0) * (parseFloat(attributeData?.price) || 0),
-                    type: 'variation',
-                    shop: variation.shop || null,
-                    seller: variation.shop?.user || null
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(attributePrice) || 0),
+                    type: 'variation'
                 });
             }
             // Cas 2: variation_attribute est null mais product_variation existe directement
-            else if (item.product_variation) {
+            else if (item && item.product_variation) {
                 const variation = item.product_variation;
-
+                const price = variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : variation.price
                 allOrderItems.push({
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
                     hex: variation.color?.hex || "",
                     size: '',
-                    quantity: parseInt(item.variation_quantity), // Keep original quantity for this case if it applies
-                    price: parseFloat(item.variation_price), // Keep original price for this case if it applies
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: price,
                     image: variation.images?.[0]?.path || '',
-                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
-                    type: 'variation',
-                    shop: variation.shop || null,
-                    seller: variation.shop?.user || null
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(price) || 0),
+                    type: 'variation'
                 });
             }
         });
@@ -67,20 +67,21 @@ const getOrderItems = (order: any) => {
 
     // Ajouter les produits sans variation (order_details)
     if (order.order_details && order.order_details.length > 0) {
+
+
         order.order_details.forEach((item: any) => {
+            const price = item.product?.product_price
             if (item && item.product) {
                 allOrderItems.push({
                     id: item.id,
                     name: item.product?.product_name || 'Produit inconnu',
                     color: '',
                     size: '',
-                    quantity: parseInt(item.quantity),
-                    price: parseFloat(item.price),
+                    quantity: parseInt(item.quantity) || 0,
+                    price: price,
                     image: item.product?.product_profile || '',
-                    total: parseInt(item.quantity) * parseFloat(item.price),
-                    type: 'simple',
-                    shop: item.product?.shop || null,
-                    seller: item.product?.shop?.user || null
+                    total: (parseInt(item.quantity) || 0) * (parseFloat(price) || 0),
+                    type: 'simple'
                 });
             }
         });
@@ -95,6 +96,7 @@ const OrderDetailPage = () => {
     const { orderId } = useParams<{ orderId: string }>();
     const navigate = useNavigate();
     const { data: orderData, isLoading, isError } = useShowOrderQuery(orderId);
+    console.log(orderData)
     const getOrderStatus = (status: string) => {
         switch (status) {
             case "0":
@@ -174,7 +176,7 @@ const OrderDetailPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Order Summary Card */}
                 <Card className="md:col-span-2 p-6">
-                    <div className="flex items-center justify-between mb-4 pb-4 border-b">
+                    <div className="flex items-center max-sm:flex-col max-sm:justify-center max-sm:gap-3 justify-between mb-4 pb-4 border-b">
                         <div className="flex items-center gap-3">
                             <div className={`p-3 rounded-lg ${status?.bgColor}`}>
                                 {status && <status.icon className={`w-6 h-6 ${status.color}`} />}
@@ -186,7 +188,7 @@ const OrderDetailPage = () => {
                                 </p>
                             </div>
                         </div>
-                        <span className="font-bold text-xl">{formatPrice(order.total_amount)}</span>
+                        <span className="font-bold text-xl">{formatPrice(totalWithTax)}</span>
                     </div>
 
                     <h2 className="text-lg font-semibold text-gray-900 mb-4">Articles Commandés ({allOrderItems.length})</h2>
@@ -274,7 +276,7 @@ const OrderDetailPage = () => {
 
 
                             <div className="flex justify-between border-t border-dashed pt-4 mt-4 text-xl font-bold">
-                                <span>Total (TTC):</span>
+                                <span>Total :</span>
                                 <span className="text-green-600">{formatPrice(totalWithTax)}</span>
                             </div>
                         </div>

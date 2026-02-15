@@ -18,46 +18,47 @@ const formatPrice = (price: string | number) => {
 
 const getOrderItems = (order: any) => {
     const allOrderItems: any[] = [];
+    // Vérifier si order existe
+    if (!order) {
+        return allOrderItems;
+    }
+
     // Ajouter les produits avec variation (orderVariations)
-    if (order.orderVariations && order.orderVariations.length > 0) {
+    if (order.orderVariations && Array.isArray(order.orderVariations) && order.orderVariations.length > 0) {
         order.orderVariations.forEach((item: any) => {
             // Cas 1: variation_attribute existe avec product_variation
-            if (item.variation_attribute && item.variation_attribute.product_variation) {
+            if (item && item.variation_attribute && item.variation_attribute.product_variation) {
                 const variation = item.variation_attribute.product_variation;
                 const attributeValue = item.variation_attribute.value;
-
+                const attributePrice = item.variation_attribute.price;
                 allOrderItems.push({
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
                     hex: variation.color?.hex || "",
                     size: attributeValue || '',
-                    quantity: parseInt(item.variation_quantity),
-                    price: parseFloat(item.variation_price),
+                    price: variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : attributePrice,
+                    quantity: parseInt(item.variation_quantity) || 0,
                     image: variation.images?.[0]?.path || '',
-                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
-                    type: 'variation',
-                    shop: variation.shop || null,
-                    seller: variation.shop?.user || null
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(attributePrice) || 0),
+                    type: 'variation'
                 });
             }
             // Cas 2: variation_attribute est null mais product_variation existe directement
-            else if (item.product_variation) {
+            else if (item && item.product_variation) {
                 const variation = item.product_variation;
-
+                const price = variation.wholeSalePrice.length != 0 ? variation.wholeSalePrice[0].wholesale_price : variation.price
                 allOrderItems.push({
                     id: item.id,
                     name: variation.product_name || 'Produit inconnu',
                     color: variation.color?.name || '',
                     hex: variation.color?.hex || "",
                     size: '',
-                    quantity: parseInt(item.variation_quantity),
-                    price: parseFloat(item.variation_price),
+                    quantity: parseInt(item.variation_quantity) || 0,
+                    price: price,
                     image: variation.images?.[0]?.path || '',
-                    total: parseInt(item.variation_quantity) * parseFloat(item.variation_price),
-                    type: 'variation',
-                    shop: variation.shop || null,
-                    seller: variation.shop?.user || null
+                    total: (parseInt(item.variation_quantity) || 0) * (parseFloat(price) || 0),
+                    type: 'variation'
                 });
             }
         });
@@ -65,20 +66,21 @@ const getOrderItems = (order: any) => {
 
     // Ajouter les produits sans variation (order_details)
     if (order.order_details && order.order_details.length > 0) {
+
+
         order.order_details.forEach((item: any) => {
+            const price = item.product?.product_price
             if (item && item.product) {
                 allOrderItems.push({
                     id: item.id,
                     name: item.product?.product_name || 'Produit inconnu',
                     color: '',
                     size: '',
-                    quantity: parseInt(item.quantity),
-                    price: parseFloat(item.price),
+                    quantity: parseInt(item.quantity) || 0,
+                    price: price,
                     image: item.product?.product_profile || '',
-                    total: parseInt(item.quantity) * parseFloat(item.price),
-                    type: 'simple',
-                    shop: item.product?.shop || null,
-                    seller: item.product?.shop?.user || null
+                    total: (parseInt(item.quantity) || 0) * (parseFloat(price) || 0),
+                    type: 'simple'
                 });
             }
         });
@@ -153,6 +155,8 @@ const OrdersPage = () => {
                 {ordersData?.map((order: any) => {
                     const status = getOrderStatus(order.status);
                     const allOrderItems = getOrderItems(order);
+                    const subtotal = allOrderItems.reduce((sum: number, item: any) => sum + item.total, 0);
+                    const totalWithTax = subtotal;
                     return (
                         <motion.div
                             key={order.id}
@@ -169,19 +173,19 @@ const OrdersPage = () => {
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <h3 className="font-semibold text-sm">Commande #{order.id}</h3>
-                                                <span className={`text-sm ${status?.color}`}>
+                                                <h3 className="font-semibold text-xs">Commande #{order.id}</h3>
+                                                <span className={`text-xs ${status?.color}`}>
                                                     {status?.title}
                                                 </span>
                                             </div>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-xs text-gray-500">
                                                 {format(new Date(order.created_at), 'PPP à HH:mm', { locale: fr })}
                                             </p>
                                         </div>
                                     </div>
 
                                     <div className="flex flex-col lg:items-end">
-                                        <span className="font-semibold text-sm">{formatPrice(order.total_amount)}</span>
+                                        <span className="font-semibold text-sm">{formatPrice(totalWithTax)}</span>
                                         <span className="text-sm text-gray-500">{order.itemsCount} article(s)</span>
                                     </div>
                                 </div>
