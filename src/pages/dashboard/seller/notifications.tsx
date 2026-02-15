@@ -186,12 +186,7 @@ const NotificationsPage: React.FC = () => {
                                                                                 <p className="font-medium">{selectedNotification.data.customer_name}</p>
                                                                             </div>
                                                                         )}
-                                                                        {selectedNotification.data.total_amount && (
-                                                                            <div>
-                                                                                <span className="text-gray-500">Montant total:</span>
-                                                                                <p className="font-medium">{selectedNotification.data.total_amount} FCFA</p>
-                                                                            </div>
-                                                                        )}
+
                                                                         <div>
                                                                             <span className="text-gray-500">Date:</span>
                                                                             <p className="font-medium">

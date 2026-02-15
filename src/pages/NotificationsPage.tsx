@@ -163,7 +163,7 @@ const NotificationsPage = () => {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <Clock className="w-4 h-4 text-gray-400" />
                         <span className="text-sm text-gray-500 whitespace-nowrap">
-                          {notification.timestamp}
+                          {notification.timestamp}s
                         </span>
                       </div>
                     </div>
