@@ -305,9 +305,10 @@ const CreateProductPage: React.FC = () => {
         setPendingVariationData(null);
     };
 
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        console.log(variationFrames)
         // Validation des prix des variations
         if (selectedAttributeType === 'colorOnly') {
             if (!globalColorPrice || globalColorPrice <= 0) {
@@ -513,12 +514,12 @@ const CreateProductPage: React.FC = () => {
 
             // Vérifier que chaque variation a une couleur et des images
             const invalidVariations = variationFrames.some(frame =>
-                !frame.color.id || frame.images.length === 0
+                !frame.color.id || frame.images.length === 0 || frame.sizes.length === 0
             );
 
             if (invalidVariations) {
-                toast.error('Veuillez remplir tous les champs obligatoires', {
-                    description: "Tous les champs marqués d'un * sont requis.",
+                toast.error('Une de vos variations est incomplete', {
+                    description: "Veuillez ajouter au moins une image,une couleur et une taille pour chaque variation.",
                     duration: 4000, // ms
                 });
                 return;
