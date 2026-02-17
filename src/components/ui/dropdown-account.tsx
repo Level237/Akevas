@@ -121,7 +121,7 @@ const DropdownAccount = ({ children, currentUser }: { children: React.ReactNode,
                           Se connecter
                         </Button>
                       </AsyncLink>
-                      <Link to="/seller/guide">
+                      <Link to="/seller-registration/personal-info">
                         <Button variant="ghost" className="w-full text-sm">
                           S'inscrire
                         </Button>
