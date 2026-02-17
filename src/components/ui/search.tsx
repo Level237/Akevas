@@ -238,7 +238,7 @@ export default function SearchResource({ open }: { open: () => void }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchState.query);
-    }, 400); // Attendre 400ms après la dernière frappe
+    }, 800); // Attendre 400ms après la dernière frappe
 
     return () => {
       clearTimeout(timer);
