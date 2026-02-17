@@ -270,6 +270,7 @@ export default function SearchResource({ open }: { open: () => void }) {
             <div className="flex-1 relative">
               <input
                 type="search"
+                enterKeyHint="search"
                 value={searchState.query}
                 onChange={(e) => setSearchState(prev => ({ ...prev, query: e.target.value }))}
                 placeholder="Rechercher un produit..."
