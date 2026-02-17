@@ -1,10 +1,10 @@
 import OptimizedImage from "@/components/OptimizedImage";
-import { useGetHistorySearchQuery, useGetUserQuery } from "@/services/auth";
+import { useGetHistorySearchQuery } from "@/services/auth";
 import { useSearchByQueryQuery } from "@/services/guardService";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion"
 import { Clock, Search, X } from "lucide-react"
 import { useState, useEffect, Suspense, useCallback } from "react";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // Composant pour les résultats de recherche
 const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) => {
@@ -99,61 +99,6 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
   }, []);
   return (
     <div className="space-y-8">
-
-{/* Produits */}
-      {data?.products && data.products.length > 0 && (
-        <div>
-          <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
-          <div className="grid grid-cols-3 mb-12 gap-4">
-          {data.products.map((product: any) => (
-                        <Link
-                          key={product.id}
-                          to={`/produit/${product.product_url}`}
-                          className="group rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200"
-                          
-                        >
-                          <div className="relative aspect-square overflow-hidden">
-                            <OptimizedImage
-                              src={getProductThumbnail(product)}
-                              alt={product.product_name}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            {/* Affichage des couleurs si variations */}
-                            {product?.variations?.length > 0 && (
-                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 px-2 py-1 rounded-full shadow-sm">
-                                {getColorSwatches(product).map((color: any) => (
-                                  <div
-                                    key={color.hex}
-                                    title={color.name}
-                                    className="w-3.5 h-3.5 rounded-full border border-gray-200"
-                                    style={{
-                                      backgroundColor: color.hex,
-                                      boxShadow: '0 0 0 1px #ccc',
-                                    }}
-                                  />
-                                ))}
-                                {product.variations.length > 4 && (
-                                  <span className="text-[10px] text-gray-600">+{product.variations.length - 4}</span>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          <div className="p-3 bg-white">
-                            <h4 className="font-medium text-xs text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
-                              {product.product_name}
-                            </h4>
-                            <p className="text-sm font-semibold text-orange-500 mt-1 text-sm">
-                              {new Intl.NumberFormat('fr-FR', {
-                                style: 'currency',
-                                currency: 'XAF'
-                              }).format(getDisplayPrice(product))}
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
-          </div>
-        </div>
-      )}
       {/* Boutiques */}
       {data?.shops && data.shops.length > 0 && (
         <div>
@@ -176,7 +121,60 @@ const SearchResults = ({ data, isLoading }: { data: any, isLoading: boolean }) =
         </div>
       )}
 
-    
+      {/* Produits */}
+      {data?.products && data.products.length > 0 && (
+        <div>
+          <h3 className="text-sm font-medium text-gray-500 mb-4">Produits</h3>
+          <div className="grid grid-cols-3 mb-12 gap-4">
+            {data.products.map((product: any) => (
+              <Link
+                key={product.id}
+                to={`/produit/${product.product_url}`}
+                className="group rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200"
+
+              >
+                <div className="relative aspect-square overflow-hidden">
+                  <OptimizedImage
+                    src={getProductThumbnail(product)}
+                    alt={product.product_name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  {/* Affichage des couleurs si variations */}
+                  {product?.variations?.length > 0 && (
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 px-2 py-1 rounded-full shadow-sm">
+                      {getColorSwatches(product).map((color: any) => (
+                        <div
+                          key={color.hex}
+                          title={color.name}
+                          className="w-3.5 h-3.5 rounded-full border border-gray-200"
+                          style={{
+                            backgroundColor: color.hex,
+                            boxShadow: '0 0 0 1px #ccc',
+                          }}
+                        />
+                      ))}
+                      {product.variations.length > 4 && (
+                        <span className="text-[10px] text-gray-600">+{product.variations.length - 4}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="p-3 bg-white">
+                  <h4 className="font-medium text-xs text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
+                    {product.product_name}
+                  </h4>
+                  <p className="text-sm font-semibold text-orange-500 mt-1 text-sm">
+                    {new Intl.NumberFormat('fr-FR', {
+                      style: 'currency',
+                      currency: 'XAF'
+                    }).format(getDisplayPrice(product))}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {(!data?.shops?.length && !data?.products?.length) && !isLoading && (
         <div className="text-center text-gray-500 py-8">
@@ -222,105 +220,105 @@ const SearchSkeleton = () => (
   </div>
 );
 
-export default function SearchResource({open}:{open:()=>void}){
-  
-      const { data: userData} = useGetUserQuery('Auth');
-      const [searchState, setSearchState] = useState({
-        query: '',
-      });
+export default function SearchResource({ open }: { open: () => void }) {
 
-      // État séparé pour la requête soumise
-      const [submittedQuery, setSubmittedQuery] = useState(searchState.query);
 
-      // Reset submittedQuery quand l'input est vide pour réafficher l'historique
-      useEffect(() => {
-        if (!searchState.query) {
-          setSubmittedQuery('');
-        }
-      }, [searchState.query]);
+  const [searchState, setSearchState] = useState({
+    query: '',
+  });
 
-      // Utiliser submittedQuery au lieu de debouncedQuery
-      const {data, isLoading} = useSearchByQueryQuery(
-        {query: submittedQuery, userId: userData?.id ? userData.id : 0},
-        { skip: !submittedQuery } // Skip la requête si la recherche soumise est vide
-      );
 
-      const {data:history,isLoading:isLoadingSearch} = useGetHistorySearchQuery('auth')
 
-    return (
-        <>
-                             <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed inset-0 bg-white z-50"
-          >
-            <div className="container mx-auto px-4 h-full flex flex-col">
-              {/* Search Header */}
-              <div className="flex items-center gap-4 py-4 border-b">
-                <button onClick={open}>
-                  <X className="w-6 h-6" />
-                </button>
 
-                <form 
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setSubmittedQuery(searchState.query);
-                  }}
-                  className="flex-1 relative"
-                >
-                  <input
-                    type="text"
-                    value={searchState.query}
-                    onChange={(e) => setSearchState(prev => ({ ...prev, query: e.target.value }))}
-                    placeholder="Rechercher un produit..."
-                    className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ed7e0f]"
-                    autoFocus
-                  />
-                  <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                    <Search className="w-5 h-5" />
-                  </button>
-                </form>
-              </div>
+  const { data: history, isLoading: isLoadingSearch } = useGetHistorySearchQuery('auth')
+  // État séparé pour la requête debounced
+  const [debouncedQuery, setDebouncedQuery] = useState(searchState.query);
 
-              {/* Search Content avec défilement */}
-              <div className="flex-1 overflow-y-auto py-6">
-                {submittedQuery ? (
-                  <Suspense fallback={<SearchSkeleton />}>
-                    <SearchResults data={data} isLoading={isLoading} />
-                  </Suspense>
-                ) : (
-                  <div className="space-y-8">
-                    {/* Historique de recherche */}
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-4 flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        Recherches récentes
-                      </h3>
-                      <div className="space-y-2">
-                        {!isLoadingSearch && history && history?.map((search:any, index:number) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setSearchState(prev => ({ ...prev, query: search.search_term }));
-                              setSubmittedQuery(search.search_term);
-                            }}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
-                          >
-                            {search.search_term}
-                          </button>
-                        ))}
+  // Effet pour gérer le debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchState.query);
+    }, 400); // Attendre 400ms après la dernière frappe
 
-                        {isLoadingSearch && <p>Chargement...</p>}
-                      </div>
-                    </div>
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchState.query]);
 
-                  </div>
-                )}
-              </div>
+  // Utiliser debouncedQuery au lieu de searchState.query
+  const { data, isLoading } = useSearchByQueryQuery(
+    { query: debouncedQuery, userId: 0 },
+    { skip: debouncedQuery === '' } // Skip la requête si la recherche est vide
+  );
+
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -50 }}
+        className="fixed inset-0 bg-white z-50"
+      >
+        <div className="container mx-auto px-4 h-full flex flex-col">
+          {/* Search Header */}
+          <div className="flex items-center gap-4 py-4 border-b">
+            <button onClick={open}>
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="flex-1 relative">
+              <input
+                type="search"
+                value={searchState.query}
+                onChange={(e) => setSearchState(prev => ({ ...prev, query: e.target.value }))}
+                placeholder="Rechercher un produit..."
+                className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ed7e0f]"
+                autoFocus
+              />
+              <Search className="absolute max-s left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
-          </motion.div>
+          </div>
 
-        </>
-    )
+          {/* Search Content avec défilement */}
+          <div className="flex-1 overflow-y-auto py-6">
+            {searchState.query ? (
+              <Suspense fallback={<SearchSkeleton />}>
+                <SearchResults data={data} isLoading={isLoading} />
+              </Suspense>
+            ) : (
+              <div className="space-y-8">
+                {/* Historique de recherche */}
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 mb-4 flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    Recherches récentes
+                  </h3>
+                  <div className="space-y-2">
+                    {!isLoadingSearch && history && history?.map((search: any, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setSearchState(prev => ({ ...prev, query: search.search_term }));
+                        }}
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-50 rounded-lg"
+                      >
+                        {search.search_term}
+                      </button>
+                    ))}
+
+                    {isLoadingSearch && <p>Chargement...</p>}
+                  </div>
+                </div>
+
+                {/* Tendances */}
+
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+
+    </>
+  )
 }
