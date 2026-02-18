@@ -348,7 +348,7 @@ export default function AdminOrderDetailPage() {
                                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                                     <img src={item.shop.shop_profile} alt="Shop Profile" className="w-5 h-5 rounded-full" />
                                                     <a
-                                                        href={`https://akevas.com/shop/${item.shop.shop_id}`}
+                                                        href={`/admin/shops/${item.shop.shop_id}`}
                                                         target='_blank'
                                                         className="font-medium text-blue-600 hover:underline flex items-center gap-1"
                                                     >
