@@ -1,9 +1,9 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Clock, CheckCircle } from 'lucide-react';
 import { NotificationData } from '@/types/notifications';
 import logo from '@/assets/favicon.png';
 
+import { Link } from 'react-router-dom';
 interface NotificationItemProps {
     notification: NotificationData;
     isSelected?: boolean;
@@ -42,10 +42,11 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         : '';
 
     return (
-        <motion.div
-            whileHover={variant === 'list' ? { backgroundColor: '#f9fafb' } : {}}
+        <Link
+
             className={`${baseClasses} ${selectedClasses} ${hoverClasses}`}
             onClick={onClick}
+            to={`/seller/notifications/${notification.id}`}
         >
             <div className="relative">
                 <img
@@ -88,7 +89,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
                     </div>
                 )}
             </div>
-        </motion.div>
+        </Link>
     );
 };
 
