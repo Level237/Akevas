@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { useAllNotificationQuery } from '@/services/sellerService';
 import NotificationItem from './NotificationItem';
 
-import AsyncLink from './AsyncLink';
 import { NotificationData } from '@/types/notifications';
 
 interface NotificationDropdownProps {
