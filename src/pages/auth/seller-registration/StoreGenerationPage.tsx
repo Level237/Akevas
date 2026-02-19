@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Store } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/index';
-import { useLoginMutation, useNewStoreMutation } from '@/services/auth';
+import { useLoginMutation, useNewStoreMutation } from '@/services/guardService';
 import { convertBase64ToFile } from '@/lib/convertBase64ToFile';
 import { removeData } from '@/store/seller/registerSlice';
 import { useCheckShopStatusMutation } from '@/services/guardService';
@@ -21,7 +21,7 @@ const StoreGenerationPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const { firstName, lastName, gender, email, phone, birthDate, nationality, sellerType, storeName, storeDescription, storeCategories, storeTown, storeQuarter, password, productType } = useSelector((state: RootState) => state.registerSeller);
-  
+
   const [newStore] = useNewStoreMutation();
   const [checkShopStatus] = useCheckShopStatusMutation();
   const [login] = useLoginMutation()
@@ -56,7 +56,7 @@ const StoreGenerationPage = () => {
 
 
 
-       const formDataAll = new FormData();
+      const formDataAll = new FormData();
 
       try {
         // Préparation des données pour l'API dès le début
@@ -117,10 +117,10 @@ const StoreGenerationPage = () => {
             console.log(response)
             if (response.data.exists) {
               clearInterval(pollInterval);
-              console.log(phone,password)
+              console.log(phone, password)
               // Connexion automatique après création
-              await login({ phone_number: phone, password, role_id: 2 });
-
+              const response = await login({ phone_number: phone, password, role_id: 2 });
+              console.log(response)
               await handleStepProgress(steps.length - 1);
               setProgress(100);
 

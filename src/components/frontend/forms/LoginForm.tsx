@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useLoginMutation } from "@/services/auth";
+import { useLoginMutation } from "@/services/guardService";
 import { useState } from "react";
 import logo from "@/assets/favicon.png"
 import { Link } from "react-router-dom";

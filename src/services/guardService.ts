@@ -13,8 +13,39 @@ export const guardService = createApi({
                 method: 'GET',
             }),
             providesTags: ['guard'],
-        }),
+        }), login: builder.mutation({
+            query: (credentials) => (
+                {
+                    url: '/api/login',
+                    method: 'POST',
+                    body: credentials
+                }),
 
+            transformErrorResponse: (baseQueryResult) => {
+                // Ici, vous pouvez personnaliser la réponse d'erreur
+
+                if (baseQueryResult.status === 400) {
+                    return { error: "l'email et le mot de passe ne peut pas etre vide" };
+                } else if (baseQueryResult.status === 500) {
+                    return { error: "l'email out le mot de passe sont incorrect" };
+                }
+                else {
+
+                    return { error: baseQueryResult.data };
+                }
+            },
+        },
+
+        ),
+        newStore: builder.mutation({
+            query: (formData) => ({
+                url: "/api/create/seller",
+                method: "POST",
+                body: formData,
+
+            }),
+            invalidatesTags: ['guard'],
+        }),
         checkToken: builder.query({
             query: () => ({
                 url: '/api/check/token',
@@ -40,7 +71,7 @@ export const guardService = createApi({
             query: (id) => `/api/shop/${id}`,
             providesTags: ['guard'],
         }),
-        
+
         checkIfEmailExists: builder.mutation({
             query: (formData) => ({
                 url: `/api/check/email-and-phone-number`,
@@ -57,7 +88,7 @@ export const guardService = createApi({
             }),
             invalidatesTags: ['guard'],
         }),
-        
+
         getCategoriesWithParentIdNull: builder.query({
             query: () => ({
                 url: `/api/categories/with-parent-id-null`,
@@ -189,10 +220,12 @@ export const guardService = createApi({
 
 export const {
     useGetShopQuery,
+    useNewStoreMutation,
     useGetCategoriesQuery,
     useGetAttributeByCategoryQuery,
     useGetAttributeValueByGroupQuery,
     useGetTownsQuery,
+    useLoginMutation,
     useGetQuartersQuery,
     useCheckIfEmailExistsMutation,
     useGetCategoriesWithParentIdNullQuery,

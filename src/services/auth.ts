@@ -10,30 +10,7 @@ export const authService = createApi({
     reducerPath: "authService",
     tagTypes: ['Auth'],
     endpoints: builder => ({
-        login: builder.mutation({
-            query: (credentials) => (
-                {
-                    url: '/api/login',
-                    method: 'POST',
-                    body: credentials
-                }),
 
-            transformErrorResponse: (baseQueryResult) => {
-                // Ici, vous pouvez personnaliser la réponse d'erreur
-
-                if (baseQueryResult.status === 400) {
-                    return { error: "l'email et le mot de passe ne peut pas etre vide" };
-                } else if (baseQueryResult.status === 500) {
-                    return { error: "l'email out le mot de passe sont incorrect" };
-                }
-                else {
-
-                    return { error: baseQueryResult.data };
-                }
-            },
-        },
-
-        ),
         checkAuth: builder.query<{ isAuthenticated: boolean }, void>({
             query: () => ({
                 url: '/api/v1/check-auth',
@@ -46,15 +23,6 @@ export const authService = createApi({
                 url: "/api/register",
                 method: "POST",
                 body: formData,
-            }),
-            invalidatesTags: ['Auth'],
-        }),
-        newStore: builder.mutation({
-            query: (formData) => ({
-                url: "/api/create/seller",
-                method: "POST",
-                body: formData,
-
             }),
             invalidatesTags: ['Auth'],
         }),
@@ -104,21 +72,21 @@ export const authService = createApi({
             query: () => '/api/v1/list/orders',
             providesTags: ['Auth'],
         }),
-        getListShopReviews:builder.query({
-            query:(shopId)=>({
-                url:`/api/list/reviews/shop/${shopId}`,
-                method:'GET'
+        getListShopReviews: builder.query({
+            query: (shopId) => ({
+                url: `/api/list/reviews/shop/${shopId}`,
+                method: 'GET'
             }),
             providesTags: ['Auth'],
         }),
-        controlPayment:builder.mutation({
-            query:(body)=>({
-                url:'/api/v1/control/payment',
-                method:'POST',
-                body:body
+        controlPayment: builder.mutation({
+            query: (body) => ({
+                url: '/api/v1/control/payment',
+                method: 'POST',
+                body: body
             })
         }),
-        validatePaymentCoin:builder.mutation({
+        validatePaymentCoin: builder.mutation({
             query: (formData) => ({
                 url: "/api/v1/validate/payment/coins",
                 method: 'POST',
@@ -126,24 +94,22 @@ export const authService = createApi({
             }),
             invalidatesTags: ['Auth']
         }),
-        verifyPayin:builder.mutation({
-            query:(formData)=>({
-                url:`/api/status/payin/coins`,
-                method:'POST',
-                body:formData
+        verifyPayin: builder.mutation({
+            query: (formData) => ({
+                url: `/api/status/payin/coins`,
+                method: 'POST',
+                body: formData
             })
         }),
-       
+
     })
 })
 
 export const {
-    useLoginMutation,
     useValidatePaymentCoinMutation,
     useGetUserQuery,
     useLogoutMutation,
     useVerifyPayinMutation,
-    useNewStoreMutation,
     useControlPaymentMutation,
     useRegisterMutation,
     useCheckAuthQuery,

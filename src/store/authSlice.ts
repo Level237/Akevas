@@ -1,4 +1,5 @@
 import { authService } from "@/services/auth";
+import { guardService } from "@/services/guardService";
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 
@@ -45,7 +46,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     // Lors d'une connexion réussie via `login`
     builder.addMatcher(
-      authService.endpoints.login.matchFulfilled,
+      guardService.endpoints.login.matchFulfilled,
       (state, action) => {
         console.log(action)
         state.isAuthenticated = true;
@@ -53,7 +54,7 @@ const authSlice = createSlice({
         // Si le backend renvoie le role, vous pouvez le stocker ici:
         // state.userRole = action.payload.user.role;
         // cookies.set('userRole', action.payload.user.role, { path: '/', secure: true });
-        state.isAuthInitialized = true; 
+        state.isAuthInitialized = true;
       }
     );
 
@@ -63,7 +64,7 @@ const authSlice = createSlice({
       (state) => {
         state.isAuthenticated = false;
         state.userRole = null;
-        state.isAuthInitialized = true; 
+        state.isAuthInitialized = true;
         // Les cookies doivent être effacés côté backend aussi
         const cookies = new Cookies();
         cookies.remove('accessToken', { path: '/' });
@@ -103,5 +104,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setAuthenticated, setUnauthenticated, setUserRole,setAuthInitialized } = authSlice.actions;
+export const { setAuthenticated, setUnauthenticated, setUserRole, setAuthInitialized } = authSlice.actions;
 export default authSlice.reducer; // Important:
