@@ -513,13 +513,25 @@ const CreateProductPage: React.FC = () => {
             }
 
             // Vérifier que chaque variation a une couleur et des images
-            const invalidVariations = variationFrames.some(frame =>
+            const invalidVariationsWithSizes = variationFrames.some(frame =>
                 !frame.color.id || frame.images.length === 0 || frame.sizes.length === 0
             );
 
-            if (invalidVariations) {
+            const invalidVariationsWithColorOnly = variationFrames.some(frame =>
+                !frame.color.id || frame.images.length === 0
+            );
+
+            if (invalidVariationsWithSizes && selectedAttributeType === "colorAndSize") {
                 toast.error('Une de vos variations est incomplete', {
                     description: "Veuillez ajouter au moins une image,une couleur et une taille pour chaque variation.",
+                    duration: 4000, // ms
+                });
+                return;
+            }
+
+            if (invalidVariationsWithColorOnly && selectedAttributeType === "colorOnly") {
+                toast.error('Une de vos variations avec couleur est incomplete', {
+                    description: "Veuillez ajouter au moins une image et une couleur pour chaque variation.",
                     duration: 4000, // ms
                 });
                 return;
