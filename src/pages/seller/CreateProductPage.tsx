@@ -521,7 +521,7 @@ const CreateProductPage: React.FC = () => {
                 !frame.color.id || frame.images.length === 0
             );
 
-            if (invalidVariationsWithSizes && selectedAttributeType === "colorAndSize") {
+            if (invalidVariationsWithSizes && selectedAttributeType === "colorAndAttribute") {
                 toast.error('Une de vos variations est incomplete', {
                     description: "Veuillez ajouter au moins une image,une couleur et une taille pour chaque variation.",
                     duration: 4000, // ms
