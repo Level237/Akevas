@@ -188,7 +188,7 @@ export default function ProductListOverview({ products, isLoading, isTrashView, 
 
                   {/* Badge statut */}
                   <div className="absolute top-3 right-3">
-                    <span className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg ${product.isRejet ? 'bg-red-500 text-white' :   getStatusColor(product.status ? 'active' : 'draft')}`}>
+                    <span className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg ${product.isRejet ? 'bg-red-500 text-white' : getStatusColor(product.status ? 'active' : 'draft')}`}>
                       {product.isRejet ? 'Rejeté' : getStatusText(product.status ? 'active' : 'draft')}
                     </span>
                   </div>
@@ -498,12 +498,12 @@ export function ProductListContainer({ searchQuery }: { searchQuery: string }) {
   const [searchParams] = useSearchParams();
   const isTrashView = searchParams.get('s') === '1';
   const isRejectedView = searchParams.get('r') === '1';
-  const { data: { data: products } = {}, isLoading} = useGetProductsQuery('seller');
+  const { data: { data: products } = {}, isLoading } = useGetProductsQuery('seller');
   const { data: productsTrashData, isLoading: isLoadingProductsTrash } = useGetProductsOfTrashQuery('seller');
   const { data: productsRejectedData, isLoading: isLoadingProductsRejected } = useGetProductsOfRejectedQuery('seller');
-  
+  console.log(productsRejectedData)
   const displayProducts = isTrashView ? (productsTrashData?.data || []) : (isRejectedView ? (productsRejectedData?.data || []) : (products || []));
   const displayLoading = isTrashView ? isLoadingProductsTrash : (isRejectedView ? isLoadingProductsRejected : isLoading);
-  
+
   return <ProductListOverview products={displayProducts} isLoading={displayLoading} isTrashView={isTrashView} searchQuery={searchQuery} />
 }
