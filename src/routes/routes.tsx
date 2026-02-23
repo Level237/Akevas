@@ -59,14 +59,15 @@ import PaymentErrorPage from "@/pages/payment/PaymentErrorPage";
 import AdminAccountPage from "@/pages/admin/account";
 import ProfilePage from "@/pages/user/ProfilePage";
 import AppLayout from "@/components/Layouts/AppLayout";
+import ListTownPage from "@/pages/admin/towns/ListTownPage";
 
 
 
 export const routes = createBrowserRouter([
   {
     path: '/',
-    element:<AppLayout/>,
-    children:[
+    element: <AppLayout />,
+    children: [
       {
         path: "",
         element: <Homepage />
@@ -80,8 +81,8 @@ export const routes = createBrowserRouter([
       },
     ]
   },
-  
- 
+
+
   {
     path: '/privacy-policy',
     element: <PrivacyPolicyPage />
@@ -99,35 +100,35 @@ export const routes = createBrowserRouter([
     element: <CatalogPage />
   },
   {
-  path: '/',
-  element: <GuardRoute />,
-  children: [
-    {
-    path: '/login',
-    element: <LoginPage />
+    path: '/',
+    element: <GuardRoute />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />
+      },
+      {
+        path: '/admin/login',
+        element: <AdminLoginPage />
+      },
+      {
+        path: '/register',
+        element: <RegisterPage />
+      },
+      {
+        path: '/forgot-password',
+        element: <ForgotPasswordPage />
+      },
+      {
+        path: '/verify-otp',
+        element: <OtpVerificationPage />
+      },
+      {
+        path: "/reset-password/:token",
+        element: <ResetPasswordPage />
+      }
+    ]
   },
-  {
-    path: '/admin/login',
-    element: <AdminLoginPage />
-  },
-  {
-    path: '/register',
-    element: <RegisterPage />
-  },
-  {
-    path: '/forgot-password',
-    element: <ForgotPasswordPage />
-  },
-  {
-    path: '/verify-otp',
-    element: <OtpVerificationPage />
-  },
-{
-    path: "/reset-password/:token",
-    element: <ResetPasswordPage />
-  }
-  ]
-},
   {
     path: '/authenticate',
     element: <AuthenticatePage />
@@ -166,7 +167,7 @@ export const routes = createBrowserRouter([
   },
   {
     path: "/",
-    element: <PrivateRoute /> ,
+    element: <PrivateRoute />,
     children: [
       {
         element: <AdminRootDashboard />,
@@ -175,71 +176,75 @@ export const routes = createBrowserRouter([
             path: "admin/dashboard",
             element: <DashboardAdminPage />
           }, {
-        path: "admin/products",
-        element: <AdminProductListPage />
-      }, {
-        path: "admin/shops/:id",
-        element: <AdminShopDetailPage />
-      }, {
-        path: "admin/shops",
-        element: <AdminShopPage />
-      }, {
-        path: "admin/delivery",
-        element: <ListDeveryPage />
+            path: "admin/products",
+            element: <AdminProductListPage />
+          }, {
+            path: "admin/shops/:id",
+            element: <AdminShopDetailPage />
+          }, {
+            path: "admin/shops",
+            element: <AdminShopPage />
+          }, {
+            path: "admin/delivery",
+            element: <ListDeveryPage />
+          },
+          {
+            path: "admin/cities",
+            element: <ListTownPage />
+          },
+          {
+            path: "admin/products/:url",
+            element: <ProductDetailPageAdmin />
+          },
+          {
+            path: "admin/delivery/:id",
+            element: <DeliveryDetailPage />
+          }, {
+            path: "admin/customers",
+            element: <ListCustomerPage />
+          }, {
+            path: "admin/orders",
+            element: <ListOrdersPage />
+          },
+          {
+            path: "admin/reviews/products",
+            element: <ListReviewPage />
+          },
+          {
+            path: "admin/reviews/shops",
+            element: <ListShopReviewPage />
+          },
+          {
+            path: "admin/feedbacks",
+            element: <ListFeedbackPage />
+          },
+          {
+            path: "admin/shop/new",
+            element: <AddShopPage />
+          },
+          {
+            path: "admin/categories",
+            element: <ListCategoriesPage />
+          },
+          {
+            path: "admin/category/new",
+            element: <CreateCategoryPage />
+          },
+          {
+            path: "admin/categories/:id/edit",
+            element: <EditCategoryPage />
+          },
+          {
+            path: "/admin/order/:id",
+            element: <AdminOrderDetailPage />
+          }, {
+            path: "/admin/account",
+            element: <AdminAccountPage />
+          }
+        ]
       },
-      {
-        path: "admin/products/:url",
-        element: <ProductDetailPageAdmin />
-      },
-      {
-        path: "admin/delivery/:id",
-        element: <DeliveryDetailPage />
-      }, {
-        path: "admin/customers",
-        element: <ListCustomerPage />
-      }, {
-        path: "admin/orders",
-        element: <ListOrdersPage />
-      },
-      {
-        path: "admin/reviews/products",
-        element: <ListReviewPage />
-      },
-      {
-        path: "admin/reviews/shops",
-        element: <ListShopReviewPage />
-      },
-      {
-        path: "admin/feedbacks",
-        element: <ListFeedbackPage />
-      },
-      {
-        path: "admin/shop/new",
-        element: <AddShopPage />
-      },
-      {
-        path: "admin/categories",
-        element: <ListCategoriesPage />
-      },
-      {
-        path: "admin/category/new",
-        element: <CreateCategoryPage />
-      },
-      {
-        path: "admin/categories/:id/edit",
-        element: <EditCategoryPage />
-      },
-      {
-        path: "/admin/order/:id",
-        element: <AdminOrderDetailPage />
-      }, {
-        path: "/admin/account",
-        element: <AdminAccountPage />
-      }
-    ]
+    ],
   },
-],
-},
   {
     path: '/',
     element: <Homepage />,
@@ -252,8 +257,8 @@ export const routes = createBrowserRouter([
     path: 'notifications',
     element: <NotificationsPage />
   },
-  
-  
+
+
   {
     path: '/home',
     element: <CurrentHomeByGenderPage />
@@ -265,48 +270,48 @@ export const routes = createBrowserRouter([
     children: [
       {
         element: <UserRootDashboard />,
-        children:[
-{
-        path: 'user/dashboard',
-        element: <UserDashboardPage />
-      }, {
-        path: 'user/orders/:id',
-        element: <OrderDetailPage />
-      }, {
-        path: 'user/orders',
-        element: <OrdersPage />
-      },
-      {
-        path: 'user/profile',
-        element: <ProfilePage />
-      },
-      {
-        path: 'account',
-        element: <AccountPage />
-      }, {
-        path: '/checkout/state',
-        element: <SucessPaymentPage />
-      },
-      {
-        path: "/user/payment/:ref",
-        element: <PaymentTicketPage />
-      },
-      {
-    path: '/pay/mobile-money',
-    element: <MobileMoneyPaymentPage />
-  },
+        children: [
+          {
+            path: 'user/dashboard',
+            element: <UserDashboardPage />
+          }, {
+            path: 'user/orders/:id',
+            element: <OrderDetailPage />
+          }, {
+            path: 'user/orders',
+            element: <OrdersPage />
+          },
+          {
+            path: 'user/profile',
+            element: <ProfilePage />
+          },
+          {
+            path: 'account',
+            element: <AccountPage />
+          }, {
+            path: '/checkout/state',
+            element: <SucessPaymentPage />
+          },
+          {
+            path: "/user/payment/:ref",
+            element: <PaymentTicketPage />
+          },
+          {
+            path: '/pay/mobile-money',
+            element: <MobileMoneyPaymentPage />
+          },
         ]
       }
-      
+
 
     ]
   },
-  
+
   {
     path: '/contact',
     element: <ContactPage />
   },
 
 ],
-  
+
 );

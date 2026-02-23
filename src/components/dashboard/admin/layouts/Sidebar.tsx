@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ChevronUp,
   User,
+  Map,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { useLogoutMutation } from "@/services/auth"
@@ -26,19 +27,23 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
   { icon: Truck, label: "Livreurs", href: "/admin/delivery" },
-  { icon: Store, label: "Boutiques", href: "#boutiques",
+  {
+    icon: Store, label: "Boutiques", href: "#boutiques",
     subItems: [
       { label: "Listes", href: "/admin/shops" },
-      { label: "Nouvelle boutique", href: "/admin/shop/new" },] },
-  { icon: Store, label: "Categories", href: "#categories",
-        subItems: [
-          { label: "Listes", href: "/admin/categories" },
-          { label: "Nouvelle categorie", href: "/admin/category/new" },] },
+      { label: "Nouvelle boutique", href: "/admin/shop/new" },]
+  },
+  {
+    icon: Store, label: "Categories", href: "#categories",
+    subItems: [
+      { label: "Listes", href: "/admin/categories" },
+      { label: "Nouvelle categorie", href: "/admin/category/new" },]
+  },
   { icon: Users, label: "Clients", href: "/admin/customers" },
   { icon: ShoppingCart, label: "Orders", href: "/admin/orders" },
-  { 
-    icon: Star, 
-    label: "Commentaires", 
+  {
+    icon: Star,
+    label: "Commentaires",
     href: "#com",
     subItems: [
       { label: "Produits", href: "/admin/reviews/products" },
@@ -46,7 +51,7 @@ const navItems = [
     ]
   },
   { icon: MessageCircle, label: "Feedbacks", href: "/admin/feedbacks" },
-  { icon: HelpCircle, label: "Help", href: "#" },
+  { icon: Map, label: "Villes", href: "/admin/cities" },
 ]
 
 export function Sidebar() {
@@ -57,8 +62,8 @@ export function Sidebar() {
   const { pathname } = useLocation()
 
   const toggleSubmenu = (href: string) => {
-    setExpandedItems(prev => 
-      prev.includes(href) 
+    setExpandedItems(prev =>
+      prev.includes(href)
         ? prev.filter(item => item !== href)
         : [...prev, href]
     )
@@ -70,9 +75,9 @@ export function Sidebar() {
 
   useEffect(() => {
     if (isSuccess) {
-        window.location.href="/login"
+      window.location.href = "/login"
     }
-}, [isSuccess]);
+  }, [isSuccess]);
   return (
     <>
       {/* Mobile Menu Button */}
@@ -130,7 +135,7 @@ export function Sidebar() {
                     <span>{item.label}</span>
                   </Link>
                   {item.subItems && (
-                    expandedItems.includes(item.href) 
+                    expandedItems.includes(item.href)
                       ? <ChevronUp className="h-4 w-4 text-gray-500" />
                       : <ChevronDown className="h-4 w-4 text-gray-500" />
                   )}

@@ -46,6 +46,21 @@ export const adminService = createApi({
             query: () => '/api/v1/admin/deliveries',
             providesTags: ['admin'],
         }),
+
+
+        adminListTown: builder.query({
+            query: () => '/api/v1/admin/towns',
+            providesTags: ['admin'],
+        }),
+
+        adminAddTown: builder.mutation({
+            query: (body) => ({
+                url: '/api/v1/admin/towns',
+                method: 'POST',
+                body: body
+            }),
+            invalidatesTags: ['admin']
+        }),
         adminListProducts: builder.query({
             query: () => '/api/v1/admin/products',
             providesTags: ['admin'],
@@ -137,10 +152,10 @@ export const adminService = createApi({
 
         }),
         togglePublish: builder.mutation({
-            query: ({ product_id,formData }) => ({
+            query: ({ product_id, formData }) => ({
                 url: `/api/v1/published/product/${product_id}`,
                 method: "POST",
-                body:formData
+                body: formData
             })
         }),
         allCategories: builder.query({
@@ -184,6 +199,7 @@ export const {
     useConfirmOrNotShopMutation,
     useRecentProductsQuery,
     useRecentDeliveryQuery,
+    useAdminAddTownMutation,
     useDeleteCategoryMutation,
     useAdminListProductsQuery,
     useAdminListDeliveryQuery,
@@ -199,6 +215,7 @@ export const {
     useAdminActiveSellerStatsQuery,
     useAdminDeliveryStatsQuery,
     useAdminListReviewsQuery,
+    useAdminListTownQuery,
     useDeclineOrValidateMutation,
     useAdminListFeedbackQuery,
     useAdminListShopReviewsQuery,
