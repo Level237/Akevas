@@ -63,6 +63,8 @@ import ListTownPage from "@/pages/admin/towns/ListTownPage";
 import AddTownPage from "@/pages/admin/towns/AddTownPage";
 import EditTownPage from "@/pages/admin/towns/EdtTownPage";
 import ListQuarterPage from "@/pages/admin/quarters/ListQuarterPage";
+import AddQuarterPage from "@/pages/admin/quarters/AddQuarterPage";
+import EditQuarterPage from "@/pages/admin/quarters/EditQuarterPage";
 
 
 
@@ -206,6 +208,14 @@ export const routes = createBrowserRouter([
           {
             path: "admin/city/add",
             element: <AddTownPage />
+          },
+          {
+            path: "admin/quarter/add",
+            element: <AddQuarterPage />
+          },
+          {
+            path: "admin/quarter/:id",
+            element: <EditQuarterPage />
           },
           {
             path: "admin/products/:url",

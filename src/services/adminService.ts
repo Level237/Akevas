@@ -202,6 +202,27 @@ export const adminService = createApi({
             providesTags: ['admin']
         }),
 
+        addQuarter: builder.mutation({
+            query: (body) => ({
+                url: `/api/v1/admin/quarters`,
+                body: body,
+                method: "POST"
+            }),
+            invalidatesTags: ['admin']
+        }),
+
+        showQuarter: builder.query({
+            query: (id) => `/api/v1/admin/quarters/${id}`,
+            providesTags: ['admin']
+        }),
+        updateQuarter: builder.mutation({
+            query: ({ id, body }) => ({
+                url: `/api/v1/admin/quarters/${id}`,
+                body: body,
+                method: "PUT"
+            }),
+            invalidatesTags: ['admin']
+        }),
         deleteTown: builder.mutation({
             query: (id) => ({
                 url: `/api/v1/admin/towns/${id}`,
@@ -233,6 +254,7 @@ export const {
     useAdminListProductsQuery,
     useAdminListDeliveryQuery,
     useGetDeliveryQuery,
+    useAddQuarterMutation,
     useGetTownQuery,
     useAdminUpdateTownMutation,
     useAdminDetailOrderQuery,
@@ -246,7 +268,9 @@ export const {
     useAdminActiveSellerStatsQuery,
     useAdminDeliveryStatsQuery,
     useAdminListReviewsQuery,
+    useShowQuarterQuery,
     useAdminListTownQuery,
+    useUpdateQuarterMutation,
     useListQuartersQuery,
     useDeclineOrValidateMutation,
     useAdminListFeedbackQuery,
