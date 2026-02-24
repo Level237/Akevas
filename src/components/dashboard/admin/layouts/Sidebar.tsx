@@ -8,7 +8,6 @@ import {
   Store,
   Users,
   ShoppingCart,
-  HelpCircle,
   Menu,
   X,
   LogOut,

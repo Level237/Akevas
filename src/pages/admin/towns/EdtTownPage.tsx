@@ -37,7 +37,7 @@ export default function EditTownPage() {
                 town_name: formData.town_name,
             }
             //body.append('code', formData.town_name.substring(0, 3).toUpperCase());
-            const res = await updateTown({
+            await updateTown({
                 id: id,
                 body: body
 
