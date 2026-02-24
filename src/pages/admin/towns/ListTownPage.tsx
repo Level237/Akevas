@@ -3,13 +3,15 @@ import { Input } from "@/components/ui/input"
 
 import { Search, Plus } from "lucide-react"
 import { ListTownsContainer } from "@/components/dashboard/admin/towns/list-towns"
+import { useNavigate } from "react-router-dom"
 
 export default function ListTownPage() {
+    const navigate = useNavigate()
     return (
         <main className="p-4 md:p-6 mt-16">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">Villes</h1>
-                <Button className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90">
+                <Button className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90" onClick={() => navigate("/admin/city/add")}>
                     <Plus className="mr-2 h-4 w-4" /> Ajouter une ville
                 </Button>
             </div>

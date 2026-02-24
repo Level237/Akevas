@@ -60,6 +60,8 @@ import AdminAccountPage from "@/pages/admin/account";
 import ProfilePage from "@/pages/user/ProfilePage";
 import AppLayout from "@/components/Layouts/AppLayout";
 import ListTownPage from "@/pages/admin/towns/ListTownPage";
+import AddTownPage from "@/pages/admin/towns/AddTownPage";
+import EditTownPage from "@/pages/admin/towns/EdtTownPage";
 
 
 
@@ -191,6 +193,14 @@ export const routes = createBrowserRouter([
           {
             path: "admin/cities",
             element: <ListTownPage />
+          },
+          {
+            path: "admin/city/:id",
+            element: <EditTownPage />
+          },
+          {
+            path: "admin/city/add",
+            element: <AddTownPage />
           },
           {
             path: "admin/products/:url",

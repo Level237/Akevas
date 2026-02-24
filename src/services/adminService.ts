@@ -61,6 +61,21 @@ export const adminService = createApi({
             }),
             invalidatesTags: ['admin']
         }),
+
+        getTown: builder.query({
+            query: (id) => `/api/v1/admin/towns/${id}`,
+            providesTags: ['admin'],
+        }),
+
+        adminUpdateTown: builder.mutation({
+            query: ({ id, body }) => (console.log(body), {
+
+                url: `/api/v1/update/town/${id}`,
+                body: body,
+                method: 'POST',
+            }),
+            invalidatesTags: ['admin']
+        }),
         adminListProducts: builder.query({
             query: () => '/api/v1/admin/products',
             providesTags: ['admin'],
@@ -181,6 +196,14 @@ export const adminService = createApi({
             }),
             invalidatesTags: ['admin']
         }),
+
+        deleteTown: builder.mutation({
+            query: (id) => ({
+                url: `/api/v1/admin/towns/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ['admin']
+        }),
         deleteCategory: builder.mutation({
             query: (id) => ({
                 url: `/api/v1/admin/category/${id}`,
@@ -201,9 +224,12 @@ export const {
     useRecentDeliveryQuery,
     useAdminAddTownMutation,
     useDeleteCategoryMutation,
+    useDeleteTownMutation,
     useAdminListProductsQuery,
     useAdminListDeliveryQuery,
     useGetDeliveryQuery,
+    useGetTownQuery,
+    useAdminUpdateTownMutation,
     useAdminDetailOrderQuery,
     useConfirmOrNotDeliveryMutation,
     useAdminListCustomersQuery,
