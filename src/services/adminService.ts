@@ -197,6 +197,11 @@ export const adminService = createApi({
             invalidatesTags: ['admin']
         }),
 
+        listQuarters: builder.query({
+            query: () => '/api/v1/admin/quarters',
+            providesTags: ['admin']
+        }),
+
         deleteTown: builder.mutation({
             query: (id) => ({
                 url: `/api/v1/admin/towns/${id}`,
@@ -242,6 +247,7 @@ export const {
     useAdminDeliveryStatsQuery,
     useAdminListReviewsQuery,
     useAdminListTownQuery,
+    useListQuartersQuery,
     useDeclineOrValidateMutation,
     useAdminListFeedbackQuery,
     useAdminListShopReviewsQuery,

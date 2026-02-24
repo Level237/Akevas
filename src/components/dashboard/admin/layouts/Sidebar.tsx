@@ -52,6 +52,7 @@ const navItems = [
   },
   { icon: MessageCircle, label: "Feedbacks", href: "/admin/feedbacks" },
   { icon: Map, label: "Villes", href: "/admin/cities" },
+  { icon: Map, label: "Quartiers", href: "/admin/quarters" },
 ]
 
 export function Sidebar() {

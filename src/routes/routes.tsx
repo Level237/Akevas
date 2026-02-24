@@ -62,6 +62,7 @@ import AppLayout from "@/components/Layouts/AppLayout";
 import ListTownPage from "@/pages/admin/towns/ListTownPage";
 import AddTownPage from "@/pages/admin/towns/AddTownPage";
 import EditTownPage from "@/pages/admin/towns/EdtTownPage";
+import ListQuarterPage from "@/pages/admin/quarters/ListQuarterPage";
 
 
 
@@ -193,6 +194,10 @@ export const routes = createBrowserRouter([
           {
             path: "admin/cities",
             element: <ListTownPage />
+          },
+          {
+            path: "admin/quarters",
+            element: <ListQuarterPage />
           },
           {
             path: "admin/city/:id",
