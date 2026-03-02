@@ -51,7 +51,8 @@ const CheckoutPage: React.FC = () => {
   const price = params.get('price');
   const name = params.get('name');
 
-  const { data: { data: quarters }, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+
 
   //const filteredQuarters = quarters?.quarters?.filter((quarter: { town_name: string }) => quarter.town_name === residence);
 
@@ -512,7 +513,7 @@ const CheckoutPage: React.FC = () => {
                         {quartersLoading ? (
                           <SelectItem value="loading">Chargement des quartiers...</SelectItem>
                         ) : (
-                          quarters?.filter((q: any) => {
+                          quarters?.data?.filter((q: any) => {
                             if (address.deliveryOption === 'remoteDelivery') {
                               // Multi-ville : quartiers de la ville choisie
                               if (isMultiCity) return q.town_name === selectedCity;
@@ -528,7 +529,7 @@ const CheckoutPage: React.FC = () => {
                               </SelectItem>
                             ))
                         )}
-                        {quarters?.filter((q: any) => {
+                        {quarters?.data?.filter((q: any) => {
                           if (address.deliveryOption === 'remoteDelivery') {
                             if (isMultiCity) return q.town_name === selectedCity;
                             return q.town_name === otherLocation;
