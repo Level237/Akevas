@@ -23,9 +23,10 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
 
   const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
+  console.log(towns)
 
-  const filteredQuarters = quarters?.quarters.filter((quarter: { town_id: string }) => quarter.town_id === data.city);
-  
+  const filteredQuarters = quarters?.data?.filter((quarter: { town_id: string }) => quarter.town_id === data.city);
+
 
 
   return (
@@ -39,7 +40,7 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
 
       <Card className="p-6">
         <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="city">Ville</Label>
               <Select
@@ -60,7 +61,7 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
                   {townsLoading ? (
                     <SelectItem value="loading">Chargement des villes...</SelectItem>
                   ) : (
-                    towns?.towns.map((town:{id:string,town_name:string}) => (
+                    towns?.map((town: { id: string, town_name: string }) => (
                       <SelectItem key={town.id} value={town.id}>
                         {town.town_name}
                       </SelectItem>
@@ -71,40 +72,40 @@ const AddressInfoStep: React.FC<AddressInfoStepProps> = ({ data, onUpdate }) => 
             </div>
 
             <div className="space-y-2">
-            <Label htmlFor="street">Quartier</Label>
-            <Select 
-            name="quarter"
-            onValueChange={(value) => {
-              onUpdate({
-                addressInfo: {
-                  ...data,
-                  street: value,
-                },
-              });
-            }}
-            disabled={quartersLoading}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choisir un quartier" />
-              </SelectTrigger>
-              <SelectContent>
-                {quartersLoading ? (
-                  <SelectItem value="loading">Chargement des quartiers...</SelectItem>
-                ) : (
-                  filteredQuarters?.map((quarter:{id:string,quarter_name:string}) => (
-                    <SelectItem key={quarter.id} value={quarter.id}>
-                      {quarter.quarter_name}
-                    </SelectItem>
-                  ))
-                )}
-                {filteredQuarters?.length === 0 && (
-                  <SelectItem value="no-quarters">Aucun quartier trouvé,veuillez verifier votre ville</SelectItem>
-                )}
-              </SelectContent>
-            </Select>
+              <Label htmlFor="street">Quartier</Label>
+              <Select
+                name="quarter"
+                onValueChange={(value) => {
+                  onUpdate({
+                    addressInfo: {
+                      ...data,
+                      street: value,
+                    },
+                  });
+                }}
+                disabled={quartersLoading}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir un quartier" />
+                </SelectTrigger>
+                <SelectContent>
+                  {quartersLoading ? (
+                    <SelectItem value="loading">Chargement des quartiers...</SelectItem>
+                  ) : (
+                    filteredQuarters?.map((quarter: { id: string, quarter_name: string }) => (
+                      <SelectItem key={quarter.id} value={quarter.id}>
+                        {quarter.quarter_name}
+                      </SelectItem>
+                    ))
+                  )}
+                  {filteredQuarters?.length === 0 && (
+                    <SelectItem value="no-quarters">Aucun quartier trouvé,veuillez verifier votre ville</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          </div>
-          
-          
+
+
         </div>
       </Card>
 
