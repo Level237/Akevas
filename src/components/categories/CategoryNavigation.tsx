@@ -44,7 +44,7 @@ const CategoryDropdown = React.memo(({
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      transition={{ 
+      transition={{
         duration: 0.2,
         ease: [0.4, 0, 0.2, 1]
       }}
@@ -143,24 +143,24 @@ CategoryDropdown.displayName = 'CategoryDropdown';
 // Séparation du contenu principal dans un composant distinct
 const CategoryNavigationContent = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(0);
-  const [currentGenderId,setCurrentGenderId]=useState<number>(0)
+  const [currentGenderId, setCurrentGenderId] = useState<number>(0)
   const params = new URLSearchParams(window.location.search);
-  const gender=params.get('g');
+  const gender = params.get('g');
 
-  const queryArg = gender && ['homme', 'femme', 'enfant'].includes(gender.toLowerCase()) 
-                   ? gender.toLowerCase() 
-                   : 'guard';
-  useEffect(()=>{
-    if(queryArg ==="homme"){
+  const queryArg = gender && ['homme', 'femme', 'enfant'].includes(gender.toLowerCase())
+    ? gender.toLowerCase()
+    : 'guard';
+  useEffect(() => {
+    if (queryArg === "homme") {
       setCurrentGenderId(1)
-    }else if(queryArg ==="femme"){
+    } else if (queryArg === "femme") {
       setCurrentGenderId(2)
-     }else if(queryArg ==="enfant"){
+    } else if (queryArg === "enfant") {
       setCurrentGenderId(3)
-    }else{
+    } else {
       setCurrentGenderId(4)
     }
-  },[gender])
+  }, [gender])
   const {
     data: { data: categoriesParent } = {},
     isLoading
@@ -173,14 +173,13 @@ const CategoryNavigationContent = () => {
   const {
     data: categoriesChildren,
     isLoading: isLoadingChildren
-  } = useGetCategoriesWithParentIdQuery({id:activeCategory,genderId:currentGenderId}, {
+  } = useGetCategoriesWithParentIdQuery({ id: activeCategory, genderId: currentGenderId }, {
     skip: !activeCategory,
     refetchOnMountOrArgChange: true,
     refetchOnFocus: false,
     refetchOnReconnect: false
   });
 
-  console.log(categoriesChildren)
   const handleMouseEnter = (categoryId: number) => {
     setActiveCategory(categoryId);
   };

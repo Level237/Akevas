@@ -42,17 +42,17 @@ interface StoreCategory {
 }
 
 
-export default function CurrentShopOverView({shop}:{shop:Seller}) {
-  
-  
+export default function CurrentShopOverView({ shop }: { shop: Seller }) {
+
+
   const [activeTab, setActiveTab] = useState<'products' | 'about' | 'reviews' | 'categories'>('products');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
-  
-  const safeProducts = shop.shop.products|| [];
+
+  const safeProducts = shop.shop.products || [];
   const normalizedProducts = safeProducts.map(normalizeProduct);
-  console.log(normalizedProducts)
+
   // Mock data
   const store = {
     code: 'JP_STORE_8472',
@@ -104,11 +104,11 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
   };
 
 
- 
+
 
   return (
     <div>
-        {/* Couverture et informations de la boutique */}
+      {/* Couverture et informations de la boutique */}
       <div className="relative block max-sm:hidden h-64 bg-gray-900">
         {shop.shop.images?.[0]?.path && (
           <OptimizedImage
@@ -117,9 +117,9 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
             className="w-full h-full object-cover opacity-50"
           />
         )}
-       
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        
+
         <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="max-w-7xl mx-auto flex items-end gap-6">
             <div className="w-32 h-32 rounded-xl overflow-hidden border-4 border-white">
@@ -132,7 +132,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
             <div className="flex-1 text-white">
               <div className="flex items-center gap-4 mb-2">
                 <h1 className="text-3xl font-bold">{shop.shop.shop_key}</h1>
-                
+
               </div>
               <div className="flex items-center gap-6 text-gray-200">
                 <div className="flex items-center">
@@ -157,24 +157,24 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
           </div>
         </div>
       </div>
-       <div className="relative hidden max-sm:block h-[300px] lg:h-[400px]">
-        <div 
+      <div className="relative hidden max-sm:block h-[300px] lg:h-[400px]">
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${shop.shop.images?.[0]?.path || '/default-cover.jpg'})` }}
         />
         <div className="absolute inset-0 bg-black/50" />
-        
+
         <div className="relative container mx-auto px-4 h-full flex flex-col justify-end pb-6 lg:pb-12">
           <div className="flex flex-col lg:flex-row items-start justify-end lg:items-end gap-4 lg:gap-8">
             {/* Store Logo */}
             <div className="w-24  h-24 lg:w-32 lg:h-32 rounded-xl overflow-hidden border-4 border-white  lg:mt-0">
               <OptimizedImage
-                src={shop.shop.shop_profile|| '/default-logo.jpg'}
+                src={shop.shop.shop_profile || '/default-logo.jpg'}
                 alt="Store logo"
                 className="w-full h-full object-cover"
               />
             </div>
-            
+
             {/* Store Info */}
             <div className="flex-1">
               <h1 className="text-2xl lg:text-4xl font-bold text-white mb-2">
@@ -191,35 +191,32 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 </div>
               </div>
             </div>
-            
+
             {/* Actions */}
-           
+
           </div>
         </div>
       </div>
       <div className="sticky lg:hidden max-sm:block md:block mt-12 top-0 bg-white border-b z-40 lg:relative lg:top-auto">
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto hide-scrollbar">
-            <button 
-              className={`px-4 py-3 font-medium border-b-2 whitespace-nowrap ${
-                activeTab === 'products' ? 'border-[#ed7e0f] text-[#ed7e0f]' : 'border-transparent'
-              }`}
+            <button
+              className={`px-4 py-3 font-medium border-b-2 whitespace-nowrap ${activeTab === 'products' ? 'border-[#ed7e0f] text-[#ed7e0f]' : 'border-transparent'
+                }`}
               onClick={() => setActiveTab('products')}
             >
               Produits
             </button>
-            <button 
-              className={`px-4 py-3 font-medium border-b-2 whitespace-nowrap ${
-                activeTab === 'about' ? 'border-[#ed7e0f] text-[#ed7e0f]' : 'border-transparent'
-              }`}
+            <button
+              className={`px-4 py-3 font-medium border-b-2 whitespace-nowrap ${activeTab === 'about' ? 'border-[#ed7e0f] text-[#ed7e0f]' : 'border-transparent'
+                }`}
               onClick={() => setActiveTab('about')}
             >
               À propos
             </button>
-            <button 
-              className={`px-4 py-3 font-medium border-b-2 whitespace-nowrap ${
-                activeTab === 'reviews' ? 'border-[#ed7e0f] text-[#ed7e0f]' : 'border-transparent'
-              }`}
+            <button
+              className={`px-4 py-3 font-medium border-b-2 whitespace-nowrap ${activeTab === 'reviews' ? 'border-[#ed7e0f] text-[#ed7e0f]' : 'border-transparent'
+                }`}
               onClick={() => setActiveTab('reviews')}
             >
               Avis
@@ -233,7 +230,7 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
         {activeTab === 'products' && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {normalizedProducts?.map((product) => (
-             <ProductCard product={product} viewMode={viewMode} />
+              <ProductCard product={product} viewMode={viewMode} />
             ))}
           </div>
         )}
@@ -243,17 +240,17 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
             <div className="prose max-w-none">
               <h2 className="text-xl font-semibold mb-4">À propos de {store?.name}</h2>
               <p className="text-gray-600">{store?.description}</p>
-              
-             
+
+
             </div>
           </div>
         )}
 
         {activeTab === 'reviews' && (
-            <ShopReviews shopId={shop?.shop?.shop_id}/>
+          <ShopReviews shopId={shop?.shop?.shop_id} />
         )}
       </div>
-         <main className="max-w-7xl lg:block  max-sm:hidden md:hidden mx-auto px-4 py-8">
+      <main className="max-w-7xl lg:block  max-sm:hidden md:hidden mx-auto px-4 py-8">
         <div className="grid max-sm:grid-cols-1 max-sm:gap-2 grid-cols-12 gap-8">
           {/* Sidebar */}
           <div className="col-span-3 max-sm::col-span-0">
@@ -310,11 +307,10 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                       onClick={() => setSelectedCategory(
                         category.id === selectedCategory ? null : category.id
                       )}
-                      className={`w-full flex items-center justify-between px-4 py-2 rounded-lg text-left transition-colors ${
-                        category.id === selectedCategory
-                          ? 'bg-[#ed7e0f] text-white'
-                          : 'hover:bg-gray-100'
-                      }`}
+                      className={`w-full flex items-center justify-between px-4 py-2 rounded-lg text-left transition-colors ${category.id === selectedCategory
+                        ? 'bg-[#ed7e0f] text-white'
+                        : 'hover:bg-gray-100'
+                        }`}
                     >
                       <span>{category.category_name}</span>
                       <span className="text-sm">({category.products_count})</span>
@@ -333,31 +329,28 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setActiveTab("products")}
-                    className={`px-4 py-2 rounded-lg font-medium ${
-                      activeTab === 'products'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-500 hover:text-gray-900'
-                    }`}
+                    className={`px-4 py-2 rounded-lg font-medium ${activeTab === 'products'
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'text-gray-500 hover:text-gray-900'
+                      }`}
                   >
                     Tous les produits
                   </button>
                   <button
                     onClick={() => setActiveTab('categories')}
-                    className={`px-4 py-2 rounded-lg font-medium ${
-                      activeTab === 'categories'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-500 hover:text-gray-900'
-                    }`}
+                    className={`px-4 py-2 rounded-lg font-medium ${activeTab === 'categories'
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'text-gray-500 hover:text-gray-900'
+                      }`}
                   >
                     Par catégories
                   </button>
                   <button
                     onClick={() => setActiveTab('reviews')}
-                    className={`px-4 py-2 rounded-lg font-medium ${
-                      activeTab === 'reviews'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-500 hover:text-gray-900'
-                    }`}
+                    className={`px-4 py-2 rounded-lg font-medium ${activeTab === 'reviews'
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'text-gray-500 hover:text-gray-900'
+                      }`}
                   >
                     Avis
                   </button>
@@ -375,21 +368,19 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                   <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
                     <button
                       onClick={() => setViewMode('grid')}
-                      className={`p-2 rounded ${
-                        viewMode === 'grid'
-                          ? 'bg-white shadow-sm'
-                          : 'text-gray-500 hover:text-gray-900'
-                      }`}
+                      className={`p-2 rounded ${viewMode === 'grid'
+                        ? 'bg-white shadow-sm'
+                        : 'text-gray-500 hover:text-gray-900'
+                        }`}
                     >
                       <Grid className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`p-2 rounded ${
-                        viewMode === 'list'
-                          ? 'bg-white shadow-sm'
-                          : 'text-gray-500 hover:text-gray-900'
-                      }`}
+                      className={`p-2 rounded ${viewMode === 'list'
+                        ? 'bg-white shadow-sm'
+                        : 'text-gray-500 hover:text-gray-900'
+                        }`}
                     >
                       <List className="w-5 h-5" />
                     </button>
@@ -409,30 +400,30 @@ export default function CurrentShopOverView({shop}:{shop:Seller}) {
                 </motion.div>
               )}
             </div>
-              {shop.shop.products?.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-16 h-16 mb-4 text-gray-400">
-            <Package className="w-16 h-16" />
-          </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Aucun produit disponible</h2>
-         
-        </div>
-              )}
+            {shop.shop.products?.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="w-16 h-16 mb-4 text-gray-400">
+                  <Package className="w-16 h-16" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">Aucun produit disponible</h2>
+
+              </div>
+            )}
             {/* Grille de produits */}
 
-            {activeTab==="products" &&             <div className={
+            {activeTab === "products" && <div className={
               viewMode === 'grid'
                 ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
                 : 'space-y-4'
             }>
 
               {normalizedProducts.map((product) => (
-               <ProductCard product={product} viewMode={viewMode} />
+                <ProductCard product={product} viewMode={viewMode} />
               ))}
             </div>}
             {activeTab === 'reviews' && (
-             <ShopReviews shopId={shop?.shop?.shop_id}/>
-        )}
+              <ShopReviews shopId={shop?.shop?.shop_id} />
+            )}
           </div>
         </div>
       </main>
@@ -449,11 +440,11 @@ export function CurrentShopOverViewSkeleton() {
           <div className="max-w-7xl mx-auto flex items-end gap-6">
             {/* Logo du magasin */}
             <div className="w-32 h-32 rounded-xl bg-gray-200" />
-            
+
             <div className="flex-1">
               {/* Nom du magasin */}
               <div className="h-8 w-64 bg-gray-200 rounded mb-4" />
-              
+
               {/* Statistiques */}
               <div className="flex items-center gap-6">
                 <div className="h-4 w-24 bg-gray-200 rounded" />
@@ -472,7 +463,7 @@ export function CurrentShopOverViewSkeleton() {
           <div className="flex flex-col items-start gap-4">
             {/* Logo */}
             <div className="w-24 h-24 rounded-xl bg-gray-200" />
-            
+
             {/* Informations */}
             <div className="w-full">
               <div className="h-6 w-48 bg-gray-200 rounded mb-3" />
@@ -481,7 +472,7 @@ export function CurrentShopOverViewSkeleton() {
                 <div className="h-4 w-24 bg-gray-200 rounded" />
               </div>
             </div>
-            
+
             {/* Actions */}
             <div className="flex gap-3 w-full">
               <div className="h-10 w-full bg-gray-200 rounded" />
@@ -532,7 +523,7 @@ export function CurrentShopOverViewSkeleton() {
                 <div key={i} className="bg-gray-100 rounded-2xl overflow-hidden animate-pulse">
                   {/* Image */}
                   <div className="aspect-square bg-gray-200" />
-                  
+
                   {/* Contenu */}
                   <div className="p-4 space-y-3">
                     <div className="h-5 w-3/4 bg-gray-200 rounded" />

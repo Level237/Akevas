@@ -190,7 +190,7 @@ const ProductDetailPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const productId = product?.id
   const [selectedAttribute, setSelectedAttribute] = useState<any | null>(null);
-  console.log(product)
+
   const handleAddToCart = async () => {
     setIsLoadingCart(true);
 
@@ -464,13 +464,13 @@ const ProductDetailPage: React.FC = () => {
     // Ne bloquer que s'il existe des paliers de gros
     const minQty = getMinWholesaleQty();
     if (!minQty) return false;
-    
+
     // Vérifier si le stock disponible est suffisant pour atteindre la quantité minimale du prix de gros
     const availableStock = getProductQuantity();
     if (availableStock < Number(minQty)) {
       return true; // Bloquer si le stock est insuffisant pour le prix de gros
     }
-    
+
     return quantity < Number(minQty);
   };
 
@@ -509,7 +509,7 @@ const ProductDetailPage: React.FC = () => {
     const whatsappUrl = `https://wa.me/237688565543?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
-  
+
 
   return (
     <div className="min-h-screen max-w-[1440px] mx-auto bg-gray-50">
@@ -894,13 +894,12 @@ const ProductDetailPage: React.FC = () => {
                                           }
                                         }}
                                         disabled={isStockInsufficient}
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                                          isSelected
-                                            ? 'bg-[#ed7e0f] text-white border-[#ed7e0f]'
-                                            : isStockInsufficient
-                                              ? 'bg-gray-100 text-gray-400 border-gray-100 cursor-not-allowed'
-                                              : 'bg-white text-gray-700 border-gray-200 hover:border-[#ed7e0f]'
-                                        }`}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${isSelected
+                                          ? 'bg-[#ed7e0f] text-white border-[#ed7e0f]'
+                                          : isStockInsufficient
+                                            ? 'bg-gray-100 text-gray-400 border-gray-100 cursor-not-allowed'
+                                            : 'bg-white text-gray-700 border-gray-200 hover:border-[#ed7e0f]'
+                                          }`}
                                       >
                                         {isStockInsufficient ? 'Indisponible' : isSelected ? 'Sélectionné' : 'Choisir'}
                                       </button>
@@ -1108,17 +1107,17 @@ const ProductDetailPage: React.FC = () => {
                             }`}
                         >
 
-                          {getProductQuantity() == 0 
+                          {getProductQuantity() == 0
                             ? 'Rupture de stock'
                             : isWholesaleBlocked()
                               ? (() => {
-                                  const minQty = getMinWholesaleQty();
-                                  const availableStock = getProductQuantity();
-                                  if (minQty && availableStock < Number(minQty)) {
-                                    return 'Stock insuffisant pour le prix de gros';
-                                  }
-                                  return 'Sélectionnez un prix de gros';
-                                })()
+                                const minQty = getMinWholesaleQty();
+                                const availableStock = getProductQuantity();
+                                if (minQty && availableStock < Number(minQty)) {
+                                  return 'Stock insuffisant pour le prix de gros';
+                                }
+                                return 'Sélectionnez un prix de gros';
+                              })()
                               : 'Acheter maintenant'}
                         </button>
                       )}
@@ -1148,13 +1147,13 @@ const ProductDetailPage: React.FC = () => {
                                 ? 'Rupture de stock'
                                 : isWholesaleBlocked()
                                   ? (() => {
-                                      const minQty = getMinWholesaleQty();
-                                      const availableStock = getProductQuantity();
-                                      if (minQty && availableStock < Number(minQty)) {
-                                        return 'Stock insuffisant pour le prix de gros';
-                                      }
-                                      return 'Sélectionnez un prix de gros';
-                                    })()
+                                    const minQty = getMinWholesaleQty();
+                                    const availableStock = getProductQuantity();
+                                    if (minQty && availableStock < Number(minQty)) {
+                                      return 'Stock insuffisant pour le prix de gros';
+                                    }
+                                    return 'Sélectionnez un prix de gros';
+                                  })()
                                   : 'Ajouter au panier'}
                             </>
                           )}
@@ -1182,10 +1181,10 @@ const ProductDetailPage: React.FC = () => {
                           Réponse rapide garantie
                         </p>
                       </div>
-                      
-                      <ShareProduct 
-                        productName={product.product_name} 
-                        url={window.location.href} 
+
+                      <ShareProduct
+                        productName={product.product_name}
+                        url={window.location.href}
                       />
                     </div>
                   </div>

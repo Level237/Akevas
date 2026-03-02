@@ -50,11 +50,11 @@ const CheckoutPage: React.FC = () => {
   const quantity = params.get('quantity');
   const price = params.get('price');
   const name = params.get('name');
-  console.log(cartItems)
-  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
-  const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === residence);
-  console.log(filteredQuarters)
+  const { data: { data: quarters }, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+
+  //const filteredQuarters = quarters?.quarters?.filter((quarter: { town_name: string }) => quarter.town_name === residence);
+
   const [address, setAddress] = useState<DeliveryAddress>({
     fullName: '',
     phone: '',
@@ -512,24 +512,23 @@ const CheckoutPage: React.FC = () => {
                         {quartersLoading ? (
                           <SelectItem value="loading">Chargement des quartiers...</SelectItem>
                         ) : (
-                          quarters?.quarters
-                            .filter((q: any) => {
-                              if (address.deliveryOption === 'remoteDelivery') {
-                                // Multi-ville : quartiers de la ville choisie
-                                if (isMultiCity) return q.town_name === selectedCity;
-                                // Mono-ville : quartiers de l'autre ville
-                                return q.town_name === otherLocation;
-                              }
-                              // localDelivery : quartiers de la ville de résidence ou choisie
-                              return q.town_name === (isMultiCity ? selectedCity : productLocation);
-                            })
+                          quarters?.filter((q: any) => {
+                            if (address.deliveryOption === 'remoteDelivery') {
+                              // Multi-ville : quartiers de la ville choisie
+                              if (isMultiCity) return q.town_name === selectedCity;
+                              // Mono-ville : quartiers de l'autre ville
+                              return q.town_name === otherLocation;
+                            }
+                            // localDelivery : quartiers de la ville de résidence ou choisie
+                            return q.town_name === (isMultiCity ? selectedCity : productLocation);
+                          })
                             .map((quarter: any) => (
                               <SelectItem key={quarter.id} value={quarter.quarter_name}>
                                 {quarter.quarter_name}
                               </SelectItem>
                             ))
                         )}
-                        {quarters?.quarters.filter((q: any) => {
+                        {quarters?.filter((q: any) => {
                           if (address.deliveryOption === 'remoteDelivery') {
                             if (isMultiCity) return q.town_name === selectedCity;
                             return q.town_name === otherLocation;

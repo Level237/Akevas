@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { useGetCurrentHomeByGenderQuery, useGetCategoriesQuery } from "@/services/guardService";
 import { Category } from "@/types/products";
-import { useCallback,useState } from "react";
+import { useCallback, useState } from "react";
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategories, setCurrentGenderId } from '@/store/features/categorySlice';
@@ -25,7 +25,7 @@ const CategoryGrid = React.memo(({ categories }: { categories: Category[] }) => 
                         src={category.category_profile}
                         alt={category.category_name}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                        
+
                     />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
@@ -51,7 +51,7 @@ const LoadingSkeleton = () => (
 const MobileCategoryMenu = React.memo(() => {
     const dispatch = useDispatch();
     const { categories, currentGenderId } = useSelector((state: RootState) => state.categories);
-    
+
     const [isTabChanging, setIsTabChanging] = useState(false);
 
     const { data: { data: currentGender } = {}, isLoading } = useGetCurrentHomeByGenderQuery(currentGenderId, {
@@ -61,7 +61,7 @@ const MobileCategoryMenu = React.memo(() => {
         refetchOnReconnect: false
     });
 
-    const {  isLoading: categoriesLoading } = useGetCategoriesQuery(undefined, {
+    const { isLoading: categoriesLoading } = useGetCategoriesQuery(undefined, {
         refetchOnMountOrArgChange: false,
         refetchOnFocus: false,
         refetchOnReconnect: false,
@@ -80,7 +80,7 @@ const MobileCategoryMenu = React.memo(() => {
     const handleTabChange = useCallback((value: string) => {
         setIsTabChanging(true);
         dispatch(setCurrentGenderId(Number(value)));
-        
+
         // Court délai pour montrer le skeleton
         setTimeout(() => {
             setIsTabChanging(false);
@@ -95,9 +95,9 @@ const MobileCategoryMenu = React.memo(() => {
 
     return (
         <div className="overflow-y-auto h-full pb-20">
-            <Tabs 
-                defaultValue={currentGenderId.toString()} 
-                onValueChange={handleTabChange} 
+            <Tabs
+                defaultValue={currentGenderId.toString()}
+                onValueChange={handleTabChange}
                 className="w-full"
             >
                 <TabsList className="w-full grid grid-cols-3 bg-transparent border-b mb-6">
@@ -127,8 +127,8 @@ const MobileCategoryMenu = React.memo(() => {
                     </TabsTrigger>
                 </TabsList>
 
-                <TabsContent 
-                    value={currentGenderId.toString()} 
+                <TabsContent
+                    value={currentGenderId.toString()}
                     className="mt-0"
                     asChild
                 >
@@ -136,7 +136,7 @@ const MobileCategoryMenu = React.memo(() => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ 
+                        transition={{
                             duration: 0.15,
                             ease: "easeOut"
                         }}
