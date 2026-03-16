@@ -190,7 +190,6 @@ const CategoryNavigationContent = () => {
 
   const renderCategories = useMemo(() => {
     if (!categoriesParent) return null;
-    console.log(categoriesChildren);
     return Object.entries(categoriesParent).map(([key, category]: any) => (
       <li
         key={key}

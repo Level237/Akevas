@@ -202,7 +202,7 @@ export default function MobileMoneyPaymentPage() {
     if (formDataPayment.s == 0) {
       formData = {
         phone: formDataPayment.phone,
-        payinAmount: "10",
+        payinAmount: formDataPayment.price,
         paymentPhone: formDataPayment.paymentPhone,
         productId: formDataPayment.productId,
         s: formDataPayment.s,
