@@ -1185,7 +1185,7 @@ const CreateProductPage: React.FC = () => {
                             </div>
 
                             {/* Section Vente en Gros - Visible uniquement si isWholesale est true */}
-                            {isWholesale && productType === "simple" && (
+                            {isWholesale && (productType === "simple" || selectedAttributeType === 'colorOnly') && (
                                 <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-sm p-6 border border-purple-100">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center">
@@ -1347,7 +1347,7 @@ const CreateProductPage: React.FC = () => {
                                                 {townsLoading ? (
                                                     <SelectItem value="loading">Chargement des villes...</SelectItem>
                                                 ) : (
-                                                    towns?.towns.map((town: { id: string, town_name: string }) => (
+                                                    towns?.map((town: { id: string, town_name: string }) => (
                                                         <SelectItem key={town.id} value={String(town.id)}>
                                                             {town.town_name}
                                                         </SelectItem>

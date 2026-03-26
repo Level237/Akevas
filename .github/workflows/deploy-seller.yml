@@ -32,7 +32,7 @@ jobs:
         with:
           # L'option --delete va supprimer les vieux fichiers JS sur le serveur (Génial !)
           # Mais rsync ne touchera pas aux dossiers 'api', 'seller' (parent) et 'delivery'
-          switches: -avzr --delete --exclude='api' --exclude='seller' --exclude='delivery'
+          switches: -avzr --delete --exclude='api' --exclude='seller' --exclude='delivery' --exclude='devapi'
           path: ./dist/
           remote_path: domains/akevas.com/public_html/seller/
           remote_host: ${{ secrets.HOST }}

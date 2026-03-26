@@ -193,9 +193,9 @@ const GalleryUpload: React.FC<GalleryUploadProps> = ({ images, onChange }) => {
         {previews.map((src, idx) => (
           <div key={idx} className="relative group w-24 h-24 rounded-lg overflow-hidden border">
             <img src={src} alt="gallery" className="w-full h-full object-cover" />
-            <button 
-              type="button" 
-              className="absolute top-1 right-1 bg-white/80 rounded-full p-1 shadow hover:bg-white" 
+            <button
+              type="button"
+              className="absolute top-1 right-1 bg-white/80 rounded-full p-1 shadow hover:bg-white"
               onClick={() => handleRemove(idx)}
             >
               <Trash2 className="w-4 h-4 text-red-500" />
@@ -221,28 +221,30 @@ interface ShopEditorModalProps {
 }
 
 const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initialData }) => {
+  console.log(initialData);
   const [formData, setFormData] = useState<SellerData>(initialData);
   const [tab, setTab] = useState<string>('general');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [updateShop, { isLoading }] = useUpdateShopMutation();
   let initialGender = formData?.shop?.gender;
-  if (!initialGender) initialGender = '1'; 
+  if (!initialGender) initialGender = '1';
   // Mise à jour du formData quand initialData change
   useEffect(() => {
     setFormData(initialData);
   }, [initialData]);
   const { data: categoriesByGender } = useGetCategoryByGenderQuery(initialGender);
   // Catégories
-  
-  
-  
+
+
+
   // Villes et quartiers
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
 
-  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+  const { data: { data: quarters } = {}, isLoading: quartersLoading } = useGetQuartersQuery('guard');
 
+  console.log(quarters);
 
-  const filteredQuarters = quarters?.quarters.filter((quarter: { town_name: string }) => quarter.town_name === formData.shop?.town);
+  const filteredQuarters = quarters?.filter((quarter: { town_name: string }) => quarter.town_name === formData.shop?.town);
 
   // Helpers pour update avec gestion d'erreur
   const handleShopChange = (changes: Partial<Shop>) => {
@@ -265,7 +267,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
   const handleCategoriesChange = (selected: number[]) => {
     // Convertir les IDs en objets de catégories
     const selectedCategories = selected.map(id => {
-      const category = categoriesByGender?.categories?.find((cat:any) => cat.id === id);
+      const category = categoriesByGender?.categories?.find((cat: any) => cat.id === id);
       return category ? {
         id: category.id,
         category_name: category.category_name,
@@ -360,10 +362,10 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
       }
       const fd = buildUpdateFormData();
 
-      const response=await updateShop(fd as any);
+      const response = await updateShop(fd as any);
       toast.success('Boutique mise à jour avec succès');
       console.log(response)
-     
+
       onClose();
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
@@ -382,14 +384,14 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
   const getSelectedCategoryIds = () => {
     return formData.shop.categories?.map(cat => cat.id) || [];
   };
-  
+
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] max-sm:max-w-[100vw] sm:max-w-[90vw] h-[95vh] sm:h-[90vh] p-0 border-0 bg-white shadow-2xl overflow-hidden rounded-xl">
         <div className="flex h-full relative">
           {/* Mobile Menu Button */}
-          <button 
+          <button
             onClick={toggleSidebar}
             className="lg:hidden max-sm:hidden absolute top-4 left-4 z-50"
           >
@@ -490,11 +492,11 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
 
               <Tabs value={tab} className="h-full flex flex-col">
                 {/* Infos vendeur */}
-              
+
                 {/* Général */}
                 <TabsContent className='overflow-y-auto max-h-[calc(100vh-300px)] flex-1' value="general">
                   <div className="flex flex-col gap-6 sm:gap-4 p-2 sm:p-4 lg:p-3">
-                    
+
                     <div>
                       <label className="block text-base max-sm:text-xs font-medium text-gray-700 mb-2">Nom de la boutique</label>
                       <Input
@@ -508,7 +510,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                       <label className="block text-base max-sm:text-xs max-sm:text-sm font-medium text-gray-700 mb-2">Description</label>
                       <Textarea
                         value={formData.shop?.shop_description || ''}
-                            onChange={e => handleShopChange({ shop_description: e.target.value })}
+                        onChange={e => handleShopChange({ shop_description: e.target.value })}
                         placeholder="Décrivez votre boutique en quelques mots..."
                         className="w-full max-sm:text-sm bg-white border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20 text-base py-3"
                         rows={3}
@@ -518,13 +520,13 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                       <label className="block text-base max-sm:text-xs font-medium text-gray-700 mb-2">Catégories</label>
                       <Select
                         isMulti
-                        options={(categoriesByGender?.categories || []).map((cat:any) => ({
+                        options={(categoriesByGender?.categories || []).map((cat: any) => ({
                           value: cat.id,
                           label: cat.category_name
                         }))}
                         value={(categoriesByGender?.categories || [])
-                          .filter((cat:any) => getSelectedCategoryIds().includes(cat.id))
-                          .map((cat:any) => ({
+                          .filter((cat: any) => getSelectedCategoryIds().includes(cat.id))
+                          .map((cat: any) => ({
                             value: cat.id,
                             label: cat.category_name
                           }))}
@@ -563,41 +565,41 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                         }}
                       />
                     </div>
-                     <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quel type de vendeur êtes-vous ?</label>
-                      <UISelect
-                        value={(formData.isWholesaler ?? '1').toString()}
-                        onValueChange={(val) => handleSellerChange({ isWholesaler: val })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionnez un type de vendeur" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="0">Grossiste</SelectItem>
-                          <SelectItem value="1">Détaillant</SelectItem>
-                          <SelectItem value="2">Les deux</SelectItem>
-                        </SelectContent>
-                      </UISelect>
-                    </div>
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Quel type de vendeur êtes-vous ?</label>
+                        <UISelect
+                          value={(formData.isWholesaler ?? '1').toString()}
+                          onValueChange={(val) => handleSellerChange({ isWholesaler: val })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sélectionnez un type de vendeur" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0">Grossiste</SelectItem>
+                            <SelectItem value="1">Détaillant</SelectItem>
+                            <SelectItem value="2">Les deux</SelectItem>
+                          </SelectContent>
+                        </UISelect>
+                      </div>
 
-                    <div>
-                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Types de produits</label>
-                      <UISelect
-                        value={(formData.shop?.product_type ?? '0').toString()}
-                        onValueChange={(val) => handleShopChange({ product_type: val })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionnez un type de produits" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="0">Boutique</SelectItem>
-                          <SelectItem value="1">Friperie</SelectItem>
-                          <SelectItem value="2">Les deux</SelectItem>
-                        </SelectContent>
-                      </UISelect>
+                      <div>
+                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Types de produits</label>
+                        <UISelect
+                          value={(formData.shop?.product_type ?? '0').toString()}
+                          onValueChange={(val) => handleShopChange({ product_type: val })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sélectionnez un type de produits" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0">Boutique</SelectItem>
+                            <SelectItem value="1">Friperie</SelectItem>
+                            <SelectItem value="2">Les deux</SelectItem>
+                          </SelectContent>
+                        </UISelect>
+                      </div>
                     </div>
-                  </div>
                   </div>
                 </TabsContent>
 
@@ -606,68 +608,68 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                   <div className="space-y-6 p-2 sm:p-4 lg:p-8">
                     <div className='flex max-sm:flex-col gap-4'>
                       <div className='w-1/2 max-sm:w-full'>
-                          <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Prénom</label>
-                          <Input
-                            value={formData.firstName || ''}
-                            onChange={e => handleSellerChange({ firstName: e.target.value })}
-                            placeholder="Votre prénom"
-                            className="bg-white border-gray-200 max-sm:text-xs  focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
-                          />
+                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Prénom</label>
+                        <Input
+                          value={formData.firstName || ''}
+                          onChange={e => handleSellerChange({ firstName: e.target.value })}
+                          placeholder="Votre prénom"
+                          className="bg-white border-gray-200 max-sm:text-xs  focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        />
                       </div>
                       <div className='w-1/2 max-sm:w-full'>
-                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Nom</label>
-                      <Input
-                        value={formData.lastName || ''}
-                        onChange={e => handleSellerChange({ lastName: e.target.value })}
-                        placeholder="Votre nom"
-                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
-                      />
-                    </div>
+                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Nom</label>
+                        <Input
+                          value={formData.lastName || ''}
+                          onChange={e => handleSellerChange({ lastName: e.target.value })}
+                          placeholder="Votre nom"
+                          className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        />
+                      </div>
                     </div>
                     <div className='flex max-sm:flex-col gap-4'>
                       <div className='w-1/2 max-sm:w-full'>
-                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Email</label>
-                      <Input
-                        value={formData.email || ''}
-                        onChange={e => handleSellerChange({ email: e.target.value })}
-                        placeholder="Votre email"
-                        type="email"
-                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
-                      />
+                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Email</label>
+                        <Input
+                          value={formData.email || ''}
+                          onChange={e => handleSellerChange({ email: e.target.value })}
+                          placeholder="Votre email"
+                          type="email"
+                          className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        />
+                      </div>
+                      <div className='w-1/2 max-sm:w-full'>
+                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Téléphone</label>
+                        <Input
+                          value={formData.phone_number || ''}
+                          onChange={e => handleSellerChange({ phone_number: e.target.value })}
+                          placeholder="Votre téléphone"
+                          className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        />
+                      </div>
                     </div>
-                    <div className='w-1/2 max-sm:w-full'>
-                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Téléphone</label>
-                      <Input
-                        value={formData.phone_number || ''}
-                        onChange={e => handleSellerChange({ phone_number: e.target.value })}
-                        placeholder="Votre téléphone"
-                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
-                      />
+                    <div className='flex max-sm:flex-col gap-4'>
+                      <div className='w-1/2 max-sm:w-full'>
+                        <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Date de naissance</label>
+                        <Input
+                          value={formData.birthDate || ''}
+                          onChange={e => handleSellerChange({ birthDate: e.target.value })}
+                          type="date"
+                          className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        />
+                      </div>
+                      <div className='w-1/2 max-sm:w-full'>
+                        <label className="block max-sm:text-xs text-sm font-medium text-gray-700 mb-2">Nationalité</label>
+                        <Input
+                          value={formData.nationality || ''}
+                          onChange={e => handleSellerChange({ nationality: e.target.value })}
+                          placeholder="Votre nationalité"
+                          className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
+                        />
+                      </div>
                     </div>
-                    </div>
-                   <div className='flex max-sm:flex-col gap-4'>
-                    <div className='w-1/2 max-sm:w-full'>
-                      <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Date de naissance</label>
-                      <Input
-                        value={formData.birthDate || ''}
-                        onChange={e => handleSellerChange({ birthDate: e.target.value })}
-                        type="date"
-                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
-                      />
-                    </div>
-                    <div className='w-1/2 max-sm:w-full'>
-                      <label className="block max-sm:text-xs text-sm font-medium text-gray-700 mb-2">Nationalité</label>
-                      <Input
-                        value={formData.nationality || ''}
-                        onChange={e => handleSellerChange({ nationality: e.target.value })}
-                        placeholder="Votre nationalité"
-                        className="bg-white max-sm:text-xs border-gray-200 focus:border-[#ed7e0f] focus:ring-2 focus:ring-[#ed7e0f]/20"
-                      />
-                    </div>
-                   </div>
-                    
-                    
-                  
+
+
+
                   </div>
                 </TabsContent>
 
@@ -705,7 +707,7 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                           <SelectValue placeholder="Sélectionnez une ville" />
                         </SelectTrigger>
                         <SelectContent>
-                          {!townsLoading && towns?.towns.map((town: any) => (
+                          {!townsLoading && towns?.map((town: any) => (
                             <SelectItem key={town.id} value={town.town_name}>{town.town_name}</SelectItem>
                           ))}
                         </SelectContent>
@@ -746,20 +748,20 @@ const ShopEditorModal: React.FC<ShopEditorModalProps> = ({ open, onClose, initia
                 </TabsContent>
               </Tabs>
               <div className="p-4 sticky bottom-0  sm:p-6 border-t border-gray-200 bg-gray-50">
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={onClose}>Annuler</Button>
-                <Button 
-                  className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white" 
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Enregistrement...' : 'Enregistrer'}
-                </Button>
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={onClose}>Annuler</Button>
+                  <Button
+                    className="bg-[#ed7e0f] hover:bg-[#ed7e0f]/90 text-white"
+                    type="submit"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Enregistrement...' : 'Enregistrer'}
+                  </Button>
+                </div>
               </div>
-            </div>
             </form>
 
-            
+
           </div>
         </div>
       </DialogContent>
