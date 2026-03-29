@@ -86,10 +86,11 @@ export default function RegisterForm() {
   const [townId, setTownId] = useState<string>('');
 
   const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
+  console.log(towns)
+  const { data: { data: quarters } = {}, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+  console.log(quarters)
 
-  const { data: quarters, isLoading: quartersLoading } = useGetQuartersQuery('guard');
-
-  const filteredQuarters = quarters?.quarters.filter((quarter: { town_id: number }) => quarter.town_id === parseInt(townId));
+  const filteredQuarters = quarters?.filter((quarter: { town_id: number }) => quarter.town_id === parseInt(townId));
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -103,8 +104,8 @@ export default function RegisterForm() {
         >
           {/* Informations de base */}
           <div className="space-y-6">
-            
-            
+
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -113,7 +114,7 @@ export default function RegisterForm() {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium">Nom d'utilisateur</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         className="h-12 px-4 rounded-xl bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
                         placeholder="John Doe"
                         {...field}
@@ -130,7 +131,7 @@ export default function RegisterForm() {
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium">Email</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         className="h-12 px-4 rounded-xl bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
                         placeholder="john@example.com"
                         type="email"
@@ -146,8 +147,8 @@ export default function RegisterForm() {
 
           {/* Téléphone et localisation */}
           <div className="space-y-2">
-            
-            
+
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -188,11 +189,11 @@ export default function RegisterForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium">Ville</FormLabel>
-                    <Select 
+                    <Select
                       onValueChange={(value) => {
                         field.onChange(value);
                         setTownId(value);
-                      }} 
+                      }}
                       defaultValue={field.value}
                     >
                       <FormControl>
@@ -209,7 +210,7 @@ export default function RegisterForm() {
                             </div>
                           </SelectItem>
                         ) : (
-                          towns?.towns.map((town: { id: string, town_name: string }) => (
+                          towns.map((town: { id: string, town_name: string }) => (
                             <SelectItem key={town.id} value={String(town.id)}>
                               {town.town_name}
                             </SelectItem>
@@ -260,8 +261,8 @@ export default function RegisterForm() {
 
           {/* Sécurité */}
           <div className="space-y-6">
-            
-            
+
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -271,7 +272,7 @@ export default function RegisterForm() {
                     <FormLabel className="text-gray-700 font-medium">Mot de passe</FormLabel>
                     <div className="relative">
                       <FormControl>
-                        <Input 
+                        <Input
                           className="h-12 px-4 rounded-xl bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all pr-10"
                           type={showPassword ? "text" : "password"}
                           placeholder="••••••••"
@@ -299,7 +300,7 @@ export default function RegisterForm() {
                     <FormLabel className="text-gray-700 font-medium">Confirmer le mot de passe</FormLabel>
                     <div className="relative">
                       <FormControl>
-                        <Input 
+                        <Input
                           className="h-12 px-4 rounded-xl bg-white/80 backdrop-blur-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all pr-10"
                           type={showConfirmPassword ? "text" : "password"}
                           placeholder="••••••••"
@@ -323,8 +324,8 @@ export default function RegisterForm() {
 
           {/* Conditions générales */}
           <div className="space-y-6">
-            
-            
+
+
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
               <FormField
                 control={form.control}
@@ -363,11 +364,11 @@ export default function RegisterForm() {
         </div>
 
         <div
-        
+
         >
           <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100">
-            <Button 
-              disabled={isLoading} 
+            <Button
+              disabled={isLoading}
               className="w-full h-14 rounded-2xl bg-[#ed7e0f] text-white font-semibold text-lg transition-all duration-300 transform hover:scale-[1.02] shadow-xl hover:shadow-2xl"
               type="submit"
             >

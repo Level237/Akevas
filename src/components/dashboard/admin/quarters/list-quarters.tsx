@@ -9,7 +9,6 @@ import { Quarter } from '@/types/quarter'
 
 export default function ListQuarters({ quarters, isLoading }: { quarters: Quarter[], isLoading: boolean }) {
     const navigate = useNavigate();
-    console.log(quarters)
     if (isLoading) {
         return <IsLoadingComponents isLoading={isLoading} />
     }
