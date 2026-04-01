@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useRegisterMutation } from "@/services/auth";
+import { useLoginMutation, useRegisterMutation } from "@/services/auth";
 import {
   Form,
   FormControl,
@@ -15,7 +15,7 @@ import * as z from "zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCheckIfEmailExistsMutation, useGetQuartersQuery, useGetTownsQuery } from "@/services/guardService";
 import { useState } from "react";
-import Cookies from "universal-cookie";
+
 import { Eye, EyeOff, Check } from "lucide-react";
 
 
@@ -47,7 +47,7 @@ export default function RegisterForm() {
       acceptTerms: false,
     },
   });
-
+  const [login] = useLoginMutation()
   const [register, { isLoading }] = useRegisterMutation()
   const [checkIfEmailExists] = useCheckIfEmailExistsMutation()
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -71,12 +71,10 @@ export default function RegisterForm() {
         password: values.password,
         residence: values.quarter
       }
-      const response = await register(formData)
+      await register(formData)
 
-      const cookies = new Cookies();
-      cookies.set('accessToken', response.data.access_token, { path: '/', secure: true });
-      cookies.set('refreshToken', response.data.refresh_token, { path: '/', secure: true });
-
+      const userObject = { phone_number: values.phone, password: values.password, role_id: 3 }
+      await login(userObject)
       window.location.href = `/authenticate`
     } catch (error) {
       console.log(error)
