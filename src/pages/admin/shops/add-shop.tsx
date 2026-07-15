@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 export default function AddShopPage() {
   const navigate = useNavigate();
   const [addShop, { isLoading }] = useAddShopMutation();
-  const { data: towns } = useGetTownsQuery('guard');
+  const { data: towns,isLoading: townsLoading } = useGetTownsQuery('guard');
   const { data: categories } = useGetCategoriesQuery('category');
   const [selectedTown, setSelectedTown] = useState<string>('');
   const { data: quarters } = useGetQuartersQuery(selectedTown);
@@ -191,16 +191,20 @@ export default function AddShopPage() {
                   setSelectedTown(value);
                 }}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez une ville" />
-                </SelectTrigger>
-                <SelectContent>
-                  {towns?.towns.map((town:any) => (
-                    <SelectItem key={town.id} value={town.id.toString()}>
-                      {town.town_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                <SelectTrigger className="bg-gray-50 border-0">
+                                                <SelectValue placeholder="Sélectionnez votre ville de livraison" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {townsLoading ? (
+                                                    <SelectItem value="loading">Chargement des villes...</SelectItem>
+                                                ) : (
+                                                    towns?.map((town: { id: string, town_name: string }) => (
+                                                        <SelectItem key={town.id} value={String(town.id)}>
+                                                            {town.town_name}
+                                                        </SelectItem>
+                                                    ))
+                                                )}
+                                            </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
@@ -214,7 +218,7 @@ export default function AddShopPage() {
                   <SelectValue placeholder="Sélectionnez un quartier" />
                 </SelectTrigger>
                 <SelectContent>
-                  {quarters?.quarters.map((quarter:any) => (
+                  {quarters.data?.map((quarter:any) => (
                     <SelectItem key={quarter.id} value={quarter.id.toString()}>
                       {quarter.quarter_name}
                     </SelectItem>
