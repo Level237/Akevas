@@ -11,13 +11,16 @@ jobs:
     environment: hostinger
     steps:
       - name: Checkout Code Akevas
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install pnpm
         run: npm install -g pnpm
 
+      - name: Configure pnpm          # ← ajoute cette étape
+        run: pnpm config set ignore-scripts true
+
       - name: Install Dependancies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: Build App
         # Ajout du nettoyage du dossier dist avant le build
