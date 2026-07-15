@@ -16,6 +16,9 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
+      - name: Configure pnpm          # ← ajoute cette étape
+        run: pnpm config set ignore-scripts true
+
       - name: Install Dependancies
         run: pnpm install
 
