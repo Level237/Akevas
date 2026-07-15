@@ -280,8 +280,8 @@ export default function ListSellers({ shops, isLoading }: ListSellersProps) {
 }
 
 export function ListSellersContainer() {
-  const { data: { data: shops } = {}, isLoading, error } = useListSellersQuery('admin');
-  console.log(shops)
+  const { data: { data: shops } = {}, isLoading } = useListSellersQuery('admin');
+ 
   return <ListSellers shops={shops} isLoading={isLoading} />;
 }
 

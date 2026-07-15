@@ -20,7 +20,7 @@ jobs:
         run: pnpm config set ignore-scripts true
 
       - name: Install Dependancies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: Build App
         # Ajout du nettoyage du dossier dist avant le build
