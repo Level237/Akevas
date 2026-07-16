@@ -16,11 +16,13 @@ import { toast } from 'sonner';
 export default function AddShopPage() {
   const navigate = useNavigate();
   const [addShop, { isLoading }] = useAddShopMutation();
-  const { data: towns,isLoading: townsLoading } = useGetTownsQuery('guard');
+  const { data: towns, isLoading: townsLoading } = useGetTownsQuery('guard');
   const { data: categories } = useGetCategoriesQuery('category');
   const [selectedTown, setSelectedTown] = useState<string>('');
-  const { data: quarters } = useGetQuartersQuery(selectedTown);
-  
+  const { data: { data: quarters } = {}, isLoading: quartersLoading } = useGetQuartersQuery('guard');
+
+  const filteredQuarters = quarters?.filter((quarter: { town_id: number }) => quarter.town_id === parseInt(selectedTown));
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -66,7 +68,7 @@ export default function AddShopPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const formDataToSend = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
@@ -90,7 +92,7 @@ export default function AddShopPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mt-12 mb-12">Ajouter une nouvelle boutique</h1>
-      
+
       <form onSubmit={handleSubmit} className="space-y-8 ">
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6 ">Informations du vendeur</h2>
@@ -192,19 +194,19 @@ export default function AddShopPage() {
                 }}
               >
                 <SelectTrigger className="bg-gray-50 border-0">
-                                                <SelectValue placeholder="Sélectionnez votre ville de livraison" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {townsLoading ? (
-                                                    <SelectItem value="loading">Chargement des villes...</SelectItem>
-                                                ) : (
-                                                    towns?.map((town: { id: string, town_name: string }) => (
-                                                        <SelectItem key={town.id} value={String(town.id)}>
-                                                            {town.town_name}
-                                                        </SelectItem>
-                                                    ))
-                                                )}
-                                            </SelectContent>
+                  <SelectValue placeholder="Sélectionnez votre ville de livraison" />
+                </SelectTrigger>
+                <SelectContent>
+                  {townsLoading ? (
+                    <SelectItem value="loading">Chargement des villes...</SelectItem>
+                  ) : (
+                    towns?.map((town: { id: string, town_name: string }) => (
+                      <SelectItem key={town.id} value={String(town.id)}>
+                        {town.town_name}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
@@ -217,12 +219,21 @@ export default function AddShopPage() {
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionnez un quartier" />
                 </SelectTrigger>
-                <SelectContent>
-                  {quarters.data?.map((quarter:any) => (
-                    <SelectItem key={quarter.id} value={quarter.id.toString()}>
-                      {quarter.quarter_name}
+                <SelectContent className="rounded-xl border-gray-200">
+                  {quartersLoading ? (
+                    <SelectItem value="loading">
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full" />
+                        Chargement...
+                      </div>
                     </SelectItem>
-                  ))}
+                  ) : (
+                    filteredQuarters?.map((quarter: { id: string, quarter_name: string }) => (
+                      <SelectItem key={quarter.id} value={String(quarter.id)}>
+                        {quarter.quarter_name}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -357,7 +368,7 @@ export default function AddShopPage() {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-6">Catégories</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories?.categories.map((category:any) => (
+            {categories?.categories.map((category: any) => (
               <div key={category.id} className="flex items-center space-x-2">
                 <input
                   type="checkbox"

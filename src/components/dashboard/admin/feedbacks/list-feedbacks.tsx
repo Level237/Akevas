@@ -21,7 +21,7 @@ const ListFeedback = ({ feedbacks, isLoading }: { feedbacks: any, isLoading: boo
     };
 
     const getStatusInfo = (status: number) => {
-        return status === 1 
+        return status === 1
             ? { text: "Traité", color: "bg-green-100 text-green-700", icon: CheckCircle }
             : { text: "Non traité", color: "bg-red-100 text-red-700", icon: AlertCircle };
     };
@@ -170,9 +170,9 @@ const ListFeedback = ({ feedbacks, isLoading }: { feedbacks: any, isLoading: boo
                                     {/* Actions */}
                                     {feedback.role === 2 && (
                                         <Link to={`/admin/shops/${feedback.shop.id}`}>
-                                            <Button 
-                                                variant="outline" 
-                                                size="sm" 
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
                                                 className="w-full h-10 text-blue-600 border-blue-200 hover:bg-blue-50"
                                             >
                                                 <ExternalLink className="h-4 w-4 mr-2" />
@@ -182,9 +182,9 @@ const ListFeedback = ({ feedbacks, isLoading }: { feedbacks: any, isLoading: boo
                                     )}
                                     {feedback.role === 4 && (
                                         <Link to={`/admin/delivery/${feedback.user.id}`}>
-                                            <Button 
-                                                variant="outline" 
-                                                size="sm" 
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
                                                 className="w-full h-10 text-blue-600 border-blue-200 hover:bg-blue-50"
                                             >
                                                 <ExternalLink className="h-4 w-4 mr-2" />
@@ -211,8 +211,10 @@ const ListFeedback = ({ feedbacks, isLoading }: { feedbacks: any, isLoading: boo
 }
 
 const ListFeedbackContainer = () => {
-    const { data, isLoading } = useAdminListFeedbackQuery("admin")
-
+    const { data, isLoading, error } = useAdminListFeedbackQuery("admin")
+    if (error) {
+        console.log(error)
+    }
     return <ListFeedback feedbacks={data} isLoading={isLoading} />
 }
 

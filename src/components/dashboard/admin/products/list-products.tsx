@@ -1,11 +1,9 @@
 import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Edit,Package, Eye} from 'lucide-react'
+import { Package, Eye} from 'lucide-react'
 import { Product } from '@/types/products'
 import { Badge } from '@/components/ui/badge'
 import { useAdminListProductsQuery } from '@/services/adminService'
 import IsLoadingComponents from '@/components/ui/isLoadingComponents'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import OptimizedImage from '@/components/OptimizedImage'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
@@ -40,133 +38,44 @@ export default function ListProducts({ products, isLoading }: { products: Produc
 
   return (
     <div className="space-y-6">
-      {/* Desktop Table View */}
-      <div className="hidden lg:block">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product: any) => (
-              <TableRow key={product.id}>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Avatar className="h-10 w-10">
-                    {product.variations && product.variations.length > 0 && product.variations[0].images && product.variations[0].images.length > 0
-                      ? <OptimizedImage
-                        src={product.variations[0].images[0]}
-                        alt={product.product_name}
-                        className="h-full w-full object-cover"
-                      />
-                      : <AvatarImage
-                        src={product.product_profile}
-                        className="object-cover"
-                      />
-                    }
-                    <AvatarFallback className="text-sm font-medium">
-                      {product.product_name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-medium truncate w-64">{product.product_name}</span>
-                    {product.variations && product.variations.length > 0 && (
-                      <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full w-fit">
-                        Variations
-                      </span>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm text-gray-600">
-                    {product.product_categories[0]?.category_name || 'N/A'}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {product.variations && product.variations.length > 0 ? (
-                    <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                      Variable
-                    </span>
-                  ) : (
-                    <span className="font-medium">
-                      {parseFloat(product.product_price).toFixed(2)} XAF
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {product.variations && product.variations.length > 0 ? (
-                    <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                      Variable
-                    </span>
-                  ) : (
-                    <span className="font-medium">{product.product_quantity}</span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {product.isRejet==0 && <Badge className={product.status ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
-                    {product.status ? "Active" : "Inactive"}
-                  </Badge>}
-                  {product.isRejet==1 && <Badge className="bg-red-100 text-red-700 hover:bg-red-200">Rejeté</Badge>}
-                </TableCell>
-                <TableCell>
-                  <span className="text-xs text-gray-500">
-                    {product.created_at ? timeAgo(product.created_at) : 'N/A'}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-1">
-                  
-                    
-                    <Button
-                      onClick={() => navigate(`/admin/products/${product.product_url}`)}
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Mobile Card View */}
-      <div className="lg:hidden space-y-4">
-        {products.map((product: any) => (
-          <Card key={product.id} className="overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-0">
+      {/* Responsive Modern Card Grid View */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {products?.map((product: any) => (
+          <Card key={product.id} className="overflow-hidden border border-gray-100 bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <CardContent className="p-0 flex flex-col h-full">
               {/* Product Image */}
-              <div className="relative h-48 w-full bg-gray-100">
+              <div className="relative h-56 w-full bg-gray-50 overflow-hidden">
                 {product.variations && product.variations.length > 0 && product.variations[0].images && product.variations[0].images.length > 0 ? (
                   <OptimizedImage
                     src={product.variations[0].images[0]}
                     alt={product.product_name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 ) : (
                   <OptimizedImage
                     src={product.product_profile}
                     alt={product.product_name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 )}
-                <div className="absolute top-3 right-3">
-                  <Badge className={product.status ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}>
-                    {product.status ? "Active" : "Inactive"}
-                  </Badge>
+                
+                {/* Status Badges */}
+                <div className="absolute top-3 right-3 flex flex-col gap-2 items-end">
+                  {product.isRejet == 0 ? (
+                    <Badge className={`shadow-sm border-0 font-medium ${product.status ? "bg-green-500 hover:bg-green-600 text-white" : "bg-red-500 hover:bg-red-600 text-white"}`}>
+                      {product.status ? "Active" : "Inactive"}
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-red-500 hover:bg-red-600 text-white shadow-sm border-0 font-medium">
+                      Rejeté
+                    </Badge>
+                  )}
                 </div>
+
+                {/* Variation Badge */}
                 {product.variations && product.variations.length > 0 && (
                   <div className="absolute top-3 left-3">
-                    <Badge className="bg-blue-100 text-blue-700">
+                    <Badge variant="secondary" className="bg-white/95 text-blue-700 shadow-sm hover:bg-white font-medium">
                       Variations
                     </Badge>
                   </div>
@@ -174,69 +83,58 @@ export default function ListProducts({ products, isLoading }: { products: Produc
               </div>
 
               {/* Product Info */}
-              <div className="p-4 space-y-3">
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900 mb-1">
+              <div className="p-5 flex flex-col flex-grow">
+                <div className="mb-4">
+                  <h3 className="font-bold text-lg text-gray-900 line-clamp-2 group-hover:text-[#ed7e0f] transition-colors leading-tight" title={product.product_name}>
                     {product.product_name}
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    {product.product_categories[0]?.category_name || 'N/A'}
+                  <p className="text-sm font-medium text-gray-500 mt-1.5">
+                    {product.product_categories && product.product_categories.length > 0 ? product.product_categories[0].category_name : 'Sans catégorie'}
                   </p>
                 </div>
 
-                {/* Price, Stock, and Date */}
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-500">Prix</p>
+                {/* Price and Stock Grid */}
+                <div className="grid grid-cols-2 gap-3 mb-5 mt-auto">
+                  <div className="bg-gray-50/80 rounded-xl p-3 border border-gray-100">
+                    <p className="text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Prix</p>
                     {product.variations && product.variations.length > 0 ? (
-                      <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                      <span className="text-sm font-bold text-blue-600">
                         Variable
                       </span>
                     ) : (
-                      <p className="font-semibold text-gray-900">
-                        {parseFloat(product.product_price).toFixed(2)} XAF
+                      <p className="font-bold text-gray-900 truncate" title={`${parseFloat(product.product_price).toLocaleString()} XAF`}>
+                        {parseFloat(product.product_price).toLocaleString()} <span className="text-xs text-gray-500 font-medium">XAF</span>
                       </p>
                     )}
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-500">Stock</p>
+                  <div className="bg-gray-50/80 rounded-xl p-3 border border-gray-100">
+                    <p className="text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Stock</p>
                     {product.variations && product.variations.length > 0 ? (
-                      <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                      <span className="text-sm font-bold text-blue-600">
                         Variable
                       </span>
                     ) : (
-                      <p className="font-semibold text-gray-900">
-                        {product.product_quantity}
+                      <p className="font-bold text-gray-900">
+                        {product.product_quantity} <span className="text-xs text-gray-500 font-medium">unités</span>
                       </p>
                     )}
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-500">Ajouté</p>
-                    <span className="text-xs text-gray-500">
-                      {product.created_at ? timeAgo(product.created_at) : 'N/A'}
-                    </span>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 px-3 text-blue-600 border-blue-200 hover:bg-blue-50"
-                      onClick={() => navigate(`/admin/products/${product.product_url}`)}
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      Voir
-                    </Button>
-                    <Button variant="outline" size="sm" className="h-8 px-3">
-                      <Edit className="h-4 w-4 mr-1" />
-                      Modifier
-                    </Button>
-                  </div>
-
-                  
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                  <span className="text-xs text-gray-400 font-medium flex items-center">
+                    Ajouté {product.created_at ? timeAgo(product.created_at) : 'N/A'}
+                  </span>
+                  <Button
+                    onClick={() => navigate(`/admin/products/${product.product_url}`)}
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 px-4 text-[#ed7e0f] bg-[#ed7e0f]/10 hover:bg-[#ed7e0f]/20 hover:text-[#ed7e0f] rounded-lg transition-colors font-medium"
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    Voir
+                  </Button>
                 </div>
               </div>
             </CardContent>

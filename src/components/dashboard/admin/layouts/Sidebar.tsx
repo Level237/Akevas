@@ -98,23 +98,25 @@ export function Sidebar() {
           "md:translate-x-0",
         )}
       >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-center h-16 border-b">
-            <AsyncLink to="/" className="flex items-center space-x-2">
-              <Package className="h-6 w-6 text-[#ed7e0f]" />
-              <span className="text-xl font-bold text-gray-900">Akevas</span>
+        <div className="flex flex-col h-full bg-white">
+          <div className="flex items-center justify-center h-20 border-b border-gray-100">
+            <AsyncLink to="/" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 group">
+              <div className="bg-[#ed7e0f]/10 p-2 rounded-xl group-hover:bg-[#ed7e0f]/20 transition-colors">
+                <Package className="h-6 w-6 text-[#ed7e0f]" />
+              </div>
+              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">Akevas</span>
             </AsyncLink>
           </div>
 
-          <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
+          <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2 scrollbar-hide">
             {navItems.map((item) => (
               <div key={item.href}>
                 <div
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer",
+                    "flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer group",
                     pathname === item.href
-                      ? "bg-[#ed7e0f]/10 text-[#ed7e0f]"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
+                      ? "bg-gradient-to-r from-[#ed7e0f]/10 to-transparent text-[#ed7e0f] shadow-sm ring-1 ring-[#ed7e0f]/20"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
                   )}
                   onClick={() => {
                     if (item.subItems) {
@@ -128,31 +130,35 @@ export function Sidebar() {
                     onClick={(e) => {
                       if (item.subItems) {
                         e.preventDefault()
+                      } else {
+                        setIsOpen(false)
                       }
                     }}
                   >
-                    <item.icon className={cn("h-5 w-5", pathname === item.href ? "text-[#ed7e0f]" : "text-gray-400")} />
+                    <item.icon className={cn("h-5 w-5 transition-transform duration-200 group-hover:scale-110", pathname === item.href ? "text-[#ed7e0f]" : "text-gray-400")} />
                     <span>{item.label}</span>
                   </Link>
                   {item.subItems && (
                     expandedItems.includes(item.href)
-                      ? <ChevronUp className="h-4 w-4 text-gray-500" />
-                      : <ChevronDown className="h-4 w-4 text-gray-500" />
+                      ? <ChevronUp className={cn("h-4 w-4 transition-colors", pathname === item.href ? "text-[#ed7e0f]" : "text-gray-400")} />
+                      : <ChevronDown className={cn("h-4 w-4 transition-colors", pathname === item.href ? "text-[#ed7e0f]" : "text-gray-400")} />
                   )}
                 </div>
                 {item.subItems && expandedItems.includes(item.href) && (
-                  <div className="ml-8 mt-1 space-y-1">
+                  <div className="ml-4 mt-2 space-y-1 pl-4 border-l-2 border-gray-100 relative">
                     {item.subItems.map((subItem) => (
                       <AsyncLink
                         key={subItem.href}
                         to={subItem.href}
+                        onClick={() => setIsOpen(false)}
                         className={cn(
-                          "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors",
+                          "flex items-center space-x-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 group",
                           pathname === subItem.href
-                            ? "bg-[#ed7e0f]/10 text-[#ed7e0f]"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+                            ? "bg-[#ed7e0f]/10 text-[#ed7e0f] font-semibold"
+                            : "text-gray-500 hover:bg-gray-50 hover:text-gray-900",
                         )}
                       >
+                        <span className={cn("w-1.5 h-1.5 rounded-full transition-colors", pathname === subItem.href ? "bg-[#ed7e0f]" : "bg-gray-300 group-hover:bg-gray-400")} />
                         <span>{subItem.label}</span>
                       </AsyncLink>
                     ))}
@@ -163,21 +169,22 @@ export function Sidebar() {
           </nav>
 
           {/* Onglet Compte en bas */}
-          <div className="p-4 border-t flex flex-col gap-2">
+          <div className="p-4 border-t border-gray-100 flex flex-col gap-2 bg-gray-50/30">
             <AsyncLink
               to="/admin/account"
+              onClick={() => setIsOpen(false)}
               className={cn(
-                "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                "flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                 pathname === "/admin/account"
-                  ? "bg-[#ed7e0f]/10 text-[#ed7e0f]"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  ? "bg-gradient-to-r from-[#ed7e0f]/10 to-transparent text-[#ed7e0f] shadow-sm ring-1 ring-[#ed7e0f]/20"
+                  : "text-gray-700 hover:bg-white hover:shadow-sm hover:text-gray-900"
               )}
             >
-              <User className="h-5 w-5" />
+              <User className={cn("h-5 w-5", pathname === "/admin/account" ? "text-[#ed7e0f]" : "text-gray-400")} />
               <span>Compte</span>
             </AsyncLink>
-            <Button variant="outline" className="w-full" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" /> Deconnexion
+            <Button variant="outline" className="w-full justify-start px-4 py-5 rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors shadow-sm" onClick={handleLogout}>
+              <LogOut className="mr-3 h-5 w-5" /> Deconnexion
             </Button>
           </div>
         </div>
