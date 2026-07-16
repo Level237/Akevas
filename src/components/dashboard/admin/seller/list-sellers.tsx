@@ -70,7 +70,7 @@ export default function ListSellers({ shops, isLoading }: ListSellersProps) {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-bold text-lg text-gray-900 line-clamp-1 group-hover:text-[#ed7e0f] transition-colors" title={shop.shop.shop_name}>
+                    <h3 className="font-bold text-lg text-gray-900 line-clamp-1 group-hover:text-[#ed7e0f] transition-colors">
                       {shop.shop.shop_name}
                     </h3>
                     <p className="text-sm text-gray-500 font-medium flex items-center gap-1.5 mt-0.5">
@@ -208,8 +208,8 @@ export function CheckStateSeller({ state }: { state: string | null }) {
   return (
     <Badge
       className={`shadow-sm border-0 font-medium ${state === "1" ? "bg-green-500 text-white hover:bg-green-600" :
-          state === "0" ? "bg-orange-500 text-white hover:bg-orange-600" :
-            "bg-red-500 text-white hover:bg-red-600"
+        state === "0" ? "bg-orange-500 text-white hover:bg-orange-600" :
+          "bg-red-500 text-white hover:bg-red-600"
         }`}
     >
       {state === "1" && "Approuvé"}

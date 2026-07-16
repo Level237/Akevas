@@ -100,7 +100,7 @@ export function Sidebar() {
       >
         <div className="flex flex-col h-full bg-white">
           <div className="flex items-center justify-center h-20 border-b border-gray-100">
-            <AsyncLink to="/" onClick={() => setIsOpen(false)} className="flex items-center space-x-3 group">
+            <AsyncLink to="/" OnClick={() => setIsOpen(false)} className="flex items-center space-x-3 group">
               <div className="bg-[#ed7e0f]/10 p-2 rounded-xl group-hover:bg-[#ed7e0f]/20 transition-colors">
                 <Package className="h-6 w-6 text-[#ed7e0f]" />
               </div>
@@ -150,7 +150,7 @@ export function Sidebar() {
                       <AsyncLink
                         key={subItem.href}
                         to={subItem.href}
-                        onClick={() => setIsOpen(false)}
+                        OnClick={() => setIsOpen(false)}
                         className={cn(
                           "flex items-center space-x-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 group",
                           pathname === subItem.href
@@ -172,7 +172,7 @@ export function Sidebar() {
           <div className="p-4 border-t border-gray-100 flex flex-col gap-2 bg-gray-50/30">
             <AsyncLink
               to="/admin/account"
-              onClick={() => setIsOpen(false)}
+              OnClick={() => setIsOpen(false)}
               className={cn(
                 "flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                 pathname === "/admin/account"
