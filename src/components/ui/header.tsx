@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search, X, Menu} from 'lucide-react'
+import { ShoppingCart, User, Search, X, Menu } from 'lucide-react'
 import logo from '../../assets/logo.png';
 import { NavigationMenuLink } from './navigation-menu';
 import { cn } from '@/lib/utils';
@@ -184,7 +184,7 @@ const Header = () => {
   const isScrolledRef = useRef(false);
   const headerRef = useRef<HTMLElement>(null);
 
- 
+
 
   const [uiState, setUiState] = useState({
     isMenuOpen: false,
@@ -245,34 +245,34 @@ const Header = () => {
       <DropdownAccount currentUser={userData}>
 
         <div className='z-[9999]'>
-        {!userData && (
-          <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
-            <User className="h-6 w-6 max-sm:w-5 max-sm:h-5" />
-          </div>
-        )}
+          {!userData && (
+            <div className="text-gray-700 hover:text-[#ed7e0f] cursor-pointer">
+              <User className="h-6 w-6 max-sm:w-5 max-sm:h-5" />
+            </div>
+          )}
 
-        {userData && (userData.role_id === 1 || userData.role_id === 3) && (
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={userData.profile} />
-            <AvatarFallback>{userData?.userName.charAt(0)}</AvatarFallback>
-          </Avatar>
-        )}
+          {userData && (userData.role_id === 1 || userData.role_id === 3) && (
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={userData.profile} />
+              <AvatarFallback>{userData?.userName.charAt(0)}</AvatarFallback>
+            </Avatar>
+          )}
         </div>
-        
+
       </DropdownAccount>
 
       {!userData && <AsyncLink to="/cart">
 
-<div
+        <div
 
-  className="relative text-gray-700 hover:text-[#ed7e0f]"
->
-  <ShoppingCart className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
-  <span className="absolute -top-2 max-sm:-top-3 -right-2  max-sm:h-[18px] bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 max-sm:text-xs flex items-center justify-center">
-    {totalQuantity}
-  </span>
-</div>
-</AsyncLink>}
+          className="relative text-gray-700 hover:text-[#ed7e0f]"
+        >
+          <ShoppingCart className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
+          <span className="absolute -top-2 max-sm:-top-3 -right-2  max-sm:h-[18px] bg-[#ed7e0f] text-white text-xs rounded-full w-5 h-5 max-sm:text-xs flex items-center justify-center">
+            {totalQuantity}
+          </span>
+        </div>
+      </AsyncLink>}
     </div>
   ), [userData, handleSearchToggle, totalQuantity]);
 
@@ -299,11 +299,11 @@ const Header = () => {
               }}>
                 <CategoryNavigation />
               </React.Profiler>
-              
+
             </div>
 
             {headerActions}
-            
+
           </div>
         </div>
       </header>
@@ -407,7 +407,7 @@ const Header = () => {
         <div className="hidden  md:block lg:hidden mx-8 px-4 py-4">
           {/* Top bar avec logo, recherche et actions */}
           <div className="flex items-center justify-between gap-6">
-          <button
+            <button
               onClick={() => setUiState(prev => ({ ...prev, isMenuOpen: true }))}
               className="lg:hidden p-2 -ml-2"
             >
