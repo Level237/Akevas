@@ -165,7 +165,7 @@ const MobileMenuOverlay = React.memo(({
             {/* Menu Content */}
             {isContentReady ? (
               <Suspense fallback={<MenuSkeleton />}>
-                <MobileCategoryMenu key={Date.now()} />
+                <MobileCategoryMenu key={Date.now()} onClick={onClose} />
               </Suspense>
             ) : (
               <MenuSkeleton />
@@ -480,7 +480,7 @@ const Header = () => {
           {/* Navigation avec menus déroulants tablette */}
           <div className="flex justify-center md:hidden md:gap-1 gap-8 items-center w-full mt-4">
             <div className='w-10 md:hidden'>
-              <MegaMenu />
+
             </div>
             <div className='flex-1'>
               <CategoryNavigation />

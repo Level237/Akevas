@@ -117,7 +117,7 @@ const MobileSlide = memo(({ slide, productImages, isLoading }: any) => {
           </div>
 
           <div className="my-6 h-48 relative">
-            {slide.type === 'marketplace' && !isLoading && productImages?.length > 0 && (
+            {!isLoading && productImages?.length > 0 && (
               <div className="grid grid-cols-2 gap-3 h-full">
                 {productImages.slice(0, 4).map((img: any, index: number) => (
                   <Link key={img.url} to={`/shop/${img.url}`} className="relative rounded-xl overflow-hidden">

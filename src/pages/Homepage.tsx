@@ -23,24 +23,24 @@ import { RootState } from '@/store';
 const Homepage = () => {
   const dispatch = useDispatch();
   const isInitialLoading = useSelector((state: RootState) => state.loading.isInitialLoading);
-  
+
   // useTransition est utile, mais on l'utilisera proprement sans état local redondant
   const [isPending, startTransition] = useTransition();
 
   // ✅ 1. APPELS API SÉCURISÉS (Plus de refetch intempestif)
-  const { 
-    data: shopsResponse, 
-    isLoading: shopsLoading, 
-    error: shopsError 
+  const {
+    data: shopsResponse,
+    isLoading: shopsLoading,
+    error: shopsError
   } = useGetHomeShopsQuery("guard", {
     refetchOnFocus: false,          // ❌ Ne pas recharger au changement d'onglet
     refetchOnMountOrArgChange: false, // ❌ Utiliser le cache de 5 min défini dans guardService
   });
 
-  const { 
-    data: categoriesResponse, 
-    isLoading: categoriesLoading, 
-    error: categoriesError 
+  const {
+    data: categoriesResponse,
+    isLoading: categoriesLoading,
+    error: categoriesError
   } = useGetCategoriesWithParentIdNullQuery("4", {
     refetchOnFocus: false,
     refetchOnMountOrArgChange: false,
@@ -97,26 +97,26 @@ const Homepage = () => {
         <Header />
 
         <main className="relative pb-20"> {/* pb-20 pour éviter que le footer ne colle au contenu sur mobile */}
-          <GenderNavigationMobile />
-          
+
+
           <div className="relative space-y-8"> {/* space-y-8 gère les espacements verticaux proprement */}
             <StoreHero />
-            
+
             {/* On passe directement 'shops' au lieu de 'localShops' */}
-            <StoreStories 
-              title="Boutiques en vedette" 
-              description="Découvrez les boutiques en vedette" 
-              shops={shops} 
-              isLoading={shopsLoading} 
+            <StoreStories
+              title="Boutiques en vedette"
+              description="Découvrez les boutiques en vedette"
+              shops={shops}
+              isLoading={shopsLoading}
             />
-            
+
             <PremiumProducts />
-            
-            <CategoryShowcaseDual 
-              categories={categories} 
-              isLoading={categoriesLoading} 
-              title="Catégories" 
-              titleCategory="Découvrez nos catégories" 
+
+            <CategoryShowcaseDual
+              categories={categories}
+              isLoading={categoriesLoading}
+              title="Catégories"
+              titleCategory="Découvrez nos catégories"
             />
           </div>
         </main>
