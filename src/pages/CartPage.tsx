@@ -14,7 +14,7 @@ import { useCheckAuthQuery } from '@/services/auth';
 import OptimizedImage from '@/components/OptimizedImage';
 const CartPage: React.FC = () => {
   // Mock data - À remplacer par l'état réel du panier
-  const { data } = useCheckAuthQuery()
+  const { data } = useCheckAuthQuery("Auth")
   const hasToken = data?.isAuthenticated
 
   const [isAuthenticated, setIsAuthenticated] = useState(false)

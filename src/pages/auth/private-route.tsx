@@ -8,10 +8,11 @@ export const PrivateRoute = () => {
     const location = useLocation();
     const dispatch = useDispatch();
 
-    // Le seul moyen de savoir si l'utilisateur est authentifié est ici :
-    const { data, isLoading, isError} = useCheckAuthQuery(undefined, {
-        // On veut absolument lancer la requête à chaque fois
-        refetchOnMountOrArgChange: true,
+    // ✅ CORRECTION : On utilise le cache. Pas de refetch forcé au montage.
+    const { data, isLoading, isError } = useCheckAuthQuery(undefined, {
+        refetchOnMountOrArgChange: false, // Ne force pas l'appel réseau si en cache
+        refetchOnFocus: false,
+        refetchOnReconnect: false,
     });
 
     useEffect(() => {
@@ -20,18 +21,18 @@ export const PrivateRoute = () => {
         } else if (data?.isAuthenticated === false || isError) {
             dispatch(setUnauthenticated());
         }
-    }, [data, isError]);
+    }, [data, isError, dispatch]);
 
-    // 1. Tant que le backend n'a pas répondu → on bloque le rendu
+    // 1. Chargement initial (seulement si le cache est vide/expiré)
     if (isLoading) {
         return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ed7e0f]"></div>
-      </div>
-    );
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ed7e0f]"></div>
+            </div>
+        );
     }
 
-    // 2. Backend dit : PAS AUTHENTIFIÉ → redirect immédiate
+    // 2. Non authentifié → redirection vers login en sauvegardant la page demandée
     if (isError || data?.isAuthenticated === false) {
         return (
             <Navigate
@@ -42,6 +43,6 @@ export const PrivateRoute = () => {
         );
     }
 
-    // 3. Backend a validé → afficher la page protégée
+    // 3. Authentifié → affichage de la page protégée
     return <Outlet />;
 };

@@ -36,7 +36,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({
     currentInfo,
     getAllImages,
 }: CheckoutDrawerProps) => {
-    const { data } = useCheckAuthQuery()
+    const { data } = useCheckAuthQuery("Auth")
 
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Components
@@ -26,6 +26,8 @@ const Homepage = () => {
 
   // useTransition est utile, mais on l'utilisera proprement sans état local redondant
   const [isPending, startTransition] = useTransition();
+
+  console.log(isPending)
 
   // ✅ 1. APPELS API SÉCURISÉS (Plus de refetch intempestif)
   const {
@@ -97,7 +99,7 @@ const Homepage = () => {
         <Header />
 
         <main className="relative pb-20"> {/* pb-20 pour éviter que le footer ne colle au contenu sur mobile */}
-
+          <GenderNavigationMobile />
 
           <div className="relative space-y-8"> {/* space-y-8 gère les espacements verticaux proprement */}
             <StoreHero />

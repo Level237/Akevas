@@ -36,7 +36,7 @@ export const guardService = createApi({
         getShop: builder.query({
             query: (id) => `/api/shop/${id}`,
             // 🌟 CHANGEMENT 3 : Tag spécifique avec ID pour une invalidation ciblée
-            providesTags: (result, error, id) => [{ type: 'Shop', id }],
+            providesTags: (id) => [{ type: 'Shop', id }],
             keepUnusedDataFor: 300, // 5 minutes
         }),
 
@@ -103,7 +103,7 @@ export const guardService = createApi({
                 currentPageResponse: response.meta.current_page,
                 totalShopsResponse: response.meta.total,
             }),
-            providesTags: (result, error, page) => [{ type: 'Shop', id: 'LIST' }, { type: 'Shop', id: page }],
+            providesTags: (_result, _error, page) => [{ type: 'Shop', id: 'LIST' }, { type: 'Shop', id: page }],
             keepUnusedDataFor: 120, // 2 minutes
         }),
 
@@ -121,7 +121,7 @@ export const guardService = createApi({
 
         getProductByUrl: builder.query({
             query: (url) => ({ url: `/api/product/detail/${url}`, method: "GET" }),
-            providesTags: (result, error, url) => [{ type: 'Product', id: url }],
+            providesTags: (_result, _error, url) => [{ type: 'Product', id: url }],
             keepUnusedDataFor: 300,
         }),
 
@@ -147,7 +147,7 @@ export const guardService = createApi({
                 total: response.meta.total,
                 hasMore: response.meta.current_page < response.meta.last_page
             }),
-            providesTags: (result, error, arg) => [{ type: 'Product', id: 'LIST' }],
+            providesTags: () => [{ type: 'Product', id: 'LIST' }],
             keepUnusedDataFor: 60,
         }),
 
@@ -196,7 +196,7 @@ export const guardService = createApi({
                 currentPageResponse: response.meta?.current_page ?? 1,
                 totalProductsResponse: response.meta?.total ?? response.data?.length ?? 0,
             }),
-            providesTags: (result, error, arg) => [{ type: 'Product', id: `CATEGORY_${arg.url}` }],
+            providesTags: (_result, _error, arg) => [{ type: 'Product', id: `CATEGORY_${arg.url}` }],
             keepUnusedDataFor: 120,
         }),
 
@@ -226,7 +226,7 @@ export const guardService = createApi({
 
         getCatalogSeller: builder.query({
             query: (shopKey) => ({ url: `/api/catalogue/${shopKey}`, method: "GET" }),
-            providesTags: (result, error, shopKey) => [{ type: 'Shop', id: shopKey }],
+            providesTags: (shopKey) => [{ type: 'Shop', id: shopKey }],
             keepUnusedDataFor: 300,
         }),
 

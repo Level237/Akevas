@@ -1,37 +1,64 @@
-
 import { baseQuery } from "./baseQuery";
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { setUnauthenticated } from "@/store/authSlice";
-
 
 export const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
-> = async (args, api, extraOptions) => { // Renommé 'store' en 'api' pour la clarté (c'est le param par défaut)
+> = async (args, api, extraOptions) => {
+
+  // 1. Première tentative de la requête
   let result = await baseQuery(args, api, extraOptions);
 
+  // 🚨 CRITIQUE 1 : Si c'est une erreur 429, on arrête TOUT immédiatement.
+  if (result.error && result.error.status === 429) {
+    return result;
+  }
+
+  // 🚨 CRITIQUE 2 : Gestion du 401 (Token expiré)
   if (result.error && result.error.status === 401) {
-    // Tenter de rafraîchir le token
-    // La route /api/refresh doit être conçue pour prendre le refreshToken d'un cookie HttpOnly
-    // et retourner un nouvel accessToken (dans un cookie HttpOnly)
-    const refreshResult = await baseQuery("/api/refresh", api, extraOptions);
+
+    // On extrait l'URL de la requête qui vient d'échouer
+    const url = typeof args === 'string' ? args : args.url;
+
+    // 🎯 LISTE DES ROUTES QUI NE DOIVENT JAMAIS DÉCLENCHER UN REFRESH
+    const skipRefreshRoutes = [
+      '/login',
+      '/register',
+      '/forgot-password',
+      '/reset-password',
+      '/verify-otp',
+      '/refresh/token',      // 🚨 Éviter boucle infinie
+      '/check-auth',         // 🚨 CRITIQUE : check-auth ne doit PAS refresh
+      '/v1/check-auth',      // Au cas où
+    ];
+
+    // Vérifier si l'URL courante fait partie des routes à ignorer
+    const shouldSkipRefresh = skipRefreshRoutes.some(route =>
+      url.includes(route)
+    );
+
+    // Si c'est une route d'auth ou check-auth, on NE TENTE PAS de refresh
+    if (shouldSkipRefresh) {
+      console.log(`[Auth] Skip refresh pour: ${url}`);
+      return result;
+    }
+
+    // Sinon (ex: appel à /api/v1/current/user), on tente le refresh
+    console.log(`[Auth] Tentative de refresh pour: ${url}`);
+    const refreshResult = await baseQuery("/api/refresh/token", api, extraOptions);
 
     if (refreshResult.data) {
-      // Le token a été rafraîchi avec succès.
-      // Le nouveau accessToken est supposé être stocké dans un cookie HttpOnly par le backend.
-      // Nous n'avons pas besoin de le stocker manuellement ici si c'est HttpOnly.
-      // On peut dispatch setAuthenticated si nécessaire, mais si checkAuth est appelé, il le fera.
-      // api.dispatch(setAuthenticated()); 
-
-      // Retenter la requête originale qui a échoué
+      // Le token a été rafraîchi avec succès, on retente la requête originale
+      console.log(`[Auth] Refresh réussi, retry de: ${url}`);
       result = await baseQuery(args, api, extraOptions);
     } else {
-      // Le rafraîchissement a échoué (refreshToken invalide, expiré, ou erreur serveur).
-      // Déconnecter l'utilisateur.
-      api.dispatch(setUnauthenticated());
-      // Nettoyage manuel des cookies si le backend ne le fait pas explicitement lors de l'échec du refresh
+      // Échec du refresh (cookie invalide ou expiré)
+      console.log(`[Auth] Refresh échoué pour: ${url}`);
+      // Ici, tu peux dispatcher une action de déconnexion si nécessaire
+      // api.dispatch(logout());
     }
   }
+
   return result;
 };
