@@ -10,7 +10,7 @@ import ErrorMessage from '@/components/ui/error-message';
 
 const StorePage: React.FC = () => {
   const { id } = useParams();
-  const { data: shop , isLoading, error } = useGetShopQuery(id);
+   const { data: { data: shop } = {}, isLoading, error } = useGetShopQuery(id);
   
   return (
     <ErrorBoundary>
